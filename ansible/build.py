@@ -60,10 +60,11 @@ if __name__ == "__main__":
     sha1 = git_trunk_sha1()
     zip_name = sha1 + ".zip"
     zip_path = os.path.join(src_dir, zip_name)
-    if os.path.exists(zip_path):
-        os.remove(zip_path)
-    zip_files(zip_path)
+    if os.path.exists(zip_name):
+        os.remove(zip_name)
+    zip_files(zip_name)
     os.remove("dbworkbench_linux")
+    os.chdir(script_dir)
     if os.path.exists(zip_name):
         os.remove(zip_name)
     os.rename(zip_path, zip_name)
