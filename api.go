@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"mime"
 	"path/filepath"
 	"strconv"
@@ -103,6 +104,10 @@ func ApiMiddleware() gin.HandlerFunc {
 
 		return
 	}
+}
+
+func Asset(fileName string) ([]byte, error) {
+	return ioutil.ReadFile(fileName)
 }
 
 func API_Home(c *gin.Context) {
