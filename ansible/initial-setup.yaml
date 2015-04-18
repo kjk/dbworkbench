@@ -1,0 +1,26 @@
+---
+- name: initial setup for dbworkbench service
+  hosts: dbworkbench-initial
+  sudo: True
+  tasks:
+    - name: install nginx
+      apt: name=nginx state=latest update_cache=yes
+    - name: install unzip
+      apt: name=unzip state=latest update_cache=yes
+    - name: install tar
+      apt: name=tar state=latest update_cache=yes
+    - name: create directory for nginx logs
+      file: >
+        path=/var/log/nginx/dbworkbench/ state=directory mode=0755
+    - name: create directory for nginx certificates
+      file: >
+        path=/etc/nginx/ssl/ state=directory mode=0755
+    - name: copy nginx config file
+      copy: src=nginx.conf dest=/etc/nginx/sites-available/dbworkbench
+    - name: enable website
+      file: >
+        dest=/etc/nginx/sites-enabled/dbworkbench
+        src=/etc/nginx/sites-available/dbworkbench
+        state=link
+    - name: restart nginx
+      service: name=nginx state=restarted

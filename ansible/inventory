@@ -1,0 +1,2 @@
+dbworkbench-initial ansible_ssh_host=dbworkbench ansible_ssh_user=root
+dbworkbench ansible_ssh_host=dbworkbench.com ansible_ssh_user=dbworkbench
