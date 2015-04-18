@@ -3,6 +3,19 @@
   hosts: dbworkbench-initial
   sudo: True
   tasks:
+  tasks:
+    - name: create a group for the user
+      group: name=dbworkbench state=present
+    - name: create a user
+      user: name=dbworkbench group=dbworkbench groups="sudo" shell=/bin/bash
+    - name: make user a sudoer
+      lineinfile: dest=/etc/sudoers state=present regexp='^%dbworkbench' line='%dbworkbench ALL=(ALL) NOPASSWD:ALL'
+    - name: create user's .ssh directory
+      file: path=/home/dbworkbench/.ssh state=directory owner=dbworkbench group=dbworkbench mode=0755
+    - name: copy existing ssh key
+      copy: src=dbworkbench_rsa.pub dest=/home/dbworkbench/.ssh/authorized_keys
+    - name: configure authorized_keys
+      file: path=/home/dbworkbench/.ssh/authorized_keys mode=0644 owner=dbworkbench group=dbworkbench
     - name: install nginx
       apt: name=nginx state=latest update_cache=yes
     - name: install unzip
