@@ -112,12 +112,12 @@ func handleSignals() {
 }
 
 func openPage() {
-	url := fmt.Sprintf("http://%v:%v", options.HttpHost, options.HttpPort)
-	fmt.Println("To view database open", url, "in browser")
-
 	if options.SkipOpen {
 		return
 	}
+
+	url := fmt.Sprintf("http://%v:%v", options.HttpHost, options.HttpPort)
+	fmt.Println("To view database open", url, "in browser")
 
 	_, err := exec.Command("which", "open").Output()
 	if err != nil {

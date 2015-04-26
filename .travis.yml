@@ -4,13 +4,12 @@ addons:
   postgresql: "9.3"
 
 go:
-- 1.4.1
 - 1.4.2
 - tip
 
 install:
   - make setup
-  
+
 script:
   - make build
   - make test
