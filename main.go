@@ -33,7 +33,6 @@ type Options struct {
 	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
 	IsLocal  bool   `long:"local" description:"is true if running locally (dev mode)"`
-	React    bool   `long:"react" description:"if true use react version (temporary)"`
 }
 
 var dbClient *Client
@@ -177,7 +176,7 @@ func main() {
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
 
-	if options.IsLocal && options.React {
+	if options.IsLocal {
 		startWebpackWatch()
 	}
 

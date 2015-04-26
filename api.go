@@ -47,6 +47,7 @@ func assetContentType(name string) string {
 
 func setupRoutes(router *gin.Engine) {
 	router.GET("/", API_Home)
+	router.GET("/react", API_HomeReact)
 	router.GET("/s/*path", API_ServeAsset)
 
 	api := router.Group("/api")
@@ -107,17 +108,24 @@ func ApiMiddleware() gin.HandlerFunc {
 	}
 }
 
-func Asset(fileName string) ([]byte, error) {
+func asset(fileName string) ([]byte, error) {
 	fmt.Fprintf(os.Stderr, "Asset: %s\n", fileName)
 	return ioutil.ReadFile(fileName)
 }
 
-func API_Home(c *gin.Context) {
-	path := "s/index.html"
-	if options.React {
-		path = "s/index_react.html"
+func API_HomeReact(c *gin.Context) {
+	data, err := asset("s/index_react.html")
+	if err != nil {
+		c.String(400, err.Error())
+		return
 	}
-	data, err := Asset(path)
+
+	c.Data(200, "text/html; charset=utf-8", data)
+
+}
+
+func API_Home(c *gin.Context) {
+	data, err := asset("s/index.html")
 
 	if err != nil {
 		c.String(400, err.Error())
@@ -350,7 +358,7 @@ func API_Bookmarks(c *gin.Context) {
 
 func API_ServeAsset(c *gin.Context) {
 	path := "s" + c.Params.ByName("path")
-	data, err := Asset(path)
+	data, err := asset(path)
 
 	if err != nil {
 		c.String(400, err.Error())

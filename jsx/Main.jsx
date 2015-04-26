@@ -124,6 +124,7 @@ var Sidebar = React.createClass({
             </ul>
           </div>
         </div>
+
         <div className="table-information">
           <div className="wrap">
             <div className="title">Table Information</div>
