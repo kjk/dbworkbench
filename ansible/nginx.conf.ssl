@@ -7,7 +7,7 @@ server {
     listen          443 ssl;
     server_name     www.databaseworkbench.com;
 
-    ssl_certificate_key     /etc/nginx/ssl/www.databaseworkbench.com.com.key;
+    ssl_certificate_key     /etc/nginx/ssl/www.databaseworkbench.com.key;
     ssl_certificate         /etc/nginx/ssl/www.databaseworkbench.com.chained.crt;
 
     # Recommended security settings from https://wiki.mozilla.org/Security/Server_Side_TLS
