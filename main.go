@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
@@ -32,6 +33,7 @@ type Options struct {
 	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
 	IsLocal  bool   `long:"local" description:"is true if running locally (dev mode)"`
+	React    bool   `long:"react" description:"if true use react version (temporary)"`
 }
 
 var dbClient *Client
@@ -152,6 +154,18 @@ func getLogDir() string {
 	return filepath.Join(getDataDir(), "log")
 }
 
+func startWebpackWatch() {
+	cmd := exec.Command("./scripts/webpack-dev.sh")
+	cmdStr := strings.Join(cmd.Args, " ")
+	fmt.Printf("starting '%s'\n", cmdStr)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Start()
+	if err != nil {
+		log.Fatalf("cmd.Start('%s') failed with '%s'\n", cmdStr, err)
+	}
+}
+
 func main() {
 	fmt.Printf("starting pgweb\n")
 	initOptions()
@@ -162,6 +176,10 @@ func main() {
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
+
+	if options.IsLocal && options.React {
+		startWebpackWatch()
+	}
 
 	initClient()
 

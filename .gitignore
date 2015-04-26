@@ -5,3 +5,5 @@ cover.out
 dbworkbench
 dbworkbench_linux
 ansible/*.zip
+s/js/bundle.js
+s/js/bundle.js.map

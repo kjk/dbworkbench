@@ -111,7 +111,11 @@ func Asset(fileName string) ([]byte, error) {
 }
 
 func API_Home(c *gin.Context) {
-	data, err := Asset("s/index.html")
+	path := "s/index.html"
+	if options.React {
+		path = "s/index_react.html"
+	}
+	data, err := Asset(path)
 
 	if err != nil {
 		c.String(400, err.Error())
