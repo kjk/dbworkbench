@@ -10,6 +10,9 @@
   - name: create .initd file
     copy: src=dbworkbench.initd dest=/etc/init.d/dbworkbench owner=root group=root mode=0755
     sudo: yes
+  - name: make changes to /etc/init.d/dbworkbench visible
+    command: systemctl daemon-reload
+    sudo: yes
   - name: create directory for the app
     file: >
       path=/home/dbworkbench/www/app/{{ sha1.stdout }}
@@ -24,6 +27,7 @@
     unarchive: src={{ sha1.stdout }}.zip dest=/home/dbworkbench/www/app/{{ sha1.stdout }}
   - name: stop existing
     command: /etc/init.d/dbworkbench stop
+    sudo: yes
   - name: stat current
     stat: path=/home/dbworkbench/www/app/current
     register: current_stat
@@ -41,5 +45,6 @@
       state=link
   - name: start it
     command: /etc/init.d/dbworkbench start
+    sudo: yes
   - name: delete .zip file
     local_action: command rm {{ sha1.stdout }}.zip
