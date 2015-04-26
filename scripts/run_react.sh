@@ -11,5 +11,5 @@ godep go build -o dbworkbench
 #gdep go build -race -o dbworkbench
 
 echo "starting dbworkbench"
-./dbworkbench --local --react || true
+./dbworkbench --local --react --skip-open || true
 rm dbworkbench

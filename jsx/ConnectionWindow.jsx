@@ -1,22 +1,55 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var ConnectionScheme = 0;
+var ConnectionStandard = 1;
+var ConnectionSSH = 2;
+
 var ConnectionWindow = React.createClass({
 
+  getInitialState: function() {
+    return {
+      connectionType: ConnectionScheme
+    };
+  },
+
+  renderConnectionFormHeader: function() {
+    var clsScheme = "btn btn-default";
+    var clsStandard = "btn btn-default";
+    var clsSSH = "btn btn-default";
+    switch (this.state.connectionType) {
+      case ConnectionScheme:
+        clsScheme += ' active';
+        break;
+      case ConnectionStandard:
+        clsStandard += ' active';
+        break;
+      case ConnectionSSH:
+        clsSSH += ' active';
+        break;
+    }
+
+    return (
+        <div className="text-center">
+          <div className="btn-group btn-group-sm connection-group-switch">
+            <button type="button" data="scheme" className={clsScheme} id="connection_scheme">Scheme</button>
+            <button type="button" data="standard" className={clsStandard} id="connection_standard">Standard</button>
+            <button type="button" data="ssh" className={clsSSH} id="connection_ssh">SSH</button>
+          </div>
+        </div>
+    );
+  },
+
   render: function() {
+    var connectionFormHeader = this.renderConnectionFormHeader();
+
     return (
       <div id="connection_window">
         <div className="connection-settings">
-          <h1>Database Workbench</h1>
+          <h1>Postgres Database Workbench</h1>
 
-          <form role="form" className="form-horizontal" id="connection_form">
-            <div className="text-center">
-              <div className="btn-group btn-group-sm connection-group-switch">
-                <button type="button" data="scheme" className="btn btn-default" id="connection_scheme">Scheme</button>
-                <button type="button" data="standard" className="btn btn-default active" id="connection_standard">Standard</button>
-              </div>
-            </div>
-
+            <form role="form" className="form-horizontal" id="connection_form">
+            {connectionFormHeader}
             <hr/>
 
             <div className="connection-scheme-group">

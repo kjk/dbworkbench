@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mime"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -107,6 +108,7 @@ func ApiMiddleware() gin.HandlerFunc {
 }
 
 func Asset(fileName string) ([]byte, error) {
+	fmt.Fprintf(os.Stderr, "Asset: %s\n", fileName)
 	return ioutil.ReadFile(fileName)
 }
 
