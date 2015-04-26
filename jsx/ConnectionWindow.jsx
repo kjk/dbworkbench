@@ -9,7 +9,8 @@ var ConnectionWindow = React.createClass({
 
   getInitialState: function() {
     return {
-      connectionType: ConnectionScheme
+      connectionType: ConnectionScheme,
+      connectionScheme: "",
     };
   },
 
@@ -37,9 +38,36 @@ var ConnectionWindow = React.createClass({
     });
   },
 
+  handleConnectScheme: function() {
+    var url = this.state.connectionScheme.trim();
+    console.log("handleConnectScheme: url: ", url);
+    var self = this;
+    apiCall("post", "/connect", { url: url }, function(resp) {
+      // TODO: this.setState({ isConnecting})
+      //button.prop("disabled", false).text("Connect");
+      if (resp.error) {
+        console.log("handleConnectScheme: resp.error: ", resp.error);
+        //$("#connection_error").text(resp.error).show();
+      }
+      else {
+        console.log("did connect");
+        var connId = 1; // TODO: for now it's always 1
+        var connStr = self.state.connectionScheme;
+        self.props.onDidConnect(connStr, connId);
+      }
+    });
+  },
+
   handleConnect: function(e) {
     e.preventDefault();
     console.log("handleConnect");
+    switch (this.state.connectionType) {
+      case ConnectionScheme:
+        this.handleConnectScheme();
+        break;
+      default:
+        console.log("ConnectionWindow.handleConnect: connection type ", this.state.connectionType, " not yet supported");
+    }
   },
 
   handleCancel: function(e) {
@@ -135,13 +163,21 @@ var ConnectionWindow = React.createClass({
     );
   },
 
+  handleConnectionSchemeChanged: function(e) {
+    var scheme = e.target.value;
+    console.log("handleConnectionSchemeChanged: ", scheme);
+    this.setState({
+      connectionScheme: scheme
+    });
+  },
+
   renderSchemeGroup: function() {
     return (
       <div className="connection-scheme-group">
         <div className="form-group">
           <div className="col-sm-12">
             <label>Enter server URL scheme</label>
-            <input type="text" className="form-control" id="connection_url" name="url" />
+            <input type="text" value={this.state.connectionScheme} onChange={this.handleConnectionSchemeChanged} className="form-control"/>
             <p className="help-block">URL format: postgres://user:password@host:port/db?sslmode=mode
             </p>
           </div>
@@ -208,7 +244,7 @@ var ConnectionWindow = React.createClass({
     }
     var error;
     if (this.props.errorMessage) {
-      error = this.renderError(this.props.errorMessage);
+      error = this.renderError(this.props.connectionErrorMessage);
     }
 
     return (

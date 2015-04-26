@@ -7,13 +7,18 @@ var ConnectionWindow = require('./ConnectionWindow.jsx');
 var App = React.createClass({
   getInitialState: function() {
     return {
-      connectionId: null,
-    }
+      connectionId: -1,
+      connected: false,
+    };
+  },
+
+  handleDidConnect: function(connectionStr, connectionId) {
+    console.log("App.handleDidConnect: ", connectionStr, connectionId);
   },
 
   render: function() {
-    if (this.state.connectionId === null) {
-      return <ConnectionWindow />;
+    if (this.state.connectionId === -1) {
+      return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     } else {
       return <div>This is a start</div>;
     }
