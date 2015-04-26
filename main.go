@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
+	"github.com/kjk/u"
 	_ "github.com/lib/pq"
 )
 
@@ -28,6 +31,7 @@ type Options struct {
 	AuthUser string `long:"auth-user" description:"HTTP basic auth user"`
 	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
+	IsLocal  bool   `long:"local" description:"is true if running locally (dev mode)"`
 }
 
 var dbClient *Client
@@ -71,7 +75,7 @@ func initOptions() {
 	_, err := flags.ParseArgs(&options, os.Args)
 
 	if err != nil {
-		os.Exit(1)
+		log.Fatalf("flags.ParseArgs() failed with %s", err)
 	}
 
 	if options.Url == "" {
@@ -127,10 +131,38 @@ func openPage() {
 	exec.Command("open", url).Output()
 }
 
-func main() {
-	initOptions()
+func verifyDirs() {
+	if !u.PathExists(getLogDir()) {
+		log.Fatalf("directory '%s' doesn't exist. Please create! \n", getLogDir())
+	}
+	if !u.PathExists(getDataDir()) {
+		log.Fatalf("directory '%s' doesn't exist\n", getDataDir())
+	}
+}
 
+func getDataDir() string {
+	if options.IsLocal {
+		return u.ExpandTildeInPath("~/data/dbworkbench")
+	}
+	//  on the server it's in /home/dbworkbench/www/data
+	return u.ExpandTildeInPath("~/www/data")
+}
+
+func getLogDir() string {
+	return filepath.Join(getDataDir(), "log")
+}
+
+func main() {
+	fmt.Printf("starting pgweb\n")
+	initOptions()
 	fmt.Println("Pgweb version", VERSION)
+
+	logToStdout = true
+	verifyDirs()
+	OpenLogFiles()
+	IncLogVerbosity()
+	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
+
 	initClient()
 
 	if dbClient != nil {

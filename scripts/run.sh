@@ -6,10 +6,10 @@ set -o pipefail
 
 #echo "go vet"
 #go tool vet -printfuncs=LogInfof,LogErrorf,LogVerbosef .
-echo "go build"
+echo "building"
 godep go build -o dbworkbench
 #gdep go build -race -o dbworkbench
 
-echo "starging dbworkbench"
-./dbworkbench || true
+echo "starting dbworkbench"
+./dbworkbench --local || true
 rm dbworkbench
