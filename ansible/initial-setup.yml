@@ -29,11 +29,11 @@
       file: >
         path=/etc/nginx/ssl/ state=directory mode=0755
     - name: copy nginx certificate
-      copy: src=www.dbworkbench.com.chained.crt dest=/etc/nginx/ssl/www.dbworkbench.com.chained.crt
+      copy: src=www.databaseworkbench.com.chained.crt dest=/etc/nginx/ssl/www.databaseworkbench.com.chained.crt
     - name: copy nginx key
-      copy: src=www.dbworkbench.com.key dest=/etc/nginx/ssl/www.dbworkbench.com.key
+      copy: src=www.databaseworkbench.com.key dest=/etc/nginx/ssl/www.databaseworkbench.com.key
     - name: copy nginx config file
-      copy: src=nginx.conf.ssl dest=/etc/nginx/sites-available/dbworkbench
+      copy: src=nginx.conf.ssl dest=/etc/nginx/sites-available/databaseworkbench
     - name: enable website
       file: >
         dest=/etc/nginx/sites-enabled/dbworkbench
