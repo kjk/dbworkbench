@@ -22,7 +22,7 @@ test -x $DAEMON || exit 0
 . /lib/lsb/init-functions
 
 start() {
-    start-stop-daemon --verbose --oknodo --start --background --chuid dbworkbench --exec $DAEMON -- $DAEMON_ARGS
+    start-stop-daemon --verbose --oknodo --start --background --chuid dbworkbench --exec $DAEMON
 }
 
 stop() {
