@@ -58,6 +58,10 @@ var ConnectionWindow = React.createClass({
     });
   },
 
+  handleConnectStandard: function() {
+    // TODO: need to construct connection url out of fields
+  },
+
   handleConnect: function(e) {
     e.preventDefault();
     console.log("handleConnect");
@@ -180,6 +184,7 @@ var ConnectionWindow = React.createClass({
             <input type="text" value={this.state.connectionScheme} onChange={this.handleConnectionSchemeChanged} className="form-control"/>
             <p className="help-block">URL format: postgres://user:password@host:port/db?sslmode=mode
             </p>
+            <p className="help-block">Test database: postgres://localhost/booktown</p>
           </div>
         </div>
       </div>

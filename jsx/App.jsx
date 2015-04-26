@@ -3,6 +3,9 @@
 
 var utils = require('./utils.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
+var TopNav = require('./Main.jsx').TopNav;
+var Sidebar = require('./Main.jsx').Sidebar;
+var Body = require('./Main.jsx').Body;
 
 var App = React.createClass({
   getInitialState: function() {
@@ -14,13 +17,27 @@ var App = React.createClass({
 
   handleDidConnect: function(connectionStr, connectionId) {
     console.log("App.handleDidConnect: ", connectionStr, connectionId);
+    this.setState({
+      connected: true,
+      connectionId: connectionId
+    });
+  },
+
+  renderMain: function() {
+    return (
+      <div>
+        <TopNav />
+        <Sidebar />
+        <Body />
+      </div>
+    );
   },
 
   render: function() {
-    if (this.state.connectionId === -1) {
+    if (!this.state.connected) {
       return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     } else {
-      return <div>This is a start</div>;
+      return this.renderMain();
     }
   }
 });
