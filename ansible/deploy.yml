@@ -18,7 +18,7 @@
       path=/home/dbworkbench/www/app/{{ sha1.stdout }}
       state=directory mode=0755
       owner=dbworkbench group=dbworkbench
-  - name: create directory for app's log
+  - name: create directory for apps log
     file: >
       path=/home/dbworkbench/www/data/log
       state=directory mode=0755
