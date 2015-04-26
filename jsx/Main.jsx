@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var api = require('./api.js');
+
 var ViewContent = 0;
 var ViewStructure = 1;
 var ViewIndexes = 2;
@@ -76,9 +78,39 @@ var TopNav = React.createClass({
   },
 });
 
+// TODO: pass connectionId and use it in api calls
 var Sidebar = React.createClass({
 
+  getInitialState: function() {
+    return {
+      tableNames: []
+    };
+  },
+
+  componentDidMount: function() {
+    var self = this;
+    api.getTables(function(data) {
+      //console.log("componentDidMount: ", data);
+      self.setState({
+        tableNames: data,
+      });
+    });
+  },
+
+  handleSelectTable: function(e) {
+    e.preventDefault();
+    var table = e.target.textContent.trim();
+    console.log("handleSelectTable: ", e.target, " table:", table);
+    // TODO: change table
+  },
+
+  // TODO: remove id="tabels"
   render: function() {
+    var self = this;
+    var tables = this.state.tableNames.map(function(item) {
+      return <li onClick={self.handleSelectTable} key={item}><span><i className='fa fa-table'></i>{item}</span></li>;
+    });
+
     return (
       <div id="sidebar">
         <div className="tables-list">
@@ -87,7 +119,9 @@ var Sidebar = React.createClass({
               <i className="fa fa-database"></i> <span className="current-database" id="current_database"></span>
               <span className="refresh" id="refresh_tables" title="Refresh tables list"><i className="fa fa-refresh"></i></span>
             </div>
-            <ul id="tables"></ul>
+            <ul id="tables">
+              {tables}
+            </ul>
           </div>
         </div>
         <div className="table-information">

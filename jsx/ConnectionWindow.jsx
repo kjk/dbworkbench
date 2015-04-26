@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var api = require('./api.js');
+
 var ConnectionScheme = 0;
 var ConnectionStandard = 1;
 var ConnectionSSH = 2;
@@ -42,7 +44,7 @@ var ConnectionWindow = React.createClass({
     var url = this.state.connectionScheme.trim();
     console.log("handleConnectScheme: url: ", url);
     var self = this;
-    apiCall("post", "/connect", { url: url }, function(resp) {
+    api.call("post", "/connect", { url: url }, function(resp) {
       // TODO: this.setState({ isConnecting})
       //button.prop("disabled", false).text("Connect");
       if (resp.error) {
