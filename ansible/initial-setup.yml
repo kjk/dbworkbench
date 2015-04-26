@@ -33,7 +33,7 @@
     - name: copy nginx key
       copy: src=www.databaseworkbench.com.key dest=/etc/nginx/ssl/www.databaseworkbench.com.key
     - name: copy nginx config file
-      copy: src=nginx.conf.ssl dest=/etc/nginx/sites-available/databaseworkbench
+      copy: src=nginx.conf.ssl dest=/etc/nginx/sites-available/dbworkbench
     - name: enable website
       file: >
         dest=/etc/nginx/sites-enabled/dbworkbench
