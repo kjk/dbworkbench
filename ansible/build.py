@@ -49,7 +49,7 @@ def zip_files(zip_path):
     zf = zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED)
     zf.write("dbworkbench_linux", "dbworkbench")
     zf.write(pj("scripts", "server_run.sh"), "server_run.sh")
-    add_dir_files(zf, "static")
+    add_dir_files(zf, "s")
     zf.close()
 
 

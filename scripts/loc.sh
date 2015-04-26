@@ -4,5 +4,5 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-wc -l static/index.html static/js/app.js static/css/app.css
+wc -l s/index.html s/js/app.js s/css/app.css
 echo && wc -l *.go
