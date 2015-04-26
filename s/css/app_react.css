@@ -390,7 +390,6 @@
 }
 
 #connection_error {
-  display: none;
 }
 
 .bookmarks {
@@ -421,12 +420,4 @@
 
 .connection-settings form p.help-block {
   font-size: 12px;
-}
-
-.connection-scheme-group {
-  display: none;
-}
-
-.connection-ssh-group {
-  display: none;
 }
