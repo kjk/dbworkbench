@@ -146,8 +146,17 @@ var Sidebar = React.createClass({
   render: function() {
     var self = this;
     var tables = this.state.tableNames.map(function(item) {
-      return <li onClick={self.handleSelectTable} key={item}><span><i className='fa fa-table'></i>{item}</span></li>;
+      var cls;
+      if (item == self.state.selectedTableName) {
+        cls += ' selected';
+      }
+      return (
+        <li onClick={self.handleSelectTable} key={item} className={cls}>
+          <span><i className='fa fa-table'></i>{item}</span>
+        </li>
+      );
     });
+
     var tableInfo = this.state.selectedTableInfo;
     return (
       <div id="sidebar">
