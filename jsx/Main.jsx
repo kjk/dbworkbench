@@ -140,6 +140,14 @@ var Sidebar = React.createClass({
         selectedTableName: table,
       });
     });
+
+    var sortColumn = null;
+    var sortOrder = null;
+    var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
+    api.getTableRows(table, params, function(data) {
+      console.log("handleSelectTable: got table rows: ", data);
+      self.props.onGotResults(data);
+    });
   },
 
   // TODO: remove id="tabels"
@@ -199,23 +207,6 @@ var Input = React.createClass({
 
 /*
 function buildTable(results, sortColumn, sortOrder) {
-  resetTable();
-
-  if (results.error) {
-    $("<tr><td>ERROR: " + results.error + "</tr></tr>").appendTo("#results");
-    $("#results").addClass("empty");
-    return;
-  }
-
-  if (!results.rows) {
-    $("<tr><td>No records found</tr></tr>").appendTo("#results");
-    $("#results").addClass("empty");
-    return;
-  }
-
-  var cols = "";
-  var rows = "";
-
   results.columns.forEach(function(col) {
       if (col === sortColumn) {
           cols += "<th data='" + col + "'" + "data-sort-order=" + sortOrder + ">" + col + "&nbsp;" + sortArrow(sortOrder) + "</th>";
@@ -223,41 +214,77 @@ function buildTable(results, sortColumn, sortOrder) {
           cols += "<th data='" + col + "'>" + col + "</th>";
       }
   });
-
-  results.rows.forEach(function(row) {
-    var r = "";
-    for (i in row) { r += "<td><div>" + escapeHtml(row[i]) + "</div></td>"; }
-    rows += "<tr>" + r + "</tr>";
-  });
-
-  $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo("#results");
-}
-
-function showTableContent(sortColumn, sortOrder) {
-  var name = getCurrentTable();
-
-  if (name.length == 0) {
-    alert("Please select a table!");
-    return;
-  }
-
-  getTableRows(name, { limit: 100, sort_column: sortColumn, sort_order: sortOrder }, function(data) {
-    buildTable(data, sortColumn, sortOrder);
-    setCurrentTab("table_content");
-
-    $("#results").attr("data-mode", "browse");
-    $("#input").hide();
-    $("#output").addClass("full");
-  });
 }
 */
 
 var Output = React.createClass({
+  renderCols: function(columns, sortColumn, sortOrder) {
+    columns.map(function(col) {
+      // TODO: use sortColumn and sortOrder
+      return (
+        <th data={col}>{col}</th>
+      );
+    });
+  },
+
+  renderRows: function(rows) {
+    var children = rows.map(function(row) {
+      return (
+        <td><div>{row}</div></td>
+      );
+    });
+
+    return (
+      <tr>{children}</tr>
+    );
+  },
+
+  renderResults: function(results) {
+    var cols = this.renderCols(results.columns);
+    var rows = this.renderRows(results.rows);
+    return (
+      <table id="results" className="table">
+        <thead>{cols}</thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+  },
+
+  renderNoResults: function() {
+    return (
+      <table id="results" className="table">
+        <tr><td>No records found</td></tr>
+      </table>
+    );
+  },
+
+  renderError: function(errorMsg) {
+    return (
+      <table id="results" className="table">
+        <tr><td>ERROR: {errorMsg}</td></tr>
+      </table>
+    );
+  },
+
   render: function() {
+    var cls = "table";
+    var results;
+    if (!this.props.results) {
+      cls += " empty";
+      results = this.renderNoResults();
+    } else {
+      if (this.props.results.error) {
+        cls += " empty";
+        results = this.renderError(this.props.results.error);
+      } else {
+        results = this.renderResults(this.props.results);
+      }
+    }
+
     return (
       <div id="output">
         <div className="wrapper">
-          <table id="results" className="table"></table>
+            {results}
         </div>
       </div>
     );

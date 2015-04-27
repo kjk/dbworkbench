@@ -13,6 +13,7 @@ var App = React.createClass({
     return {
       connectionId: -1,
       connected: false,
+      results: null,
     };
   },
 
@@ -24,24 +25,37 @@ var App = React.createClass({
     });
   },
 
-  renderMain: function() {
-    return (
-      <div>
-        <TopNav />
-        <Sidebar />
-        <div id="body">
-          <Input/>
-          <Output/>
-        </div>
-      </div>
-    );
+  handleGotResults: function(results) {
+    console.log("handleGotResults: ", results);
+    this.setState({
+      results: results
+    });
+  },
+
+  renderInput: function() {
+    return <Input />;
   },
 
   render: function() {
+    var results = this.state.results;
+    var input;
+    if (!results) {
+      input = this.renderInput();
+    }
+
     if (!this.state.connected) {
       return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     } else {
-      return this.renderMain();
+      return (
+        <div>
+          <TopNav />
+          <Sidebar onGotResults={this.handleGotResults}/>
+          <div id="body">
+            {input}
+            <Output results={results}/>
+          </div>
+        </div>
+      );
     }
   }
 });
