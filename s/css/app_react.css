@@ -114,7 +114,6 @@
   margin-right: 4px;
   cursor: pointer;
   color: #95a7b7;
-  display: none;
 }
 
 #sidebar div.tables-list .title span.refresh:hover {
@@ -147,7 +146,6 @@
 #sidebar div.table-information ul {
   padding: 33px 0 0;
   font-size: 12px;
-  display: none;
 }
 
 #sidebar div.table-information ul li {

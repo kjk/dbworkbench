@@ -78,12 +78,42 @@ var TopNav = React.createClass({
   },
 });
 
+var TableInformation = React.createClass({
+  renderTableInfo: function(info) {
+    console.log("renderTableInfo: info: ", info);
+    if (info && !$.isEmptyObject(info)) {
+      return (
+        <ul>
+          <li>Size: <span>{info.total_size}</span></li>
+          <li>Data size: <span>{info.data_size}</span></li>
+          <li>Index size: <span>{info.index_size}</span></li>
+          <li>Estimated rows: <span>{info.rows_count}</span></li>
+        </ul>
+      );
+    }
+  },
+
+  render: function() {
+    var info = this.renderTableInfo(this.props.tableInfo);
+    return (
+      <div className="table-information">
+        <div className="wrap">
+          <div className="title">Table Information</div>
+          {info}
+        </div>
+      </div>
+    );
+  }
+});
+
 // TODO: pass connectionId and use it in api calls
 var Sidebar = React.createClass({
 
   getInitialState: function() {
     return {
-      tableNames: []
+      tableNames: [],
+      selectedTableName: "",
+      selectedTableInfo: null,
     };
   },
 
@@ -93,6 +123,7 @@ var Sidebar = React.createClass({
       //console.log("componentDidMount: ", data);
       self.setState({
         tableNames: data,
+        tableInfo: null,
       });
     });
   },
@@ -101,7 +132,14 @@ var Sidebar = React.createClass({
     e.preventDefault();
     var table = e.target.textContent.trim();
     console.log("handleSelectTable: ", e.target, " table:", table);
-    // TODO: change table
+    var self = this;
+    api.call("get", "/tables/" + table + "/info", {}, function(data) {
+      console.log("handleSelectTable: tableInfo: ", data);
+      self.setState({
+        selectedTableInfo: data,
+        selectedTableName: table,
+      });
+    });
   },
 
   // TODO: remove id="tabels"
@@ -110,7 +148,7 @@ var Sidebar = React.createClass({
     var tables = this.state.tableNames.map(function(item) {
       return <li onClick={self.handleSelectTable} key={item}><span><i className='fa fa-table'></i>{item}</span></li>;
     });
-
+    var tableInfo = this.state.selectedTableInfo;
     return (
       <div id="sidebar">
         <div className="tables-list">
@@ -124,18 +162,7 @@ var Sidebar = React.createClass({
             </ul>
           </div>
         </div>
-
-        <div className="table-information">
-          <div className="wrap">
-            <div className="title">Table Information</div>
-            <ul>
-              <li>Size: <span id="table_total_size"></span></li>
-              <li>Data size: <span id="table_data_size"></span></li>
-              <li>Index size: <span id="table_index_size"></span></li>
-              <li>Estimated rows: <span id="table_rows_count"></span></li>
-            </ul>
-          </div>
-        </div>
+        <TableInformation tableInfo={tableInfo} />
       </div>
     );
   }
