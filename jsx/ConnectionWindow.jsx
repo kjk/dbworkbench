@@ -13,6 +13,8 @@ var ConnectionWindow = React.createClass({
     return {
       connectionType: ConnectionScheme,
       connectionScheme: "",
+      connectionErrorMessage: "",
+      isConnecting: false,
     };
   },
 
@@ -20,7 +22,8 @@ var ConnectionWindow = React.createClass({
     console.log("handleChangeConnectionTypeToScheme");
     e.preventDefault();
     this.setState({
-      connectionType: ConnectionScheme
+      connectionType: ConnectionScheme,
+      connectionErrorMessage: ""
     });
   },
 
@@ -28,7 +31,8 @@ var ConnectionWindow = React.createClass({
     console.log("handleChangeConnectionTypeToStandard");
     e.preventDefault();
     this.setState({
-      connectionType: ConnectionStandard
+      connectionType: ConnectionStandard,
+      connectionErrorMessage: ""
     });
   },
 
@@ -36,7 +40,8 @@ var ConnectionWindow = React.createClass({
     console.log("handleChangeConnectionTypeToSSH");
     e.preventDefault();
     this.setState({
-      connectionType: ConnectionSSH
+      connectionType: ConnectionSSH,
+      connectionErrorMessage: ""
     });
   },
 
@@ -44,12 +49,16 @@ var ConnectionWindow = React.createClass({
     var url = this.state.connectionScheme.trim();
     console.log("handleConnectScheme: url: ", url);
     var self = this;
+    this.setState({
+      isConnecting: true,
+    });
     api.call("post", "/connect", { url: url }, function(resp) {
-      // TODO: this.setState({ isConnecting})
-      //button.prop("disabled", false).text("Connect");
       if (resp.error) {
         console.log("handleConnectScheme: resp.error: ", resp.error);
-        //$("#connection_error").text(resp.error).show();
+        self.setState({
+          connectionErrorMessage: resp.error,
+          isConnecting: false,
+        });
       }
       else {
         console.log("did connect");
@@ -229,7 +238,7 @@ var ConnectionWindow = React.createClass({
 
   renderError: function(errorText) {
     return (
-      <div id="connection_error" className="alert alert-danger">{errorText}</div>
+      <div className="alert alert-danger">{errorText}</div>
     );
   },
 
@@ -250,10 +259,10 @@ var ConnectionWindow = React.createClass({
         console.log("unknown connectionType: ", this.state.connectionType);
     }
     var error;
-    if (this.props.errorMessage) {
-      error = this.renderError(this.props.connectionErrorMessage);
+    if (this.state.connectionErrorMessage !== "") {
+      error = this.renderError(this.state.connectionErrorMessage);
     }
-
+    var connectDisabled = this.state.isConnecting;
     return (
       <div id="connection_window">
         <div className="connection-settings">
@@ -267,7 +276,7 @@ var ConnectionWindow = React.createClass({
 
             <div className="form-group">
               <div className="col-sm-12">
-                <button onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
+                <button disabled={connectDisabled} onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
                 <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default">Cancel</button>
               </div>
             </div>
