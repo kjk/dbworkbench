@@ -178,27 +178,86 @@ var Sidebar = React.createClass({
 
 });
 
-var Body = React.createClass({
-
+var Input = React.createClass({
   render: function() {
     return (
-      <div id="body">
-        <div id="input">
-          <div className="wrapper">
-            <div id="custom_query"></div>
-            <div className="actions">
-              <input type="button" id="run" value="Run Query" className="btn btn-sm btn-primary" />
-              <input type="button" id="explain" value="Explain Query" className="btn btn-sm btn-default" />
-              <input type="button" id="csv" value="Download CSV" className="btn btn-sm btn-default" />
+      <div id="input">
+        <div className="wrapper">
+          <div id="custom_query"></div>
+          <div className="actions">
+            <input type="button" id="run" value="Run Query" className="btn btn-sm btn-primary" />
+            <input type="button" id="explain" value="Explain Query" className="btn btn-sm btn-default" />
+            <input type="button" id="csv" value="Download CSV" className="btn btn-sm btn-default" />
 
-              <div id="query_progress">Please wait, query is executing...</div>
-            </div>
+            <div id="query_progress">Please wait, query is executing...</div>
           </div>
         </div>
-        <div id="output">
-          <div className="wrapper">
-            <table id="results" className="table"></table>
-          </div>
+      </div>
+    );
+  }
+});
+
+/*
+function buildTable(results, sortColumn, sortOrder) {
+  resetTable();
+
+  if (results.error) {
+    $("<tr><td>ERROR: " + results.error + "</tr></tr>").appendTo("#results");
+    $("#results").addClass("empty");
+    return;
+  }
+
+  if (!results.rows) {
+    $("<tr><td>No records found</tr></tr>").appendTo("#results");
+    $("#results").addClass("empty");
+    return;
+  }
+
+  var cols = "";
+  var rows = "";
+
+  results.columns.forEach(function(col) {
+      if (col === sortColumn) {
+          cols += "<th data='" + col + "'" + "data-sort-order=" + sortOrder + ">" + col + "&nbsp;" + sortArrow(sortOrder) + "</th>";
+      } else {
+          cols += "<th data='" + col + "'>" + col + "</th>";
+      }
+  });
+
+  results.rows.forEach(function(row) {
+    var r = "";
+    for (i in row) { r += "<td><div>" + escapeHtml(row[i]) + "</div></td>"; }
+    rows += "<tr>" + r + "</tr>";
+  });
+
+  $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo("#results");
+}
+
+function showTableContent(sortColumn, sortOrder) {
+  var name = getCurrentTable();
+
+  if (name.length == 0) {
+    alert("Please select a table!");
+    return;
+  }
+
+  getTableRows(name, { limit: 100, sort_column: sortColumn, sort_order: sortOrder }, function(data) {
+    buildTable(data, sortColumn, sortOrder);
+    setCurrentTab("table_content");
+
+    $("#results").attr("data-mode", "browse");
+    $("#input").hide();
+    $("#output").addClass("full");
+  });
+}
+*/
+
+var Output = React.createClass({
+  render: function() {
+    return (
+      <div id="output">
+        <div className="wrapper">
+          <table id="results" className="table"></table>
         </div>
       </div>
     );
@@ -207,4 +266,5 @@ var Body = React.createClass({
 
 module.exports.TopNav = TopNav;
 module.exports.Sidebar = Sidebar;
-module.exports.Body = Body;
+module.exports.Input = Input;
+module.exports.Output = Output;

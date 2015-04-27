@@ -5,7 +5,8 @@ var utils = require('./utils.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 var TopNav = require('./Main.jsx').TopNav;
 var Sidebar = require('./Main.jsx').Sidebar;
-var Body = require('./Main.jsx').Body;
+var Input = require('./Main.jsx').Input;
+var Output = require('./Main.jsx').Output;
 
 var App = React.createClass({
   getInitialState: function() {
@@ -28,7 +29,10 @@ var App = React.createClass({
       <div>
         <TopNav />
         <Sidebar />
-        <Body />
+        <div id="body">
+          <Input/>
+          <Output/>
+        </div>
       </div>
     );
   },
