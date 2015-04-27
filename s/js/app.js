@@ -111,7 +111,7 @@ function buildTable(results, sortColumn, sortOrder) {
     rows += "<tr>" + r + "</tr>";
   });
 
-  $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo("#results");
+  $("<thead>" + cols + "</thead><tbody>" + rows + "</tbody>").appendTo("#results");
 }
 
 function setCurrentTab(id) {

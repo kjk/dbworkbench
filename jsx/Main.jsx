@@ -218,34 +218,54 @@ function buildTable(results, sortColumn, sortOrder) {
 */
 
 var Output = React.createClass({
-  renderCols: function(columns, sortColumn, sortOrder) {
-    columns.map(function(col) {
+  renderHeader: function(columns, sortColumn, sortOrder) {
+    var i = 0;
+    var children = columns.map(function(col) {
       // TODO: use sortColumn and sortOrder
+      i = i + 1;
       return (
-        <th data={col}>{col}</th>
-      );
-    });
-  },
-
-  renderRows: function(rows) {
-    var children = rows.map(function(row) {
-      return (
-        <td><div>{row}</div></td>
+        <th key={i} data={col}>{col}</th>
       );
     });
 
     return (
-      <tr>{children}</tr>
+      <thead>{children}</thead>
+    );
+  },
+
+  renderRow: function(row, key) {
+    var i = 0;
+    var children = row.map(function(col) {
+      i = i + 1;
+      return (
+        <td key={i}><div>{col}</div></td>
+      );
+    });
+    return (
+      <tr key={key}>{children}</tr>
+    );
+  },
+
+  renderRows: function(rows) {
+    var self = this;
+    var i = 0;
+    var children = rows.map(function(row) {
+      i = i + 1;
+      return self.renderRow(row, i);
+    });
+
+    return (
+      <tbody>{children}</tbody>
     );
   },
 
   renderResults: function(results) {
-    var cols = this.renderCols(results.columns);
+    var header = this.renderHeader(results.columns);
     var rows = this.renderRows(results.rows);
     return (
       <table id="results" className="table">
-        <thead>{cols}</thead>
-        <tbody>{rows}</tbody>
+        {header}
+        {rows}
       </table>
     );
   },
