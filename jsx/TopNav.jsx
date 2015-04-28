@@ -24,7 +24,7 @@ var viewNames = [
 var TopNav = React.createClass({
   getInitialState: function() {
     return {
-      view: ViewSQLQuery
+      view: ViewStructure
     };
   },
 
@@ -41,6 +41,11 @@ var TopNav = React.createClass({
   switchToHistory: function() { this.switchToView(ViewHistory); },
   switchToActivity: function() { this.switchToView(ViewActivity); },
   switchToConnection: function() { this.switchToView(ViewConnection); },
+
+  componentDidMount: function() {
+    console.log("TopNav.componentDidMount");
+    this.switchToView(this.props.view);
+  },
 
   render: function() {
     var handlers = [
@@ -76,4 +81,11 @@ var TopNav = React.createClass({
   },
 });
 
-module.exports = TopNav;
+module.exports.ViewContent = ViewContent;
+module.exports.ViewStructure = ViewStructure;
+module.exports.ViewIndexes = ViewIndexes;
+module.exports.ViewSQLQuery = ViewSQLQuery;
+module.exports.ViewHistory = ViewHistory;
+module.exports.ViewActivity = ViewActivity;
+module.exports.ViewConnection = ViewConnection;
+module.exports.TopNav = TopNav;

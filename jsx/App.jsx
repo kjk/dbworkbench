@@ -3,7 +3,8 @@
 
 var utils = require('./utils.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var TopNav = require('./TopNav.jsx');
+var TopNav = require('./TopNav.jsx').TopNav;
+var ViewSQLQuery = require('./TopNav.jsx').ViewSQLQuery;
 var Sidebar = require('./Sidebar.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
@@ -50,7 +51,7 @@ var App = React.createClass({
     } else {
       return (
         <div>
-          <TopNav />
+          <TopNav view={ViewSQLQuery}/>
           <Sidebar
             onGotResults={this.handleGotResults}
             databaseName={this.state.databaseName}
