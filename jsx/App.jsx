@@ -5,7 +5,7 @@ var utils = require('./utils.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 var TopNav = require('./Main.jsx').TopNav;
 var Sidebar = require('./Main.jsx').Sidebar;
-var Input = require('./Main.jsx').Input;
+var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
 
 var App = React.createClass({
