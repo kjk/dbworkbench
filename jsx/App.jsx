@@ -3,8 +3,8 @@
 
 var utils = require('./utils.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var TopNav = require('./Main.jsx').TopNav;
-var Sidebar = require('./Main.jsx').Sidebar;
+var TopNav = require('./TopNav.jsx');
+var Sidebar = require('./Sidebar.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
 
