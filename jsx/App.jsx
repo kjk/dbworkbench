@@ -13,15 +13,17 @@ var App = React.createClass({
     return {
       connectionId: -1,
       connected: false,
+      databaseName: "",
       results: null,
     };
   },
 
-  handleDidConnect: function(connectionStr, connectionId) {
-    console.log("App.handleDidConnect: ", connectionStr, connectionId);
+  handleDidConnect: function(connectionStr, connectionId, databaseName) {
+    console.log("App.handleDidConnect: ", connectionStr, connectionId, databaseName);
     this.setState({
       connected: true,
-      connectionId: connectionId
+      connectionId: connectionId,
+      databaseName: databaseName
     });
   },
 
@@ -49,7 +51,10 @@ var App = React.createClass({
       return (
         <div>
           <TopNav />
-          <Sidebar onGotResults={this.handleGotResults}/>
+          <Sidebar
+            onGotResults={this.handleGotResults}
+            databaseName={this.state.databaseName}
+          />
           <div id="body">
             {input}
             <Output results={results}/>

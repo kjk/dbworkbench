@@ -64,7 +64,8 @@ var ConnectionWindow = React.createClass({
         console.log("did connect");
         var connId = 1; // TODO: for now it's always 1
         var connStr = self.state.connectionScheme;
-        self.props.onDidConnect(connStr, connId);
+        var databaseName = resp.current_database;
+        self.props.onDidConnect(connStr, connId, databaseName);
       }
     });
   },

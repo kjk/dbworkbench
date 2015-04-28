@@ -75,6 +75,12 @@ var Sidebar = React.createClass({
     });
   },
 
+  handleRefreshDatabase: function(e) {
+    e.preventDefault();
+    console.log("handleRefreshDatabase");
+    // TODO: do the refresh
+  },
+
   // TODO: remove id="tabels"
   render: function() {
     var self = this;
@@ -96,8 +102,11 @@ var Sidebar = React.createClass({
         <div className="tables-list">
           <div className="wrap">
             <div className="title">
-              <i className="fa fa-database"></i> <span className="current-database" id="current_database"></span>
-              <span className="refresh" id="refresh_tables" title="Refresh tables list"><i className="fa fa-refresh"></i></span>
+              <i className="fa fa-database"></i>
+              <span className="current-database" id="current_database">{this.props.databaseName}</span>
+              <span className="refresh" id="refresh_tables"
+                    title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
+              </span>
             </div>
             <ul id="tables">
               {tables}
