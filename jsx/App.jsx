@@ -6,7 +6,7 @@ var ConnectionWindow = require('./ConnectionWindow.jsx');
 var TopNav = require('./Main.jsx').TopNav;
 var Sidebar = require('./Main.jsx').Sidebar;
 var Input = require('./Main.jsx').Input;
-var Output = require('./Main.jsx').Output;
+var Output = require('./Output.jsx');
 
 var App = React.createClass({
   getInitialState: function() {
