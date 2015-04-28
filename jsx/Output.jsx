@@ -59,7 +59,7 @@ var Output = React.createClass({
     var header = this.renderHeader(results.columns);
     var rows = this.renderRows(results.rows);
     return (
-      <table id="results" className="table">
+      <table id="results" className="table" data-mode="browse">
         {header}
         {rows}
       </table>
