@@ -25,7 +25,7 @@ var Output = React.createClass({
     });
 
     return (
-      <thead>{children}</thead>
+      <thead><tr>{children}</tr></thead>
     );
   },
 
