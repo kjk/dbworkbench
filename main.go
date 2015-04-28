@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
+	"github.com/kjk/dbworkbench/ga_event"
 	"github.com/kjk/u"
 	_ "github.com/lib/pq"
 )
@@ -91,6 +92,7 @@ func initOptions() {
 
 func startServer() {
 	router := gin.Default()
+	router.Use(ga_event.GALogger("UA-62336732-1", "databaseworkbench.com"))
 
 	// Enable HTTP basic authentication only if both user and password are set
 	if options.AuthUser != "" && options.AuthPass != "" {
