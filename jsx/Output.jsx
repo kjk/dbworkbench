@@ -69,7 +69,9 @@ var Output = React.createClass({
   renderNoResults: function() {
     return (
       <table id="results" className="table empty">
-        <tr><td>No records found</td></tr>
+        <tbody>
+          <tr><td>No records found</td></tr>
+        </tbody>
       </table>
     );
   },
@@ -77,7 +79,9 @@ var Output = React.createClass({
   renderError: function(errorMsg) {
     return (
       <table id="results" className="table empty">
-        <tr><td>ERROR: {errorMsg}</td></tr>
+        <tbody>
+          <tr><td>ERROR: {errorMsg}</td></tr>
+        </tbody>
       </table>
     );
   },
