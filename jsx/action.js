@@ -31,12 +31,20 @@ function broadcastAction(action) {
 }
 
 // TODO: multiple subscribers
+// TODO: should return callback id that can be used with unsubscribeFromAction
 function subscribeToAction(action, cb) {
   var currentCb = subscribers[action];
   if (currentCb) {
     console.log("subscribeToAction: already has a callback for action ", action, " will over-write");
   }
   subscribers[action] = cb;
+}
+
+function unsubscribeFromAction(action, cb) {
+  var currentCb = subscribers[action];
+  if (currentCb === cb) {
+    subscribers[action] = null;
+  }
 }
 
 /* actions */

@@ -2,6 +2,7 @@
 'use strict';
 
 var utils = require('./utils.js');
+var api = require('./api.js');
 var action = require('./action.js');
 var view = require('./view.js');
 
@@ -15,32 +16,60 @@ var Output = require('./Output.jsx');
 var App = React.createClass({
   getInitialState: function() {
     return {
+      selectedView: view.SQLQuery,
       connectionId: -1,
       connected: false,
       databaseName: "",
-      selectedView: view.SQLQuery,
+      tables: null,
+      selectedTable: "",
+      selectedTableInfo: null,
       results: null,
     };
   },
 
   handleDidConnect: function(connectionStr, connectionId, databaseName) {
-    console.log("App.handleDidConnect: ", connectionStr, connectionId, databaseName);
     this.setState({
       connected: true,
       connectionId: connectionId,
       databaseName: databaseName
     });
-  },
-
-  handleGotResults: function(results) {
-    console.log("handleGotResults: ", results);
-    this.setState({
-      results: results
+    var self = this;
+    api.getTables(function(data) {
+      self.setState({
+        tables: data,
+      });
     });
   },
 
   renderInput: function() {
-    return <Input />;
+    if (this.state.results) {
+      return <Input />;
+    }
+  },
+
+  handleTableSelected: function(table) {
+    this.setState({
+      selectedTable: table
+    });
+
+    var self = this;
+    api.call("get", "/tables/" + table + "/info", {}, function(data) {
+      console.log("handleSelectTable: tableInfo: ", data);
+      self.setState({
+        selectedTableInfo: data,
+      });
+    });
+
+    var sortColumn = null;
+    var sortOrder = null;
+    var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
+    api.getTableRows(table, params, function(data) {
+      console.log("handleSelectTable: got table rows: ", data);
+      self.setState({
+        results: data
+      });
+      action.viewSelected(view.Content);
+    });
   },
 
   handleViewSelected: function(view) {
@@ -53,6 +82,7 @@ var App = React.createClass({
 
   componentDidMount: function() {
     action.onViewSelected(this.handleViewSelected);
+    action.onTableSelected(this.handleTableSelected);
   },
 
   componentDidUnmount: function() {
@@ -60,29 +90,25 @@ var App = React.createClass({
   },
 
   render: function() {
-    var results = this.state.results;
-    var input;
-    if (!results) {
-      input = this.renderInput();
-    }
-
     if (!this.state.connected) {
-      return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
-    } else {
-      return (
-        <div>
-          <TopNav view={this.state.selectedView}/>
-          <Sidebar
-            onGotResults={this.handleGotResults}
-            databaseName={this.state.databaseName}
-          />
-          <div id="body">
-            {input}
-            <Output results={results}/>
-          </div>
+    return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
+  } else {
+    return (
+      <div>
+        <TopNav view={this.state.selectedView}/>
+        <Sidebar
+          tables={this.state.tables}
+          selectedTable={this.state.selectedTable}
+          selectedTableInfo={this.state.selectedTableInfo}
+          databaseName={this.state.databaseName}
+        />
+        <div id="body">
+          {this.renderInput()}
+          <Output results={this.state.results}/>
         </div>
-      );
-    }
+      </div>
+    );
+  }
   }
 });
 

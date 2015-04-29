@@ -1,11 +1,10 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var api = require('./api.js');
+var action = require('./action.js');
 
 var TableInformation = React.createClass({
   renderTableInfo: function(info) {
-    console.log("renderTableInfo: info: ", info);
     if (info && !$.isEmptyObject(info)) {
       return (
         <ul>
@@ -31,49 +30,7 @@ var TableInformation = React.createClass({
   }
 });
 
-// TODO: pass connectionId and use it in api calls
 var Sidebar = React.createClass({
-
-  getInitialState: function() {
-    return {
-      tableNames: [],
-      selectedTableName: "",
-      selectedTableInfo: null,
-    };
-  },
-
-  componentDidMount: function() {
-    var self = this;
-    api.getTables(function(data) {
-      //console.log("componentDidMount: ", data);
-      self.setState({
-        tableNames: data,
-        tableInfo: null,
-      });
-    });
-  },
-
-  handleSelectTable: function(e) {
-    e.preventDefault();
-    var table = e.target.textContent.trim();
-    console.log("handleSelectTable: ", e.target, " table:", table);
-    var self = this;
-    api.call("get", "/tables/" + table + "/info", {}, function(data) {
-      console.log("handleSelectTable: tableInfo: ", data);
-      self.setState({
-        selectedTableInfo: data,
-        selectedTableName: table,
-      });
-    });
-
-    var sortColumn = null;
-    var sortOrder = null;
-    var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
-    api.getTableRows(table, params, function(data) {
-      console.log("handleSelectTable: got table rows: ", data);
-      self.props.onGotResults(data);
-    });
-  },
 
   handleRefreshDatabase: function(e) {
     e.preventDefault();
@@ -81,29 +38,38 @@ var Sidebar = React.createClass({
     // TODO: do the refresh
   },
 
-  // TODO: remove id="tabels"
-  render: function() {
+  handleSelectTable: function(e, table) {
+    e.preventDefault();
+    action.tableSelected(table);
+  },
+
+  renderTables: function(tables) {
     var self = this;
-    var tables = this.state.tableNames.map(function(item) {
-      var cls;
-      if (item == self.state.selectedTableName) {
-        cls += ' selected';
-      }
+    var res = tables.map(function(table) {
+      var cls = (table == self.props.selectedTable) ? ' selected' : '';
+      var handler = function(e) {
+        self.handleSelectTable(e, table);
+      };
       return (
-        <li onClick={self.handleSelectTable} key={item} className={cls}>
-          <span><i className='fa fa-table'></i>{item}</span>
+        <li onClick={handler} key={table} className={cls}>
+          <span><i className='fa fa-table'></i>{table}</span>
         </li>
       );
     });
+    return res;
+  },
 
-    var tableInfo = this.state.selectedTableInfo;
+  // TODO: remove id="tables"
+  render: function() {
+    var tables = this.props.tables ? this.renderTables(this.props.tables) : null;
+
     return (
       <div id="sidebar">
         <div className="tables-list">
           <div className="wrap">
             <div className="title">
               <i className="fa fa-database"></i>
-              <span className="current-database" id="current_database">{this.props.databaseName}</span>
+              <span className="current-database" id="current">{this.props.databaseName}</span>
               <span className="refresh" id="refresh_tables"
                     title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
               </span>
@@ -113,7 +79,7 @@ var Sidebar = React.createClass({
             </ul>
           </div>
         </div>
-        <TableInformation tableInfo={tableInfo} />
+        <TableInformation tableInfo={this.props.selectedTableInfo} />
       </div>
     );
   }
