@@ -20,14 +20,8 @@ function getTableIndexes(table, cb)    { apiCall("get", "/tables/" + table + "/i
 function getHistory(cb)                { apiCall("get", "/history", {}, cb); }
 function getBookmarks(cb)              { apiCall("get", "/bookmarks", {}, cb); }
 function getActivity(cb)               { apiCall("get", "/activity", {}, cb); }
-
-function executeQuery(query, cb) {
-  apiCall("post", "/query", { query: query }, cb);
-}
-
-function explainQuery(query, cb) {
-  apiCall("post", "/explain", { query: query }, cb);
-}
+function executeQuery(query, cb)       { apiCall("post", "/query", { query: query }, cb); }
+function explainQuery(query, cb)       { apiCall("post", "/explain", { query: query }, cb); }
 
 module.exports.call = apiCall;
 module.exports.getTables = getTables;
@@ -36,3 +30,6 @@ module.exports.getTableStructure = getTableStructure;
 module.exports.getTableIndexes = getTableIndexes;
 module.exports.getHistory = getHistory;
 module.exports.getBookmarks = getBookmarks;
+module.exports.getActivity = getActivity;
+module.exports.executeQuery = executeQuery;
+module.exports.explainQuery = explainQuery;
