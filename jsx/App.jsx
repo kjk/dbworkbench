@@ -48,18 +48,22 @@ var App = React.createClass({
   },
 
   handleTableSelected: function(table) {
+    console.log("handleTableSelected: table: ", table);
     this.setState({
       selectedTable: table,
-      selectedTableInfo: null,
-      results: null
+      //selectedTableInfo: null,
+      //results: null
     });
 
-    // this will trigger getting the results
-    action.viewSelected(view.Content);
+    // must delay otherwise this.state.selectedTable will not be visible yet
+    // in handleViewSelected
+    setTimeout(function() {
+      action.viewSelected(view.Content);
+    }, 200);
 
     var self = this;
     api.call("get", "/tables/" + table + "/info", {}, function(data) {
-      console.log("handleSelectTable: tableInfo: ", data);
+      //console.log("handleTableSelected: tableInfo: ", data);
       self.setState({
         selectedTableInfo: data,
       });
@@ -121,6 +125,16 @@ var App = React.createClass({
     });
   },
 
+  getActivity: function() {
+    var self = this;
+    api.getActivity(function(data) {
+      console.log("getActivity: ", data);
+      self.setState({
+        results: data
+      });
+    });
+  },
+
   handleViewSelected: function(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({
@@ -132,7 +146,7 @@ var App = React.createClass({
       return;
     }
     if (this.state.selectedTable === "") {
-      console.log("handleViewSelected: not connected, selectedTable: ", this.state.selectedTable);
+      console.log("handleViewSelected: no selectedTable");
       return;
     }
 

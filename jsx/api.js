@@ -19,6 +19,7 @@ function getTableStructure(table, cb)  { apiCall("get", "/tables/" + table, {}, 
 function getTableIndexes(table, cb)    { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)                { apiCall("get", "/history", {}, cb); }
 function getBookmarks(cb)              { apiCall("get", "/bookmarks", {}, cb); }
+function getActivity(cb)               { apiCall("get", "/activity", {}, cb); }
 
 function executeQuery(query, cb) {
   apiCall("post", "/query", { query: query }, cb);
