@@ -7,6 +7,7 @@ var view = require('./view.js');
 var TopNav = React.createClass({
 
   render: function() {
+    console.log("TopNav.render: view: ", this.props.view);
     var currentView = this.props.view;
     var children = view.AllViews.map(function(viewName) {
       var handler = function() {

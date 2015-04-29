@@ -42,15 +42,20 @@ var App = React.createClass({
   },
 
   renderInput: function() {
-    if (this.state.results) {
+    if (this.selectedView === view.SQLQuery) {
       return <Input />;
     }
   },
 
   handleTableSelected: function(table) {
     this.setState({
-      selectedTable: table
+      selectedTable: table,
+      selectedTableInfo: null,
+      results: null
     });
+
+    // this will trigger getting the results
+    action.viewSelected(view.Content);
 
     var self = this;
     api.call("get", "/tables/" + table + "/info", {}, function(data) {
@@ -60,24 +65,104 @@ var App = React.createClass({
       });
     });
 
+  },
+
+  getTableContent: function() {
     var sortColumn = null;
     var sortOrder = null;
     var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
-    api.getTableRows(table, params, function(data) {
-      console.log("handleSelectTable: got table rows: ", data);
+
+    var self = this;
+    api.getTableRows(this.state.selectedTable, params, function(data) {
+      console.log("getTableContent: ", data);
       self.setState({
         results: data
       });
-      action.viewSelected(view.Content);
     });
   },
 
-  handleViewSelected: function(view) {
-    console.log("handleViewSelected: ", view);
-    // TODO: load the right data as results
-    this.setState({
-      selectedView: view
+  getTableStructure: function() {
+    var self = this;
+    api.getTableStructure(this.state.selectedTable, function(data) {
+      console.log("getTableStructure: ", data);
+      self.setState({
+        results: data
+      });
     });
+  },
+
+  getTableIndexes: function() {
+    var self = this;
+    api.getTableIndexes(this.state.selectedTable, function(data) {
+      console.log("getTableIndexes: ", data);
+      self.setState({
+        results: data
+      });
+    });
+  },
+
+  getHistory: function() {
+    var self = this;
+    api.getHistory(function(data) {
+      console.log("getHistory: ", data);
+      self.setState({
+        results: data
+      });
+    });
+  },
+
+  getBookmarks: function() {
+    var self = this;
+    api.getBookmarks(function(data) {
+      console.log("getBookmarks: ", data);
+      self.setState({
+        results: data
+      });
+    });
+  },
+
+  handleViewSelected: function(viewName) {
+    console.log("handleViewSelected: ", viewName);
+    this.setState({
+      selectedView: viewName
+    });
+
+    if (this.state.connectionId === -1) {
+      console.log("handleViewSelected: not connected, connectionId: ", this.state.connectionId);
+      return;
+    }
+    if (this.state.selectedTable === "") {
+      console.log("handleViewSelected: not connected, selectedTable: ", this.state.selectedTable);
+      return;
+    }
+
+    switch (viewName) {
+      case view.Content:
+        this.getTableContent();
+        break;
+      case view.Structure:
+        this.getTableStructure();
+        break;
+      case view.Indexes:
+        this.getTableIndexes();
+        break;
+      case view.SQLQuery:
+        this.setState({
+          results: null,
+        });
+        break;
+      case view.History:
+        this.getHistory();
+        break;
+      case view.Activity:
+        this.getActivity();
+        break;
+      case view.Connection:
+        // TODO: write me
+        break;
+      default:
+        console.log("handleViewSelected: unknown view: ", viewName);
+    }
   },
 
   componentDidMount: function() {
@@ -86,13 +171,15 @@ var App = React.createClass({
   },
 
   componentDidUnmount: function() {
-    //action.cancelOnViewSelected(this.handleViewSelected);
+    action.cancelOnViewSelected(this.handleViewSelected);
+    action.cancelOnTableSelected(this.handleTableSelected);
   },
 
   render: function() {
     if (!this.state.connected) {
-    return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
-  } else {
+      return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
+    }
+
     return (
       <div>
         <TopNav view={this.state.selectedView}/>
@@ -108,7 +195,6 @@ var App = React.createClass({
         </div>
       </div>
     );
-  }
   }
 });
 

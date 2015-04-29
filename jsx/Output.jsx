@@ -43,6 +43,10 @@ var Output = React.createClass({
   },
 
   renderRows: function(rows) {
+    if (!rows) {
+      return;
+    }
+
     var self = this;
     var i = 0;
     var children = rows.map(function(row) {

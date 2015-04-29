@@ -55,14 +55,22 @@ function tableSelected(name) {
 function onTableSelected(cb) {
   subscribeToAction(tableSelectedIdx, cb);
 }
+function cancelOnTableSelected(cb) {
+  unsubscribeToAction(tableSelectedIdx, cb);
+}
 function viewSelected(view) {
   broadcastAction(viewSelectedIdx, view);
 }
 function onViewSelected(cb) {
   subscribeToAction(viewSelectedIdx, cb);
 }
+function cancelOnViewSelected(cb) {
+  unsubscribeToAction(viewSelectedIdx, cb);
+}
 
 exports.tableSelected = tableSelected;
 exports.onTableSelected = onTableSelected;
+exports.cancelOnTableSelected = cancelOnTableSelected;
 exports.viewSelected = viewSelected;
 exports.onViewSelected = onViewSelected;
+exports.cancelOnViewSelected = cancelOnViewSelected;
