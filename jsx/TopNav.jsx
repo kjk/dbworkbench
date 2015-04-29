@@ -1,49 +1,24 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var ViewContent = 0;
-var ViewStructure = 1;
-var ViewIndexes = 2;
-var ViewSQLQuery = 3;
-var ViewHistory = 4;
-var ViewActivity = 5;
-var ViewConnection = 6;
-
-var allViews = [0, 1, 2, 3, 4, 5, 6];
-
-var viewNames = [
-  "Content",
-  "Structure",
-  "Indexes",
-  "SQL Query",
-  "History",
-  "Activity",
-  "Connection"
-];
+var action = require('./action.js');
+var view = require('./view.js');
 
 var TopNav = React.createClass({
-  getInitialState: function() {
-    return {
-      view: ViewStructure
-    };
-  },
 
   switchToView: function(view) {
-    this.setState({
-      view: view,
-    });
+    action.viewSelected(view);
   },
 
-  switchToContent: function() { this.switchToView(ViewContent); },
-  switchToStructure: function() { this.switchToView(ViewStructure); },
-  switchToIndexes: function() { this.switchToView(ViewIndexes); },
-  switchToSQLQuery: function() { this.switchToView(ViewSQLQuery); },
-  switchToHistory: function() { this.switchToView(ViewHistory); },
-  switchToActivity: function() { this.switchToView(ViewActivity); },
-  switchToConnection: function() { this.switchToView(ViewConnection); },
+  switchToContent: function() { this.switchToView(view.Content); },
+  switchToStructure: function() { this.switchToView(view.Structure); },
+  switchToIndexes: function() { this.switchToView(view.Indexes); },
+  switchToSQLQuery: function() { this.switchToView(view.SQLQuery); },
+  switchToHistory: function() { this.switchToView(view.History); },
+  switchToActivity: function() { this.switchToView(view.Activity); },
+  switchToConnection: function() { this.switchToView(view.Connection); },
 
   componentDidMount: function() {
-    console.log("TopNav.componentDidMount");
     this.switchToView(this.props.view);
   },
 
@@ -59,14 +34,14 @@ var TopNav = React.createClass({
     ];
     var self = this;
 
-    var children = allViews.map(function(view) {
+    var children = view.AllViews.map(function(viewIdx) {
       var cls;
-      if (self.state.view == view) {
+      if (self.props.view == viewIdx) {
         cls = "selected";
       }
-      var handler = handlers[view];
-      var txt = viewNames[view];
-      return <li onClick={handler} key={view} className={cls}>{txt}</li>;
+      var handler = handlers[viewIdx];
+      var txt = view.Names[viewIdx];
+      return <li onClick={handler} key={viewIdx} className={cls}>{txt}</li>;
     });
 
     return (
@@ -81,11 +56,4 @@ var TopNav = React.createClass({
   },
 });
 
-module.exports.ViewContent = ViewContent;
-module.exports.ViewStructure = ViewStructure;
-module.exports.ViewIndexes = ViewIndexes;
-module.exports.ViewSQLQuery = ViewSQLQuery;
-module.exports.ViewHistory = ViewHistory;
-module.exports.ViewActivity = ViewActivity;
-module.exports.ViewConnection = ViewConnection;
 module.exports.TopNav = TopNav;
