@@ -18,7 +18,7 @@
       lineinfile: dest=/etc/pam.d/common-session state=present line="session required pam_limits.so"
     - name: increse file limit 2
       lineinfile: dest=/etc/pam.d/common-session-noninteractive state=present line="session required pam_limits.so"
-    - name: create user's .ssh directory
+    - name: create users .ssh directory
       file: path=/home/dbworkbench/.ssh state=directory owner=dbworkbench group=dbworkbench mode=0755
     - name: copy ssh key
       copy: src=dbworkbench_rsa.pub dest=/home/dbworkbench/.ssh/authorized_keys
@@ -26,6 +26,12 @@
       file: path=/home/dbworkbench/.ssh/authorized_keys mode=0644 owner=dbworkbench group=dbworkbench
     - name: install nginx
       apt: name=nginx state=latest update_cache=yes cache_valid_time=120
+    - name: install postgres
+      apt: name=postgresql-9.4 state=latest update_cache=yes
+    - script: postgres_setup.sh creates=/var/lib/postgresql/db_inited
+      become: yes
+      become_method: sudo
+      become_user: postgres
     - name: install unzip
       apt: name=unzip state=latest update_cache=yes cache_valid_time=120
     - name: install tar
