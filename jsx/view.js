@@ -1,23 +1,13 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var Content = 0;
-var Structure = 1;
-var Indexes = 2;
-var SQLQuery = 3;
-var History = 4;
-var Activity = 5;
-var Connection = 6;
-
-var Names = [
-  "Content",
-  "Structure",
-  "Indexes",
-  "SQL Query",
-  "History",
-  "Activity",
-  "Connection"
-];
+var Content = "Content";
+var Structure = "Structure";
+var Indexes = "Indexes";
+var SQLQuery = "SQL Query";
+var History = "History";
+var Activity = "Activity";
+var Connection = "Connection";
 
 var AllViews = [
   Content,
@@ -36,5 +26,4 @@ exports.SQLQuery = SQLQuery;
 exports.History = History;
 exports.Activity = Activity;
 exports.Connection = Connection;
-exports.Names = Names;
 exports.AllViews = AllViews;

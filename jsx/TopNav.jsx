@@ -8,13 +8,12 @@ var TopNav = React.createClass({
 
   render: function() {
     var currentView = this.props.view;
-    var children = view.AllViews.map(function(viewIdx) {
-      var txt = view.Names[viewIdx];
+    var children = view.AllViews.map(function(viewName) {
       var handler = function() {
-        action.viewSelected(viewIdx);
+        action.viewSelected(viewName);
       };
-      var cls = (currentView == viewIdx) ? "selected" : "";
-      return <li key={viewIdx} onClick={handler} className={cls}>{txt}</li>;
+      var cls = (currentView == viewName) ? "selected" : "";
+      return <li key={viewName} onClick={handler} className={cls}>{viewName}</li>;
     });
 
     return (
