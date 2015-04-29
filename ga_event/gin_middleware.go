@@ -1,9 +1,11 @@
 package ga_event
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GALogger(trackingId string, domainName string) gin.HandlerFunc {
@@ -25,7 +27,10 @@ func GALogger(trackingId string, domainName string) gin.HandlerFunc {
 		}
 
 		c.Next()
-		gaContext.NewPageView(c.Request.UserAgent(), cid, c.ClientIP(), c.Request.URL.Path, "", nil).Log()
+		err := gaContext.NewPageView(c.Request.UserAgent(), cid, c.ClientIP(), c.Request.URL.Path, "", nil).Log()
 
+		if err != nil {
+			log.Printf("Unable to log GA PageView: %v\n", err)
+		}
 	}
 }
