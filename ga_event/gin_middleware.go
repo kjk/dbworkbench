@@ -26,11 +26,14 @@ func GALogger(trackingId string, domainName string) gin.HandlerFunc {
 			http.SetCookie(c.Writer, cookie)
 		}
 
-		c.Next()
-		err := gaContext.NewPageView(c.Request.UserAgent(), cid, c.ClientIP(), c.Request.URL.Path, "", nil).Log()
+		go func() {
+			err := gaContext.NewPageView(c.Request.UserAgent(), cid, c.ClientIP(), c.Request.URL.Path, "", nil).Log()
 
-		if err != nil {
-			log.Printf("Unable to log GA PageView: %v\n", err)
-		}
+			if err != nil {
+				log.Printf("Unable to log GA PageView: %v\n", err)
+			}
+		}()
+
+		c.Next()
 	}
 }
