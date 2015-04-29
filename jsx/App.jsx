@@ -18,7 +18,7 @@ var App = React.createClass({
       connectionId: -1,
       connected: false,
       databaseName: "",
-      selectedView: view.Structure,
+      selectedView: view.SQLQuery,
       results: null,
     };
   },
@@ -45,6 +45,7 @@ var App = React.createClass({
 
   handleViewSelected: function(view) {
     console.log("handleViewSelected: ", view);
+    // TODO: load the right data as results
     this.setState({
       selectedView: view
     });
