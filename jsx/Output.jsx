@@ -108,6 +108,10 @@ var Output = React.createClass({
       }
     }
 
+    if (this.props.notFull) {
+      clsOutput = "";
+    }
+
     return (
       <div id="output" className={clsOutput}>
         <div className="wrapper">

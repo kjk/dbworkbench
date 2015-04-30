@@ -42,7 +42,7 @@ var App = React.createClass({
   },
 
   renderInput: function() {
-    if (this.selectedView === view.SQLQuery) {
+    if (this.state.selectedView === view.SQLQuery) {
       return <Input />;
     }
   },
@@ -51,8 +51,6 @@ var App = React.createClass({
     console.log("handleTableSelected: table: ", table);
     this.setState({
       selectedTable: table,
-      //selectedTableInfo: null,
-      //results: null
     });
 
     // must delay otherwise this.state.selectedTable will not be visible yet
@@ -68,7 +66,6 @@ var App = React.createClass({
         selectedTableInfo: data,
       });
     });
-
   },
 
   getTableContent: function() {
@@ -174,7 +171,7 @@ var App = React.createClass({
     }
 
     if (this.state.selectedTable === "") {
-      console.log("handleViewSelected: no selectedTable");
+      //console.log("handleViewSelected: no selectedTable");
       return;
     }
 
@@ -208,6 +205,9 @@ var App = React.createClass({
       return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     }
 
+    // when showing sql query, results are below editor window
+    var notFull = (this.state.selectedView === view.SQLQuery);
+
     return (
       <div>
         <TopNav view={this.state.selectedView}/>
@@ -219,7 +219,7 @@ var App = React.createClass({
         />
         <div id="body">
           {this.renderInput()}
-          <Output results={this.state.results}/>
+          <Output results={this.state.results} notFull={notFull}/>
         </div>
       </div>
     );
