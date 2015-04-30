@@ -16,6 +16,9 @@ function buildTable(results, sortColumn, sortOrder) {
 var Output = React.createClass({
   renderHeader: function(columns, sortColumn, sortOrder) {
     var i = 0;
+    if (!columns) {
+      columns = [];
+    }
     var children = columns.map(function(col) {
       // TODO: use sortColumn and sortOrder
       i = i + 1;
