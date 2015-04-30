@@ -75,7 +75,7 @@ var Output = React.createClass({
 
   renderNoResults: function() {
     return (
-      <table id="results" className="table empty">
+      <table id="results" className="table empty no-crop">
         <tbody>
           <tr><td>No records found</td></tr>
         </tbody>
@@ -94,23 +94,24 @@ var Output = React.createClass({
   },
 
   render: function() {
-    var clsOutput;
-    var results;
-    if (!this.props.results) {
-      results = this.renderNoResults();
+    var clsOutput, children;
+    var results = this.props.results;
+    if (!results || !results.rows || results.rows.length === 0) {
+      children = this.renderNoResults();
+      clsOutput = "full";
     } else {
-      if (this.props.results.error) {
-        results = this.renderError(this.props.results.error);
+      if (results.error) {
+        children = this.renderError(results.error);
       } else {
         clsOutput = "full";
-        results = this.renderResults(this.props.results);
+        children = this.renderResults(results);
       }
     }
 
     return (
       <div id="output" className={clsOutput}>
         <div className="wrapper">
-            {results}
+            {children}
         </div>
       </div>
     );
