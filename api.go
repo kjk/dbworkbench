@@ -45,34 +45,6 @@ func assetContentType(name string) string {
 	return result
 }
 
-func setupRoutes(router *gin.Engine) {
-	router.GET("/", API_Home)
-	router.GET("/react", API_HomeReact)
-	router.GET("/s/*path", API_ServeAsset)
-
-	api := router.Group("/api")
-	{
-		api.Use(ApiMiddleware())
-
-		api.POST("/connect", API_Connect)
-		api.GET("/databases", API_GetDatabases)
-		api.GET("/connection", API_ConnectionInfo)
-		api.GET("/activity", API_Activity)
-		api.GET("/schemas", API_GetSchemas)
-		api.GET("/tables", API_GetTables)
-		api.GET("/tables/:table", API_GetTable)
-		api.GET("/tables/:table/rows", API_GetTableRows)
-		api.GET("/tables/:table/info", API_GetTableInfo)
-		api.GET("/tables/:table/indexes", API_TableIndexes)
-		api.GET("/query", API_RunQuery)
-		api.POST("/query", API_RunQuery)
-		api.GET("/explain", API_ExplainQuery)
-		api.POST("/explain", API_ExplainQuery)
-		api.GET("/history", API_History)
-		api.GET("/bookmarks", API_Bookmarks)
-	}
-}
-
 // Middleware function to check database connection status before running queries
 func ApiMiddleware() gin.HandlerFunc {
 	allowedPaths := []string{

@@ -7,19 +7,16 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
-	"github.com/kjk/dbworkbench/ga_event"
 	"github.com/kjk/u"
 	_ "github.com/lib/pq"
 )
 
-const VERSION = "0.5.2"
-
 type Options struct {
-	Version  bool   `short:"v" long:"version" description:"Print version"`
 	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
 	Url      string `long:"url" description:"Database connection string"`
 	Host     string `long:"host" description:"Server hostname or IP"`
@@ -83,33 +80,6 @@ func initOptions() {
 	if options.Url == "" {
 		options.Url = os.Getenv("DATABASE_URL")
 	}
-
-	if options.Version {
-		fmt.Printf("pgweb v%s\n", VERSION)
-		os.Exit(0)
-	}
-}
-
-func startServer() {
-	router := gin.Default()
-	router.Use(ga_event.GALogger("UA-62336732-1", "databaseworkbench.com"))
-
-	// Enable HTTP basic authentication only if both user and password are set
-	if options.AuthUser != "" && options.AuthPass != "" {
-		auth := map[string]string{options.AuthUser: options.AuthPass}
-		router.Use(gin.BasicAuth(auth))
-	}
-
-	setupRoutes(router)
-
-	fmt.Println("Starting server...")
-	go func() {
-		err := router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))
-		if err != nil {
-			fmt.Println("Cant start server:", err)
-			os.Exit(1)
-		}
-	}()
 }
 
 func handleSignals() {
@@ -168,9 +138,10 @@ func startWebpackWatch() {
 }
 
 func main() {
-	fmt.Printf("starting pgweb\n")
+	fmt.Printf("starting\n")
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	initOptions()
-	fmt.Println("Pgweb version", VERSION)
 
 	logToStdout = true
 	verifyDirs()
@@ -196,7 +167,8 @@ func main() {
 		startRuntimeProfiler()
 	}
 
-	startServer()
+	//startServer()
+	go startWebServer()
 	openPage()
 	handleSignals()
 }
