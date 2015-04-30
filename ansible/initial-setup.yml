@@ -18,6 +18,12 @@
       lineinfile: dest=/etc/pam.d/common-session state=present line="session required pam_limits.so"
     - name: increse file limit 2
       lineinfile: dest=/etc/pam.d/common-session-noninteractive state=present line="session required pam_limits.so"
+    - name: increase shmmax
+      lineinfile: dest=/etc/sysctl.conf state=present line="kernel.shmmax=536870912"
+    - name: increase shmall
+      lineinfile: dest=/etc/sysctl.conf state=present line="kernel.shmall=131072"
+    - name: reload sysctl vars
+      command: /sbin/sysctl -p
     - name: create users .ssh directory
       file: path=/home/dbworkbench/.ssh state=directory owner=dbworkbench group=dbworkbench mode=0755
     - name: copy ssh key
