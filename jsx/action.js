@@ -11,11 +11,11 @@ var subscribers = [];
 // index in subscribers array for a given action
 var tableSelectedIdx = 0;
 var viewSelectedIdx = 1;
-
-// TODO: unsubscribe
+var executeQueryIdx = 2;
+var explainQueryIdx = 3;
 
 // TODO: multiple subscribers
-function broadcastAction(action) {
+function broadcast(action) {
   var cb = subscribers[action];
   if (cb) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -32,7 +32,7 @@ function broadcastAction(action) {
 
 // TODO: multiple subscribers
 // TODO: should return callback id that can be used with unsubscribeFromAction
-function subscribeToAction(action, cb) {
+function subscribe(action, cb) {
   var currentCb = subscribers[action];
   if (currentCb) {
     console.log("subscribeToAction: already has a callback for action ", action, " will over-write");
@@ -40,7 +40,7 @@ function subscribeToAction(action, cb) {
   subscribers[action] = cb;
 }
 
-function unsubscribeFromAction(action, cb) {
+function unsubscribe(action, cb) {
   var currentCb = subscribers[action];
   if (currentCb === cb) {
     subscribers[action] = null;
@@ -50,27 +50,67 @@ function unsubscribeFromAction(action, cb) {
 /* actions */
 
 function tableSelected(name) {
-  broadcastAction(tableSelectedIdx, name);
-}
-function onTableSelected(cb) {
-  subscribeToAction(tableSelectedIdx, cb);
-}
-function cancelOnTableSelected(cb) {
-  unsubscribeToAction(tableSelectedIdx, cb);
-}
-function viewSelected(view) {
-  broadcastAction(viewSelectedIdx, view);
-}
-function onViewSelected(cb) {
-  subscribeToAction(viewSelectedIdx, cb);
-}
-function cancelOnViewSelected(cb) {
-  unsubscribeToAction(viewSelectedIdx, cb);
+  broadcast(tableSelectedIdx, name);
 }
 
-exports.tableSelected = tableSelected;
-exports.onTableSelected = onTableSelected;
-exports.cancelOnTableSelected = cancelOnTableSelected;
-exports.viewSelected = viewSelected;
-exports.onViewSelected = onViewSelected;
-exports.cancelOnViewSelected = cancelOnViewSelected;
+function onTableSelected(cb) {
+  subscribe(tableSelectedIdx, cb);
+}
+
+function offTableSelected(cb) {
+  unsubscribe(tableSelectedIdx, cb);
+}
+
+function viewSelected(view) {
+  broadcast(viewSelectedIdx, view);
+}
+
+function onViewSelected(cb) {
+  subscribe(viewSelectedIdx, cb);
+}
+
+function offViewSelected(cb) {
+  unsubscribe(viewSelectedIdx, cb);
+}
+
+function executeQuery(query) {
+  broadcast(executeQueryIdx, query);
+}
+
+function onExecuteQuery(cb) {
+  subscribe(executeQueryIdx, cb);
+}
+
+function offExecuteQuery(cb) {
+  unsubscribe(executeQueryIdx, cb);
+}
+
+function explainQuery(query) {
+  broadcast(explainQueryIdx, query);
+}
+
+function onExplainQuery(cb) {
+  subscribe(explainQueryIdx, cb);
+}
+
+function offExplainQuery(cb) {
+  unsubscribe(explainQueryIdx, cb);
+}
+
+module.exports = {
+  tableSelected: tableSelected,
+  onTableSelected: onTableSelected,
+  offTableSelected: offTableSelected,
+
+  viewSelected: viewSelected,
+  onViewSelected: onViewSelected,
+  offViewSelected: offViewSelected,
+
+  executeQuery: executeQuery,
+  onExecuteQuery: onExecuteQuery,
+  offExecuteQuery: offExecuteQuery,
+
+  explainQuery: explainQuery,
+  onExplainQuery: onExplainQuery,
+  offExplainQuery: offExplainQuery
+};

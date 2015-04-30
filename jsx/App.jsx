@@ -190,14 +190,71 @@ var App = React.createClass({
     }
   },
 
+  handleExecuteQuery: function(query) {
+    console.log("handleExecuteQuery", query);
+    var self = this;
+    api.executeQuery(query, function(data) {
+      self.setState({
+        results: data
+      });
+
+      // refresh tables list if table was added or removed
+      var re = /(create|drop) table/i;
+      if (query.match(re)) {
+        api.getTables(function(data) {
+          self.setState({
+            tables: data,
+          });
+        });
+      }
+    });
+  },
+
+  handleExplainQuery: function(query) {
+    console.log("handleExplainQuery", query);
+    var self = this;
+    api.explainQuery(query, function(data) {
+      self.setState({
+        results: data
+      });
+    });
+  },
+
+  /*
+  function exportToCSV() {
+    var query = $.trim(editor.getValue());
+
+    if (query.length == 0) {
+      return;
+    }
+
+    // Replace line breaks with spaces and properly encode query
+    query = window.encodeURI(query.replace(/\n/g, " "));
+
+    var url = "http://" + window.location.host + "/api/query?format=csv&query=" + query;
+    var win = window.open(url, '_blank');
+
+    setCurrentTab("table_query");
+    win.focus();
+  }
+  */
+  exportToCSV: function() {
+    // TODO: write me
+    console.log("exportToCSV");
+  },
+
   componentDidMount: function() {
     action.onViewSelected(this.handleViewSelected);
     action.onTableSelected(this.handleTableSelected);
+    action.onExecuteQuery(this.handleExecuteQuery);
+    action.onExplainQuery(this.handleExplainQuery);
   },
 
   componentDidUnmount: function() {
-    action.cancelOnViewSelected(this.handleViewSelected);
-    action.cancelOnTableSelected(this.handleTableSelected);
+    action.offViewSelected(this.handleViewSelected);
+    action.offTableSelected(this.handleTableSelected);
+    action.offExecuteQuery(this.handleExecuteQuery);
+    action.offExplainQuery(this.handleExplainQuery);
   },
 
   render: function() {
