@@ -135,6 +135,15 @@ var App = React.createClass({
     });
   },
 
+  getConnectionInfo: function() {
+    var self = this;
+    api.getConnectionInfo(function(data) {
+      self.setState({
+        results: data
+      });
+    });
+  },
+
   handleViewSelected: function(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({
@@ -145,6 +154,25 @@ var App = React.createClass({
       console.log("handleViewSelected: not connected, connectionId: ", this.state.connectionId);
       return;
     }
+
+    // those don't require table being selected
+    switch (viewName) {
+      case view.SQLQuery:
+        this.setState({
+          results: null,
+        });
+        return;
+      case view.History:
+        this.getHistory();
+        break;
+      case view.Connection:
+        this.getConnectionInfo();
+        return;
+      case view.Activity:
+        this.getActivity();
+        return;
+    }
+
     if (this.state.selectedTable === "") {
       console.log("handleViewSelected: no selectedTable");
       return;
@@ -159,20 +187,6 @@ var App = React.createClass({
         break;
       case view.Indexes:
         this.getTableIndexes();
-        break;
-      case view.SQLQuery:
-        this.setState({
-          results: null,
-        });
-        break;
-      case view.History:
-        this.getHistory();
-        break;
-      case view.Activity:
-        this.getActivity();
-        break;
-      case view.Connection:
-        // TODO: write me
         break;
       default:
         console.log("handleViewSelected: unknown view: ", viewName);
