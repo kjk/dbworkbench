@@ -81,7 +81,7 @@ func ApiMiddleware() gin.HandlerFunc {
 }
 
 func asset(fileName string) ([]byte, error) {
-	fmt.Fprintf(os.Stderr, "Asset: %s\n", fileName)
+	fmt.Fprintf(os.Stderr, "asset: %s\n", fileName)
 	return ioutil.ReadFile(fileName)
 }
 

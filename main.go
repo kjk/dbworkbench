@@ -167,7 +167,7 @@ func main() {
 		startRuntimeProfiler()
 	}
 
-	//startServer()
+	//startGinServer()
 	go startWebServer()
 	openPage()
 	handleSignals()
