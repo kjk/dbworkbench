@@ -1,13 +1,6 @@
 package ga_event
 
-import (
-	"log"
-	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
-)
-
+/*
 func GALogger(trackingId string, domainName string) gin.HandlerFunc {
 	gaContext := NewGAContext(trackingId, domainName)
 	return func(c *gin.Context) {
@@ -37,3 +30,4 @@ func GALogger(trackingId string, domainName string) gin.HandlerFunc {
 		c.Next()
 	}
 }
+*/
