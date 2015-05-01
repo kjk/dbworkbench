@@ -4,16 +4,51 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
-	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/kjk/dbworkbench/ga_event"
 )
+
+var extraMimeTypes = map[string]string{
+	".icon": "image-x-icon",
+	".ttf":  "application/x-font-ttf",
+	".woff": "application/x-font-woff",
+	".eot":  "application/vnd.ms-fontobject",
+	".svg":  "image/svg+xml",
+}
+
+type Error struct {
+	Message string `json:"error"`
+}
+
+func NewError(err error) Error {
+	return Error{err.Error()}
+}
+
+func assetContentType(name string) string {
+	ext := filepath.Ext(name)
+	result := mime.TypeByExtension(ext)
+
+	if result == "" {
+		result = extraMimeTypes[ext]
+	}
+
+	if result == "" {
+		result = "text/plain; charset=utf-8"
+	}
+
+	return result
+}
+
+func asset(fileName string) ([]byte, error) {
+	//fmt.Fprintf(os.Stderr, "asset: %s\n", fileName)
+	return ioutil.ReadFile(fileName)
+}
 
 func get(f http.HandlerFunc) http.HandlerFunc {
 	// TODO: reject non-GET methods
@@ -64,7 +99,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 // GET /s/:path
 func handleStatic(w http.ResponseWriter, r *http.Request) {
 	path := "s/" + r.URL.Path[len("/s/"):]
-	LogInfof("handleStatic: path='%s'\n", path)
+	//LogInfof("path='%s'\n", path)
 	serveStatic(w, r, path)
 }
 
@@ -271,7 +306,7 @@ func handleGetTable(w http.ResponseWriter, r *http.Request, table string) {
 }
 
 func apiGetTableRows(w http.ResponseWriter, r *http.Request, table string) {
-	LogInfof("apiGetTableRows: table='%s'\n", table)
+	LogInfof("table='%s'\n", table)
 	limit := 1000 // Number of rows to fetch
 	limitVal := r.FormValue("limit")
 
@@ -319,7 +354,7 @@ func apiGetTableInfo(w http.ResponseWriter, r *http.Request, table string) {
 }
 
 func apiGetTableIndexes(w http.ResponseWriter, r *http.Request, table string) {
-	LogInfof("apiGetTableIndexes: table='%s'\n", table)
+	LogInfof("table='%s'\n", table)
 	res, err := dbClient.TableIndexes(table)
 
 	if err != nil {
@@ -336,13 +371,12 @@ func handleTablesDispatch(w http.ResponseWriter, r *http.Request) {
 	uriPath := uri[len("/api/tables/"):]
 	parts := strings.SplitN(uriPath, "/", 2)
 	table := parts[0]
-	LogInfof("handleTablesDispatch: table='%s'\n", table)
+	LogInfof("table='%s'\n", table)
 	if len(parts) == 1 {
 		handleGetTable(w, r, table)
 		return
 	}
 	cmd := parts[1]
-	LogInfof(" cmd='%s'\n", cmd)
 	if cmd == "rows" {
 		apiGetTableRows(w, r, table)
 		return
@@ -355,9 +389,11 @@ func handleTablesDispatch(w http.ResponseWriter, r *http.Request) {
 		apiGetTableIndexes(w, r, table)
 		return
 	}
+	LogErrorf("unknown cmd: '%s'\n", cmd)
 	http.NotFound(w, r)
 }
 
+// TODO: 	router.Use(ga_event.GALogger("UA-62336732-1", "databaseworkbench.com"))
 func registerHTTPHandlers() {
 	http.HandleFunc("/", get(handleIndex))
 	http.HandleFunc("/s/", get(handleStatic))
@@ -375,24 +411,6 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/explain", get(hasConnection(handleExplainQuery)))
 }
 
-func setupRoutes(router *gin.Engine) {
-
-	api := router.Group("/api")
-	{
-		api.Use(ApiMiddleware())
-
-		api.GET("/tables/:table", API_GetTable)
-		api.GET("/tables/:table/rows", API_GetTableRows)
-		api.GET("/tables/:table/info", API_GetTableInfo)
-		api.GET("/tables/:table/indexes", API_TableIndexes)
-
-		api.GET("/query", API_RunQuery)
-		api.POST("/query", API_RunQuery)
-		api.GET("/explain", API_ExplainQuery)
-		api.POST("/explain", API_ExplainQuery)
-	}
-}
-
 func startWebServer() {
 	registerHTTPHandlers()
 	httpAddr := fmt.Sprintf(":%v", options.HttpPort)
@@ -401,26 +419,4 @@ func startWebServer() {
 		log.Fatalf("http.ListendAndServer() failed with %s\n", err)
 	}
 	fmt.Printf("Exited\n")
-}
-
-func startGinServer() {
-	router := gin.Default()
-	router.Use(ga_event.GALogger("UA-62336732-1", "databaseworkbench.com"))
-
-	// Enable HTTP basic authentication only if both user and password are set
-	if options.AuthUser != "" && options.AuthPass != "" {
-		auth := map[string]string{options.AuthUser: options.AuthPass}
-		router.Use(gin.BasicAuth(auth))
-	}
-
-	setupRoutes(router)
-
-	fmt.Println("Starting server...")
-	go func() {
-		err := router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))
-		if err != nil {
-			fmt.Println("Cant start server:", err)
-			os.Exit(1)
-		}
-	}()
 }

@@ -10,7 +10,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
 	"github.com/kjk/u"
 	_ "github.com/lib/pq"
@@ -159,15 +158,10 @@ func main() {
 		defer dbClient.db.Close()
 	}
 
-	if !options.Debug {
-		gin.SetMode("release")
-	}
-
 	if options.Debug {
 		startRuntimeProfiler()
 	}
 
-	//startGinServer()
 	go startWebServer()
 	openPage()
 	handleSignals()
