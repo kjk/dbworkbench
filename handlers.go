@@ -128,7 +128,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	serveStatic(w, r, "s/index_react.html")
+	serveStatic(w, r, "s/index.html")
 }
 
 // GET /s/:path

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
   <title>Database Workbench</title>
   <meta charset="utf-8">
@@ -7,195 +7,20 @@
   <meta http-equiv="Content-Language" content="en">
   <link rel="stylesheet" href="/s/css/bootstrap.css"></link>
   <link rel="stylesheet" href="/s/css/font-awesome.css"></link>
-  <link rel="stylesheet" href="/s/css/app.css"></link>
+  <link rel="stylesheet" href="/s/css/main.css"></link>
+  <script type="text/javascript" src="/s/js/lib/react-with-addons-0.13.2.js"></script>
   <script type="text/javascript" src="/s/js/lib/jquery.js"></script>
   <script type="text/javascript" src="/s/js/lib/ace.js"></script>
   <script type="text/javascript" src="/s/js/lib/ace-pgsql.js"></script>
-  <script type="text/javascript" src="/s/js/app.js"></script>
+  <script type="text/javascript" src="/s/js/bundle.js"></script>
 </head>
+
 <body>
-  <div id="main">
-
-    <div id="nav">
-      <ul>
-        <li id="table_content">Content</li>
-        <li id="table_structure">Structure</li>
-        <li id="table_indexes">Indexes</li>
-        <li id="table_query" class="selected">SQL Query</li>
-        <li id="table_history">History</li>
-        <li id="table_activity">Activity</li>
-        <li id="table_connection">Connection</li>
-      </ul>
-
-      <a href="#" id="edit_connection" class="btn btn-primary btn-sm"><i class="fa fa-gear"></i> Edit Connection</a>
-    </div>
-
-    <div id="sidebar">
-      <div class="tables-list">
-        <div class="wrap">
-          <div class="title">
-            <i class="fa fa-database"></i> <span class="current-database" id="current_database"></span>
-            <span class="refresh" id="refresh_tables" title="Refresh tables list"><i class="fa fa-refresh"></i></span>
-          </div>
-          <ul id="tables"></ul>
-        </div>
-      </div>
-      <div class="table-information">
-        <div class="wrap">
-          <div class="title">Table Information</div>
-          <ul>
-            <li>Size: <span id="table_total_size"></span></li>
-            <li>Data size: <span id="table_data_size"></span></li>
-            <li>Index size: <span id="table_index_size"></span></li>
-            <li>Estimated rows: <span id="table_rows_count"></span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div id="body">
-      <div id="input">
-        <div class="wrapper">
-          <div id="custom_query"></div>
-          <div class="actions">
-            <input type="button" id="run" value="Run Query" class="btn btn-sm btn-primary" />
-            <input type="button" id="explain" value="Explain Query" class="btn btn-sm btn-default" />
-            <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
-
-            <div id="query_progress">Please wait, query is executing...</div>
-          </div>
-        </div>
-      </div>
-      <div id="output">
-        <div class="wrapper">
-          <table id="results" class="table"></table>
-        </div>
-      </div>
-    </div>
-
+  <div id ="main">
   </div>
 
-  <div id="connection_window">
-    <div class="connection-settings">
-      <h1>Database Workbench</h1>
-      <h1><a href="/react">rect version</a></h1>
+  <script src="/s/js/bundle.js"></script>
+  <script>window.runOnLoad(window.appStart);</script>
 
-      <form role="form" class="form-horizontal" id="connection_form">
-        <div class="text-center">
-          <div class="btn-group btn-group-sm connection-group-switch">
-            <button type="button" data="scheme" class="btn btn-default" id="connection_scheme">Scheme</button>
-            <button type="button" data="standard" class="btn btn-default active" id="connection_standard">Standard</button>
-            <!--<button type="button" data="ssh" class="btn btn-default">SSH</button>-->
-          </div>
-        </div>
-
-        <hr/>
-
-        <div class="connection-scheme-group">
-          <div class="form-group">
-            <div class="col-sm-12">
-              <label>Enter server URL scheme</label>
-              <input type="text" class="form-control" id="connection_url" name="url">
-              <p class="help-block">URL format: postgres://user:password@host:port/db?sslmode=mode</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="connection-standard-group">
-          <div class="form-group bookmarks">
-            <label class="col-sm-3 control-label">Bookmark</label>
-            <div class="col-sm-9">
-              <select class="form-control" id="connection_bookmarks"></select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Host</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_host" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Username</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_user" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Password</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_password" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Database</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_db" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">Port</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_port" class="form-control" placeholder="5432" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">SSL</label>
-            <div class="col-sm-9">
-              <select class="form-control" id="connection_ssl">
-                <option value="disable">disable</option>
-                <option value="require" selected="selected">require</option>
-                <option value="verify-full">verify-full</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="connection-ssh-group">
-          <div class="form-group">
-            <label class="col-sm-3 control-label">SSH Host</label>
-            <div class="col-sm-9">
-              <input type="text" id="ssh_host" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">SSH User</label>
-            <div class="col-sm-9">
-              <input type="text" id="ssh_user" class="form-control" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">SSH Password</label>
-            <div class="col-sm-9">
-              <input type="text" id="ssh_password" class="form-control" placeholder="optional" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-3 control-label">SSH Port</label>
-            <div class="col-sm-9">
-              <input type="text" id="pg_host" class="form-control" placeholder="optional" />
-            </div>
-          </div>
-        </div>
-
-        <div id="connection_error" class="alert alert-danger"></div>
-
-        <div class="form-group">
-          <div class="col-sm-12">
-            <button type="submit" class="btn btn-block btn-primary">Connect</button>
-            <button type="reset" id="close_connection_window" class="btn btn-block btn-default">Cancel</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
 </body>
 </html>
