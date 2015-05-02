@@ -94,8 +94,7 @@ var Output = React.createClass({
   },
 
   render: function() {
-    var children;
-    var clsOutput = this.props.notFull ? "" : "full";
+    var clsOutput, children;
     var results = this.props.results;
     if (!results) {
       children = this.renderNoResults();
@@ -110,7 +109,9 @@ var Output = React.createClass({
         children = this.renderResults(results);
       }
     }
-
+    if (this.props.notFull) {
+      clsOutput = "";
+    }
     return (
       <div id="output" className={clsOutput}>
         <div className="wrapper">

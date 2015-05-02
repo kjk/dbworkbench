@@ -32,7 +32,7 @@ function broadcast(action) {
 
 // TODO: multiple subscribers
 // TODO: should return callback id that can be used with unsubscribeFromAction
-function subscribe(action, cb) {
+function on(action, cb) {
   var currentCb = subscribers[action];
   if (currentCb) {
     console.log("subscribeToAction: already has a callback for action ", action, " will over-write");
@@ -40,7 +40,7 @@ function subscribe(action, cb) {
   subscribers[action] = cb;
 }
 
-function unsubscribe(action, cb) {
+function off(action, cb) {
   var currentCb = subscribers[action];
   if (currentCb === cb) {
     subscribers[action] = null;
@@ -54,11 +54,11 @@ function tableSelected(name) {
 }
 
 function onTableSelected(cb) {
-  subscribe(tableSelectedIdx, cb);
+  on(tableSelectedIdx, cb);
 }
 
 function offTableSelected(cb) {
-  unsubscribe(tableSelectedIdx, cb);
+  off(tableSelectedIdx, cb);
 }
 
 function viewSelected(view) {
@@ -66,11 +66,11 @@ function viewSelected(view) {
 }
 
 function onViewSelected(cb) {
-  subscribe(viewSelectedIdx, cb);
+  on(viewSelectedIdx, cb);
 }
 
 function offViewSelected(cb) {
-  unsubscribe(viewSelectedIdx, cb);
+  off(viewSelectedIdx, cb);
 }
 
 function executeQuery(query) {
@@ -78,11 +78,11 @@ function executeQuery(query) {
 }
 
 function onExecuteQuery(cb) {
-  subscribe(executeQueryIdx, cb);
+  on(executeQueryIdx, cb);
 }
 
 function offExecuteQuery(cb) {
-  unsubscribe(executeQueryIdx, cb);
+  off(executeQueryIdx, cb);
 }
 
 function explainQuery(query) {
@@ -90,11 +90,11 @@ function explainQuery(query) {
 }
 
 function onExplainQuery(cb) {
-  subscribe(explainQueryIdx, cb);
+  on(explainQueryIdx, cb);
 }
 
 function offExplainQuery(cb) {
-  unsubscribe(explainQueryIdx, cb);
+  off(explainQueryIdx, cb);
 }
 
 module.exports = {

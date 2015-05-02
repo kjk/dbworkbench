@@ -215,32 +215,10 @@ var App = React.createClass({
     var self = this;
     api.explainQuery(query, function(data) {
       self.setState({
+        selectedView: view.SQLQuery,
         results: data
       });
     });
-  },
-
-  /*
-  function exportToCSV() {
-    var query = $.trim(editor.getValue());
-
-    if (query.length == 0) {
-      return;
-    }
-
-    // Replace line breaks with spaces and properly encode query
-    query = window.encodeURI(query.replace(/\n/g, " "));
-
-    var url = "http://" + window.location.host + "/api/query?format=csv&query=" + query;
-    var win = window.open(url, '_blank');
-
-    setCurrentTab("table_query");
-    win.focus();
-  }
-  */
-  exportToCSV: function() {
-    // TODO: write me
-    console.log("exportToCSV");
   },
 
   componentDidMount: function() {
