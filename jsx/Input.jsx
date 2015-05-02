@@ -30,7 +30,19 @@ var Input = React.createClass({
   exportToCSV: function(e) {
     e.preventDefault();
     console.log("downloadCsv");
-    // TODO: write me
+
+    var query = $.trim(this.editor.getValue());
+
+    if (query.length === 0) {
+      return;
+    }
+
+    // Replace line breaks with spaces and properly encode query
+    query = window.encodeURI(query.replace(/\n/g, " "));
+
+    var url = window.location.protocol + "//" + window.location.host + "/api/query?format=csv&query=" + query;
+    var win = window.open(url, '_blank');
+    win.focus();
   },
 
   initEditor: function() {

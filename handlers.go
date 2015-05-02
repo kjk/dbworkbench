@@ -22,10 +22,12 @@ var extraMimeTypes = map[string]string{
 	".svg":  "image/svg+xml",
 }
 
+// Error is error message sent to client as json response for backend errors
 type Error struct {
 	Message string `json:"error"`
 }
 
+// NewError creates a new Error
 func NewError(err error) Error {
 	return Error{err.Error()}
 }
@@ -198,7 +200,8 @@ func handleQuery(w http.ResponseWriter, r *http.Request, query string) {
 	q := r.URL.Query()
 
 	if len(q["format"]) > 0 && q["format"][0] == "csv" {
-		filename := fmt.Sprintf("pgweb-%v.csv", time.Now().Unix())
+		// TODO: add database name
+		filename := fmt.Sprintf("db-%v.csv", time.Now().Unix())
 		w.Header().Set("Content-disposition", "attachment;filename="+filename)
 		serveData(w, r, 200, "text/csv", result.CSV())
 		return
