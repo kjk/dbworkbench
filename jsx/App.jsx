@@ -221,18 +221,28 @@ var App = React.createClass({
     });
   },
 
+  adHockTest: function() {
+    var cid1 = action.onViewSelected(this.handleViewSelected);
+    var cid2 = action.onViewSelected(this.handleViewSelected);
+    action.offViewSelected(cid2);
+    action.offViewSelected(cid1);
+    action.offViewSelected(18);
+  },
+
   componentDidMount: function() {
-    action.onViewSelected(this.handleViewSelected);
-    action.onTableSelected(this.handleTableSelected);
-    action.onExecuteQuery(this.handleExecuteQuery);
-    action.onExplainQuery(this.handleExplainQuery);
+    //this.adHockTest();
+
+    this.cidViewSelected = action.onViewSelected(this.handleViewSelected);
+    this.cidTableSelected = action.onTableSelected(this.handleTableSelected);
+    this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
+    this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
   },
 
   componentDidUnmount: function() {
-    action.offViewSelected(this.handleViewSelected);
-    action.offTableSelected(this.handleTableSelected);
-    action.offExecuteQuery(this.handleExecuteQuery);
-    action.offExplainQuery(this.handleExplainQuery);
+    action.offViewSelected(this.cidViewSelected);
+    action.offTableSelected(this.cidTableSelected);
+    action.offExecuteQuery(this.cidExecuteQuery);
+    action.offExplainQuery(this.cidExplainQuery);
   },
 
   render: function() {
