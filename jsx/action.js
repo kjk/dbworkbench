@@ -2,8 +2,9 @@
 'use strict';
 
 // Loosely inspired by flux ideas.
-// An action is a function in this module.
-// One can subscribe to get notified when action happened.
+// One part of the code can trigger an action by calling a function in this
+// module. Other parts of the code can provide callbacks to be called when
+// action is triggered.
 
 // array of callbacks.
 var subscribers = [];

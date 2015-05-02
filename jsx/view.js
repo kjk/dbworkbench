@@ -19,11 +19,13 @@ var AllViews = [
   Connection
 ];
 
-exports.Content = Content;
-exports.Structure = Structure;
-exports.Indexes = Indexes;
-exports.SQLQuery = SQLQuery;
-exports.History = History;
-exports.Activity = Activity;
-exports.Connection = Connection;
-exports.AllViews = AllViews;
+module.exports = {
+  Content: Content,
+  Structure: Structure,
+  Indexes: Indexes,
+  SQLQuery: SQLQuery,
+  History: History,
+  Activity: Activity,
+  Connection: Connection,
+  AllViews: AllViews
+};
