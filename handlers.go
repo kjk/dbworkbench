@@ -65,6 +65,7 @@ func asset(fileName string) ([]byte, error) {
 	return ioutil.ReadFile(fileName)
 }
 
+// TODO: not sure if it's worth to put GET, POST etc. filters
 func get(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -439,14 +440,14 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/history", get(handleHistory))
 	http.HandleFunc("/api/bookmarks", get(handleBookmarks))
 
-	http.HandleFunc("/api/databases", timeit(get(hasConnection(handleGetDatabases))))
-	http.HandleFunc("/api/connection", timeit(get(hasConnection(handleConnectionInfo))))
-	http.HandleFunc("/api/activity", timeit(get(hasConnection(handleActivity))))
-	http.HandleFunc("/api/schemas", timeit(get(hasConnection(handleGetSchemas))))
-	http.HandleFunc("/api/tables", timeit(get(hasConnection(handleGetTables))))
-	http.HandleFunc("/api/tables/", timeit(get(hasConnection(handleTablesDispatch))))
-	http.HandleFunc("/api/query", timeit(get(hasConnection(handleRunQuery))))
-	http.HandleFunc("/api/explain", timeit(get(hasConnection(handleExplainQuery))))
+	http.HandleFunc("/api/databases", timeit(hasConnection(handleGetDatabases)))
+	http.HandleFunc("/api/connection", timeit(hasConnection(handleConnectionInfo)))
+	http.HandleFunc("/api/activity", timeit(hasConnection(handleActivity)))
+	http.HandleFunc("/api/schemas", timeit(hasConnection(handleGetSchemas)))
+	http.HandleFunc("/api/tables", timeit(hasConnection(handleGetTables)))
+	http.HandleFunc("/api/tables/", timeit(hasConnection(handleTablesDispatch)))
+	http.HandleFunc("/api/query", timeit(hasConnection(handleRunQuery)))
+	http.HandleFunc("/api/explain", timeit(hasConnection(handleExplainQuery)))
 }
 
 func startWebServer() {
