@@ -94,22 +94,21 @@ var Output = React.createClass({
   },
 
   render: function() {
-    var clsOutput, children;
+    var children;
+    var clsOutput = this.props.notFull ? "" : "full";
     var results = this.props.results;
-    if (!results || !results.rows || results.rows.length === 0) {
+    if (!results) {
       children = this.renderNoResults();
-      clsOutput = "full";
     } else {
       if (results.error) {
         children = this.renderError(results.error);
+      } else if (!results.rows || results.rows.length === 0) {
+        children = this.renderNoResults();
+        clsOutput = "full";
       } else {
         clsOutput = "full";
         children = this.renderResults(results);
       }
-    }
-
-    if (this.props.notFull) {
-      clsOutput = "";
     }
 
     return (
