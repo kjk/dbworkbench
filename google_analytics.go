@@ -144,17 +144,14 @@ func ga(f http.HandlerFunc) http.HandlerFunc {
 		if cid == "" {
 			cid = generateUUID()
 			cookie := &http.Cookie{
-				Name:       "GAT",
-				Value:      cid,
-				Path:       "/",
-				Domain:     "",
-				Expires:    time.Now().Add(18000 * time.Hour),
-				RawExpires: "",
-				MaxAge:     18000 * 60 * 60,
-				Secure:     false,
-				HttpOnly:   false,
-				Raw:        "",
-				Unparsed:   nil,
+				Name:     "GAT",
+				Value:    cid,
+				Path:     "/",
+				Domain:   "",
+				Expires:  time.Now().Add(18000 * time.Hour),
+				MaxAge:   18000 * 60 * 60,
+				Secure:   false,
+				HttpOnly: false,
 			}
 			http.SetCookie(w, cookie)
 		}
