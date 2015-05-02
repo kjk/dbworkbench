@@ -1,39 +1,10 @@
-# pgweb
+# Database Workbench
 
-Web-based PostgreSQL database browser written in Go.
+Web-based database browser written in Go, originally based on http://github.com/sosedoff/pgweb
 
-Based on http://github.com/sosedoff/pgweb
+# pre-requisites
 
-## Usage
-
-Start server:
-
-```
-pgweb
-```
-
-You can also provide connection flags:
-
-```
-pgweb --host localhost --user myuser --db mydb
-```
-
-Connection URL scheme is also supported:
-
-```
-pgweb --url postgres://user:password@host:port/database?sslmode=[mode]
-```
-
-## Testing
-
-Run tests:
-
-```
-make test
-```
-
-## License
-
-The MIT License (MIT)
-
-Copyright (c) 2014-2015 Dan Sosedoff, <dan.sosedoff@gmail.com>
+* `npm install react-tools -g`
+* `npm install webpack -g`
+* `npm install webpack-dev-server -g`
+* `npm install jsx-loader -g`
