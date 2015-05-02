@@ -63,6 +63,7 @@ var Input = React.createClass({
         }
       }
     ]);
+    this.editor.focus();
   },
 
   componentDidMount: function() {
