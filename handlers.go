@@ -32,6 +32,19 @@ func NewError(err error) Error {
 	return Error{err.Error()}
 }
 
+func getClientIP(r *http.Request) string {
+	clientIP := r.Header.Get("X-Real-IP")
+	if len(clientIP) > 0 {
+		return clientIP
+	}
+	clientIP = r.Header.Get("X-Forwarded-For")
+	clientIP = strings.Split(clientIP, ",")[0]
+	if len(clientIP) > 0 {
+		return strings.TrimSpace(clientIP)
+	}
+	return r.RemoteAddr
+}
+
 func assetContentType(name string) string {
 	ext := filepath.Ext(name)
 	result := mime.TypeByExtension(ext)
@@ -419,7 +432,6 @@ func handleTablesDispatch(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
-// TODO: 	router.Use(ga_event.GALogger("UA-62336732-1", "databaseworkbench.com"))
 func registerHTTPHandlers() {
 	http.HandleFunc("/", get(handleIndex))
 	http.HandleFunc("/s/", get(handleStatic))
