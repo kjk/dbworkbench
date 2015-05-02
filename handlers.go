@@ -190,6 +190,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request, query string) {
 	result, err := dbClient.Query(query)
 
 	if err != nil {
+		LogErrorf("query: '%s', err: %s\n", query, err)
 		serveJSON(w, r, 400, NewError(err))
 		return
 	}
@@ -209,6 +210,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request, query string) {
 // GET | POST /api/query
 func handleRunQuery(w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
+	LogInfof("query: '%s'\n", query)
 
 	if query == "" {
 		serveJSON(w, r, 400, errors.New("Query parameter is missing"))
@@ -216,6 +218,19 @@ func handleRunQuery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handleQuery(w, r, query)
+}
+
+// GET | POST /api/explain
+func handleExplainQuery(w http.ResponseWriter, r *http.Request) {
+	query := strings.TrimSpace(r.FormValue("query"))
+	LogInfof("query: '%s'\n", query)
+
+	if query == "" {
+		serveJSON(w, r, 400, errors.New("Query parameter is missing"))
+		return
+	}
+
+	handleQuery(w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
 }
 
 // GET /api/history
@@ -282,20 +297,9 @@ func handleGetTables(w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, 200, names)
 }
 
-// GET | POST /api/explain
-func handleExplainQuery(w http.ResponseWriter, r *http.Request) {
-	query := strings.TrimSpace(r.FormValue("query"))
-
-	if query == "" {
-		serveJSON(w, r, 400, errors.New("Query parameter is missing"))
-		return
-	}
-
-	handleQuery(w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
-}
-
 func handleGetTable(w http.ResponseWriter, r *http.Request, table string) {
 	res, err := dbClient.Table(table)
+	LogInfof("table: '%s'\n", table)
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
