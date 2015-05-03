@@ -176,7 +176,7 @@ func handleConnect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := Options{Url: url}
+	opts := Options{URL: url}
 	url, err := formatConnectionUrl(opts)
 
 	if err != nil {

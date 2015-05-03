@@ -15,9 +15,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Options represents command-line options
 type Options struct {
 	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
-	Url      string `long:"url" description:"Database connection string"`
+	URL      string `long:"url" description:"Database connection string"`
 	Host     string `long:"host" description:"Server hostname or IP"`
 	Port     int    `long:"port" description:"Server port" default:"5432"`
 	User     string `long:"user" description:"Database user"`
@@ -74,10 +75,6 @@ func initOptions() {
 
 	if err != nil {
 		log.Fatalf("flags.ParseArgs() failed with %s", err)
-	}
-
-	if options.Url == "" {
-		options.Url = os.Getenv("DATABASE_URL")
 	}
 }
 
@@ -147,6 +144,8 @@ func main() {
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
+
+	getDbMust()
 
 	if options.IsLocal {
 		startWebpackWatch()

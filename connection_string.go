@@ -23,7 +23,7 @@ func currentUser() (string, error) {
 }
 
 func formatConnectionUrl(opts Options) (string, error) {
-	url := opts.Url
+	url := opts.URL
 
 	// Make sure to only accept urls in a standard format
 	if !strings.Contains(url, "postgres://") {
@@ -51,11 +51,11 @@ func formatConnectionUrl(opts Options) (string, error) {
 }
 
 func connectionSettingsBlank(opts Options) bool {
-	return opts.Host == "" && opts.User == "" && opts.DbName == "" && opts.Url == ""
+	return opts.Host == "" && opts.User == "" && opts.DbName == "" && opts.URL == ""
 }
 
 func buildConnectionString(opts Options) (string, error) {
-	if opts.Url != "" {
+	if opts.URL != "" {
 		return formatConnectionUrl(opts)
 	}
 
