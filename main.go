@@ -25,8 +25,8 @@ type Options struct {
 	Pass     string `long:"pass" description:"Password for user"`
 	DbName   string `long:"db" description:"Database name"`
 	Ssl      string `long:"ssl" description:"SSL option"`
-	HttpHost string `long:"bind" description:"HTTP server host" default:"localhost"`
-	HttpPort uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
+	HTTPHost string `long:"bind" description:"HTTP server host" default:"localhost"`
+	HTTPPort uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
 	AuthUser string `long:"auth-user" description:"HTTP basic auth user"`
 	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
@@ -89,7 +89,7 @@ func openPage() {
 		return
 	}
 
-	url := fmt.Sprintf("http://%v:%v", options.HttpHost, options.HttpPort)
+	url := fmt.Sprintf("http://%v:%v", options.HTTPHost, options.HTTPPort)
 	fmt.Println("To view database open", url, "in browser")
 
 	_, err := exec.Command("which", "open").Output()
@@ -144,6 +144,7 @@ func main() {
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
+	initCookieMust()
 
 	getDbMust()
 

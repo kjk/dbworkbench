@@ -4,12 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const (
@@ -127,43 +125,4 @@ func gaLogEvent(cid string, category string, action string, label string,
 	}
 
 	return gaLog("", payload)
-}
-
-func ga(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		cid := ""
-
-		for _, cookie := range r.Cookies() {
-			if cookie.Name == "GAT" {
-				cid = cookie.Value
-				break
-			}
-		}
-
-		// TODO: if the user is logged in, user user id instead
-		if cid == "" {
-			cid = generateUUID()
-			cookie := &http.Cookie{
-				Name:     "GAT",
-				Value:    cid,
-				Path:     "/",
-				Domain:   "",
-				Expires:  time.Now().Add(18000 * time.Hour),
-				MaxAge:   18000 * 60 * 60,
-				Secure:   false,
-				HttpOnly: false,
-			}
-			http.SetCookie(w, cookie)
-		}
-
-		f(w, r)
-
-		go func() {
-			err := gaLogPageView(r.UserAgent(), cid, getClientIP(r), r.URL.Path, "", nil)
-
-			if err != nil {
-				log.Printf("Unable to log GA PageView: %v\n", err)
-			}
-		}()
-	}
 }

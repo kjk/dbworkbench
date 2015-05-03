@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_assetContentType(t *testing.T) {
+func Test_MimeTypeByExtensionExt(t *testing.T) {
 	samples := map[string]string{
 		"foo.html": "text/html; charset=utf-8",
 		"foo.css":  "text/css; charset=utf-8",
@@ -24,6 +24,6 @@ func Test_assetContentType(t *testing.T) {
 	}
 
 	for name, expected := range samples {
-		assert.Equal(t, expected, assetContentType(name))
+		assert.Equal(t, expected, MimeTypeByExtensionExt(name))
 	}
 }

@@ -1,37 +1,47 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"mime"
 	"net/http"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/securecookie"
 )
 
-var extraMimeTypes = map[string]string{
-	".icon": "image-x-icon",
-	".ttf":  "application/x-font-ttf",
-	".woff": "application/x-font-woff",
-	".eot":  "application/vnd.ms-fontobject",
-	".svg":  "image/svg+xml",
-}
+const (
+	cookieAuthKeyHex = "4d1e71694154384ee43b20d06c710a2e6149126efadd140c66a4fa9bed9cb0bd"
+	cookieEncrKeyHex = "514171b116075c359db13549dc4b15924a5c0d0615c8b9d81436ba4d712132a1"
+	cookieName       = "dbwckie" // "database workbench cookie"
 
-// CookieVal contains data we set in browser cookie
-type CookieVal struct {
-	UserID            int    `json:"uid"`
-	IsLoggedIn        bool   `json:"ili"`
-	GoogleAnalyticsID string `json:"aid"`
+	// random string for oauth2 API calls to protect against CSRF
+	oauthSecretString = "34132083213"
+)
+
+var (
+	cookieAuthKey []byte
+	cookieEncrKey []byte
+
+	secureCookie *securecookie.SecureCookie
+)
+
+// CookieValue contains data we set in browser cookie
+type CookieValue struct {
+	UserID            int
+	IsLoggedIn        bool
+	GoogleAnalyticsID string
 }
 
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
-	Cookie    *CookieVal
+	Cookie    *CookieValue
+	IsAdmin   bool
 	TimeStart time.Time
 }
 
@@ -43,6 +53,63 @@ type Error struct {
 // NewError creates a new Error
 func NewError(err error) Error {
 	return Error{err.Error()}
+}
+
+func initCookieMust() {
+	var err error
+	cookieAuthKey, err = hex.DecodeString(cookieAuthKeyHex)
+	fatalIfErr(err, "hex.DecodeString(cookieAuthKeyHex)")
+	cookieEncrKey, err = hex.DecodeString(cookieEncrKeyHex)
+	fatalIfErr(err, "hex.DecodeString(cookieEncrKeyHex)")
+	secureCookie = securecookie.New(cookieAuthKey, cookieEncrKey)
+	// verify auth/encr keys are correct
+	val := map[string]string{
+		"foo": "bar",
+	}
+	_, err = secureCookie.Encode(cookieName, val)
+	fatalIfErr(err, "secureCookie.Encode")
+}
+
+func setCookie(w http.ResponseWriter, cookieVal *CookieValue) {
+	if encoded, err := secureCookie.Encode(cookieName, cookieVal); err == nil {
+		// TODO: set expiration (Expires    time.Time) long time in the future?
+		cookie := &http.Cookie{
+			Name:  cookieName,
+			Value: encoded,
+			Path:  "/",
+		}
+		http.SetCookie(w, cookie)
+	} else {
+		LogErrorf("secureCookie.Encode() failed with '%s'\n", err)
+	}
+}
+
+func genAndSetNewCookieValue(w http.ResponseWriter) *CookieValue {
+	c := &CookieValue{
+		GoogleAnalyticsID: generateUUID(),
+	}
+	setCookie(w, c)
+	return c
+}
+
+func getOrCreateCookie(w http.ResponseWriter, r *http.Request) *CookieValue {
+	cookie, err := r.Cookie(cookieName)
+	if err != nil {
+		return genAndSetNewCookieValue(w)
+	}
+	var cv CookieValue
+	if err = secureCookie.Decode(cookieName, cookie.Value, cv); err != nil {
+		// most likely expired cookie, so ignore and delete
+		LogErrorf("secureCookie.Decode() failed with %s\n", err)
+		return genAndSetNewCookieValue(w)
+	}
+	//LogVerbosef("Got cookie %#v\n", ret)
+	if cv.GoogleAnalyticsID == "" {
+		LogError("cv.GoogleAnalyticsID is empty string\n")
+		cv.GoogleAnalyticsID = generateUUID()
+		setCookie(w, &cv)
+	}
+	return &cv
 }
 
 func getClientIP(r *http.Request) string {
@@ -58,22 +125,6 @@ func getClientIP(r *http.Request) string {
 	return r.RemoteAddr
 }
 
-func assetContentType(name string) string {
-	ext := filepath.Ext(name)
-	ext = strings.ToLower(ext)
-	result := mime.TypeByExtension(ext)
-
-	if result == "" {
-		result = extraMimeTypes[ext]
-	}
-
-	if result == "" {
-		result = "text/plain; charset=utf-8"
-	}
-
-	return result
-}
-
 func asset(fileName string) ([]byte, error) {
 	//fmt.Fprintf(os.Stderr, "asset: %s\n", fileName)
 	return ioutil.ReadFile(fileName)
@@ -82,14 +133,30 @@ func asset(fileName string) ([]byte, error) {
 // HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
 type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
 
+// TODO: wrap w within CountingResponseWriter which intercepts Write() and
+// remembers how much data we wrote and log this for analysis
+// TODO: also intercept WriteHeader() and remember code so that it can be
+// inspected after it has been written
+// TODO: add options, either as single int (flags) or optional args...
+// Flags could be GetOnly, PostOnly, NoLog, LoggedOnly (reject etc.
 func withctx(f HandlerWithCtxFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := &ReqContext{
+			Cookie:    getOrCreateCookie(w, r),
 			TimeStart: time.Now(),
 		}
 		f(ctx, w, r)
-		// TODO: save this for further analysis
+		// TODO: log this to a file for further analysis
 		LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
+
+		go func(r *http.Request, gaID string) {
+			err := gaLogPageView(r.UserAgent(), gaID, getClientIP(r), r.URL.Path, "", nil)
+
+			if err != nil {
+				log.Printf("Unable to log GA PageView: %v\n", err)
+			}
+		}(r, ctx.Cookie.GoogleAnalyticsID)
+
 	}
 }
 
@@ -114,15 +181,6 @@ func post(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func timeit(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		timeStart := time.Now()
-		f(w, r)
-		// TODO: save this for further analysis
-		LogInfof("%s took %s\n", r.RequestURI, time.Since(timeStart))
-	}
-}
-
 func hasUser(f http.HandlerFunc) http.HandlerFunc {
 	// TODO: reject if no user
 	return f
@@ -142,7 +200,7 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 		return
 	}
 
-	serveData(w, r, 200, assetContentType(path), data)
+	serveData(w, r, 200, MimeTypeByExtensionExt(path), data)
 }
 
 // GET /
@@ -473,7 +531,7 @@ func registerHTTPHandlers() {
 
 func startWebServer() {
 	registerHTTPHandlers()
-	httpAddr := fmt.Sprintf(":%v", options.HttpPort)
+	httpAddr := fmt.Sprintf(":%v", options.HTTPPort)
 	fmt.Printf("Started running on %s\n", httpAddr)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		log.Fatalf("http.ListendAndServer() failed with %s\n", err)
