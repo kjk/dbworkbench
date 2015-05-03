@@ -221,7 +221,7 @@ var App = React.createClass({
     });
   },
 
-  adHockTest: function() {
+  adHocTest: function() {
     var cid1 = action.onViewSelected(this.handleViewSelected);
     var cid2 = action.onViewSelected(this.handleViewSelected);
     action.offViewSelected(cid2);
@@ -230,7 +230,7 @@ var App = React.createClass({
   },
 
   componentDidMount: function() {
-    //this.adHockTest();
+    //this.adHocTest();
 
     this.cidViewSelected = action.onViewSelected(this.handleViewSelected);
     this.cidTableSelected = action.onTableSelected(this.handleTableSelected);

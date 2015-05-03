@@ -76,7 +76,7 @@ function off(actionIdx, cbId) {
       }
     }
   }
-  console.log("actions.off: didn't find callback id", cbId, "for action", getActionName(actionIdx));
+  console.log("action.off: didn't find callback id", cbId, "for action", getActionName(actionIdx));
 }
 
 /* actions */
