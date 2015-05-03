@@ -47,6 +47,7 @@ func getClientIP(r *http.Request) string {
 
 func assetContentType(name string) string {
 	ext := filepath.Ext(name)
+	ext = strings.ToLower(ext)
 	result := mime.TypeByExtension(ext)
 
 	if result == "" {
