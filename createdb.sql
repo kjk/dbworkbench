@@ -1,4 +1,6 @@
 -- there should be at least one empty line between separate SQL statements
+CREATE EXTENSION hstore;
+
 CREATE TABLE users (
   id                  INT NOT NULL AUTO_INCREMENT,
   created_at          TIMESTAMP NOT NULL,
