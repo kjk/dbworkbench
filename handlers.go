@@ -22,6 +22,19 @@ var extraMimeTypes = map[string]string{
 	".svg":  "image/svg+xml",
 }
 
+// CookieVal contains data we set in browser cookie
+type CookieVal struct {
+	UserID            int    `json:"uid"`
+	IsLoggedIn        bool   `json:"ili"`
+	GoogleAnalyticsID string `json:"aid"`
+}
+
+// ReqContext contains data that is useful to access in every http handler
+type ReqContext struct {
+	Cookie    *CookieVal
+	TimeStart time.Time
+}
+
 // Error is error message sent to client as json response for backend errors
 type Error struct {
 	Message string `json:"error"`
@@ -66,6 +79,20 @@ func asset(fileName string) ([]byte, error) {
 	return ioutil.ReadFile(fileName)
 }
 
+// HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
+type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
+
+func withctx(f HandlerWithCtxFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := &ReqContext{
+			TimeStart: time.Now(),
+		}
+		f(ctx, w, r)
+		// TODO: save this for further analysis
+		LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
+	}
+}
+
 // TODO: not sure if it's worth to put GET, POST etc. filters
 func get(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -101,10 +128,6 @@ func hasUser(f http.HandlerFunc) http.HandlerFunc {
 	return f
 }
 
-func hasConnection(f http.HandlerFunc) http.HandlerFunc {
-	// TODO: reject if no connection
-	return f
-}
 func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 	data, err := asset(path)
 
@@ -123,7 +146,7 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 // GET /
-func handleIndex(w http.ResponseWriter, r *http.Request) {
+func handleIndex(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
 	if uri != "/" {
 		http.NotFound(w, r)
@@ -133,7 +156,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /s/:path
-func handleStatic(w http.ResponseWriter, r *http.Request) {
+func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	path := "s/" + r.URL.Path[len("/s/"):]
 	//LogInfof("path='%s'\n", path)
 	serveStatic(w, r, path)
@@ -170,7 +193,7 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 }
 
 // POST /api/connect
-func handleConnect(w http.ResponseWriter, r *http.Request) {
+func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
 		serveJSON(w, r, 400, Error{"Url parameter is required"})
@@ -211,7 +234,7 @@ func handleConnect(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/databases
-func handleGetDatabases(w http.ResponseWriter, r *http.Request) {
+func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	names, err := dbClient.Databases()
 
 	if err != nil {
@@ -222,7 +245,7 @@ func handleGetDatabases(w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, 200, names)
 }
 
-func handleQuery(w http.ResponseWriter, r *http.Request, query string) {
+func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
 	result, err := dbClient.Query(query)
 
 	if err != nil {
@@ -245,7 +268,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request, query string) {
 }
 
 // GET | POST /api/query
-func handleRunQuery(w http.ResponseWriter, r *http.Request) {
+func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	LogInfof("query: '%s'\n", query)
 
@@ -254,11 +277,11 @@ func handleRunQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handleQuery(w, r, query)
+	handleQuery(ctx, w, r, query)
 }
 
 // GET | POST /api/explain
-func handleExplainQuery(w http.ResponseWriter, r *http.Request) {
+func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	LogInfof("query: '%s'\n", query)
 
@@ -267,7 +290,7 @@ func handleExplainQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handleQuery(w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
+	handleQuery(ctx, w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
 }
 
 // GET /api/history
@@ -288,7 +311,7 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/connection
-func handleConnectionInfo(w http.ResponseWriter, r *http.Request) {
+func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	res, err := dbClient.Info()
 
 	if err != nil {
@@ -300,7 +323,7 @@ func handleConnectionInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/activity
-func handleActivity(w http.ResponseWriter, r *http.Request) {
+func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	res, err := dbClient.Activity()
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -311,7 +334,7 @@ func handleActivity(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/schemas
-func handleGetSchemas(w http.ResponseWriter, r *http.Request) {
+func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	names, err := dbClient.Schemas()
 
 	if err != nil {
@@ -323,7 +346,7 @@ func handleGetSchemas(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/tables
-func handleGetTables(w http.ResponseWriter, r *http.Request) {
+func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	names, err := dbClient.Tables()
 
 	if err != nil {
@@ -334,7 +357,7 @@ func handleGetTables(w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, 200, names)
 }
 
-func handleGetTable(w http.ResponseWriter, r *http.Request, table string) {
+func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := dbClient.Table(table)
 	LogInfof("table: '%s'\n", table)
 
@@ -346,7 +369,7 @@ func handleGetTable(w http.ResponseWriter, r *http.Request, table string) {
 	serveJSON(w, r, 200, res)
 }
 
-func apiGetTableRows(w http.ResponseWriter, r *http.Request, table string) {
+func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
 	limit := 1000 // Number of rows to fetch
 	limitVal := r.FormValue("limit")
@@ -383,7 +406,7 @@ func apiGetTableRows(w http.ResponseWriter, r *http.Request, table string) {
 	serveJSON(w, r, 200, res)
 }
 
-func apiGetTableInfo(w http.ResponseWriter, r *http.Request, table string) {
+func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := dbClient.TableInfo(table)
 
 	if err != nil {
@@ -394,7 +417,7 @@ func apiGetTableInfo(w http.ResponseWriter, r *http.Request, table string) {
 	serveJSON(w, r, 200, res.Format()[0])
 }
 
-func apiGetTableIndexes(w http.ResponseWriter, r *http.Request, table string) {
+func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
 	res, err := dbClient.TableIndexes(table)
 
@@ -407,27 +430,27 @@ func apiGetTableIndexes(w http.ResponseWriter, r *http.Request, table string) {
 }
 
 // GET /api/tables/:table/:action
-func handleTablesDispatch(w http.ResponseWriter, r *http.Request) {
+func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
 	uriPath := uri[len("/api/tables/"):]
 	parts := strings.SplitN(uriPath, "/", 2)
 	table := parts[0]
 	LogInfof("table='%s'\n", table)
 	if len(parts) == 1 {
-		handleGetTable(w, r, table)
+		handleGetTable(ctx, w, r, table)
 		return
 	}
 	cmd := parts[1]
 	if cmd == "rows" {
-		apiGetTableRows(w, r, table)
+		apiGetTableRows(ctx, w, r, table)
 		return
 	}
 	if cmd == "info" {
-		apiGetTableInfo(w, r, table)
+		apiGetTableInfo(ctx, w, r, table)
 		return
 	}
 	if cmd == "indexes" {
-		apiGetTableIndexes(w, r, table)
+		apiGetTableIndexes(ctx, w, r, table)
 		return
 	}
 	LogErrorf("unknown cmd: '%s'\n", cmd)
@@ -435,20 +458,20 @@ func handleTablesDispatch(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerHTTPHandlers() {
-	http.HandleFunc("/", get(handleIndex))
-	http.HandleFunc("/s/", get(handleStatic))
-	http.HandleFunc("/api/connect", timeit(post(handleConnect)))
+	http.HandleFunc("/", get(withctx(handleIndex)))
+	http.HandleFunc("/s/", get(withctx(handleStatic)))
+	http.HandleFunc("/api/connect", post(withctx(handleConnect)))
 	http.HandleFunc("/api/history", get(handleHistory))
 	http.HandleFunc("/api/bookmarks", get(handleBookmarks))
 
-	http.HandleFunc("/api/databases", timeit(hasConnection(handleGetDatabases)))
-	http.HandleFunc("/api/connection", timeit(hasConnection(handleConnectionInfo)))
-	http.HandleFunc("/api/activity", timeit(hasConnection(handleActivity)))
-	http.HandleFunc("/api/schemas", timeit(hasConnection(handleGetSchemas)))
-	http.HandleFunc("/api/tables", timeit(hasConnection(handleGetTables)))
-	http.HandleFunc("/api/tables/", timeit(hasConnection(handleTablesDispatch)))
-	http.HandleFunc("/api/query", timeit(hasConnection(handleRunQuery)))
-	http.HandleFunc("/api/explain", timeit(hasConnection(handleExplainQuery)))
+	http.HandleFunc("/api/databases", withctx(handleGetDatabases))
+	http.HandleFunc("/api/connection", withctx(handleConnectionInfo))
+	http.HandleFunc("/api/activity", withctx(handleActivity))
+	http.HandleFunc("/api/schemas", withctx(handleGetSchemas))
+	http.HandleFunc("/api/tables", withctx(handleGetTables))
+	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch))
+	http.HandleFunc("/api/query", withctx(handleRunQuery))
+	http.HandleFunc("/api/explain", withctx(handleExplainQuery))
 }
 
 func startWebServer() {
