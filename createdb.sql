@@ -2,7 +2,7 @@
 CREATE EXTENSION hstore;
 
 CREATE TABLE users (
-  id                  INT NOT NULL AUTO_INCREMENT,
+  id                  INT NOT NULL SERIAL,
   created_at          TIMESTAMP NOT NULL,
   email               VARCHAR(255) NOT NULL,
   username            VARCHAR(255) NOT NULL,
