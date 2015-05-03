@@ -441,20 +441,17 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 	cmd := parts[1]
-	if cmd == "rows" {
+	switch cmd {
+	case "rows":
 		apiGetTableRows(ctx, w, r, table)
-		return
-	}
-	if cmd == "info" {
+	case "info":
 		apiGetTableInfo(ctx, w, r, table)
-		return
-	}
-	if cmd == "indexes" {
+	case "indexes":
 		apiGetTableIndexes(ctx, w, r, table)
-		return
+	default:
+		LogErrorf("unknown cmd: '%s'\n", cmd)
+		http.NotFound(w, r)
 	}
-	LogErrorf("unknown cmd: '%s'\n", cmd)
-	http.NotFound(w, r)
 }
 
 func registerHTTPHandlers() {
