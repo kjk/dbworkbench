@@ -6,20 +6,6 @@
 // module. Other parts of the code can provide callbacks to be called when
 // action is triggered.
 
-// index in subscribers array for a given action
-var tableSelectedIdx = 0;
-var viewSelectedIdx = 1;
-var executeQueryIdx = 2;
-var explainQueryIdx = 3;
-
-// must be in same order as *Idx above
-var actionNames = [
-  "tableSelected",
-  "viewSelected",
-  "executeQuery",
-  "explainQuery"
-];
-
 // index is one of the above constants.
 // value at a given index is [[cbFunc, cbId], ...]
 var actionCallbacks = [];
@@ -80,6 +66,20 @@ function off(actionIdx, cbId) {
 }
 
 /* actions */
+
+// index in actionCallbacks array for a given action
+var tableSelectedIdx = 0;
+var viewSelectedIdx = 1;
+var executeQueryIdx = 2;
+var explainQueryIdx = 3;
+
+// must be in same order as *Idx above
+var actionNames = [
+  "tableSelected",
+  "viewSelected",
+  "executeQuery",
+  "explainQuery"
+];
 
 function tableSelected(name) {
   broadcast(tableSelectedIdx, name);
