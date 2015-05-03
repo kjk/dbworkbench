@@ -1,32 +1,35 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var action = require('./action.js');
-var view = require('./view.js');
-
 var TopNav = React.createClass({
 
+  handleSignIn: function(e) {
+    e.preventDefault();
+    console.log("clicked sign in");
+  },
+
   render: function() {
-    //console.log("TopNav.render: view: ", this.props.view);
-    var currentView = this.props.view;
-    var children = view.AllViews.map(function(viewName) {
-      var handler = function() {
-        action.viewSelected(viewName);
-      };
-      var cls = (currentView == viewName) ? "selected" : "";
-      return <li key={viewName} onClick={handler} className={cls}>{viewName}</li>;
-    });
 
     return (
-      <div id="nav">
-        <ul>
-          {children}
-        </ul>
+      <header className="navbar navbar-default navbar-fixed-top">
+        <div className="container">
+          <div className="navbar-header">
+            <a href="/" className="navbar-brand">Database Workbench</a>
+          </div>
+          <nav className="collapse navbar-collapse bs-navbar-collapse">
+            <ul className="nav navbar-nav">
 
-        <a href="#" id="edit_connection" className="btn btn-primary btn-sm"><i className="fa fa-gear"></i> Edit Connection</a>
-      </div>
+            </ul>
+            <ul className="nav navbar-nav navbar-right">
+              <li>
+                <a href="#" onClick={this.handleSignIn}>Sign in / Sign up</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
     );
   },
 });
 
-module.exports.TopNav = TopNav;
+module.exports = TopNav;

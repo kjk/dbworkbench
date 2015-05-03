@@ -2,6 +2,7 @@
 'use strict';
 
 var api = require('./api.js');
+var TopNav = require('./TopNav.jsx');
 
 var ConnectionScheme = 0;
 var ConnectionStandard = 1;
@@ -265,23 +266,27 @@ var ConnectionWindow = React.createClass({
     }
     var connectDisabled = this.state.isConnecting;
     return (
-      <div id="connection_window">
-        <div className="connection-settings">
-          <h1>Postgres Database Workbench</h1>
-            <form role="form" className="form-horizontal" id="connection_form">
-            {connectionFormHeader}
-            <hr/>
+      <div>
+        <TopNav />
 
-            {group}
-            {error}
+        <div id="connection_window">
+          <div className="connection-settings">
+            <h1>Postgres Database Workbench</h1>
+              <form role="form" className="form-horizontal" id="connection_form">
+              {connectionFormHeader}
+              <hr/>
 
-            <div className="form-group">
-              <div className="col-sm-12">
-                <button disabled={connectDisabled} onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
-                <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default">Cancel</button>
+              {group}
+              {error}
+
+              <div className="form-group">
+                <div className="col-sm-12">
+                  <button disabled={connectDisabled} onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
+                  <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default">Cancel</button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     );

@@ -7,8 +7,8 @@ var action = require('./action.js');
 var view = require('./view.js');
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var TopNav = require('./TopNav.jsx').TopNav;
-var ViewSQLQuery = require('./TopNav.jsx').ViewSQLQuery;
+var TopNav = require('./TopNav.jsx');
+var DbNav = require('./DbNav.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
@@ -255,7 +255,8 @@ var App = React.createClass({
 
     return (
       <div>
-        <TopNav view={this.state.selectedView}/>
+        <TopNav />
+        <DbNav view={this.state.selectedView}/>
         <Sidebar
           tables={this.state.tables}
           selectedTable={this.state.selectedTable}

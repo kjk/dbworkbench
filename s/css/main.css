@@ -3,7 +3,7 @@
 
 #nav {
   position: fixed;
-  top: 0;
+  top: 50px;
   left: 250px;
   right: 0;
   height: 50px;
@@ -70,7 +70,7 @@
   position: fixed;
   width: 250px;
   left: 0px;
-  top: 0px;
+  top: 50px;
   bottom: 0px;
 }
 
@@ -202,7 +202,7 @@
 
 #body {
   position: fixed;
-  top: 50px;
+  top: 100px;
   left: 250px;
   bottom: 0px;
   right: 0px;
@@ -365,9 +365,9 @@
 
 #connection_window {
   z-index: 3;
-  position: fixed;
+  position: relative;
   background: #ebeef0;
-  top: 0px;
+  /*top: 0px;*/
   left: 0px;
   bottom: 0px;
   right: 0px;
