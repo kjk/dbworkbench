@@ -5,22 +5,29 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Language" content="en">
-  <link rel="stylesheet" href="/s/css/bootstrap.css"></link>
-  <link rel="stylesheet" href="/s/css/font-awesome.css"></link>
-  <link rel="stylesheet" href="/s/css/main.css"></link>
+  <link type="text/css" rel="stylesheet" href="/s/css/bootstrap.css"/>
+  <link type="text/css" rel="stylesheet" href="/s/css/font-awesome.css"/>
+  <link type="text/css" rel="stylesheet" href="/s/css/main.css"/>
   <script type="text/javascript" src="/s/js/lib/react-with-addons-0.13.2.js"></script>
   <script type="text/javascript" src="/s/js/lib/jquery.js"></script>
   <script type="text/javascript" src="/s/js/lib/ace.js"></script>
   <script type="text/javascript" src="/s/js/lib/ace-pgsql.js"></script>
   <script type="text/javascript" src="/s/js/bundle.js"></script>
+  <script type="text/javascript">
+    var gUserInfo = null;
+    function setUserInfo(json) {
+      gUserInfo = json;
+    }
+  </script>
+  <script type="text/javascript" src="/api/userinfo?jsonp=setUserInfo"></script>
 </head>
 
 <body>
   <div id ="main">
   </div>
 
-  <script src="/s/js/bundle.js"></script>
-  <script>window.runOnLoad(window.appStart);</script>
+  <script type="text/javascript" src="/s/js/bundle.js"></script>
+  <script type="text/javascript">window.runOnLoad(window.appStart);</script>
 
 </body>
 </html>

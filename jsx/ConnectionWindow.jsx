@@ -265,9 +265,11 @@ var ConnectionWindow = React.createClass({
       error = this.renderError(this.state.connectionErrorMessage);
     }
     var connectDisabled = this.state.isConnecting;
+    var isLoggedIn = gUserInfo.IsLoggedIn;
+
     return (
       <div>
-        <TopNav isLoggedIn={false}/>
+        <TopNav isLoggedIn={isLoggedIn}/>
 
         <div id="connection_window">
           <div className="connection-settings">

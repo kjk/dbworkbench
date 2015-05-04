@@ -222,10 +222,31 @@ func writeHeader(w http.ResponseWriter, code int, contentType string) {
 	w.WriteHeader(code)
 }
 
-func serveJSON(w http.ResponseWriter, r *http.Request, code int, data ...interface{}) error {
+func serveJSON(w http.ResponseWriter, r *http.Request, code int, v interface{}) error {
 	writeHeader(w, code, "application/json")
 	encoder := json.NewEncoder(w)
-	return encoder.Encode(data[0])
+	return encoder.Encode(v)
+}
+
+func serveJSONP(w http.ResponseWriter, r *http.Request, code int, v interface{}, jsonp string) error {
+	writeHeader(w, code, "application/json")
+
+	if jsonp == "" {
+		return serveJSON(w, r, code, v)
+	}
+
+	b, err := json.Marshal(v)
+	if err != nil {
+		// should never happen
+		LogErrorf("json.MarshalIndent() failed with %q\n", err)
+		return err
+	}
+	res := []byte(jsonp)
+	res = append(res, '(')
+	res = append(res, b...)
+	res = append(res, ')')
+	_, err = w.Write(res)
+	return err
 }
 
 func serveString(w http.ResponseWriter, r *http.Request, code int, format string, args ...interface{}) error {
@@ -509,6 +530,24 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// GET /api/userinfo
+// Returns information about the user
+// Arguments:
+//  - jsonp : jsonp wrapper, optional
+func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
+	LogInfof("jsonp: '%s'\n", jsonp)
+
+	v := struct {
+		Email      string
+		IsLoggedIn bool
+	}{
+		Email:      "kkowalczyk@gmail.com",
+		IsLoggedIn: true,
+	}
+	serveJSONP(w, r, 200, v, jsonp)
+}
+
 func registerHTTPHandlers() {
 	http.HandleFunc("/", get(withctx(handleIndex)))
 	http.HandleFunc("/s/", get(withctx(handleStatic)))
@@ -524,6 +563,7 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch))
 	http.HandleFunc("/api/query", withctx(handleRunQuery))
 	http.HandleFunc("/api/explain", withctx(handleExplainQuery))
+	http.HandleFunc("/api/userinfo", withctx(handleUserInfo))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)
 	http.HandleFunc("/logout", withctx(handleLogout))
