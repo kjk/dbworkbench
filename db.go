@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -11,7 +12,19 @@ import (
 var (
 	sqlDb   *sql.DB
 	sqlDbMu sync.Mutex
+	errNYI  = errors.New("NYI")
 )
+
+// DbUser corresponds to users table
+type DbUser struct {
+	ID    int
+	Email string
+}
+
+func dbGetOrCreateUser(email string, fullName string) (*DbUser, error) {
+	LogInfof("email: %s, fullName: %s\n", email, fullName)
+	return nil, errNYI
+}
 
 func getSqlConnectionRoot() string {
 	if options.IsLocal {

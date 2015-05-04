@@ -267,7 +267,7 @@ var ConnectionWindow = React.createClass({
     var connectDisabled = this.state.isConnecting;
     return (
       <div>
-        <TopNav />
+        <TopNav isLoggedIn={false}/>
 
         <div id="connection_window">
           <div className="connection-settings">

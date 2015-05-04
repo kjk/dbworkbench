@@ -3,13 +3,17 @@
 
 var TopNav = React.createClass({
 
-  handleSignIn: function(e) {
-    e.preventDefault();
-    console.log("clicked sign in");
+  renderSignIn: function() {
+    return <a href="/logingoogle?redir=/">Sign in / Sign up</a>;
+  },
+
+  renderSignOut: function() {
+    return <a href="/logout?redir=/">Sign out</a>;
   },
 
   render: function() {
-
+    console.log("isLoggedIn:", this.props.isLoggedIn);
+    var signInOrOut = this.props.isLoggedIn ? this.renderSignOut() : this.renderSignIn();
     return (
       <header className="navbar navbar-default navbar-fixed-top">
         <div className="container">
@@ -18,11 +22,10 @@ var TopNav = React.createClass({
           </div>
           <nav className="collapse navbar-collapse bs-navbar-collapse">
             <ul className="nav navbar-nav">
-
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li>
-                <a href="#" onClick={this.handleSignIn}>Sign in / Sign up</a>
+                {signInOrOut}
               </li>
             </ul>
           </nav>

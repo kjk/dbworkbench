@@ -19,9 +19,6 @@ const (
 	cookieAuthKeyHex = "4d1e71694154384ee43b20d06c710a2e6149126efadd140c66a4fa9bed9cb0bd"
 	cookieEncrKeyHex = "514171b116075c359db13549dc4b15924a5c0d0615c8b9d81436ba4d712132a1"
 	cookieName       = "dbwckie" // "database workbench cookie"
-
-	// random string for oauth2 API calls to protect against CSRF
-	oauthSecretString = "34132083213"
 )
 
 var (
@@ -98,7 +95,7 @@ func getOrCreateCookie(w http.ResponseWriter, r *http.Request) *CookieValue {
 		return genAndSetNewCookieValue(w)
 	}
 	var cv CookieValue
-	if err = secureCookie.Decode(cookieName, cookie.Value, cv); err != nil {
+	if err = secureCookie.Decode(cookieName, cookie.Value, &cv); err != nil {
 		// most likely expired cookie, so ignore and delete
 		LogErrorf("secureCookie.Decode() failed with %s\n", err)
 		return genAndSetNewCookieValue(w)
@@ -527,6 +524,17 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch))
 	http.HandleFunc("/api/query", withctx(handleRunQuery))
 	http.HandleFunc("/api/explain", withctx(handleExplainQuery))
+
+	http.HandleFunc("/logingoogle", handleLoginGoogle)
+	http.HandleFunc("/logout", withctx(handleLogout))
+	http.HandleFunc("/googleoauth2cb", withctx(handleOauthGoogleCallback))
+	http.HandleFunc("/showmyhost", handleShowMyHost)
+}
+
+// GET /showmyhost, for testing only
+func handleShowMyHost(w http.ResponseWriter, r *http.Request) {
+	s := getMyHost(r)
+	serveString(w, r, 200, "me: %s\n", s)
 }
 
 func startWebServer() {
