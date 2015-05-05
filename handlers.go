@@ -71,9 +71,10 @@ func setCookie(w http.ResponseWriter, cookieVal *CookieValue) {
 	if encoded, err := secureCookie.Encode(cookieName, cookieVal); err == nil {
 		// TODO: set expiration (Expires    time.Time) long time in the future?
 		cookie := &http.Cookie{
-			Name:  cookieName,
-			Value: encoded,
-			Path:  "/",
+			Name:     cookieName,
+			Value:    encoded,
+			Path:     "/",
+			HttpOnly: true,
 		}
 		http.SetCookie(w, cookie)
 	} else {
