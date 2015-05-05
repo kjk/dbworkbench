@@ -5,6 +5,7 @@ CREATE TABLE users (
   id                  SERIAL NOT NULL PRIMARY KEY,
   created_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   email               VARCHAR(255) NOT NULL,
+  full_name           VARCHAR(255) NOT NULL,
   -- either password or google_oauth_json must be set
   password            VARCHAR(255),
   google_oauth_json   VARCHAR(2048)

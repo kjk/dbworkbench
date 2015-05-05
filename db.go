@@ -7,23 +7,94 @@ import (
 	"io/ioutil"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
-	sqlDb   *sql.DB
-	sqlDbMu sync.Mutex
-	errNYI  = errors.New("NYI")
+	sqlDb       *sql.DB
+	errNYI      = errors.New("NYI")
+	muCache     sync.Mutex
+	dbUserCache map[int]*DbUser
 )
 
 // DbUser corresponds to users table
 type DbUser struct {
-	ID    int
-	Email string
+	ID        int
+	CreatedAt time.Time
+	Email     string
+	FullName  string
+}
+
+func init() {
+	dbUserCache = make(map[int]*DbUser)
+}
+
+func isErrNoRows(err error) bool {
+	return err == sql.ErrNoRows
+}
+
+func dbGetUserByQuery(q string, args ...interface{}) (*DbUser, error) {
+	var user DbUser
+	db := getDbMust()
+	err := db.QueryRow(q, args...).Scan(&user.ID, &user.CreatedAt, &user.Email, &user.FullName)
+	if isErrNoRows(err) {
+		return nil, nil
+	}
+	if err != nil {
+		LogInfof("db.QueryRow('%s') failed with %s\n", q, err)
+		return nil, err
+	}
+	return &user, nil
+}
+
+func dbGetUserByID(id int) (*DbUser, error) {
+	q := `SELECT id, created_at, email, full_name FROM users WHERE id=$1`
+	return dbGetUserByQuery(q, id)
+}
+
+func dbGetUserByIDCached(id int) (*DbUser, error) {
+	LogInfof("id: %d\n", id)
+	muCache.Lock()
+	if dbUser, ok := dbUserCache[id]; ok {
+		muCache.Unlock()
+		return dbUser, nil
+	}
+	muCache.Unlock()
+
+	dbUser, err := dbGetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	muCache.Lock()
+	dbUserCache[id] = dbUser
+	muCache.Unlock()
+	return dbUser, nil
+}
+
+func dbGetUserByEmail(email string) (*DbUser, error) {
+	q := `SELECT id, created_at, email, full_name FROM users WHERE email=$1`
+	return dbGetUserByQuery(q, email)
 }
 
 func dbGetOrCreateUser(email string, fullName string) (*DbUser, error) {
 	LogInfof("email: %s, fullName: %s\n", email, fullName)
-	return nil, errNYI
+	dbUser, err := dbGetUserByEmail(email)
+	if dbUser != nil {
+		return dbUser, nil
+	}
+	if err != nil {
+		// shouldn't happen, log and ignore
+		LogErrorf("dbGetUserByEmail('%s') failed with '%s'\n", email, err)
+	}
+
+	db := getDbMust()
+	q := `INSERT INTO users (email, fulL_name, created_at) VALUES ($1, $2, now())`
+	_, err = db.Exec(q, email, fullName)
+	if err != nil {
+		return nil, err
+	}
+	return dbGetUserByEmail(email)
 }
 
 func getSqlConnectionRoot() string {
@@ -96,8 +167,6 @@ func getDbMust() *sql.DB {
 	if sqlDb != nil {
 		return sqlDb
 	}
-	sqlDbMu.Lock()
-	defer sqlDbMu.Unlock()
 	db, err := sql.Open("postgres", getSqlConnection())
 	if err != nil {
 		LogFatalf("sql.Open() failed with %s\n", err)

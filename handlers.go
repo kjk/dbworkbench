@@ -38,8 +38,20 @@ type CookieValue struct {
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
 	Cookie    *CookieValue
+	DbUser    *DbUser
 	IsAdmin   bool
 	TimeStart time.Time
+}
+
+func isAdminUser(dbUser *DbUser) bool {
+	if dbUser == nil {
+		return false
+	}
+	switch dbUser.Email {
+	case "kkowalczyk@gmail.com":
+		return true
+	}
+	return false
 }
 
 // Error is error message sent to client as json response for backend errors
@@ -143,6 +155,13 @@ func withctx(f HandlerWithCtxFunc) http.HandlerFunc {
 			Cookie:    getOrCreateCookie(w, r),
 			TimeStart: time.Now(),
 		}
+		dbUser, err := dbGetUserByIDCached(ctx.Cookie.UserID)
+		if err != nil {
+			// shouldn't happen, log and ignore
+			LogErrorf("dbGetUserByIDCached('%d') failed with '%s'\n", ctx.Cookie.UserID, err)
+		}
+		ctx.DbUser = dbUser
+		ctx.IsAdmin = isAdminUser(dbUser)
 		f(ctx, w, r)
 		// TODO: log this to a file for further analysis
 		LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
@@ -154,34 +173,7 @@ func withctx(f HandlerWithCtxFunc) http.HandlerFunc {
 				log.Printf("Unable to log GA PageView: %v\n", err)
 			}
 		}(r, ctx.Cookie.GoogleAnalyticsID)
-
 	}
-}
-
-// TODO: not sure if it's worth to put GET, POST etc. filters
-func get(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			http.NotFound(w, r)
-			return
-		}
-		f(w, r)
-	}
-}
-
-func post(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			http.NotFound(w, r)
-			return
-		}
-		f(w, r)
-	}
-}
-
-func hasUser(f http.HandlerFunc) http.HandlerFunc {
-	// TODO: reject if no user
-	return f
 }
 
 func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
@@ -538,23 +530,29 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
 	LogInfof("jsonp: '%s'\n", jsonp)
+	if ctx.DbUser != nil {
+		LogInfof("dbUser: %#v\n", ctx.DbUser)
+	}
 
 	v := struct {
 		Email      string
 		IsLoggedIn bool
 	}{
-		Email:      "kkowalczyk@gmail.com",
-		IsLoggedIn: true,
+		IsLoggedIn: ctx.Cookie.IsLoggedIn,
 	}
+	if ctx.DbUser != nil {
+		v.Email = ctx.DbUser.Email
+	}
+	LogInfof("v: %#v\n", v)
 	serveJSONP(w, r, 200, v, jsonp)
 }
 
 func registerHTTPHandlers() {
-	http.HandleFunc("/", get(withctx(handleIndex)))
-	http.HandleFunc("/s/", get(withctx(handleStatic)))
-	http.HandleFunc("/api/connect", post(withctx(handleConnect)))
-	http.HandleFunc("/api/history", get(handleHistory))
-	http.HandleFunc("/api/bookmarks", get(handleBookmarks))
+	http.HandleFunc("/", withctx(handleIndex))
+	http.HandleFunc("/s/", withctx(handleStatic))
+	http.HandleFunc("/api/connect", withctx(handleConnect))
+	http.HandleFunc("/api/history", handleHistory)
+	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
 	http.HandleFunc("/api/databases", withctx(handleGetDatabases))
 	http.HandleFunc("/api/connection", withctx(handleConnectionInfo))

@@ -244,7 +244,7 @@ var ConnectionWindow = React.createClass({
     );
   },
 
-  render: function() {
+  renderConnectionWindow: function() {
     var connectionFormHeader = this.renderConnectionFormHeader();
     var group;
     switch (this.state.connectionType) {
@@ -265,31 +265,48 @@ var ConnectionWindow = React.createClass({
       error = this.renderError(this.state.connectionErrorMessage);
     }
     var connectDisabled = this.state.isConnecting;
-    var isLoggedIn = gUserInfo.IsLoggedIn;
 
+    return (
+      <div id="connection_window">
+        <div className="connection-settings">
+          <h1>Postgres Database Workbench</h1>
+            <form role="form" className="form-horizontal" id="connection_form">
+            {connectionFormHeader}
+            <hr/>
+
+            {group}
+            {error}
+
+            <div className="form-group">
+              <div className="col-sm-12">
+                <button disabled={connectDisabled} onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
+                <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  },
+
+  renderPleaseSignIn: function() {
+    return (
+      <div id="connection_window">
+        <div className="connection-settings">
+          <h1>Postgres Database Workbench</h1>
+          <p>Please sign in to connect to a database.</p>
+        </div>
+      </div>
+    );
+  },
+
+  render: function() {
+    var isLoggedIn = gUserInfo.IsLoggedIn;
+    console.log("isLoggedIn: ", isLoggedIn);
     return (
       <div>
         <TopNav isLoggedIn={isLoggedIn}/>
-
-        <div id="connection_window">
-          <div className="connection-settings">
-            <h1>Postgres Database Workbench</h1>
-              <form role="form" className="form-horizontal" id="connection_form">
-              {connectionFormHeader}
-              <hr/>
-
-              {group}
-              {error}
-
-              <div className="form-group">
-                <div className="col-sm-12">
-                  <button disabled={connectDisabled} onClick={this.handleConnect} className="btn btn-block btn-primary">Connect</button>
-                  <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default">Cancel</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
+        {isLoggedIn ? this.renderConnectionWindow() : this.renderPleaseSignIn() }
       </div>
     );
   }

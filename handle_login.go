@@ -91,6 +91,7 @@ func handleOauthGoogleCallback(ctx *ReqContext, w http.ResponseWriter, r *http.R
 	}
 	LogInfof("created user %d with email '%s'\n", dbUser.ID, dbUser.Email)
 	ctx.Cookie.UserID = dbUser.ID
+	ctx.Cookie.IsLoggedIn = true
 	setCookie(w, ctx.Cookie)
 	// Maybe: dbUserSetGoogleOauth(user, tokenCredJson)
 	http.Redirect(w, r, redir, http.StatusTemporaryRedirect)
@@ -104,12 +105,12 @@ func handleLoginGoogle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cb := getMyHost(r) + "/googleoauth2cb"
-	oauthGoogleCopy := oauthGoogleConf
-	oauthGoogleCopy.RedirectURL = cb
+	oauthCopy := oauthGoogleConf
+	oauthCopy.RedirectURL = cb
 	// oauth2 package has a way to add additional args to url (SetAuthURLParam)
 	// but google doesn't seem to send them back to callback url, so I encode
 	// redir inside secret
-	uri := oauthGoogleCopy.AuthCodeURL(oauthSecretPrefix+redir, oauth2.AccessTypeOnline)
+	uri := oauthCopy.AuthCodeURL(oauthSecretPrefix+redir, oauth2.AccessTypeOnline)
 	http.Redirect(w, r, uri, http.StatusTemporaryRedirect)
 }
 
@@ -120,6 +121,7 @@ func handleLogout(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		LogErrorf("Missing 'redir' arg for /logout\n")
 		redir = "/"
 	}
+	LogInfof("redir: '%s'\n", redir)
 	ctx.Cookie.IsLoggedIn = false
 	setCookie(w, ctx.Cookie)
 	http.Redirect(w, r, redir, http.StatusTemporaryRedirect)
