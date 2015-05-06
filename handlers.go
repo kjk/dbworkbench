@@ -40,12 +40,13 @@ type ReqOpts uint
 const (
 	OnlyGet ReqOpts = 1 << iota
 	OnlyPost
+	MustBeLoggedIn
 )
 
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
 	Cookie    *CookieValue
-	DbUser    *DbUser
+	User      *User
 	IsAdmin   bool
 	TimeStart time.Time
 }
@@ -171,15 +172,22 @@ func withctx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			TimeStart: time.Now(),
 		}
 
+		if opts&MustBeLoggedIn != 0 {
+			if ctx.Cookie.UserID == -1 {
+				http.NotFound(w, r)
+				return
+			}
+		}
+
 		if ctx.Cookie.UserID != -1 {
-			ctx.DbUser, _ = dbGetUserByIDCached(ctx.Cookie.UserID)
-			if ctx.DbUser == nil {
+			ctx.User, _ = dbGetUserByIDCached(ctx.Cookie.UserID)
+			if ctx.User == nil {
 				// if we have valid UserID, we should be able to look up the user
 				LogErrorf("dbGetUserByIDCached() returned nil for userId %d, url: %s\n", ctx.Cookie.UserID, r.RequestURI)
 				http.NotFound(w, r)
 				return
 			}
-			ctx.IsAdmin = isAdminUser(ctx.DbUser)
+			ctx.IsAdmin = isAdminUser(ctx.User.DbUser)
 		}
 
 		f(ctx, w, r)
@@ -550,18 +558,20 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
 	LogInfof("jsonp: '%s'\n", jsonp)
-	if ctx.DbUser != nil {
-		LogInfof("dbUser: %#v\n", ctx.DbUser)
+	if ctx.User != nil {
+		LogInfof("User: %#v\n", ctx.User)
 	}
 
 	v := struct {
-		Email      string
-		IsLoggedIn bool
+		Email        string
+		IsLoggedIn   bool
+		ConnectionID int
 	}{
 		IsLoggedIn: ctx.Cookie.IsLoggedIn,
 	}
-	if ctx.DbUser != nil {
-		v.Email = ctx.DbUser.Email
+	if ctx.User != nil {
+		v.Email = ctx.User.DbUser.Email
+		v.ConnectionID = ctx.User.ConnectionID
 	}
 	LogInfof("v: %#v\n", v)
 	serveJSONP(w, r, 200, v, jsonp)
@@ -570,18 +580,18 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 func registerHTTPHandlers() {
 	http.HandleFunc("/", withctx(handleIndex, OnlyGet))
 	http.HandleFunc("/s/", withctx(handleStatic, OnlyGet))
-	http.HandleFunc("/api/connect", withctx(handleConnect, OnlyPost))
+	http.HandleFunc("/api/connect", withctx(handleConnect, OnlyPost|MustBeLoggedIn))
 	http.HandleFunc("/api/history", handleHistory)
 	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
-	http.HandleFunc("/api/databases", withctx(handleGetDatabases, 0))
-	http.HandleFunc("/api/connection", withctx(handleConnectionInfo, 0))
-	http.HandleFunc("/api/activity", withctx(handleActivity, 0))
-	http.HandleFunc("/api/schemas", withctx(handleGetSchemas, 0))
-	http.HandleFunc("/api/tables", withctx(handleGetTables, 0))
-	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch, 0))
-	http.HandleFunc("/api/query", withctx(handleRunQuery, 0))
-	http.HandleFunc("/api/explain", withctx(handleExplainQuery, 0))
+	http.HandleFunc("/api/databases", withctx(handleGetDatabases, MustBeLoggedIn))
+	http.HandleFunc("/api/connection", withctx(handleConnectionInfo, MustBeLoggedIn))
+	http.HandleFunc("/api/activity", withctx(handleActivity, MustBeLoggedIn))
+	http.HandleFunc("/api/schemas", withctx(handleGetSchemas, MustBeLoggedIn))
+	http.HandleFunc("/api/tables", withctx(handleGetTables, MustBeLoggedIn))
+	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch, MustBeLoggedIn))
+	http.HandleFunc("/api/query", withctx(handleRunQuery, MustBeLoggedIn))
+	http.HandleFunc("/api/explain", withctx(handleExplainQuery, MustBeLoggedIn))
 	http.HandleFunc("/api/userinfo", withctx(handleUserInfo, 0))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)

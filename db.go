@@ -7,14 +7,16 @@ import (
 	"io/ioutil"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 var (
-	sqlDb       *sql.DB
-	errNYI      = errors.New("NYI")
-	muCache     sync.Mutex
-	dbUserCache map[int]*DbUser
+	sqlDb        *sql.DB
+	errNYI             = errors.New("NYI")
+	connectionID int32 = 1
+	muCache      sync.Mutex
+	dbUserCache  map[int]*User
 )
 
 // DbUser corresponds to users table
@@ -25,8 +27,19 @@ type DbUser struct {
 	FullName  string
 }
 
+type User struct {
+	DbUser       *DbUser
+	ConnectionID int
+}
+
+func genNewConnectionID() int {
+	id := atomic.AddInt32(&connectionID, 1)
+	// TODO: wrap around after some reasonably large number
+	return int(id)
+}
+
 func init() {
-	dbUserCache = make(map[int]*DbUser)
+	dbUserCache = make(map[int]*User)
 }
 
 func isErrNoRows(err error) bool {
@@ -52,7 +65,7 @@ func dbGetUserByID(id int) (*DbUser, error) {
 	return dbGetUserByQuery(q, id)
 }
 
-func dbGetUserByIDCached(id int) (*DbUser, error) {
+func dbGetUserByIDCached(id int) (*User, error) {
 	LogInfof("id: %d\n", id)
 	muCache.Lock()
 	if dbUser, ok := dbUserCache[id]; ok {
@@ -65,11 +78,13 @@ func dbGetUserByIDCached(id int) (*DbUser, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	user := &User{
+		DbUser: dbUser,
+	}
 	muCache.Lock()
-	dbUserCache[id] = dbUser
+	dbUserCache[id] = user
 	muCache.Unlock()
-	return dbUser, nil
+	return user, nil
 }
 
 func dbGetUserByEmail(email string) (*DbUser, error) {
