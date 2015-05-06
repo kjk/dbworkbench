@@ -35,6 +35,13 @@ type CookieValue struct {
 	GoogleAnalyticsID string
 }
 
+type ReqOpts uint
+
+const (
+	OnlyGet ReqOpts = 1 << iota
+	OnlyPost
+)
+
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
 	Cookie    *CookieValue
@@ -43,13 +50,12 @@ type ReqContext struct {
 	TimeStart time.Time
 }
 
-func isAdminUser(dbUser *DbUser) bool {
-	if dbUser == nil {
-		return false
-	}
-	switch dbUser.Email {
-	case "kkowalczyk@gmail.com":
-		return true
+func isAdminUser(u *DbUser) bool {
+	if u != nil {
+		switch u.Email {
+		case "kkowalczyk@gmail.com":
+			return true
+		}
 	}
 	return false
 }
@@ -143,25 +149,39 @@ func asset(fileName string) ([]byte, error) {
 // HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
 type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
 
-// TODO: wrap w within CountingResponseWriter which intercepts Write() and
-// remembers how much data we wrote and log this for analysis
-// TODO: also intercept WriteHeader() and remember code so that it can be
-// inspected after it has been written
-// TODO: add options, either as single int (flags) or optional args...
-// Flags could be GetOnly, PostOnly, NoLog, LoggedOnly (reject etc.
-func withctx(f HandlerWithCtxFunc) http.HandlerFunc {
+// TODO: wrap w within CountingResponseWriter
+func withctx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		method := strings.ToUpper(r.Method)
+		if opts&OnlyGet != 0 {
+			if method != "GET" {
+				http.NotFound(w, r)
+				return
+			}
+		}
+		if opts&OnlyPost != 0 {
+			if method != "POST" {
+				http.NotFound(w, r)
+				return
+			}
+		}
+
 		ctx := &ReqContext{
 			Cookie:    getOrCreateCookie(w, r),
 			TimeStart: time.Now(),
 		}
-		dbUser, err := dbGetUserByIDCached(ctx.Cookie.UserID)
-		if err != nil {
-			// shouldn't happen, log and ignore
-			LogErrorf("dbGetUserByIDCached('%d') failed with '%s'\n", ctx.Cookie.UserID, err)
+
+		if ctx.Cookie.UserID != -1 {
+			ctx.DbUser, _ = dbGetUserByIDCached(ctx.Cookie.UserID)
+			if ctx.DbUser == nil {
+				// if we have valid UserID, we should be able to look up the user
+				LogErrorf("dbGetUserByIDCached() returned nil for userId %d, url: %s\n", ctx.Cookie.UserID, r.RequestURI)
+				http.NotFound(w, r)
+				return
+			}
+			ctx.IsAdmin = isAdminUser(ctx.DbUser)
 		}
-		ctx.DbUser = dbUser
-		ctx.IsAdmin = isAdminUser(dbUser)
+
 		f(ctx, w, r)
 		// TODO: log this to a file for further analysis
 		LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
@@ -548,25 +568,25 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func registerHTTPHandlers() {
-	http.HandleFunc("/", withctx(handleIndex))
-	http.HandleFunc("/s/", withctx(handleStatic))
-	http.HandleFunc("/api/connect", withctx(handleConnect))
+	http.HandleFunc("/", withctx(handleIndex, OnlyGet))
+	http.HandleFunc("/s/", withctx(handleStatic, OnlyGet))
+	http.HandleFunc("/api/connect", withctx(handleConnect, OnlyPost))
 	http.HandleFunc("/api/history", handleHistory)
 	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
-	http.HandleFunc("/api/databases", withctx(handleGetDatabases))
-	http.HandleFunc("/api/connection", withctx(handleConnectionInfo))
-	http.HandleFunc("/api/activity", withctx(handleActivity))
-	http.HandleFunc("/api/schemas", withctx(handleGetSchemas))
-	http.HandleFunc("/api/tables", withctx(handleGetTables))
-	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch))
-	http.HandleFunc("/api/query", withctx(handleRunQuery))
-	http.HandleFunc("/api/explain", withctx(handleExplainQuery))
-	http.HandleFunc("/api/userinfo", withctx(handleUserInfo))
+	http.HandleFunc("/api/databases", withctx(handleGetDatabases, 0))
+	http.HandleFunc("/api/connection", withctx(handleConnectionInfo, 0))
+	http.HandleFunc("/api/activity", withctx(handleActivity, 0))
+	http.HandleFunc("/api/schemas", withctx(handleGetSchemas, 0))
+	http.HandleFunc("/api/tables", withctx(handleGetTables, 0))
+	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch, 0))
+	http.HandleFunc("/api/query", withctx(handleRunQuery, 0))
+	http.HandleFunc("/api/explain", withctx(handleExplainQuery, 0))
+	http.HandleFunc("/api/userinfo", withctx(handleUserInfo, 0))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)
-	http.HandleFunc("/logout", withctx(handleLogout))
-	http.HandleFunc("/googleoauth2cb", withctx(handleOauthGoogleCallback))
+	http.HandleFunc("/logout", withctx(handleLogout, 0))
+	http.HandleFunc("/googleoauth2cb", withctx(handleOauthGoogleCallback, 0))
 	http.HandleFunc("/showmyhost", handleShowMyHost)
 }
 
