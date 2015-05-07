@@ -53,7 +53,7 @@ var ConnectionWindow = React.createClass({
     this.setState({
       isConnecting: true,
     });
-    api.call("post", "/connect", { url: url }, function(resp) {
+    api.connect(url, function(resp) {
       if (resp.error) {
         console.log("handleConnectScheme: resp.error: ", resp.error);
         self.setState({
@@ -63,9 +63,9 @@ var ConnectionWindow = React.createClass({
       }
       else {
         console.log("did connect");
-        var connId = 1; // TODO: for now it's always 1
+        var connId = resp.ConnectionID;
         var connStr = self.state.connectionScheme;
-        var databaseName = resp.current_database;
+        var databaseName = resp.CurrentDatabase;
         self.props.onDidConnect(connStr, connId, databaseName);
       }
     });

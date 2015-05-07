@@ -13,6 +13,11 @@ function apiCall(method, path, params, cb) {
   });
 }
 
+function connect(url, cb) {
+  var opts = { url: url }
+  apiCall("post", "/connect", opts, cb);
+}
+
 function getTables(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables", opts, cb);
@@ -31,6 +36,11 @@ function getTableStructure(connId, table, cb) {
 function getTableIndexes(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table + "/indexes", opts, cb);
+}
+
+function getTableInfo(connId, table, cb) {
+  var opts = { conn_id : connId };
+  apiCall("get", "/tables/" + table + "/info", opts, cb);
 }
 
 function getHistory(connId, cb) {
@@ -83,11 +93,12 @@ function getConnectionInfo(connId, cb) {
 }
 
 module.exports = {
-  call: apiCall,
+  connect: connect,
   getTables: getTables,
   getTableRows: getTableRows,
   getTableStructure: getTableStructure,
   getTableIndexes: getTableIndexes,
+  getTableInfo: getTableInfo,
   getHistory: getHistory,
   getBookmarks: getBookmarks,
   getActivity: getActivity,

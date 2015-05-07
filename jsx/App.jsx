@@ -62,8 +62,7 @@ var App = React.createClass({
 
     var self = this;
     var connId = this.state.connectionId;
-    var opts = { conn_id : connId };
-    api.call("get", "/tables/" + table + "/info", opts, function(data) {
+    api.getTableInfo(connId, table, function(data) {
       //console.log("handleTableSelected: tableInfo: ", data);
       self.setState({
         selectedTableInfo: data,
@@ -226,7 +225,8 @@ var App = React.createClass({
   handleExplainQuery: function(query) {
     console.log("handleExplainQuery", query);
     var self = this;
-    api.explainQuery(query, function(data) {
+    var connId = this.state.connectionId;
+    api.explainQuery(connId, query, function(data) {
       self.setState({
         selectedView: view.SQLQuery,
         results: data
@@ -251,6 +251,7 @@ var App = React.createClass({
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
 
     var connId = this.state.connectionId;
+    var self = this;
     if (connId !== 0) {
       api.getTables(connId, function(data) {
         self.setState({

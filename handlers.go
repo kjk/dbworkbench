@@ -162,6 +162,7 @@ type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
 // TODO: wrap w within CountingResponseWriter
 func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cw := NewCountingResponseWriter(w)
 		method := strings.ToUpper(r.Method)
 		if opts&OnlyGet != 0 {
 			if method != "GET" {
@@ -204,11 +205,20 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		if opts&MustHaveConnection != 0 {
 			connID, err := strconv.Atoi(r.FormValue("conn_id"))
 			if err != nil || connID <= 0 {
-				LogErrorf("uri: %s, connId <= 0 or err != nil\n")
+				if err != nil {
+					LogErrorf("uri: '%s', err: '%s'\n", r.RequestURI, err)
+				} else {
+					LogErrorf("uri: '%s', connID: %d (should be > 0)\n", r.RequestURI, connID)
+				}
 				http.NotFound(w, r)
 				return
 			}
-			if ctx.User.dbClient == nil || ctx.User.ConnectionID == connID {
+			if ctx.User.dbClient == nil || ctx.User.ConnectionID != connID {
+				if ctx.User.dbClient == nil {
+					LogErrorf("ctx.User.dbClient == nil\n")
+				} else {
+					LogErrorf("ctx.User.ConnectionID != connID (%d != %d)\n", ctx.User.ConnectionID, connID)
+				}
 				http.NotFound(w, r)
 				return
 			}
@@ -216,10 +226,10 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			ctx.dbClient = ctx.User.dbClient
 		}
 
-		f(ctx, w, r)
+		f(ctx, cw, r)
 		if !strings.HasPrefix(r.RequestURI, "/s/") {
 			// TODO: log this to a file for further analysis
-			LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
+			LogInfof("%s took %s, code: %d\n", r.RequestURI, time.Since(ctx.TimeStart), cw.Code)
 		}
 
 		go func(r *http.Request, gaID string) {
@@ -346,17 +356,37 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	info, err := client.Info()
-
-	if err == nil {
-		// TODO: mutex protect
-		if ctx.User.dbClient != nil {
-			ctx.User.dbClient.db.Close()
-		}
-		ctx.User.ConnectionID = genNewConnectionID()
-		ctx.User.dbClient = client
+	if err != nil {
+		serveJSON(w, r, 400, Error{err.Error()})
+		return
 	}
 
-	serveJSON(w, r, 200, info.Format()[0])
+	// TODO: mutex protect
+	if ctx.User.dbClient != nil {
+		ctx.User.dbClient.db.Close()
+	}
+	ctx.User.ConnectionID = genNewConnectionID()
+	ctx.User.dbClient = client
+
+	i := info.Format()[0]
+	currDb, ok := i["current_database"]
+	if !ok {
+		serveJSON(w, r, 400, Error{"no current_database"})
+		return
+	}
+	currDbStr, ok := currDb.(string)
+	if !ok {
+		serveJSON(w, r, 400, Error{"invalid type"})
+		return
+	}
+	v := struct {
+		ConnectionID    int
+		CurrentDatabase string
+	}{
+		ConnectionID:    ctx.User.ConnectionID,
+		CurrentDatabase: currDbStr,
+	}
+	serveJSON(w, r, 200, v)
 }
 
 // POST /api/disconnect
@@ -605,10 +635,7 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 //  - jsonp : jsonp wrapper, optional
 func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
-	LogInfof("jsonp: '%s'\n", jsonp)
-	if ctx.User != nil {
-		LogInfof("User: %#v\n", ctx.User)
-	}
+	LogInfof("User: %#v\n", ctx.User)
 
 	v := struct {
 		Email        string
@@ -641,7 +668,7 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection))
 	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection))
 	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustHaveConnection))
-	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, 0))
+	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, MustBeLoggedIn))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)
 	http.HandleFunc("/logout", withCtx(handleLogout, 0))

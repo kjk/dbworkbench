@@ -6,8 +6,8 @@ import "net/http"
 // bytes were written and which code was sent
 type CountingResponseWriter struct {
 	w            http.ResponseWriter
-	bytesWritten int
-	code         int
+	BytesWritten int
+	Code         int
 }
 
 func NewCountingResponseWriter(w http.ResponseWriter) *CountingResponseWriter {
@@ -18,7 +18,7 @@ func NewCountingResponseWriter(w http.ResponseWriter) *CountingResponseWriter {
 
 func (w *CountingResponseWriter) Write(d []byte) (int, error) {
 	n, err := w.w.Write(d)
-	w.bytesWritten += n
+	w.BytesWritten += n
 	return n, err
 }
 
@@ -27,6 +27,6 @@ func (w *CountingResponseWriter) Header() http.Header {
 }
 
 func (w *CountingResponseWriter) WriteHeader(code int) {
-	w.code = code
+	w.Code = code
 	w.w.WriteHeader(code)
 }
