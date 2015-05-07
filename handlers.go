@@ -151,7 +151,7 @@ func asset(fileName string) ([]byte, error) {
 type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
 
 // TODO: wrap w within CountingResponseWriter
-func withctx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
+func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		method := strings.ToUpper(r.Method)
 		if opts&OnlyGet != 0 {
@@ -578,25 +578,25 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func registerHTTPHandlers() {
-	http.HandleFunc("/", withctx(handleIndex, OnlyGet))
-	http.HandleFunc("/s/", withctx(handleStatic, OnlyGet))
-	http.HandleFunc("/api/connect", withctx(handleConnect, OnlyPost|MustBeLoggedIn))
+	http.HandleFunc("/", withCtx(handleIndex, OnlyGet))
+	http.HandleFunc("/s/", withCtx(handleStatic, OnlyGet))
+	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|MustBeLoggedIn))
 	http.HandleFunc("/api/history", handleHistory)
 	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
-	http.HandleFunc("/api/databases", withctx(handleGetDatabases, MustBeLoggedIn))
-	http.HandleFunc("/api/connection", withctx(handleConnectionInfo, MustBeLoggedIn))
-	http.HandleFunc("/api/activity", withctx(handleActivity, MustBeLoggedIn))
-	http.HandleFunc("/api/schemas", withctx(handleGetSchemas, MustBeLoggedIn))
-	http.HandleFunc("/api/tables", withctx(handleGetTables, MustBeLoggedIn))
-	http.HandleFunc("/api/tables/", withctx(handleTablesDispatch, MustBeLoggedIn))
-	http.HandleFunc("/api/query", withctx(handleRunQuery, MustBeLoggedIn))
-	http.HandleFunc("/api/explain", withctx(handleExplainQuery, MustBeLoggedIn))
-	http.HandleFunc("/api/userinfo", withctx(handleUserInfo, 0))
+	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustBeLoggedIn))
+	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustBeLoggedIn))
+	http.HandleFunc("/api/activity", withCtx(handleActivity, MustBeLoggedIn))
+	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustBeLoggedIn))
+	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustBeLoggedIn))
+	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustBeLoggedIn))
+	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustBeLoggedIn))
+	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustBeLoggedIn))
+	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, 0))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)
-	http.HandleFunc("/logout", withctx(handleLogout, 0))
-	http.HandleFunc("/googleoauth2cb", withctx(handleOauthGoogleCallback, 0))
+	http.HandleFunc("/logout", withCtx(handleLogout, 0))
+	http.HandleFunc("/googleoauth2cb", withCtx(handleOauthGoogleCallback, 0))
 	http.HandleFunc("/showmyhost", handleShowMyHost)
 }
 
