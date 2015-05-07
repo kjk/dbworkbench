@@ -69,7 +69,7 @@ func dbGetUserByID(id int) (*DbUser, error) {
 }
 
 func dbGetUserByIDCached(id int) (*User, error) {
-	LogInfof("id: %d\n", id)
+	//LogInfof("id: %d\n", id)
 	muCache.Lock()
 	if dbUser, ok := dbUserCache[id]; ok {
 		muCache.Unlock()

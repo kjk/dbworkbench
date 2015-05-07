@@ -217,8 +217,10 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		}
 
 		f(ctx, w, r)
-		// TODO: log this to a file for further analysis
-		LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
+		if !strings.HasPrefix(r.RequestURI, "/s/") {
+			// TODO: log this to a file for further analysis
+			LogInfof("%s took %s\n", r.RequestURI, time.Since(ctx.TimeStart))
+		}
 
 		go func(r *http.Request, gaID string) {
 			err := gaLogPageView(r.UserAgent(), gaID, getClientIP(r), r.URL.Path, "", nil)
