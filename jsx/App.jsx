@@ -17,9 +17,9 @@ var App = React.createClass({
   getInitialState: function() {
     return {
       selectedView: view.SQLQuery,
-      connectionId: -1,
-      connected: false,
-      databaseName: "",
+      connectionId: gUserInfo.ConnectionID,
+      connected: gUserInfo.ConnectionID !== 0,
+      databaseName: "fixme: db name", // TODO: get database name
       tables: null,
       selectedTable: "",
       selectedTableInfo: null,
@@ -34,7 +34,8 @@ var App = React.createClass({
       databaseName: databaseName
     });
     var self = this;
-    api.getTables(function(data) {
+    var connId = this.state.connectionId;
+    api.getTables(connId, function(data) {
       self.setState({
         tables: data,
       });
@@ -60,7 +61,9 @@ var App = React.createClass({
     }, 200);
 
     var self = this;
-    api.call("get", "/tables/" + table + "/info", {}, function(data) {
+    var connId = this.state.connectionId;
+    var opts = { conn_id : connId };
+    api.call("get", "/tables/" + table + "/info", opts, function(data) {
       //console.log("handleTableSelected: tableInfo: ", data);
       self.setState({
         selectedTableInfo: data,
@@ -74,7 +77,9 @@ var App = React.createClass({
     var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
 
     var self = this;
-    api.getTableRows(this.state.selectedTable, params, function(data) {
+    var connId = this.state.connectionId;
+    var selectedTable = this.state.selectedTable;
+    api.getTableRows(connId, selectedTable, params, function(data) {
       console.log("getTableContent: ", data);
       self.setState({
         results: data
@@ -84,7 +89,9 @@ var App = React.createClass({
 
   getTableStructure: function() {
     var self = this;
-    api.getTableStructure(this.state.selectedTable, function(data) {
+    var connId = this.state.connectionId;
+    var selectedTable = this.state.selectedTable;
+    api.getTableStructure(connId, selectedTable, function(data) {
       console.log("getTableStructure: ", data);
       self.setState({
         results: data
@@ -94,7 +101,9 @@ var App = React.createClass({
 
   getTableIndexes: function() {
     var self = this;
-    api.getTableIndexes(this.state.selectedTable, function(data) {
+    var connId = this.state.connectionId;
+    var selectedTable = this.state.selectedTable;
+    api.getTableIndexes(connId, selectedTable, function(data) {
       console.log("getTableIndexes: ", data);
       self.setState({
         results: data
@@ -104,7 +113,8 @@ var App = React.createClass({
 
   getHistory: function() {
     var self = this;
-    api.getHistory(function(data) {
+    var connId = this.state.connectionId;
+    api.getHistory(connId, function(data) {
       console.log("getHistory: ", data);
       self.setState({
         results: data
@@ -124,7 +134,8 @@ var App = React.createClass({
 
   getActivity: function() {
     var self = this;
-    api.getActivity(function(data) {
+    var connId = this.state.connectionId;
+    api.getActivity(connId, function(data) {
       console.log("getActivity: ", data);
       self.setState({
         results: data
@@ -134,7 +145,8 @@ var App = React.createClass({
 
   getConnectionInfo: function() {
     var self = this;
-    api.getConnectionInfo(function(data) {
+    var connId = this.state.connectionId;
+    api.getConnectionInfo(connId, function(data) {
       self.setState({
         results: data
       });
@@ -147,7 +159,7 @@ var App = React.createClass({
       selectedView: viewName
     });
 
-    if (this.state.connectionId === -1) {
+    if (this.state.connectionId === 0) {
       console.log("handleViewSelected: not connected, connectionId: ", this.state.connectionId);
       return;
     }
@@ -193,7 +205,8 @@ var App = React.createClass({
   handleExecuteQuery: function(query) {
     console.log("handleExecuteQuery", query);
     var self = this;
-    api.executeQuery(query, function(data) {
+    var connId = this.state.connectionId;
+    api.executeQuery(connId, query, function(data) {
       self.setState({
         results: data
       });
@@ -201,7 +214,7 @@ var App = React.createClass({
       // refresh tables list if table was added or removed
       var re = /(create|drop) table/i;
       if (query.match(re)) {
-        api.getTables(function(data) {
+        api.getTables(self.state.connectionId, function(data) {
           self.setState({
             tables: data,
           });
@@ -236,6 +249,15 @@ var App = React.createClass({
     this.cidTableSelected = action.onTableSelected(this.handleTableSelected);
     this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
+
+    var connId = this.state.connectionId;
+    if (connId !== 0) {
+      api.getTables(connId, function(data) {
+        self.setState({
+          tables: data,
+        });
+      });
+    }
   },
 
   componentDidUnmount: function() {

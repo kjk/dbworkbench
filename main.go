@@ -33,41 +33,11 @@ type Options struct {
 	IsLocal  bool   `long:"local" description:"is true if running locally (dev mode)"`
 }
 
-var dbClient *Client
 var options Options
 
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
 	os.Exit(1)
-}
-
-func initClient() {
-	if connectionSettingsBlank(options) {
-		return
-	}
-
-	client, err := NewClient()
-	if err != nil {
-		exitWithMessage(err.Error())
-	}
-
-	if options.Debug {
-		fmt.Println("Server connection string:", client.connectionString)
-	}
-
-	fmt.Println("Connecting to server...")
-	err = client.Test()
-	if err != nil {
-		exitWithMessage(err.Error())
-	}
-
-	fmt.Println("Checking tables...")
-	_, err = client.Tables()
-	if err != nil {
-		exitWithMessage(err.Error())
-	}
-
-	dbClient = client
 }
 
 func initOptions() {
@@ -150,12 +120,6 @@ func main() {
 
 	if options.IsLocal {
 		startWebpackWatch()
-	}
-
-	initClient()
-
-	if dbClient != nil {
-		defer dbClient.db.Close()
 	}
 
 	if options.Debug {

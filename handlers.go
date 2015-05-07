@@ -35,20 +35,29 @@ type CookieValue struct {
 	GoogleAnalyticsID string
 }
 
+// ReqOpts is a set of flags passed to withCtx
 type ReqOpts uint
 
 const (
+	// OnlyGet tells to reject non-GET requests
 	OnlyGet ReqOpts = 1 << iota
+	// OnlyPost tells to reject non-POST requests
 	OnlyPost
+	// MustBeLoggedIn tells to reject requests if user is not logged in
 	MustBeLoggedIn
+	// MustHaveConnection tells to reject requests if conn_id request arg is not
+	// present. Implies MustBeLoggedIn
+	MustHaveConnection
 )
 
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
-	Cookie    *CookieValue
-	User      *User
-	IsAdmin   bool
-	TimeStart time.Time
+	Cookie       *CookieValue
+	User         *User
+	IsAdmin      bool
+	TimeStart    time.Time
+	ConnectionID int
+	dbClient     *Client
 }
 
 func isAdminUser(u *DbUser) bool {
@@ -156,12 +165,14 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		method := strings.ToUpper(r.Method)
 		if opts&OnlyGet != 0 {
 			if method != "GET" {
+				LogErrorf("uri: %s, not GET\n", r.RequestURI)
 				http.NotFound(w, r)
 				return
 			}
 		}
 		if opts&OnlyPost != 0 {
 			if method != "POST" {
+				LogErrorf("uri: %s, not POST\n", r.RequestURI)
 				http.NotFound(w, r)
 				return
 			}
@@ -169,11 +180,11 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 
 		ctx := &ReqContext{
 			Cookie:    getOrCreateCookie(w, r),
-			TimeStart: time.Now(),
-		}
+			TimeStart: time.Now()}
 
-		if opts&MustBeLoggedIn != 0 {
+		if opts&MustBeLoggedIn != 0 || opts&MustHaveConnection != 0 {
 			if ctx.Cookie.UserID == -1 {
+				LogErrorf("uri: %s, ctx.Cookie.UserID is -1\n")
 				http.NotFound(w, r)
 				return
 			}
@@ -188,6 +199,21 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 				return
 			}
 			ctx.IsAdmin = isAdminUser(ctx.User.DbUser)
+		}
+
+		if opts&MustHaveConnection != 0 {
+			connID, err := strconv.Atoi(r.FormValue("conn_id"))
+			if err != nil || connID <= 0 {
+				LogErrorf("uri: %s, connId <= 0 or err != nil\n")
+				http.NotFound(w, r)
+				return
+			}
+			if ctx.User.dbClient == nil || ctx.User.ConnectionID == connID {
+				http.NotFound(w, r)
+				return
+			}
+			ctx.ConnectionID = connID
+			ctx.dbClient = ctx.User.dbClient
 		}
 
 		f(ctx, w, r)
@@ -320,19 +346,35 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	info, err := client.Info()
 
 	if err == nil {
-		if dbClient != nil {
-			dbClient.db.Close()
+		// TODO: mutex protect
+		if ctx.User.dbClient != nil {
+			ctx.User.dbClient.db.Close()
 		}
-
-		dbClient = client
+		ctx.User.ConnectionID = genNewConnectionID()
+		ctx.User.dbClient = client
 	}
 
 	serveJSON(w, r, 200, info.Format()[0])
 }
 
+// POST /api/disconnect
+func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	// TODO: mutex protect
+	if ctx.User.dbClient != nil {
+		ctx.User.dbClient.db.Close()
+		ctx.User.ConnectionID = 0
+	}
+	v := struct {
+		Message string
+	}{
+		Message: "ok",
+	}
+	serveJSON(w, r, 200, v)
+}
+
 // GET /api/databases
 func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	names, err := dbClient.Databases()
+	names, err := ctx.dbClient.Databases()
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -343,7 +385,7 @@ func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 }
 
 func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
-	result, err := dbClient.Query(query)
+	result, err := ctx.dbClient.Query(query)
 
 	if err != nil {
 		LogErrorf("query: '%s', err: %s\n", query, err)
@@ -391,8 +433,8 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 }
 
 // GET /api/history
-func handleHistory(w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, 200, dbClient.history)
+func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	serveJSON(w, r, 200, ctx.dbClient.history)
 }
 
 // GET /api/bookmarks
@@ -409,7 +451,7 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/connection
 func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	res, err := dbClient.Info()
+	res, err := ctx.dbClient.Info()
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -421,7 +463,7 @@ func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 
 // GET /api/activity
 func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	res, err := dbClient.Activity()
+	res, err := ctx.dbClient.Activity()
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
 		return
@@ -432,7 +474,7 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/schemas
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	names, err := dbClient.Schemas()
+	names, err := ctx.dbClient.Schemas()
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -444,9 +486,11 @@ func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/tables
 func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	names, err := dbClient.Tables()
+	LogInfof("connID: %d\n", ctx.ConnectionID)
+	names, err := ctx.dbClient.Tables()
 
 	if err != nil {
+		LogErrorf("ctx.dbClient.Tables() failed with '%s'\n", err)
 		serveJSON(w, r, 400, NewError(err))
 		return
 	}
@@ -455,10 +499,11 @@ func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	res, err := dbClient.Table(table)
+	res, err := ctx.dbClient.Table(table)
 	LogInfof("table: '%s'\n", table)
 
 	if err != nil {
+		LogErrorf("ctx.dbClient.Table('%s') failed with '%s'\n", table, err)
 		serveJSON(w, r, 400, NewError(err))
 		return
 	}
@@ -493,9 +538,10 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 		SortOrder:  r.FormValue("sort_order"),
 	}
 
-	res, err := dbClient.TableRows(table, opts)
+	res, err := ctx.dbClient.TableRows(table, opts)
 
 	if err != nil {
+		LogErrorf("ctx.dbClient.TableRowss() failed with '%s'\n", err)
 		serveJSON(w, r, 400, NewError(err))
 		return
 	}
@@ -504,7 +550,7 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 }
 
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	res, err := dbClient.TableInfo(table)
+	res, err := ctx.dbClient.TableInfo(table)
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -516,7 +562,7 @@ func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 
 func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
-	res, err := dbClient.TableIndexes(table)
+	res, err := ctx.dbClient.TableIndexes(table)
 
 	if err != nil {
 		serveJSON(w, r, 400, NewError(err))
@@ -581,17 +627,18 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/", withCtx(handleIndex, OnlyGet))
 	http.HandleFunc("/s/", withCtx(handleStatic, OnlyGet))
 	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|MustBeLoggedIn))
-	http.HandleFunc("/api/history", handleHistory)
+	http.HandleFunc("/api/disconnect", withCtx(handleDisconnect, OnlyPost|MustHaveConnection))
+	http.HandleFunc("/api/history", withCtx(handleHistory, MustHaveConnection))
 	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
-	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustBeLoggedIn))
-	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustBeLoggedIn))
-	http.HandleFunc("/api/activity", withCtx(handleActivity, MustBeLoggedIn))
-	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustBeLoggedIn))
-	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustBeLoggedIn))
-	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustBeLoggedIn))
-	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustBeLoggedIn))
-	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustBeLoggedIn))
+	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection))
+	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection))
+	http.HandleFunc("/api/activity", withCtx(handleActivity, MustHaveConnection))
+	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustHaveConnection))
+	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustHaveConnection))
+	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection))
+	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection))
+	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustHaveConnection))
 	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, 0))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)

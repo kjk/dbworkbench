@@ -27,9 +27,12 @@ type DbUser struct {
 	FullName  string
 }
 
+// User describes information about a user
 type User struct {
-	DbUser       *DbUser
+	DbUser *DbUser
+	// TODO: allow multiple connections
 	ConnectionID int
+	dbClient     *Client
 }
 
 func genNewConnectionID() int {
