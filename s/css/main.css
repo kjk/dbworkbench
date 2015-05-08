@@ -423,3 +423,50 @@
 .connection-settings form p.help-block {
   font-size: 12px;
 }
+
+.overlay {
+  position: fixed;
+  overflow: auto;
+  text-align: center;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: block;
+  z-index: 900;
+  background-color: rgba(255,255,255,0.97);
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.button--close {
+  font-size: 32px;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  font-family: "jaf-bernino-sans","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+.overlay-dialog--signin {
+  max-width: 620px;
+}
+
+.overlay-dialog--signin, .overlay-dialog--alert, .overlay-dialog--confirm {
+  text-align: center;
+}
+
+.overlay-dialog {
+  display: inline-block;
+  vertical-align: middle;
+  outline: none;
+  overflow: hidden;
+  max-width: 580px;
+  padding: 100px 80px;
+}
