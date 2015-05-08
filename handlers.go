@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -28,6 +27,9 @@ var (
 	secureCookie *securecookie.SecureCookie
 )
 
+// HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
+type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
+
 // CookieValue contains data we set in browser cookie
 type CookieValue struct {
 	UserID            int
@@ -48,6 +50,9 @@ const (
 	// MustHaveConnection tells to reject requests if conn_id request arg is not
 	// present. Implies MustBeLoggedIn
 	MustHaveConnection
+	// IsJSON denotes a handler that is serving JSON requests and should send
+	// errors as { "error": "error message" }
+	IsJSON
 )
 
 // ReqContext contains data that is useful to access in every http handler
@@ -68,16 +73,6 @@ func isAdminUser(u *DbUser) bool {
 		}
 	}
 	return false
-}
-
-// Error is error message sent to client as json response for backend errors
-type Error struct {
-	Message string `json:"error"`
-}
-
-// NewError creates a new Error
-func NewError(err error) Error {
-	return Error{err.Error()}
 }
 
 func initCookieMust() {
@@ -156,25 +151,30 @@ func asset(fileName string) ([]byte, error) {
 	return ioutil.ReadFile(fileName)
 }
 
-// HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
-type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
+func serveError(w http.ResponseWriter, r *http.Request, isJSON bool, errMsg string) {
+	if isJSON {
+		serveJSONError(w, r, errMsg)
+		return
+	}
+	LogErrorf("uri: '%s', err: '%s'\n", r.RequestURI, errMsg)
+	http.NotFound(w, r)
+}
 
-// TODO: wrap w within CountingResponseWriter
 func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		isJSON := opts&IsJSON != 0
+
 		cw := NewCountingResponseWriter(w)
 		method := strings.ToUpper(r.Method)
 		if opts&OnlyGet != 0 {
 			if method != "GET" {
-				LogErrorf("uri: %s, not GET\n", r.RequestURI)
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, fmt.Sprintf("%s is not GET", r.Method))
 				return
 			}
 		}
 		if opts&OnlyPost != 0 {
 			if method != "POST" {
-				LogErrorf("uri: %s, not POST\n", r.RequestURI)
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, fmt.Sprintf("%s is not POST", r.Method))
 				return
 			}
 		}
@@ -185,8 +185,7 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 
 		if opts&MustBeLoggedIn != 0 || opts&MustHaveConnection != 0 {
 			if ctx.Cookie.UserID == -1 {
-				LogErrorf("uri: %s, ctx.Cookie.UserID is -1\n")
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, "must be logged")
 				return
 			}
 		}
@@ -195,8 +194,7 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			ctx.User, _ = dbGetUserByIDCached(ctx.Cookie.UserID)
 			if ctx.User == nil {
 				// if we have valid UserID, we should be able to look up the user
-				LogErrorf("dbGetUserByIDCached() returned nil for userId %d, url: %s\n", ctx.Cookie.UserID, r.RequestURI)
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, fmt.Sprintf("dbGetUserByIDCached() returned nil for userId %d", ctx.Cookie.UserID))
 				return
 			}
 			ctx.IsAdmin = isAdminUser(ctx.User.DbUser)
@@ -205,21 +203,23 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		if opts&MustHaveConnection != 0 {
 			connID, err := strconv.Atoi(r.FormValue("conn_id"))
 			if err != nil || connID <= 0 {
+				var errMsg string
 				if err != nil {
-					LogErrorf("uri: '%s', err: '%s'\n", r.RequestURI, err)
+					errMsg = err.Error()
 				} else {
-					LogErrorf("uri: '%s', connID: %d (should be > 0)\n", r.RequestURI, connID)
+					errMsg = fmt.Sprintf("connID: %d (should be > 0)", connID)
 				}
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, errMsg)
 				return
 			}
 			if ctx.User.dbClient == nil || ctx.User.ConnectionID != connID {
+				var errMsg string
 				if ctx.User.dbClient == nil {
-					LogErrorf("ctx.User.dbClient == nil\n")
+					errMsg = "ctx.User.dbClient == nil"
 				} else {
-					LogErrorf("ctx.User.ConnectionID != connID (%d != %d)\n", ctx.User.ConnectionID, connID)
+					errMsg = fmt.Sprintf("ctx.User.ConnectionID != connID (%d != %d)", ctx.User.ConnectionID, connID)
 				}
-				http.NotFound(w, r)
+				serveError(w, r, isJSON, errMsg)
 				return
 			}
 			ctx.ConnectionID = connID
@@ -247,12 +247,12 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 
 	if err != nil {
 		LogErrorf("asset('%s') failed with '%s'\n", path, err)
-		serveString(w, r, 404, err.Error())
+		servePlainText(w, r, 404, err.Error())
 		return
 	}
 
 	if len(data) == 0 {
-		serveString(w, r, 404, "Asset is empty")
+		servePlainText(w, r, 404, "Asset is empty")
 		return
 	}
 
@@ -281,19 +281,35 @@ func writeHeader(w http.ResponseWriter, code int, contentType string) {
 	w.WriteHeader(code)
 }
 
-func serveJSON(w http.ResponseWriter, r *http.Request, code int, v interface{}) error {
-	writeHeader(w, code, "application/json")
+// err can be an error, a string or anything that can be converted to string
+func serveJSONError(w http.ResponseWriter, r *http.Request, errMsg interface{}) {
+	writeHeader(w, 400, "application/json") // Note: maybe different code, like 500?
+	msg := fmt.Sprintf("%s", errMsg)
+	LogErrorf("url: '%s', err: '%s'\n", r.RequestURI, msg)
+	v := struct {
+		Error string `json:"error"`
+	}{
+		Error: msg,
+	}
+
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(v); err != nil {
+		LogErrorf("err: %s\n", err)
+	}
+}
+
+func serveJSON(w http.ResponseWriter, r *http.Request, v interface{}) error {
+	writeHeader(w, 200, "application/json")
 	encoder := json.NewEncoder(w)
 	return encoder.Encode(v)
 }
 
-func serveJSONP(w http.ResponseWriter, r *http.Request, code int, v interface{}, jsonp string) error {
-	writeHeader(w, code, "application/json")
-
+func serveJSONP(w http.ResponseWriter, r *http.Request, v interface{}, jsonp string) error {
 	if jsonp == "" {
-		return serveJSON(w, r, code, v)
+		return serveJSON(w, r, v)
 	}
 
+	writeHeader(w, 200, "application/json")
 	b, err := json.Marshal(v)
 	if err != nil {
 		// should never happen
@@ -308,7 +324,7 @@ func serveJSONP(w http.ResponseWriter, r *http.Request, code int, v interface{},
 	return err
 }
 
-func serveString(w http.ResponseWriter, r *http.Request, code int, format string, args ...interface{}) error {
+func servePlainText(w http.ResponseWriter, r *http.Request, code int, format string, args ...interface{}) error {
 	writeHeader(w, code, "text/plain")
 	var err error
 	if len(args) > 0 {
@@ -331,7 +347,7 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
-		serveJSON(w, r, 400, Error{"Url parameter is required"})
+		serveJSONError(w, r, "Url parameter is required")
 		return
 	}
 
@@ -339,25 +355,25 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url, err := formatConnectionUrl(opts)
 
 	if err != nil {
-		serveJSON(w, r, 400, Error{err.Error()})
+		serveJSONError(w, r, err)
 		return
 	}
 
 	client, err := NewClientFromUrl(url)
 	if err != nil {
-		serveJSON(w, r, 400, Error{err.Error()})
+		serveJSONError(w, r, err)
 		return
 	}
 
 	err = client.Test()
 	if err != nil {
-		serveJSON(w, r, 400, Error{err.Error()})
+		serveJSONError(w, r, err)
 		return
 	}
 
 	info, err := client.Info()
 	if err != nil {
-		serveJSON(w, r, 400, Error{err.Error()})
+		serveJSONError(w, r, err)
 		return
 	}
 
@@ -371,12 +387,12 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	i := info.Format()[0]
 	currDb, ok := i["current_database"]
 	if !ok {
-		serveJSON(w, r, 400, Error{"no current_database"})
+		serveJSONError(w, r, "no current_database")
 		return
 	}
 	currDbStr, ok := currDb.(string)
 	if !ok {
-		serveJSON(w, r, 400, Error{"invalid type"})
+		serveJSONError(w, r, "invalid type")
 		return
 	}
 	v := struct {
@@ -386,7 +402,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		ConnectionID:    ctx.User.ConnectionID,
 		CurrentDatabase: currDbStr,
 	}
-	serveJSON(w, r, 200, v)
+	serveJSON(w, r, v)
 }
 
 // POST /api/disconnect
@@ -401,27 +417,24 @@ func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}{
 		Message: "ok",
 	}
-	serveJSON(w, r, 200, v)
+	serveJSON(w, r, v)
 }
 
 // GET /api/databases
 func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	names, err := ctx.dbClient.Databases()
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
-
-	serveJSON(w, r, 200, names)
+	serveJSON(w, r, names)
 }
 
 func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
 	result, err := ctx.dbClient.Query(query)
 
 	if err != nil {
-		LogErrorf("query: '%s', err: %s\n", query, err)
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
@@ -435,16 +448,16 @@ func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query 
 		return
 	}
 
-	serveJSON(w, r, 200, result)
+	serveJSON(w, r, result)
 }
 
 // GET | POST /api/query
 func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
-	LogInfof("query: '%s'\n", query)
+	//LogInfof("query: '%s'\n", query)
 
 	if query == "" {
-		serveJSON(w, r, 400, errors.New("Query parameter is missing"))
+		serveJSONError(w, r, "Query parameter is missing")
 		return
 	}
 
@@ -454,10 +467,10 @@ func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 // GET | POST /api/explain
 func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
-	LogInfof("query: '%s'\n", query)
+	//LogInfof("query: '%s'\n", query)
 
 	if query == "" {
-		serveJSON(w, r, 400, errors.New("Query parameter is missing"))
+		serveJSONError(w, r, "Query parameter is missing")
 		return
 	}
 
@@ -466,81 +479,74 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 // GET /api/history
 func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, 200, ctx.dbClient.history)
+	serveJSON(w, r, ctx.dbClient.history)
 }
 
 // GET /api/bookmarks
 func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 	bookmarks, err := readAllBookmarks(bookmarksPath())
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, bookmarks)
+	serveJSON(w, r, bookmarks)
 }
 
 // GET /api/connection
 func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	res, err := ctx.dbClient.Info()
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res.Format()[0])
+	serveJSON(w, r, res.Format()[0])
 }
 
 // GET /api/activity
 func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	res, err := ctx.dbClient.Activity()
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res)
+	serveJSON(w, r, res)
 }
 
 // GET /api/schemas
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	names, err := ctx.dbClient.Schemas()
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, names)
+	serveJSON(w, r, names)
 }
 
 // GET /api/tables
 func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	LogInfof("connID: %d\n", ctx.ConnectionID)
+	//LogInfof("connID: %d\n", ctx.ConnectionID)
 	names, err := ctx.dbClient.Tables()
-
 	if err != nil {
-		LogErrorf("ctx.dbClient.Tables() failed with '%s'\n", err)
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, names)
+	serveJSON(w, r, names)
 }
 
 func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := ctx.dbClient.Table(table)
-	LogInfof("table: '%s'\n", table)
-
+	//LogInfof("table: '%s'\n", table)
 	if err != nil {
-		LogErrorf("ctx.dbClient.Table('%s') failed with '%s'\n", table, err)
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res)
+	serveJSON(w, r, res)
 }
 
 func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
@@ -550,14 +556,13 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 
 	if limitVal != "" {
 		num, err := strconv.Atoi(limitVal)
-
 		if err != nil {
-			serveJSON(w, r, 400, Error{"Invalid limit value"})
+			serveJSONError(w, r, "Invalid limit value")
 			return
 		}
 
 		if num <= 0 {
-			serveJSON(w, r, 400, Error{"Limit should be greater than 0"})
+			serveJSONError(w, r, "Limit should be greater than 0")
 			return
 		}
 
@@ -571,37 +576,33 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 	}
 
 	res, err := ctx.dbClient.TableRows(table, opts)
-
 	if err != nil {
-		LogErrorf("ctx.dbClient.TableRowss() failed with '%s'\n", err)
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res)
+	serveJSON(w, r, res)
 }
 
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := ctx.dbClient.TableInfo(table)
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res.Format()[0])
+	serveJSON(w, r, res.Format()[0])
 }
 
 func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
 	res, err := ctx.dbClient.TableIndexes(table)
-
 	if err != nil {
-		serveJSON(w, r, 400, NewError(err))
+		serveJSONError(w, r, err)
 		return
 	}
 
-	serveJSON(w, r, 200, res)
+	serveJSON(w, r, res)
 }
 
 // GET /api/tables/:table/:action
@@ -649,26 +650,26 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		v.ConnectionID = ctx.User.ConnectionID
 	}
 	LogInfof("v: %#v\n", v)
-	serveJSONP(w, r, 200, v, jsonp)
+	serveJSONP(w, r, v, jsonp)
 }
 
 func registerHTTPHandlers() {
 	http.HandleFunc("/", withCtx(handleIndex, OnlyGet))
 	http.HandleFunc("/s/", withCtx(handleStatic, OnlyGet))
-	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|MustBeLoggedIn))
-	http.HandleFunc("/api/disconnect", withCtx(handleDisconnect, OnlyPost|MustHaveConnection))
-	http.HandleFunc("/api/history", withCtx(handleHistory, MustHaveConnection))
-	http.HandleFunc("/api/bookmarks", handleBookmarks)
 
-	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection))
-	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection))
-	http.HandleFunc("/api/activity", withCtx(handleActivity, MustHaveConnection))
-	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustHaveConnection))
-	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustHaveConnection))
-	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection))
-	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection))
-	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustHaveConnection))
-	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, MustBeLoggedIn))
+	http.HandleFunc("/api/activity", withCtx(handleActivity, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/bookmarks", handleBookmarks)
+	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|MustBeLoggedIn|IsJSON))
+	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/disconnect", withCtx(handleDisconnect, OnlyPost|MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/history", withCtx(handleHistory, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, MustBeLoggedIn|IsJSON))
 
 	http.HandleFunc("/logingoogle", handleLoginGoogle)
 	http.HandleFunc("/logout", withCtx(handleLogout, 0))
@@ -679,7 +680,7 @@ func registerHTTPHandlers() {
 // GET /showmyhost, for testing only
 func handleShowMyHost(w http.ResponseWriter, r *http.Request) {
 	s := getMyHost(r)
-	serveString(w, r, 200, "me: %s\n", s)
+	servePlainText(w, r, 200, "me: %s\n", s)
 }
 
 func startWebServer() {
