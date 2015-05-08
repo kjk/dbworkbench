@@ -72,6 +72,7 @@
   left: 0px;
   top: 50px;
   bottom: 0px;
+  border-right: 1px solid black;
 }
 
 #sidebar .title {
@@ -83,7 +84,7 @@
   padding: 0px 8px;
   padding-left: 12px;
   color: #fff;
-  background: #31373d;
+  /* background: #31373d; */
 }
 
 #sidebar div.tables-list {
@@ -93,7 +94,7 @@
   left: 0px;
   bottom: 130px;
   overflow: auto;
-  background: #31373d;
+  /* background: #31373d; */
 }
 
 #sidebar div.tables-list .wrap {
@@ -131,7 +132,7 @@
   left: 0px;
   height: 130px;
   bottom: 0px;
-  background: #272c30;
+  /* background: #272c30; */
 }
 
 #sidebar div.table-information .wrap {
@@ -170,23 +171,26 @@
 #sidebar ul li {
   list-style: none;
   list-style-type: none;
-  line-height: 30px;
+  /* line-height: 1.2em; */
   padding: 0px;
   margin: 0px;
   cursor: pointer;
-  color: #95a7b7 !important;
+  /* color: #95a7b7 !important; */
+  color: black;
   white-space: nowrap;
 }
 
 #sidebar li.selected {
-  color: #fff !important;
+  /*background: #272c30;
+  color: #fff !important;*/
+  background: #eeeeee;
+  color: black;
   font-weight: bold;
-  background: #272c30;
   -webkit-font-smoothing: antialiased;
 }
 
 #sidebar ul li:hover span {
-  background: #272c30;
+  background: #dddddd;
 }
 
 #sidebar ul li i {
