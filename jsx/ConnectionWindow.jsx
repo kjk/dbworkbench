@@ -301,7 +301,7 @@ var ConnectionWindow = React.createClass({
   },
 
   render: function() {
-    var isLoggedIn = gUserInfo.IsLoggedIn;
+    var isLoggedIn = gUserInfo ? gUserInfo.IsLoggedIn : false;
     console.log("isLoggedIn: ", isLoggedIn);
     return (
       <div>

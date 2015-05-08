@@ -161,7 +161,7 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			TimeStart: time.Now()}
 
 		if opts&MustBeLoggedIn != 0 || opts&MustHaveConnection != 0 {
-			if ctx.Cookie.UserID == -1 {
+			if !ctx.Cookie.IsLoggedIn || ctx.Cookie.UserID == -1 {
 				serveError(w, r, isJSON, "must be logged")
 				return
 			}

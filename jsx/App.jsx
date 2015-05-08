@@ -17,8 +17,8 @@ var App = React.createClass({
   getInitialState: function() {
     return {
       selectedView: view.SQLQuery,
-      connectionId: gUserInfo.ConnectionID,
-      connected: gUserInfo.ConnectionID !== 0,
+      connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
+      connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
       databaseName: "fixme: db name", // TODO: get database name
       tables: null,
       selectedTable: "",
