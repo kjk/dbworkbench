@@ -7,16 +7,20 @@ import (
 	"io/ioutil"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
 var (
-	sqlDb        *sql.DB
-	errNYI             = errors.New("NYI")
-	connectionID int32 = 1
-	muCache      sync.Mutex
-	dbUserCache  map[int]*User
+	sqlDb  *sql.DB
+	errNYI = errors.New("NYI")
+)
+
+var (
+	// single muCache protects all things below
+	muCache          sync.Mutex
+	nextConnectionID = 1
+	userCache        map[int]*User           // maps user id to User
+	connections      map[int]*ConnectionInfo // maps connection id to ConnectionInfo
 )
 
 // DbUser corresponds to users table
@@ -31,18 +35,123 @@ type DbUser struct {
 type User struct {
 	DbUser *DbUser
 	// TODO: allow multiple connections
-	ConnectionID int
-	dbClient     *Client
+	ConnInfo *ConnectionInfo
 }
 
-func genNewConnectionID() int {
-	id := atomic.AddInt32(&connectionID, 1)
-	// TODO: wrap around after some reasonably large number
-	return int(id)
+// ConnectionInfo contains information about a database connection
+type ConnectionInfo struct {
+	ConnectionString string
+	ConnectionID     int
+	UserID           int
+	CreatedAt        time.Time
+	LastAccessAt     time.Time
+	Client           *Client
+}
+
+func copyConnectionInfo(ci *ConnectionInfo) *ConnectionInfo {
+	if ci == nil {
+		return nil
+	}
+	return &ConnectionInfo{
+		ConnectionString: ci.ConnectionString,
+		ConnectionID:     ci.ConnectionID,
+		UserID:           ci.UserID,
+		CreatedAt:        ci.CreatedAt,
+		LastAccessAt:     ci.LastAccessAt,
+		Client:           ci.Client,
+	}
+}
+
+func copyDbUser(u *DbUser) *DbUser {
+	if u == nil {
+		return nil
+	}
+	return &DbUser{
+		ID:        u.ID,
+		CreatedAt: u.CreatedAt,
+		Email:     u.Email,
+		FullName:  u.FullName,
+	}
+}
+
+// copyUser makes a deep copy of User so that it can be accessed without locking.
+// Corollary: this is read-only, to make changes
+func copyUser(u *User) *User {
+	if u == nil {
+		return nil
+	}
+	return &User{
+		DbUser:   copyDbUser(u.DbUser),
+		ConnInfo: copyConnectionInfo(u.ConnInfo),
+	}
+}
+
+// creates new ConnectionInfo for a user and update user info. make sure
+// to call removeCurrentUserConnectionInfo before calling this
+func addConnectionInfo(connString string, userID int, client *Client) *ConnectionInfo {
+	muCache.Lock()
+	defer muCache.Unlock()
+	nextConnectionID++
+	conn := &ConnectionInfo{
+		ConnectionString: connString,
+		ConnectionID:     nextConnectionID,
+		UserID:           userID,
+		CreatedAt:        time.Now(),
+		LastAccessAt:     time.Now(),
+		Client:           client,
+	}
+	if user := userCache[userID]; user != nil {
+		user.ConnInfo = conn
+	} else {
+		// TODO: shouldn't happen, log an error
+	}
+	return conn
+}
+
+func removeCurrentUserConnectionInfo(userID int) {
+	muCache.Lock()
+	defer muCache.Unlock()
+	if user := userCache[userID]; user != nil {
+		if user.ConnInfo != nil && user.ConnInfo.Client != nil {
+			user.ConnInfo.Client.db.Close()
+			user.ConnInfo = nil
+		}
+	} else {
+		// TODO: shouldnt' happen, log an error
+	}
+}
+
+func withUserLocked(userID int, f func(*User)) bool {
+	foundUser := false
+	muCache.Lock()
+	if user := userCache[userID]; user != nil {
+		f(user)
+		foundUser = true
+	}
+	muCache.Unlock()
+	return foundUser
+}
+
+func withConnectionLocked(connID int, f func(*ConnectionInfo)) bool {
+	foundConn := false
+	muCache.Lock()
+	if conn := connections[connID]; conn != nil {
+		f(conn)
+		foundConn = true
+	}
+	muCache.Unlock()
+	return foundConn
+}
+
+func updateConnectionLastAccess(connID int) {
+	withConnectionLocked(connID, func(conn *ConnectionInfo) {
+		conn.LastAccessAt = time.Now()
+	})
 }
 
 func init() {
-	dbUserCache = make(map[int]*User)
+	userCache = make(map[int]*User)
+	connections = make(map[int]*ConnectionInfo)
 }
 
 func isErrNoRows(err error) bool {
@@ -68,12 +177,17 @@ func dbGetUserByID(id int) (*DbUser, error) {
 	return dbGetUserByQuery(q, id)
 }
 
+func dbGetUserCopyByIDCached(id int) (*User, error) {
+	user, err := dbGetUserByIDCached(id)
+	return copyUser(user), err
+}
+
 func dbGetUserByIDCached(id int) (*User, error) {
 	//LogInfof("id: %d\n", id)
 	muCache.Lock()
-	if dbUser, ok := dbUserCache[id]; ok {
+	if user, ok := userCache[id]; ok {
 		muCache.Unlock()
-		return dbUser, nil
+		return user, nil
 	}
 	muCache.Unlock()
 
@@ -85,7 +199,7 @@ func dbGetUserByIDCached(id int) (*User, error) {
 		DbUser: dbUser,
 	}
 	muCache.Lock()
-	dbUserCache[id] = user
+	userCache[id] = user
 	muCache.Unlock()
 	return user, nil
 }

@@ -61,7 +61,7 @@ type ReqContext struct {
 	IsAdmin      bool
 	TimeStart    time.Time
 	ConnectionID int
-	dbClient     *Client
+	Client       *Client
 }
 
 func isAdminUser(u *DbUser) bool {
@@ -168,7 +168,7 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		}
 
 		if ctx.Cookie.UserID != -1 {
-			ctx.User, _ = dbGetUserByIDCached(ctx.Cookie.UserID)
+			ctx.User, _ = dbGetUserCopyByIDCached(ctx.Cookie.UserID)
 			if ctx.User == nil {
 				// if we have valid UserID, we should be able to look up the user
 				serveError(w, r, isJSON, fmt.Sprintf("dbGetUserByIDCached() returned nil for userId %d", ctx.Cookie.UserID))
@@ -176,6 +176,7 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			}
 			ctx.IsAdmin = isAdminUser(ctx.User.DbUser)
 		}
+		user := ctx.User
 
 		if opts&MustHaveConnection != 0 {
 			connID, err := strconv.Atoi(r.FormValue("conn_id"))
@@ -189,18 +190,18 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 				serveError(w, r, isJSON, errMsg)
 				return
 			}
-			if ctx.User.dbClient == nil || ctx.User.ConnectionID != connID {
+			if user.ConnInfo == nil || user.ConnInfo.ConnectionID != connID {
 				var errMsg string
-				if ctx.User.dbClient == nil {
-					errMsg = "ctx.User.dbClient == nil"
+				if user.ConnInfo == nil {
+					errMsg = "ctx.User.ConnInfo == nil"
 				} else {
-					errMsg = fmt.Sprintf("ctx.User.ConnectionID != connID (%d != %d)", ctx.User.ConnectionID, connID)
+					errMsg = fmt.Sprintf("ctx.User.ConnInfo.ConnectionID != connID (%d != %d)", user.ConnInfo.ConnectionID, connID)
 				}
 				serveError(w, r, isJSON, errMsg)
 				return
 			}
 			ctx.ConnectionID = connID
-			ctx.dbClient = ctx.User.dbClient
+			ctx.Client = user.ConnInfo.Client
 		}
 
 		f(ctx, cw, r)
@@ -287,12 +288,9 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: mutex protect
-	if ctx.User.dbClient != nil {
-		ctx.User.dbClient.db.Close()
-	}
-	ctx.User.ConnectionID = genNewConnectionID()
-	ctx.User.dbClient = client
+	userID := ctx.User.DbUser.ID
+	removeCurrentUserConnectionInfo(userID)
+	connInfo := addConnectionInfo(url, userID, client)
 
 	i := info.Format()[0]
 	currDb, ok := i["current_database"]
@@ -309,7 +307,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		ConnectionID    int
 		CurrentDatabase string
 	}{
-		ConnectionID:    ctx.User.ConnectionID,
+		ConnectionID:    connInfo.ConnectionID,
 		CurrentDatabase: currDbStr,
 	}
 	serveJSON(w, r, v)
@@ -317,11 +315,8 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // POST /api/disconnect
 func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	// TODO: mutex protect
-	if ctx.User.dbClient != nil {
-		ctx.User.dbClient.db.Close()
-		ctx.User.ConnectionID = 0
-	}
+	userID := ctx.User.DbUser.ID
+	removeCurrentUserConnectionInfo(userID)
 	v := struct {
 		Message string
 	}{
@@ -332,7 +327,7 @@ func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/databases
 func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	names, err := ctx.dbClient.Databases()
+	names, err := ctx.User.ConnInfo.Client.Databases()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -341,7 +336,7 @@ func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 }
 
 func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
-	result, err := ctx.dbClient.Query(query)
+	result, err := ctx.User.ConnInfo.Client.Query(query)
 
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -389,7 +384,7 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 // GET /api/history
 func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, ctx.dbClient.history)
+	serveJSON(w, r, ctx.User.ConnInfo.Client.history)
 }
 
 // GET /api/bookmarks
@@ -405,7 +400,7 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/connection
 func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	res, err := ctx.dbClient.Info()
+	res, err := ctx.User.ConnInfo.Client.Info()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -416,7 +411,7 @@ func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 
 // GET /api/activity
 func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	res, err := ctx.dbClient.Activity()
+	res, err := ctx.User.ConnInfo.Client.Activity()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -427,7 +422,7 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/schemas
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	names, err := ctx.dbClient.Schemas()
+	names, err := ctx.User.ConnInfo.Client.Schemas()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -439,7 +434,7 @@ func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 // GET /api/tables
 func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	//LogInfof("connID: %d\n", ctx.ConnectionID)
-	names, err := ctx.dbClient.Tables()
+	names, err := ctx.User.ConnInfo.Client.Tables()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -449,7 +444,7 @@ func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	res, err := ctx.dbClient.Table(table)
+	res, err := ctx.User.ConnInfo.Client.Table(table)
 	//LogInfof("table: '%s'\n", table)
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -485,7 +480,7 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 		SortOrder:  r.FormValue("sort_order"),
 	}
 
-	res, err := ctx.dbClient.TableRows(table, opts)
+	res, err := ctx.User.ConnInfo.Client.TableRows(table, opts)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -495,7 +490,7 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 }
 
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	res, err := ctx.dbClient.TableInfo(table)
+	res, err := ctx.User.ConnInfo.Client.TableInfo(table)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -506,7 +501,7 @@ func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 
 func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
-	res, err := ctx.dbClient.TableIndexes(table)
+	res, err := ctx.User.ConnInfo.Client.TableIndexes(table)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -557,7 +552,9 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 	if ctx.User != nil {
 		v.Email = ctx.User.DbUser.Email
-		v.ConnectionID = ctx.User.ConnectionID
+		if ctx.User.ConnInfo != nil {
+			v.ConnectionID = ctx.User.ConnInfo.ConnectionID
+		}
 	}
 	LogInfof("v: %#v\n", v)
 	serveJSONP(w, r, v, jsonp)
