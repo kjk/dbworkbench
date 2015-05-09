@@ -41,13 +41,13 @@ func gaLog(ua string, values url.Values) error {
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	_, err := c.Do(req)
+	resp, err := c.Do(req)
 
 	if err != nil {
 		LogErrorf("GAEvent Recording error '%s'", err)
 		return err
 	}
-
+	resp.Body.Close()
 	return nil
 }
 
