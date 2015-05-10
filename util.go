@@ -47,3 +47,21 @@ func httpErrorf(w http.ResponseWriter, format string, args ...interface{}) {
 	}
 	http.Error(w, msg, http.StatusInternalServerError)
 }
+
+// IntInArray returns true if int is in array of ints
+func IntInArray(arr []int, n int) bool {
+	for _, n2 := range arr {
+		if n2 == n {
+			return true
+		}
+	}
+	return false
+}
+
+// IntAppendIfNotExists adds int to array if it's not in the array yet
+func IntAppendIfNotExists(arr []int, n int) []int {
+	if IntInArray(arr, n) {
+		return arr
+	}
+	return append(arr, n)
+}
