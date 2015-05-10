@@ -75,31 +75,31 @@ func NewClientFromUrl(url string) (*Client, error) {
 	return &client, nil
 }
 
-func (client *Client) Test() error {
-	return client.db.Ping()
+func (c *Client) Test() error {
+	return c.db.Ping()
 }
 
-func (client *Client) Info() (*Result, error) {
-	return client.query(PG_INFO)
+func (c *Client) Info() (*Result, error) {
+	return c.query(PG_INFO)
 }
 
-func (client *Client) Databases() ([]string, error) {
-	return client.fetchRows(PG_DATABASES)
+func (c *Client) Databases() ([]string, error) {
+	return c.fetchRows(PG_DATABASES)
 }
 
-func (client *Client) Schemas() ([]string, error) {
-	return client.fetchRows(PG_SCHEMAS)
+func (c *Client) Schemas() ([]string, error) {
+	return c.fetchRows(PG_SCHEMAS)
 }
 
-func (client *Client) Tables() ([]string, error) {
-	return client.fetchRows(PG_TABLES)
+func (c *Client) Tables() ([]string, error) {
+	return c.fetchRows(PG_TABLES)
 }
 
-func (client *Client) Table(table string) (*Result, error) {
-	return client.query(PG_TABLE_SCHEMA, table)
+func (c *Client) Table(table string) (*Result, error) {
+	return c.query(PG_TABLE_SCHEMA, table)
 }
 
-func (client *Client) TableRows(table string, opts RowsOptions) (*Result, error) {
+func (c *Client) TableRows(table string, opts RowsOptions) (*Result, error) {
 	sql := fmt.Sprintf(`SELECT * FROM "%s"`, table)
 
 	if opts.SortColumn != "" {
@@ -114,15 +114,15 @@ func (client *Client) TableRows(table string, opts RowsOptions) (*Result, error)
 		sql += fmt.Sprintf(" LIMIT %d", opts.Limit)
 	}
 
-	return client.query(sql)
+	return c.query(sql)
 }
 
-func (client *Client) TableInfo(table string) (*Result, error) {
-	return client.query(PG_TABLE_INFO, table)
+func (c *Client) TableInfo(table string) (*Result, error) {
+	return c.query(PG_TABLE_INFO, table)
 }
 
-func (client *Client) TableIndexes(table string) (*Result, error) {
-	res, err := client.query(PG_TABLE_INDEXES, table)
+func (c *Client) TableIndexes(table string) (*Result, error) {
+	res, err := c.query(PG_TABLE_INDEXES, table)
 
 	if err != nil {
 		return nil, err
@@ -232,8 +232,8 @@ func (res *Result) CSV() []byte {
 }
 
 // Fetch all rows as strings for a single column
-func (client *Client) fetchRows(q string) ([]string, error) {
-	res, err := client.query(q)
+func (c *Client) fetchRows(q string) ([]string, error) {
+	res, err := c.query(q)
 
 	if err != nil {
 		return nil, err

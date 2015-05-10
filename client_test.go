@@ -10,6 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TODO: needs to rename db name here and in data/booktown.sql to booktown_test
+// so that I can have a test db for testing the program and be able to run tests
+
 var testClient *Client
 var testCommands map[string]string
 
@@ -90,12 +93,21 @@ func test_Info(t *testing.T) {
 	assert.NotEqual(t, nil, res)
 }
 
+func strInArray(s string, arr []string) bool {
+	for _, s2 := range arr {
+		if s2 == s {
+			return true
+		}
+	}
+	return false
+}
+
 func test_Databases(t *testing.T) {
 	res, err := testClient.Databases()
 
 	assert.Equal(t, nil, err)
-	assert.Contains(t, res, "booktown")
-	assert.Contains(t, res, "postgres")
+	assert.True(t, strInArray("booktown", res))
+	assert.True(t, strInArray("postgres", res))
 }
 
 func test_Tables(t *testing.T) {
