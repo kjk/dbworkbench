@@ -230,19 +230,11 @@ func dbGetOrCreateUser(email string, fullName string) (*DbUser, error) {
 }
 
 func getSqlConnectionRoot() string {
-	if options.IsLocal {
-		return "postgres://localhost/postgres?sslmode=disable"
-	}
-	// TODO: what is sslmode in prod?
-	return "postgres://localhost/postgres"
+	return "postgres://localhost/postgres?sslmode=disable"
 }
 
 func getSqlConnection() string {
-	if options.IsLocal {
-		return "postgres://localhost/dbworkbench?sslmode=disable"
-	}
-	// TODO: what is sslmode in prod?
-	return "postgres://localhost/dbworkbench"
+	return "postgres://localhost/dbworkbench?sslmode=disable"
 }
 
 func execMust(db *sql.DB, q string, args ...interface{}) {
