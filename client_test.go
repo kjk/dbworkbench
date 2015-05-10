@@ -70,7 +70,7 @@ func teardown() {
 	}
 }
 
-func test_NewClientFromUrl(t *testing.T) {
+func testNewClientFromUrl(t *testing.T) {
 	url := "postgres://postgres@localhost/booktown?sslmode=disable"
 	client, err := NewClientFromUrl(url)
 
@@ -82,11 +82,11 @@ func test_NewClientFromUrl(t *testing.T) {
 	assert.Equal(t, url, client.connectionString)
 }
 
-func test_Test(t *testing.T) {
+func testTest(t *testing.T) {
 	assert.Equal(t, nil, testClient.Test())
 }
 
-func test_Info(t *testing.T) {
+func testInfo(t *testing.T) {
 	res, err := testClient.Info()
 
 	assert.Equal(t, nil, err)
@@ -102,7 +102,7 @@ func strInArray(s string, arr []string) bool {
 	return false
 }
 
-func test_Databases(t *testing.T) {
+func testDatabases(t *testing.T) {
 	res, err := testClient.Databases()
 
 	assert.Equal(t, nil, err)
@@ -110,7 +110,7 @@ func test_Databases(t *testing.T) {
 	assert.True(t, strInArray("postgres", res))
 }
 
-func test_Tables(t *testing.T) {
+func testTables(t *testing.T) {
 	res, err := testClient.Tables()
 
 	expected := []string{
@@ -145,7 +145,7 @@ func test_Tables(t *testing.T) {
 	assert.Equal(t, expected, res)
 }
 
-func test_Table(t *testing.T) {
+func testTable(t *testing.T) {
 	res, err := testClient.Table("books")
 
 	columns := []string{
@@ -162,7 +162,7 @@ func test_Table(t *testing.T) {
 	assert.Equal(t, 4, len(res.Rows))
 }
 
-func test_TableRows(t *testing.T) {
+func testTableRows(t *testing.T) {
 	res, err := testClient.TableRows("books", RowsOptions{})
 
 	assert.Equal(t, nil, err)
@@ -170,7 +170,7 @@ func test_TableRows(t *testing.T) {
 	assert.Equal(t, 15, len(res.Rows))
 }
 
-func test_TableInfo(t *testing.T) {
+func testTableInfo(t *testing.T) {
 	res, err := testClient.TableInfo("books")
 
 	assert.Equal(t, nil, err)
@@ -178,7 +178,7 @@ func test_TableInfo(t *testing.T) {
 	assert.Equal(t, 1, len(res.Rows))
 }
 
-func test_TableIndexes(t *testing.T) {
+func testTableIndexes(t *testing.T) {
 	res, err := testClient.TableIndexes("books")
 
 	assert.Equal(t, nil, err)
@@ -186,7 +186,7 @@ func test_TableIndexes(t *testing.T) {
 	assert.Equal(t, 2, len(res.Rows))
 }
 
-func test_Query(t *testing.T) {
+func testQuery(t *testing.T) {
 	res, err := testClient.Query("SELECT * FROM books")
 
 	assert.Equal(t, nil, err)
@@ -194,7 +194,7 @@ func test_Query(t *testing.T) {
 	assert.Equal(t, 15, len(res.Rows))
 }
 
-func test_QueryError(t *testing.T) {
+func testQueryError(t *testing.T) {
 	res, err := testClient.Query("SELCT * FROM books")
 
 	assert.NotEqual(t, nil, err)
@@ -202,7 +202,7 @@ func test_QueryError(t *testing.T) {
 	assert.Equal(t, true, res == nil)
 }
 
-func test_QueryInvalidTable(t *testing.T) {
+func testQueryInvalidTable(t *testing.T) {
 	res, err := testClient.Query("SELECT * FROM books2")
 
 	assert.NotEqual(t, nil, err)
@@ -210,7 +210,7 @@ func test_QueryInvalidTable(t *testing.T) {
 	assert.Equal(t, true, res == nil)
 }
 
-func test_ResultCsv(t *testing.T) {
+func testResultCsv(t *testing.T) {
 	res, _ := testClient.Query("SELECT * FROM books ORDER BY id ASC LIMIT 1")
 	csv := res.CSV()
 
@@ -219,7 +219,7 @@ func test_ResultCsv(t *testing.T) {
 	assert.Equal(t, expected, string(csv))
 }
 
-func test_History(t *testing.T) {
+func testHistory(t *testing.T) {
 	_, err := testClient.Query("SELECT * FROM books")
 	query := testClient.history[len(testClient.history)-1].Query
 
@@ -227,7 +227,7 @@ func test_History(t *testing.T) {
 	assert.Equal(t, "SELECT * FROM books", query)
 }
 
-func test_HistoryError(t *testing.T) {
+func testHistoryError(t *testing.T) {
 	_, err := testClient.Query("SELECT * FROM books123")
 	query := testClient.history[len(testClient.history)-1].Query
 
@@ -246,21 +246,21 @@ func TestAll(t *testing.T) {
 	setup()
 	setupClient()
 
-	test_NewClientFromUrl(t)
-	test_Test(t)
-	test_Info(t)
-	test_Databases(t)
-	test_Tables(t)
-	test_Table(t)
-	test_TableRows(t)
-	test_TableInfo(t)
-	test_TableIndexes(t)
-	test_Query(t)
-	test_QueryError(t)
-	test_QueryInvalidTable(t)
-	test_ResultCsv(t)
-	test_History(t)
-	test_HistoryError(t)
+	testNewClientFromUrl(t)
+	testTest(t)
+	testInfo(t)
+	testDatabases(t)
+	testTables(t)
+	testTable(t)
+	testTableRows(t)
+	testTableInfo(t)
+	testTableIndexes(t)
+	testQuery(t)
+	testQueryError(t)
+	testQueryInvalidTable(t)
+	testResultCsv(t)
+	testHistory(t)
+	testHistoryError(t)
 
 	teardownClient()
 	teardown()
