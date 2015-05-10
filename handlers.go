@@ -327,6 +327,7 @@ func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/databases
 func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	names, err := ctx.User.ConnInfo.Client.Databases()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -336,6 +337,7 @@ func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 }
 
 func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	result, err := ctx.User.ConnInfo.Client.Query(query)
 
 	if err != nil {
@@ -400,6 +402,7 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/connection
 func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	res, err := ctx.User.ConnInfo.Client.Info()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -411,6 +414,7 @@ func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 
 // GET /api/activity
 func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	res, err := ctx.User.ConnInfo.Client.Activity()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -422,6 +426,7 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/schemas
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	names, err := ctx.User.ConnInfo.Client.Schemas()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -434,6 +439,7 @@ func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 // GET /api/tables
 func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	//LogInfof("connID: %d\n", ctx.ConnectionID)
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	names, err := ctx.User.ConnInfo.Client.Tables()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -444,6 +450,7 @@ func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	res, err := ctx.User.ConnInfo.Client.Table(table)
 	//LogInfof("table: '%s'\n", table)
 	if err != nil {
@@ -456,6 +463,7 @@ func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, tab
 
 func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	limit := 1000 // Number of rows to fetch
 	limitVal := r.FormValue("limit")
 
@@ -501,6 +509,7 @@ func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 
 func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
+	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
 	res, err := ctx.User.ConnInfo.Client.TableIndexes(table)
 	if err != nil {
 		serveJSONError(w, r, err)

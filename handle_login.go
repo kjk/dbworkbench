@@ -116,6 +116,7 @@ func handleLoginGoogle(w http.ResponseWriter, r *http.Request) {
 
 // url: GET /logout?redir=${redirect}
 func handleLogout(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	removeCurrentUserConnectionInfo(ctx.Cookie.UserID)
 	redir := strings.TrimSpace(r.FormValue("redir"))
 	if redir == "" {
 		LogErrorf("Missing 'redir' arg for /logout\n")
