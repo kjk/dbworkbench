@@ -263,7 +263,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	opts := Options{URL: url}
-	url, err := formatConnectionUrl(opts)
+	url, err := formatConnectionURL(opts)
 
 	if err != nil {
 		serveJSONError(w, r, err)

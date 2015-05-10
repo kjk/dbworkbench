@@ -3,26 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
-	"os/user"
+
 	"strings"
 )
 
-func currentUser() (string, error) {
-	u, err := user.Current()
-	if err == nil {
-		return u.Username, nil
-	}
-
-	name := os.Getenv("USER")
-	if name != "" {
-		return name, nil
-	}
-
-	return "", errors.New("Unable to detect OS user")
-}
-
-func formatConnectionUrl(opts Options) (string, error) {
+func formatConnectionURL(opts Options) (string, error) {
 	url := opts.URL
 
 	// Make sure to only accept urls in a standard format
@@ -56,15 +41,7 @@ func connectionSettingsBlank(opts Options) bool {
 
 func buildConnectionString(opts Options) (string, error) {
 	if opts.URL != "" {
-		return formatConnectionUrl(opts)
-	}
-
-	// Try to detect user from current OS user
-	if opts.User == "" {
-		u, err := currentUser()
-		if err == nil {
-			opts.User = u
-		}
+		return formatConnectionURL(opts)
 	}
 
 	// Disable ssl for localhost connections, most users have it disabled
