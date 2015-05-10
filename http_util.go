@@ -26,6 +26,14 @@ func acceptsGzip(r *http.Request) bool {
 	return r != nil && strings.Contains(r.Header.Get("Accept-Encoding"), "gzip")
 }
 
+func httpErrorf(w http.ResponseWriter, format string, args ...interface{}) {
+	msg := format
+	if len(args) > 0 {
+		msg = fmt.Sprintf(format, args...)
+	}
+	http.Error(w, msg, http.StatusInternalServerError)
+}
+
 func serveError(w http.ResponseWriter, r *http.Request, isJSON bool, errMsg string) {
 	if isJSON {
 		serveJSONError(w, r, errMsg)

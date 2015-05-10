@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"os/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -138,15 +136,6 @@ func Test_Localhost_And_Ssl(t *testing.T) {
 	str, err := buildConnectionString(opts)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "postgres://user:password@localhost:5432/db?sslmode=require", str)
-}
-
-func Test_No_User(t *testing.T) {
-	opts := Options{Host: "host", Port: 5432, DbName: "db"}
-	u, _ := user.Current()
-	str, err := buildConnectionString(opts)
-
-	assert.Equal(t, nil, err)
-	assert.Equal(t, fmt.Sprintf("postgres://%s@host:5432/db", u.Username), str)
 }
 
 func Test_Port(t *testing.T) {

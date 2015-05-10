@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
-	"strings"
 
-	"github.com/BurntSushi/toml"
 	"github.com/mitchellh/go-homedir"
 )
+
+/*
+TODO: implement
+*/
 
 type Bookmark struct {
 	Url      string `json:"url"`      // Postgres connection URL
@@ -20,52 +20,13 @@ type Bookmark struct {
 	Ssl      string `json:"ssl"`      // Connection SSL mode
 }
 
-func readServerConfig(path string) (Bookmark, error) {
-	bookmark := Bookmark{}
-
-	buff, err := ioutil.ReadFile(path)
-	if err != nil {
-		return bookmark, err
-	}
-
-	_, err = toml.Decode(string(buff), &bookmark)
-	return bookmark, err
-}
-
-func fileBasename(path string) string {
-	filename := filepath.Base(path)
-	return strings.Replace(filename, filepath.Ext(path), "", 1)
-}
-
 func bookmarksPath() string {
 	path, _ := homedir.Dir()
 	return fmt.Sprintf("%s/.pgweb/bookmarks", path)
 }
 
 func readAllBookmarks(path string) (map[string]Bookmark, error) {
-	results := map[string]Bookmark{}
+	res := map[string]Bookmark{}
+	return res, nil
 
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return results, err
-	}
-
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".toml" {
-			continue
-		}
-
-		fullPath := path + "/" + file.Name()
-		key := fileBasename(file.Name())
-		config, err := readServerConfig(fullPath)
-
-		if err != nil {
-			fmt.Printf("%s parse error: %s\n", fullPath, err)
-			continue
-		}
-
-		results[key] = config
-	}
-
-	return results, nil
 }

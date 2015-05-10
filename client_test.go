@@ -14,37 +14,82 @@ import (
 // so that I can have a test db for testing the program and be able to run tests
 
 var testClient *Client
-var testCommands map[string]string
-
-func setupCommands() {
-	testCommands = map[string]string{
-		"createdb": "createdb",
-		"psql":     "psql",
-		"dropdb":   "dropdb",
-	}
-
-	if onWindows() {
-		for k, v := range testCommands {
-			testCommands[k] = v + ".exe"
-		}
-	}
-}
 
 func onWindows() bool {
 	return runtime.GOOS == "windows"
 }
 
-func setup() {
-	out, err := exec.Command(testCommands["createdb"], "-U", "postgres", "-h", "localhost", "booktown").CombinedOutput()
+func exeName(cmd string) string {
+	if onWindows() {
+		return cmd + ".exe"
+	}
+	return cmd
+}
 
+func buildArgs() []string {
+	pgHost := "localhost"
+	pgPort := "5432"
+	pgUser := "postgres"
+
+	s := os.Getenv("WERCKER_POSTGRESQL_HOST")
+	if s != "" {
+		pgHost = s
+	}
+
+	s = os.Getenv("WERCKER_POSTGRESQL_PORT")
+	if s != "" {
+		pgPort = s
+	}
+
+	s = os.Getenv("WERCKER_POSTGRESQL_USERNAME")
+	if s != "" {
+		pgUser = s
+	}
+
+	res := []string{
+		"-U", pgUser,
+		"-h", pgHost,
+		"-p", pgPort,
+	}
+	return res
+}
+
+func dbURL() string {
+	host := os.Getenv("WERCKER_POSTGRESQL_HOST")
+	if host == "" {
+		return "postgres://postgres@localhost/booktown?sslmode=disable"
+	}
+	port := os.Getenv("WERCKER_POSTGRESQL_PORT")
+	user := os.Getenv("WERCKER_POSTGRESQL_USERNAME")
+	pwd := os.Getenv("WERCKER_POSTGRESQL_PASSWORD")
+	s := fmt.Sprintf("postgres://%s:%s@%s:%s/booktown?sslmode=disable", user, pwd, host, port)
+	return s
+}
+
+func setupCmdPgPassword(cmd *exec.Cmd) {
+	pwd := os.Getenv("WERCKER_POSTGRESQL_PASSWORD")
+	if pwd != "" {
+		cmd.Env = append(cmd.Env, "PGPASSWORD="+pwd)
+	}
+}
+
+func setup() {
+	args := buildArgs()
+	args = append(args, "booktown")
+	cmd := exec.Command(exeName("createdb"), args...)
+	setupCmdPgPassword(cmd)
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("Database creation failed:", string(out))
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
-	out, err = exec.Command(testCommands["psql"], "-U", "postgres", "-h", "localhost", "-f", "./data/booktown.sql", "booktown").CombinedOutput()
-
+	args = buildArgs()
+	args = append(args, "-f", "./data/booktown.sql", "booktown")
+	cmd = exec.Command(exeName("psql"), args...)
+	setupCmdPgPassword(cmd)
+	out, err = cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("Database import failed:", string(out))
 		fmt.Println("Error:", err)
@@ -53,7 +98,7 @@ func setup() {
 }
 
 func setupClient() {
-	testClient, _ = NewClientFromUrl("postgres://postgres@localhost/booktown?sslmode=disable")
+	testClient, _ = NewClientFromUrl(dbURL())
 }
 
 func teardownClient() {
@@ -63,15 +108,18 @@ func teardownClient() {
 }
 
 func teardown() {
-	_, err := exec.Command(testCommands["dropdb"], "-U", "postgres", "-h", "localhost", "booktown").CombinedOutput()
-
+	args := buildArgs()
+	args = append(args, "booktown")
+	cmd := exec.Command(exeName("dropdb"), args...)
+	setupCmdPgPassword(cmd)
+	_, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("Teardown error:", err)
 	}
 }
 
-func testNewClientFromUrl(t *testing.T) {
-	url := "postgres://postgres@localhost/booktown?sslmode=disable"
+func testNewClientFromURL(t *testing.T) {
+	url := dbURL()
 	client, err := NewClientFromUrl(url)
 
 	if err != nil {
@@ -241,12 +289,11 @@ func TestAll(t *testing.T) {
 		return
 	}
 
-	setupCommands()
 	teardown()
 	setup()
 	setupClient()
 
-	testNewClientFromUrl(t)
+	testNewClientFromURL(t)
 	testTest(t)
 	testInfo(t)
 	testDatabases(t)

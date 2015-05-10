@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"mime"
-	"net/http"
 	"path/filepath"
 	"strings"
 )
@@ -38,14 +36,6 @@ func MimeTypeByExtensionExt(name string) string {
 	}
 
 	return result
-}
-
-func httpErrorf(w http.ResponseWriter, format string, args ...interface{}) {
-	msg := format
-	if len(args) > 0 {
-		msg = fmt.Sprintf(format, args...)
-	}
-	http.Error(w, msg, http.StatusInternalServerError)
 }
 
 // IntInArray returns true if int is in array of ints

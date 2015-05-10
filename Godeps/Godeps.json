@@ -1,12 +1,10 @@
 {
 	"ImportPath": "github.com/kjk/dbworkbench",
 	"GoVersion": "go1.4.2",
+	"Packages": [
+		"."
+	],
 	"Deps": [
-		{
-			"ImportPath": "github.com/BurntSushi/toml",
-			"Comment": "v0.1.0-9-g3883ac1",
-			"Rev": "3883ac1ce943878302255f538fce319d23226223"
-		},
 		{
 			"ImportPath": "github.com/bradfitz/slice",
 			"Rev": "a665b5dbaad5fc7474c1193c67ed138df1e1b0e7"
@@ -41,6 +39,22 @@
 		{
 			"ImportPath": "github.com/stretchr/testify/assert",
 			"Rev": "2eaa4b48b8954bf871229043b8064ca156a542a5"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "a8c61998a557a37435f719980da368469c10bfed"
+		},
+		{
+			"ImportPath": "golang.org/x/oauth2",
+			"Rev": "ec6d5d770f531108a6464462b2201b74fcd09314"
+		},
+		{
+			"ImportPath": "google.golang.org/api/googleapi",
+			"Rev": "a59c1355aff5abf0f60c182f9fe9b8acb31ac40e"
+		},
+		{
+			"ImportPath": "google.golang.org/api/oauth2/v2",
+			"Rev": "a59c1355aff5abf0f60c182f9fe9b8acb31ac40e"
 		}
 	]
 }
