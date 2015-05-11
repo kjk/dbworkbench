@@ -28,12 +28,13 @@ var (
 )
 
 func getMyHost(r *http.Request) string {
-	scheme := "http"
-	if r.TLS != nil {
-		scheme = "https"
+	// on production we force https, but it's done on nginx level, so we have to
+	// hardcode the scheme
+	scheme := "https"
+	if options.IsLocal {
+		scheme = "http"
 	}
 	res := scheme + "://" + r.Host
-	//LogInfof("res: %s\n", res)
 	return res
 }
 
