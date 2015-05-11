@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Invalid_Url(t *testing.T) {
+func TestInvalidUrl(t *testing.T) {
 	opts := Options{}
 	examples := []string{
 		"postgresql://foobar",
@@ -23,7 +23,7 @@ func Test_Invalid_Url(t *testing.T) {
 	}
 }
 
-func Test_Valid_Url(t *testing.T) {
+func TestValidUrl(t *testing.T) {
 	url := "postgres://myhost/database"
 	str, err := buildConnectionString(Options{URL: url})
 
@@ -31,7 +31,7 @@ func Test_Valid_Url(t *testing.T) {
 	assert.Equal(t, url, str)
 }
 
-func Test_Url_And_Ssl_Flag(t *testing.T) {
+func TestUrlAndSslFlag(t *testing.T) {
 	str, err := buildConnectionString(Options{
 		URL: "postgres://myhost/database",
 		Ssl: "disable",
@@ -41,7 +41,7 @@ func Test_Url_And_Ssl_Flag(t *testing.T) {
 	assert.Equal(t, "postgres://myhost/database?sslmode=disable", str)
 }
 
-func Test_Localhost_Url_And_No_Ssl_Flag(t *testing.T) {
+func TestLocalhostUrlAndNoSslFlag(t *testing.T) {
 	str, err := buildConnectionString(Options{
 		URL: "postgres://localhost/database",
 	})
@@ -57,7 +57,7 @@ func Test_Localhost_Url_And_No_Ssl_Flag(t *testing.T) {
 	assert.Equal(t, "postgres://127.0.0.1/database?sslmode=disable", str)
 }
 
-func Test_Localhost_Url_And_Ssl_Flag(t *testing.T) {
+func TestLocalhostUrlAndSslFlag(t *testing.T) {
 	str, err := buildConnectionString(Options{
 		URL: "postgres://localhost/database",
 		Ssl: "require",
@@ -75,7 +75,7 @@ func Test_Localhost_Url_And_Ssl_Flag(t *testing.T) {
 	assert.Equal(t, "postgres://127.0.0.1/database?sslmode=require", str)
 }
 
-func Test_Localhost_Url_And_Ssl_Arg(t *testing.T) {
+func TestLocalhostUrlAndSslArg(t *testing.T) {
 	str, err := buildConnectionString(Options{
 		URL: "postgres://localhost/database?sslmode=require",
 	})
@@ -91,7 +91,7 @@ func Test_Localhost_Url_And_Ssl_Arg(t *testing.T) {
 	assert.Equal(t, "postgres://127.0.0.1/database?sslmode=require", str)
 }
 
-func Test_Flag_Args(t *testing.T) {
+func TestFlagArgs(t *testing.T) {
 	str, err := buildConnectionString(Options{
 		Host:   "host",
 		Port:   5432,
@@ -104,7 +104,7 @@ func Test_Flag_Args(t *testing.T) {
 	assert.Equal(t, "postgres://user:password@host:5432/db", str)
 }
 
-func Test_Localhost(t *testing.T) {
+func TestLocalhost(t *testing.T) {
 	opts := Options{
 		Host:   "localhost",
 		Port:   5432,
@@ -123,7 +123,7 @@ func Test_Localhost(t *testing.T) {
 	assert.Equal(t, "postgres://user:password@127.0.0.1:5432/db?sslmode=disable", str)
 }
 
-func Test_Localhost_And_Ssl(t *testing.T) {
+func TestLocalhostAndSsl(t *testing.T) {
 	opts := Options{
 		Host:   "localhost",
 		Port:   5432,
@@ -138,7 +138,7 @@ func Test_Localhost_And_Ssl(t *testing.T) {
 	assert.Equal(t, "postgres://user:password@localhost:5432/db?sslmode=require", str)
 }
 
-func Test_Port(t *testing.T) {
+func TestPort(t *testing.T) {
 	opts := Options{Host: "host", User: "user", Port: 5000, DbName: "db"}
 	str, err := buildConnectionString(opts)
 
@@ -146,7 +146,7 @@ func Test_Port(t *testing.T) {
 	assert.Equal(t, "postgres://user@host:5000/db", str)
 }
 
-func Test_Blank(t *testing.T) {
+func TestBlank(t *testing.T) {
 	assert.Equal(t, true, connectionSettingsBlank(Options{}))
 	assert.Equal(t, false, connectionSettingsBlank(Options{Host: "host", User: "user"}))
 	assert.Equal(t, false, connectionSettingsBlank(Options{Host: "host", User: "user", DbName: "db"}))
