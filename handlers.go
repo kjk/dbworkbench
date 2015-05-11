@@ -158,7 +158,8 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 
 		ctx := &ReqContext{
 			Cookie:    getOrCreateCookie(w, r),
-			TimeStart: time.Now()}
+			TimeStart: time.Now(),
+		}
 
 		if opts&MustBeLoggedIn != 0 || opts&MustHaveConnection != 0 {
 			if !ctx.Cookie.IsLoggedIn || ctx.Cookie.UserID == -1 {
@@ -559,11 +560,11 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}{
 		IsLoggedIn: ctx.Cookie.IsLoggedIn,
 	}
-	if ctx.User != nil {
+	if ctx.User != nil && ctx.User.DbUser != nil {
 		v.Email = ctx.User.DbUser.Email
-		if ctx.User.ConnInfo != nil {
-			v.ConnectionID = ctx.User.ConnInfo.ConnectionID
-		}
+	}
+	if ctx.User.ConnInfo != nil {
+		v.ConnectionID = ctx.User.ConnInfo.ConnectionID
 	}
 	LogInfof("v: %#v\n", v)
 	serveJSONP(w, r, v, jsonp)

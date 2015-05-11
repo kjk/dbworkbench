@@ -86,6 +86,20 @@ func copyUser(u *User) *User {
 	}
 }
 
+func getSqlConnectionRoot() string {
+	if options.IsLocal {
+		return "postgres://localhost/postgres?sslmode=disable"
+	}
+	return "postgres://dbworkbench_admin:f1r34nd1c3@127.0.0.1/postgres?sslmode=disable"
+}
+
+func getSqlConnection() string {
+	if options.IsLocal {
+		return "postgres://localhost/dbworkbench_admin?sslmode=disable"
+	}
+	return "postgres://dbworkbench_admin:f1r34nd1c3@127.0.0.1/dbworkbench_admin?sslmode=disable"
+}
+
 // creates new ConnectionInfo for a user and update user info. make sure
 // to call removeCurrentUserConnectionInfo before calling this
 func addConnectionInfo(connString string, userID int, client *Client) *ConnectionInfo {
@@ -229,14 +243,6 @@ func dbGetOrCreateUser(email string, fullName string) (*DbUser, error) {
 	return dbGetUserByEmail(email)
 }
 
-func getSqlConnectionRoot() string {
-	return "postgres://localhost/postgres?sslmode=disable"
-}
-
-func getSqlConnection() string {
-	return "postgres://localhost/dbworkbench?sslmode=disable"
-}
-
 func execMust(db *sql.DB, q string, args ...interface{}) {
 	LogVerbosef("db.Exec(): %s\n", q)
 	_, err := db.Exec(q, args...)
@@ -258,7 +264,7 @@ func createDatabaseMust() *sql.DB {
 	LogVerbosef("got root connection\n")
 	err = db.Ping()
 	fatalIfErr(err, "db.Ping()")
-	execMust(db, `CREATE DATABASE dbworkbench`)
+	execMust(db, `CREATE DATABASE dbworkbench_admin`)
 	db.Close()
 
 	db, err = sql.Open("postgres", getSqlConnection())
@@ -298,7 +304,7 @@ func getDbMust() *sql.DB {
 	err = db.Ping()
 	if err != nil {
 		db.Close()
-		if strings.Contains(err.Error(), `database "dbworkbench" does not exist`) {
+		if strings.Contains(err.Error(), `database "dbworkbench_admin" does not exist`) {
 			LogVerbosef("db.Ping() failed because no database exists\n")
 			db = createDatabaseMust()
 		} else {

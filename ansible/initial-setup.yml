@@ -34,6 +34,8 @@
       apt: name=nginx state=latest update_cache=yes cache_valid_time=120
     - name: install postgres
       apt: name=postgresql-9.4 state=latest update_cache=yes cache_valid_time=120
+    - name: install postgres hstore extension
+      apt: name=postgresql-contrib-9.4 state=latest update_cache=yes cache_valid_time=120
     - script: postgres_setup.sh creates=/var/lib/postgresql/db_inited
       become: yes
       become_method: sudo
