@@ -17,20 +17,21 @@ import (
 
 // Options represents command-line options
 type Options struct {
-	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
-	URL      string `long:"url" description:"Database connection string"`
-	Host     string `long:"host" description:"Server hostname or IP"`
-	Port     int    `long:"port" description:"Server port" default:"5432"`
-	User     string `long:"user" description:"Database user"`
-	Pass     string `long:"pass" description:"Password for user"`
-	DbName   string `long:"db" description:"Database name"`
-	Ssl      string `long:"ssl" description:"SSL option"`
-	HTTPHost string `long:"bind" description:"HTTP server host" default:"localhost"`
-	HTTPPort uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
-	AuthUser string `long:"auth-user" description:"HTTP basic auth user"`
-	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
-	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
-	IsLocal  bool   `long:"local" description:"is true if running locally (dev mode)"`
+	Debug        bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
+	URL          string `long:"url" description:"Database connection string"`
+	Host         string `long:"host" description:"Server hostname or IP"`
+	Port         int    `long:"port" description:"Server port" default:"5432"`
+	User         string `long:"user" description:"Database user"`
+	Pass         string `long:"pass" description:"Password for user"`
+	DbName       string `long:"db" description:"Database name"`
+	Ssl          string `long:"ssl" description:"SSL option"`
+	HTTPHost     string `long:"bind" description:"HTTP server host" default:"localhost"`
+	HTTPPort     uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
+	AuthUser     string `long:"auth-user" description:"HTTP basic auth user"`
+	AuthPass     string `long:"auth-pass" description:"HTTP basic auth password"`
+	SkipOpen     bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
+	IsLocal      bool   `long:"local" description:"is true if running locally (dev mode)"`
+	TestSendMail bool   `long:"test-send-email" description:"send a test e-mail"`
 }
 
 var options Options
@@ -115,6 +116,11 @@ func main() {
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
 	initCookieMust()
+
+	if options.TestSendMail {
+		sendTestEmail()
+		return
+	}
 
 	getDbMust()
 
