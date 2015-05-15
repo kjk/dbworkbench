@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -132,11 +133,6 @@ func getOrCreateCookie(w http.ResponseWriter, r *http.Request) *CookieValue {
 	return &cv
 }
 
-func asset(fileName string) ([]byte, error) {
-	//fmt.Fprintf(os.Stderr, "asset: %s\n", fileName)
-	return ioutil.ReadFile(fileName)
-}
-
 func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		isJSON := opts&IsJSON != 0
@@ -222,10 +218,10 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 }
 
 func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
-	data, err := asset(path)
+	data, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		LogErrorf("asset('%s') failed with '%s'\n", path, err)
+		LogErrorf("ioutil.ReadFile('%s') failed with '%s'\n", path, err)
 		servePlainText(w, r, 404, err.Error())
 		return
 	}
@@ -241,11 +237,16 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 // GET /
 func handleIndex(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
-	if uri != "/" {
-		http.NotFound(w, r)
-		return
+	if uri == "/" {
+		uri = "index.html"
+	} else {
+		uri = strings.ToLower(uri)
+		if strings.HasSuffix(uri, ".html") {
+			uri = uri[1:]
+		}
 	}
-	serveStatic(w, r, "s/index.html")
+	path := filepath.Join("s", uri)
+	serveStatic(w, r, path)
 }
 
 // GET /s/:path

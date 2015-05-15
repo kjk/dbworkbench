@@ -104,6 +104,18 @@ func startWebpackWatch() {
 	}
 }
 
+func startGulp() {
+	cmd := exec.Command("./scripts/run_gulp_watch.sh")
+	cmdStr := strings.Join(cmd.Args, " ")
+	fmt.Printf("starting '%s'\n", cmdStr)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Start()
+	if err != nil {
+		log.Fatalf("cmd.Start('%s') failed with '%s'\n", cmdStr, err)
+	}
+}
+
 func main() {
 	fmt.Printf("starting\n")
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -126,6 +138,7 @@ func main() {
 
 	if options.IsLocal {
 		startWebpackWatch()
+		startGulp()
 	}
 
 	if options.Debug {

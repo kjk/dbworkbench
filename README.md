@@ -4,7 +4,9 @@ Web-based database browser written in Go, originally based on http://github.com/
 
 # pre-requisites
 
-* `npm install react-tools -g`
-* `npm install webpack -g`
-* `npm install webpack-dev-server -g`
-* `npm install jsx-loader -g`
+* `npm install -g react-tools`
+* `npm install -g webpack`
+* `npm install -g webpack-dev-server`
+* `npm install -g jsx-loader -g`
+* `npm install -g gulp`
+* `npm install -g gulp-autoprefixer gulp-rename`
