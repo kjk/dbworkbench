@@ -235,7 +235,7 @@ func dbGetOrCreateUser(email string, fullName string) (*DbUser, error) {
 	}
 
 	db := getDbMust()
-	q := `INSERT INTO users (email, fulL_name, created_at) VALUES ($1, $2, now())`
+	q := `INSERT INTO users (email, full_name, created_at) VALUES ($1, $2, now())`
 	_, err = db.Exec(q, email, fullName)
 	if err != nil {
 		return nil, err
