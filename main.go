@@ -92,18 +92,6 @@ func getLogDir() string {
 	return filepath.Join(getDataDir(), "log")
 }
 
-func startWebpackWatch() {
-	cmd := exec.Command("./scripts/webpack-dev.sh")
-	cmdStr := strings.Join(cmd.Args, " ")
-	fmt.Printf("starting '%s'\n", cmdStr)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Start()
-	if err != nil {
-		log.Fatalf("cmd.Start('%s') failed with '%s'\n", cmdStr, err)
-	}
-}
-
 func startGulp() {
 	cmd := exec.Command("./scripts/run_gulp_watch.sh")
 	cmdStr := strings.Join(cmd.Args, " ")
@@ -137,7 +125,6 @@ func main() {
 	getDbMust()
 
 	if options.IsLocal {
-		startWebpackWatch()
 		startGulp()
 	}
 

@@ -13,6 +13,28 @@
 var gulp = require('gulp');
 var prefix = require('gulp-autoprefixer');
 var rename = require('gulp-rename');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var react = require('gulp-react');
+var htmlreplace = require('gulp-html-replace');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var watchify = require('watchify');
+var reactify = require('reactify');
+var streamify = require('gulp-streamify');
+var exorcist   = require('exorcist')
+
+gulp.task('js', function() {
+  browserify({
+    entries: ['jsx/App.jsx'],
+    transform: [reactify],
+    debug: true
+  })
+    .bundle()
+    .pipe(exorcist('s/dist/bundle.js.map'))
+    .pipe(source('bundle.js'))
+    .pipe(gulp.dest('s/dist'))
+});
 
 gulp.task('css', function() {
   return gulp.src('s/*.css')
@@ -21,9 +43,9 @@ gulp.task('css', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('s/*.css', ['css']);
+  gulp.watch(['jsx/*', 's/*.css'], ['css', 'js']);
 });
 
-gulp.task('css_and_watch', ['css', 'watch']);
+gulp.task('build_and_watch', ['css', 'js', 'watch']);
 
-gulp.task('default', ['css']);
+gulp.task('default', ['css', 'js']);
