@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	gaTrackingID = "UA-62336732-1"
+	gaTrackingID = "UA-63191601-1"
 	gaDomainName = "databaseworkbench.com"
 	beaconURL    = "http://www.google-analytics.com/collect"
 )
