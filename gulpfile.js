@@ -1,28 +1,25 @@
 // Pre-requisites: need to install all the npm modules with:
-// npm install -g gulp-rename (etc.)
-// If you don't have all the modules installed locally, run as:
-// NODE_PATH=/usr/local/lib/node_modules gulp css
+// npm install
 
 // TODO:
-// - convert webpack.config.js to gulp,  http://tylermcginnis.com/reactjs-tutorial-pt-2-building-react-applications-with-gulp-and-browserify/
 // - use gulp-uglify for prod to minifiy javascript:
 //   var uglify= require('gulp-uglify');
 //   .pipe(uglify())
 // - concat js files see http://www.hongkiat.com/blog/getting-started-with-gulp-js/
 
-var gulp = require('gulp');
-var prefix = require('gulp-autoprefixer');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var react = require('gulp-react');
+var browserify  = require('browserify');
+var exorcist    = require('exorcist')
+var gulp        = require('gulp');
+var prefix      = require('gulp-autoprefixer');
+var concat      = require('gulp-concat');
 var htmlreplace = require('gulp-html-replace');
-var source = require('vinyl-source-stream');
-var browserify = require('browserify');
-var watchify = require('watchify');
-var reactify = require('reactify');
-var streamify = require('gulp-streamify');
-var exorcist   = require('exorcist')
+var uglify      = require('gulp-uglify');
+var react       = require('gulp-react');
+var rename      = require('gulp-rename');
+var streamify   = require('gulp-streamify');
+var source      = require('vinyl-source-stream');
+var watchify    = require('watchify');
+var reactify    = require('reactify');
 
 gulp.task('js', function() {
   browserify({
