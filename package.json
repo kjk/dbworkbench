@@ -1,0 +1,20 @@
+{
+  "name" : "dbworkbench",
+  "dependencies" : {
+    "react-tools": "*",
+    "gulp": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-rename": "*",
+    "gulp-concat": "*",
+    "gulp-uglify": "*",
+    "gulp-react": "*",
+    "gulp-html-replace": "*",
+    "vinyl-source-stream": "*",
+    "browserify": "*",
+    "watchify": "*",
+    "reactify": "*",
+    "gulp-streamify": "*",
+    "exorcist": "*"
+  },
+  "version" : "0.0.0"
+}
