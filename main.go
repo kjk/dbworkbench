@@ -12,7 +12,6 @@ import (
 
 	"github.com/jessevdk/go-flags"
 	"github.com/kjk/u"
-	_ "github.com/lib/pq"
 )
 
 // Options represents command-line options
