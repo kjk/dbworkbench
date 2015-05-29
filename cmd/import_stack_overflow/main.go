@@ -4,12 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
+	"github.com/kjk/u"
 	_ "github.com/lib/pq"
 )
 
-const ()
+const (
+	demoDBUser = "demodb"
+)
 
 var (
 	sites = []string{
@@ -60,6 +64,25 @@ CREATE TABLE posts (
   closed_date              TIMESTAMP WITHOUT TIME ZONE
 );
 `
+
+	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
+	createDemodbRoleIfNotExistsStmt = `
+do
+$body$
+declare
+  num_users integer;
+begin
+   SELECT count(*)
+     into num_users
+   FROM pg_user
+   WHERE usename = 'demodb';
+
+   IF num_users = 0 THEN
+      CREATE ROLE demodb LOGIN PASSWORD 'demodb';
+   END IF;
+end
+$body$
+;`
 )
 
 func getSqlConnectionRoot() string {
@@ -72,6 +95,10 @@ func getSqlConnectionForDB(name string) string {
 
 func getDataURL(name string) string {
 	return fmt.Sprintf("https://archive.org/download/stackexchange/%s.stackexchange.com.7z", name)
+}
+
+func getDataPath(name string) string {
+	return fmt.Sprintf("%s.stackexchange.com.7z", name)
 }
 
 func LogVerbosef(format string, arg ...interface{}) {
@@ -107,8 +134,10 @@ func createDatabaseMust(dbName string) *sql.DB {
 	LogVerbosef("got root connection\n")
 	err = db.Ping()
 	fatalIfErr(err, "db.Ping()")
+	execMust(db, createDemodbRoleIfNotExistsStmt)
 	execMust(db, fmt.Sprintf("DROP DATABASE IF EXISTS %s", dbName))
 	execMust(db, fmt.Sprintf("CREATE DATABASE %s", dbName))
+	execMust(db, fmt.Sprintf("GRANT CONNECT ON DATABASE %s TO %s;", dbName, demoDBUser))
 	db.Close()
 
 	db, err = sql.Open("postgres", getSqlConnectionForDB(dbName))
@@ -122,14 +151,43 @@ func createDatabaseMust(dbName string) *sql.DB {
 		}
 	}
 
+	// grant dmoDBUser read-only access to the database
+	execMust(db, fmt.Sprintf(`GRANT USAGE ON SCHEMA public TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON %s TO %s;`, dbName, demoDBUser))
+
 	LogVerbosef("created database\n")
 	err = db.Ping()
 	fatalIfErr(err, "db.Ping()")
 	return db
 }
 
+func httpDlAtomicCached(dstPath, uri string) error {
+	// TODO: should at least check size of the file is correct
+	if u.PathExists(dstPath) {
+		return nil
+	}
+	tmpPath := dstPath + ".tmp"
+	fTmp, err := os.Create(tmpPath)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if fTmp != nil {
+			fTmp.Close()
+		}
+	}()
+
+	return nil
+}
+
 func importSite(name string) error {
-	createDatabaseMust(name)
+	//db := createDatabaseMust(name)
+	dstPath := getDataPath(name)
+	uri := getDataURL(name)
+	err := httpDlAtomicCached(dstPath, uri)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
