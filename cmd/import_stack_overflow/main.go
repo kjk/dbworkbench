@@ -3,9 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/kjk/u"
 	_ "github.com/lib/pq"
@@ -166,6 +169,8 @@ func httpDlAtomicCached(dstPath, uri string) error {
 	if u.PathExists(dstPath) {
 		return nil
 	}
+	LogVerbosef("starting to download '%s'\n", uri)
+	timeStart := time.Now()
 	tmpPath := dstPath + ".tmp"
 	fTmp, err := os.Create(tmpPath)
 	if err != nil {
@@ -174,9 +179,29 @@ func httpDlAtomicCached(dstPath, uri string) error {
 	defer func() {
 		if fTmp != nil {
 			fTmp.Close()
+			os.Remove(tmpPath)
 		}
 	}()
 
+	resp, err := http.Get(uri)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(fTmp, resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return err
+	}
+	err = fTmp.Close()
+	fTmp = nil
+	if err != nil {
+		return err
+	}
+	err = os.Rename(tmpPath, dstPath)
+	if err != nil {
+		return err
+	}
+	LogVerbosef("downloaded to '%s' in '%s'\n", dstPath, time.Since(timeStart))
 	return nil
 }
 
