@@ -94,6 +94,6 @@ func importBadges(archive *lzmadec.Archive, db *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("importBadgesIntoDB() failed with %s", err)
 	}
-	LogVerbosef("processed %d posts records\n", n)
+	LogVerbosef("processed %d badges records\n", n)
 	return nil
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/lib/pq"
 )
 
-func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
-	fmt.Printf("importTagsIntoDB()\n")
+func importPostHistoryIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
+	fmt.Printf("importPostHistoryIntoDB()\n")
 	txn, err := db.Begin()
 	if err != nil {
 		return 0, err
@@ -23,12 +23,16 @@ func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 		}
 	}()
 
-	stmt, err := txn.Prepare(pq.CopyIn("tags",
+	stmt, err := txn.Prepare(pq.CopyIn("posthistory",
 		"id",
-		"tag_name",
-		"count",
-		"excerpt_post_id",
-		"wiki_post_id",
+		"post_history_type_id",
+		"post_id",
+		"revision_guid",
+		"creation_date",
+		"user_id",
+		"user_display_name",
+		"text",
+		"comment",
 	))
 	if err != nil {
 		err = fmt.Errorf("txt.Prepare() failed with %s", err)
@@ -36,13 +40,17 @@ func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	}
 	n := 0
 	for r.Next() {
-		t := &r.Tag
+		p := &r.PostHistory
 		_, err = stmt.Exec(
-			t.ID,
-			t.TagName,
-			t.Count,
-			t.ExcerptPostID,
-			t.WikiPostID,
+			p.ID,
+			p.PostHistoryTypeID,
+			p.PostID,
+			p.RevisionGUID,
+			p.CreationDate,
+			p.UserID,
+			p.UserDisplayName,
+			p.Text,
+			p.Comment,
 		)
 		if err != nil {
 			err = fmt.Errorf("stmt.Exec() failed with %s", err)
@@ -72,8 +80,8 @@ func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importTags(archive *lzmadec.Archive, db *sql.DB) error {
-	name := "Tags.xml"
+func importPostHistory(archive *lzmadec.Archive, db *sql.DB) error {
+	name := "PostHistory.xml"
 	entry := getEntryForFile(archive, name)
 	if entry == nil {
 		LogVerbosef("genEntryForFile('%s') returned nil", name)
@@ -86,16 +94,16 @@ func importTags(archive *lzmadec.Archive, db *sql.DB) error {
 		return fmt.Errorf("ExtractReader('%s') failed with %s", entry.Path, err)
 	}
 	defer reader.Close()
-	r, err := stackoverflow.NewTagsReader(reader)
+	r, err := stackoverflow.NewPostHistoryReader(reader)
 	if err != nil {
-		LogVerbosef("NewTagsReader failed with %s", err)
-		return fmt.Errorf("stackoverflow.NewTagsReader() failed with %s", err)
+		LogVerbosef("NewPostsHistoryReader failed with %s", err)
+		return fmt.Errorf("stackoverflow.NewPostHistoryReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importTagsIntoDB(r, db)
+	n, err := importPostHistoryIntoDB(r, db)
 	if err != nil {
-		return fmt.Errorf("importTagsIntoDB() failed with %s", err)
+		return fmt.Errorf("importPostHistoryIntoDB() failed with %s", err)
 	}
-	LogVerbosef("processed %d tags records\n", n)
+	LogVerbosef("processed %d postshistory records\n", n)
 	return nil
 }

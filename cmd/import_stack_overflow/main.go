@@ -80,19 +80,31 @@ CREATE TABLE badges (
 CREATE TABLE comments (
 	id 								SERIAL NOT NULL PRIMARY KEY,
 	post_id 					INTEGER NOT NULL,
-	score 						INTEGER,
+	score 						INTEGER NOT NULL,
 	text 							VARCHAR(32000),
 	creation_date 		TIMESTAMP WITHOUT TIME ZONE,
-	user_id 					INTEGER,
+	user_id 					INTEGER NOT NULL,
 	user_display_name VARCHAR(256)
 );
 
 CREATE TABLE tags (
 	id 								SERIAL NOT NULL PRIMARY KEY,
 	tag_name 					VARCHAR(256),
-	count 						INTEGER,
+	count 						INTEGER NOT NULL,
 	excerpt_post_id 	INTEGER,
 	wiki_post_id 			INTEGER
+);
+
+CREATE TABLE posthistory (
+	id 										SERIAL NOT NULL PRIMARY KEY,
+	post_history_type_id 	INTEGER NOT NULL,
+	post_id 							INTEGER NOT NULL,
+	revision_guid 				VARCHAR(256),
+	creation_date 				TIMESTAMP WITHOUT TIME ZONE,
+	user_id 							INTEGER,
+	user_display_name 		VARCHAR(512),
+	text 									VARCHAR(32000),
+	comment 							VARCHAR(32000)
 );
 `
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
@@ -199,6 +211,9 @@ func createDatabaseMust(dbName string) *sql.DB {
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON users TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON posts TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON badges TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON tags TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON comments TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON posthistory TO %s;`, demoDBUser))
 
 	LogVerbosef("created database\n")
 	err = db.Ping()
@@ -312,11 +327,16 @@ func importSite(name string) error {
 			LogFatalf("importComments() failed with %s\n", err)
 		}
 
+		err = importTags(archive, db)
+		if err != nil {
+			LogFatalf("importTags() failed with %s\n", err)
+		}
+
 	*/
 
-	err = importTags(archive, db)
+	err = importComments(archive, db)
 	if err != nil {
-		LogFatalf("importTags() failed with %s\n", err)
+		LogFatalf("importComments() failed with %s\n", err)
 	}
 
 	return nil

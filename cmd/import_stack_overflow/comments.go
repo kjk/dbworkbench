@@ -91,14 +91,14 @@ func importComments(archive *lzmadec.Archive, db *sql.DB) error {
 	defer reader.Close()
 	r, err := stackoverflow.NewCommentsReader(reader)
 	if err != nil {
-		LogVerbosef("NewPostsReader failed with %s", err)
-		return fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
+		LogVerbosef("NewCommentsReader failed with %s", err)
+		return fmt.Errorf("stackoverflow.NewCommentsReader() failed with %s", err)
 	}
 	defer r.Close()
 	n, err := importCommentsIntoDB(r, db)
 	if err != nil {
-		return fmt.Errorf("importBadgesIntoDB() failed with %s", err)
+		return fmt.Errorf("importCommentsIntoDB() failed with %s", err)
 	}
-	LogVerbosef("processed %d posts records\n", n)
+	LogVerbosef("processed %d comments records\n", n)
 	return nil
 }
