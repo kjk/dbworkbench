@@ -2,16 +2,20 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/kjk/lzmadec"
+	"github.com/kjk/stackoverflow"
 	"github.com/kjk/u"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 const (
@@ -19,6 +23,8 @@ const (
 )
 
 var (
+	dataDir string
+
 	sites = []string{
 		"academia",
 		"android",
@@ -34,7 +40,7 @@ CREATE TABLE users (
   last_access_date    TIMESTAMP WITHOUT TIME ZONE,
   website_url         VARCHAR(512),
   location            VARCHAR(1024),
-  about_me            VARCHAR(4096),
+  about_me            VARCHAR(32000),
   views               INTEGER NOT NULL,
   up_votes            INTEGER NOT NULL,
   down_votes          INTEGER NOT NULL,
@@ -88,6 +94,11 @@ $body$
 ;`
 )
 
+func init() {
+	dataDir = u.ExpandTildeInPath("~/data/import_stack_overflow")
+	os.MkdirAll(dataDir, 0755)
+}
+
 func getSqlConnectionRoot() string {
 	return "postgres://localhost/postgres?sslmode=disable"
 }
@@ -101,15 +112,23 @@ func getDataURL(name string) string {
 }
 
 func getDataPath(name string) string {
-	return fmt.Sprintf("%s.stackexchange.com.7z", name)
+	name = fmt.Sprintf("%s.stackexchange.com.7z", name)
+	return filepath.Join(dataDir, name)
 }
 
+// LogVerbosef logs in a verbose manner
 func LogVerbosef(format string, arg ...interface{}) {
 	s := fmt.Sprintf(format, arg...)
 	/*if pc, _, _, ok := runtime.Caller(1); ok {
 		s = FunctionFromPc(pc) + ": " + s
 	}*/
 	fmt.Print(s)
+}
+
+// LogFatalf logs a message and quits
+func LogFatalf(format string, arg ...interface{}) {
+	LogVerbosef(format, arg)
+	os.Exit(1)
 }
 
 func fatalIfErr(err error, what string) {
@@ -154,9 +173,10 @@ func createDatabaseMust(dbName string) *sql.DB {
 		}
 	}
 
-	// grant dmoDBUser read-only access to the database
+	// grant demoDBUser read-only access to the database
 	execMust(db, fmt.Sprintf(`GRANT USAGE ON SCHEMA public TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON %s TO %s;`, dbName, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON users TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON posts TO %s;`, demoDBUser))
 
 	LogVerbosef("created database\n")
 	err = db.Ping()
@@ -167,6 +187,7 @@ func createDatabaseMust(dbName string) *sql.DB {
 func httpDlAtomicCached(dstPath, uri string) error {
 	// TODO: should at least check size of the file is correct
 	if u.PathExists(dstPath) {
+		LogVerbosef("'%s' already download as '%s'\n", uri, dstPath)
 		return nil
 	}
 	LogVerbosef("starting to download '%s'\n", uri)
@@ -205,13 +226,153 @@ func httpDlAtomicCached(dstPath, uri string) error {
 	return nil
 }
 
+func getEntryForFile(archive *lzmadec.Archive, name string) *lzmadec.Entry {
+	for _, e := range archive.Entries {
+		if strings.EqualFold(name, e.Path) {
+			return &e
+		}
+	}
+	return nil
+}
+
+func toTimePtr(t time.Time) *time.Time {
+	if t.IsZero() {
+		return nil
+	}
+	return &t
+}
+
+func toStringPtr(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
+func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
+	txn, err := db.Begin()
+	if err != nil {
+		return 0, err
+	}
+
+	defer func() {
+		if txn != nil {
+			LogVerbosef("calling txn.Rollback()\n")
+			txn.Rollback()
+		}
+	}()
+
+	stmt, err := txn.Prepare(pq.CopyIn("users",
+		"id",
+		"reputation",
+		"creation_date",
+		"display_name",
+		"last_access_date",
+		"website_url",
+		"location",
+		"about_me",
+		"views",
+		"up_votes",
+		"down_votes",
+		"age",
+		"account_id",
+		"profile_image_url"))
+	if err != nil {
+		LogVerbosef("txn.Prepare() failed with %s\n", err)
+		return 0, fmt.Errorf("txt.Prepare() failed with %s", err)
+	}
+	n := 0
+	for r.Next() {
+		u := &r.User
+		_, err = stmt.Exec(
+			u.ID,
+			u.Reputation,
+			u.CreationDate,
+			toStringPtr(u.DisplayName),
+			toTimePtr(u.LastAccessDate),
+			toStringPtr(u.WebsiteURL),
+			toStringPtr(u.Location),
+			toStringPtr(u.AboutMe),
+			u.Views,
+			u.UpVotes,
+			u.DownVotes,
+			u.Age,
+			u.AccountID,
+			toStringPtr(u.ProfileImageURL),
+		)
+		if err != nil {
+			LogVerbosef("stmt.Exec() failed with %s\n", err)
+			fmt.Printf("len(u.DisplayName): %d\n", len(u.DisplayName))
+			fmt.Printf("len(u.WebsiteURL): %d\n", len(u.WebsiteURL))
+			fmt.Printf("len(u.Location): %d\n", len(u.Location))
+			fmt.Printf("len(u.AboutMe): %d\n", len(u.AboutMe))
+			fmt.Printf("u.AboutMe: '%s'\n", u.AboutMe)
+			return 0, fmt.Errorf("stmt.Exec() failed with %s", err)
+		}
+		n++
+	}
+	if err = r.Err(); err != nil {
+		LogVerbosef("r.Err() failed with %s\n", err)
+		return 0, err
+	}
+	_, err = stmt.Exec()
+	if err != nil {
+		LogVerbosef("stmt.Exec() 2 failed with %s\n", err)
+		return 0, fmt.Errorf("stmt.Exec() failed with %s", err)
+	}
+	err = stmt.Close()
+	if err != nil {
+		LogVerbosef("stmt.Close() failed with %s\n", err)
+		return 0, fmt.Errorf("stmt.Close() failed with %s", err)
+	}
+	err = txn.Commit()
+	txn = nil
+	if err != nil {
+		LogVerbosef("txn.Commit() failed with %s\n", err)
+		return 0, fmt.Errorf("txn.Commit() failed with %s", err)
+	}
+	return n, nil
+}
+
+func importUsers(archive *lzmadec.Archive, db *sql.DB) error {
+	usersRecord := getEntryForFile(archive, "Users.xml")
+	if usersRecord == nil {
+		return errors.New("genEntryForFile('Users.xml') returned nil")
+	}
+
+	usersReader, err := archive.ExtractReader(usersRecord.Path)
+	if err != nil {
+		return fmt.Errorf("ExtractReader('%s') failed with %s", usersRecord.Path, err)
+	}
+	defer usersReader.Close()
+	ur, err := stackoverflow.NewUsersReader(usersReader)
+	if err != nil {
+		return fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
+	}
+	n, err := importUsersIntoDB(ur, db)
+	if err != nil {
+		return fmt.Errorf("importUsersIntoDB() failed with %s", err)
+	}
+	LogVerbosef("processed %d user records\n", n)
+	return nil
+}
+
 func importSite(name string) error {
-	//db := createDatabaseMust(name)
+	db := createDatabaseMust(name)
 	dstPath := getDataPath(name)
 	uri := getDataURL(name)
 	err := httpDlAtomicCached(dstPath, uri)
 	if err != nil {
 		return err
+	}
+	archive, err := lzmadec.NewArchive(dstPath)
+	if err != nil {
+		LogFatalf("lzmadec.NewArchive('%s') failed with '%s'\n", dstPath, err)
+	}
+
+	err = importUsers(archive, db)
+	if err != nil {
+		LogFatalf("importUsers() failed with %s\n", err)
 	}
 	return nil
 }
