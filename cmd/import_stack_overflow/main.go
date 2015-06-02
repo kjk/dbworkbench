@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -13,9 +12,7 @@ import (
 	"time"
 
 	"github.com/kjk/lzmadec"
-	"github.com/kjk/stackoverflow"
 	"github.com/kjk/u"
-	"github.com/lib/pq"
 )
 
 const (
@@ -235,6 +232,13 @@ func getEntryForFile(archive *lzmadec.Archive, name string) *lzmadec.Entry {
 	return nil
 }
 
+func toIntPtr(n int) *int {
+	if n == 0 {
+		return nil
+	}
+	return &n
+}
+
 func toTimePtr(t time.Time) *time.Time {
 	if t.IsZero() {
 		return nil
@@ -249,114 +253,6 @@ func toStringPtr(s string) *string {
 	return &s
 }
 
-func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
-	txn, err := db.Begin()
-	if err != nil {
-		return 0, err
-	}
-
-	defer func() {
-		if txn != nil {
-			LogVerbosef("calling txn.Rollback()\n")
-			txn.Rollback()
-		}
-	}()
-
-	stmt, err := txn.Prepare(pq.CopyIn("users",
-		"id",
-		"reputation",
-		"creation_date",
-		"display_name",
-		"last_access_date",
-		"website_url",
-		"location",
-		"about_me",
-		"views",
-		"up_votes",
-		"down_votes",
-		"age",
-		"account_id",
-		"profile_image_url"))
-	if err != nil {
-		LogVerbosef("txn.Prepare() failed with %s\n", err)
-		return 0, fmt.Errorf("txt.Prepare() failed with %s", err)
-	}
-	n := 0
-	for r.Next() {
-		u := &r.User
-		_, err = stmt.Exec(
-			u.ID,
-			u.Reputation,
-			u.CreationDate,
-			toStringPtr(u.DisplayName),
-			toTimePtr(u.LastAccessDate),
-			toStringPtr(u.WebsiteURL),
-			toStringPtr(u.Location),
-			toStringPtr(u.AboutMe),
-			u.Views,
-			u.UpVotes,
-			u.DownVotes,
-			u.Age,
-			u.AccountID,
-			toStringPtr(u.ProfileImageURL),
-		)
-		if err != nil {
-			LogVerbosef("stmt.Exec() failed with %s\n", err)
-			fmt.Printf("len(u.DisplayName): %d\n", len(u.DisplayName))
-			fmt.Printf("len(u.WebsiteURL): %d\n", len(u.WebsiteURL))
-			fmt.Printf("len(u.Location): %d\n", len(u.Location))
-			fmt.Printf("len(u.AboutMe): %d\n", len(u.AboutMe))
-			fmt.Printf("u.AboutMe: '%s'\n", u.AboutMe)
-			return 0, fmt.Errorf("stmt.Exec() failed with %s", err)
-		}
-		n++
-	}
-	if err = r.Err(); err != nil {
-		LogVerbosef("r.Err() failed with %s\n", err)
-		return 0, err
-	}
-	_, err = stmt.Exec()
-	if err != nil {
-		LogVerbosef("stmt.Exec() 2 failed with %s\n", err)
-		return 0, fmt.Errorf("stmt.Exec() failed with %s", err)
-	}
-	err = stmt.Close()
-	if err != nil {
-		LogVerbosef("stmt.Close() failed with %s\n", err)
-		return 0, fmt.Errorf("stmt.Close() failed with %s", err)
-	}
-	err = txn.Commit()
-	txn = nil
-	if err != nil {
-		LogVerbosef("txn.Commit() failed with %s\n", err)
-		return 0, fmt.Errorf("txn.Commit() failed with %s", err)
-	}
-	return n, nil
-}
-
-func importUsers(archive *lzmadec.Archive, db *sql.DB) error {
-	usersRecord := getEntryForFile(archive, "Users.xml")
-	if usersRecord == nil {
-		return errors.New("genEntryForFile('Users.xml') returned nil")
-	}
-
-	usersReader, err := archive.ExtractReader(usersRecord.Path)
-	if err != nil {
-		return fmt.Errorf("ExtractReader('%s') failed with %s", usersRecord.Path, err)
-	}
-	defer usersReader.Close()
-	ur, err := stackoverflow.NewUsersReader(usersReader)
-	if err != nil {
-		return fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
-	}
-	n, err := importUsersIntoDB(ur, db)
-	if err != nil {
-		return fmt.Errorf("importUsersIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d user records\n", n)
-	return nil
-}
-
 func importSite(name string) error {
 	db := createDatabaseMust(name)
 	dstPath := getDataPath(name)
@@ -368,6 +264,11 @@ func importSite(name string) error {
 	archive, err := lzmadec.NewArchive(dstPath)
 	if err != nil {
 		LogFatalf("lzmadec.NewArchive('%s') failed with '%s'\n", dstPath, err)
+	}
+
+	err = importPosts(archive, db)
+	if err != nil {
+		LogFatalf("importPosts() failed with %s\n", err)
 	}
 
 	err = importUsers(archive, db)
