@@ -127,12 +127,12 @@ func importPosts(archive *lzmadec.Archive, db *sql.DB) error {
 	defer reader.Close()
 	r, err := stackoverflow.NewPostsReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
+		return fmt.Errorf("stackoverflow.NewPostsReader() failed with %s", err)
 	}
 	defer r.Close()
 	n, err := importPostsIntoDB(r, db)
 	if err != nil {
-		return fmt.Errorf("importUsersIntoDB() failed with %s", err)
+		return fmt.Errorf("importPostsIntoDB() failed with %s", err)
 	}
 	LogVerbosef("processed %d posts records\n", n)
 	return nil

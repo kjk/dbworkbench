@@ -115,6 +115,15 @@ CREATE TABLE postlinks (
 	link_type_id 		INTEGER NOT NULL
 );
 
+CREATE TABLE votes (
+	id 						SERIAL NOT NULL PRIMARY KEY,
+	post_id 			INTEGER NOT NULL,
+	vote_type_id 	INTEGER NOT NULL,
+	user_id 			INTEGER NOT NULL,
+	bounty_amount INTEGER NOT NULL,
+	creation_date TIMESTAMP WITHOUT TIME ZONE
+);
+
 `
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
 	createDemodbRoleIfNotExistsStmt = `
@@ -224,6 +233,7 @@ func createDatabaseMust(dbName string) *sql.DB {
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON comments TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON posthistory TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON postlinks TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON votes TO %s;`, demoDBUser))
 
 	LogVerbosef("created database\n")
 	err = db.Ping()
@@ -347,11 +357,16 @@ func importSite(name string) error {
 			LogFatalf("importComments() failed with %s\n", err)
 		}
 
+		err = importPostLinks(archive, db)
+		if err != nil {
+			LogFatalf("importPostLinks() failed with %s\n", err)
+		}
+
 	*/
 
-	err = importPostLinks(archive, db)
+	err = importVotes(archive, db)
 	if err != nil {
-		LogFatalf("importPostLinks() failed with %s\n", err)
+		LogFatalf("importVotes() failed with %s\n", err)
 	}
 
 	return nil
