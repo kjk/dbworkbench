@@ -69,6 +69,14 @@ CREATE TABLE posts (
   community_owned_date     TIMESTAMP WITHOUT TIME ZONE,
   closed_date              TIMESTAMP WITHOUT TIME ZONE
 );
+
+CREATE TABLE badges (
+	id 				SERIAL NOT NULL PRIMARY KEY,
+	user_id 	INTEGER NOT NULL,
+	name 			VARCHAR(256),
+	date 			TIMESTAMP WITHOUT TIME ZONE
+);
+
 `
 
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
@@ -174,6 +182,7 @@ func createDatabaseMust(dbName string) *sql.DB {
 	execMust(db, fmt.Sprintf(`GRANT USAGE ON SCHEMA public TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON users TO %s;`, demoDBUser))
 	execMust(db, fmt.Sprintf(`GRANT SELECT ON posts TO %s;`, demoDBUser))
+	execMust(db, fmt.Sprintf(`GRANT SELECT ON badges TO %s;`, demoDBUser))
 
 	LogVerbosef("created database\n")
 	err = db.Ping()
@@ -184,7 +193,7 @@ func createDatabaseMust(dbName string) *sql.DB {
 func httpDlAtomicCached(dstPath, uri string) error {
 	// TODO: should at least check size of the file is correct
 	if u.PathExists(dstPath) {
-		LogVerbosef("'%s' already download as '%s'\n", uri, dstPath)
+		LogVerbosef("'%s' already downloaded as '%s'\n", uri, dstPath)
 		return nil
 	}
 	LogVerbosef("starting to download '%s'\n", uri)
@@ -261,23 +270,34 @@ func importSite(name string) error {
 	if err != nil {
 		return err
 	}
+
 	archive, err := lzmadec.NewArchive(dstPath)
 	if err != nil {
 		LogFatalf("lzmadec.NewArchive('%s') failed with '%s'\n", dstPath, err)
 	}
 
-	err = importPosts(archive, db)
-	if err != nil {
-		LogFatalf("importPosts() failed with %s\n", err)
-	}
+	/*
+		err = importPosts(archive, db)
+		if err != nil {
+			LogFatalf("importPosts() failed with %s\n", err)
+		}
 
-	err = importUsers(archive, db)
+		err = importUsers(archive, db)
+		if err != nil {
+			LogFatalf("importUsers() failed with %s\n", err)
+		}
+	*/
+
+	err = importBadges(archive, db)
 	if err != nil {
-		LogFatalf("importUsers() failed with %s\n", err)
+		LogFatalf("importBadges() failed with %s\n", err)
 	}
 	return nil
 }
 
 func main() {
-	importSite(sites[0])
+	err := importSite(sites[0])
+	if err != nil {
+		LogVerbosef("importSite() failed with %s\n", err)
+	}
 }
