@@ -86,8 +86,15 @@ CREATE TABLE comments (
 	user_id 					INTEGER,
 	user_display_name VARCHAR(256)
 );
-`
 
+CREATE TABLE tags (
+	id 								SERIAL NOT NULL PRIMARY KEY,
+	tag_name 					VARCHAR(256),
+	count 						INTEGER,
+	excerpt_post_id 	INTEGER,
+	wiki_post_id 			INTEGER
+);
+`
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
 	createDemodbRoleIfNotExistsStmt = `
 do
@@ -300,11 +307,16 @@ func importSite(name string) error {
 		if err != nil {
 			LogFatalf("importBadges() failed with %s\n", err)
 		}
+		err = importComments(archive, db)
+		if err != nil {
+			LogFatalf("importComments() failed with %s\n", err)
+		}
+
 	*/
 
-	err = importComments(archive, db)
+	err = importTags(archive, db)
 	if err != nil {
-		LogFatalf("importComments() failed with %s\n", err)
+		LogFatalf("importTags() failed with %s\n", err)
 	}
 
 	return nil
