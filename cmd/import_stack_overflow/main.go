@@ -77,6 +77,15 @@ CREATE TABLE badges (
 	date 			TIMESTAMP WITHOUT TIME ZONE
 );
 
+CREATE TABLE comments (
+	id 								SERIAL NOT NULL PRIMARY KEY,
+	post_id 					INTEGER NOT NULL,
+	score 						INTEGER,
+	text 							VARCHAR(32000),
+	creation_date 		TIMESTAMP WITHOUT TIME ZONE,
+	user_id 					INTEGER,
+	user_display_name VARCHAR(256)
+);
 `
 
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
@@ -277,21 +286,27 @@ func importSite(name string) error {
 	}
 
 	/*
-		err = importPosts(archive, db)
-		if err != nil {
-			LogFatalf("importPosts() failed with %s\n", err)
-		}
+			err = importPosts(archive, db)
+			if err != nil {
+				LogFatalf("importPosts() failed with %s\n", err)
+			}
 
-		err = importUsers(archive, db)
+			err = importUsers(archive, db)
+			if err != nil {
+				LogFatalf("importUsers() failed with %s\n", err)
+			}
+
+		err = importBadges(archive, db)
 		if err != nil {
-			LogFatalf("importUsers() failed with %s\n", err)
+			LogFatalf("importBadges() failed with %s\n", err)
 		}
 	*/
 
-	err = importBadges(archive, db)
+	err = importComments(archive, db)
 	if err != nil {
-		LogFatalf("importBadges() failed with %s\n", err)
+		LogFatalf("importComments() failed with %s\n", err)
 	}
+
 	return nil
 }
 
