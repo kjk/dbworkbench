@@ -15,13 +15,6 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 		return 0, err
 	}
 
-	defer func() {
-		if txn != nil {
-			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
-			txn.Rollback()
-		}
-	}()
-
 	stmt, err := txn.Prepare(pq.CopyIn("users",
 		"id",
 		"reputation",
@@ -36,7 +29,16 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 		"down_votes",
 		"age",
 		"account_id",
-		"profile_image_url"))
+		"profile_image_url",
+	))
+
+	defer func() {
+		if txn != nil {
+			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
+			txn.Rollback()
+		}
+	}()
+
 	if err != nil {
 		err = fmt.Errorf("txt.Prepare() failed with %s", err)
 		return 0, err
@@ -61,14 +63,6 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 			toStringPtr(u.ProfileImageURL),
 		)
 		if err != nil {
-			/*
-				LogVerbosef("stmt.Exec() failed with %s\n", err)
-				fmt.Printf("len(u.DisplayName): %d\n", len(u.DisplayName))
-				fmt.Printf("len(u.WebsiteURL): %d\n", len(u.WebsiteURL))
-				fmt.Printf("len(u.Location): %d\n", len(u.Location))
-				fmt.Printf("len(u.AboutMe): %d\n", len(u.AboutMe))
-				fmt.Printf("u.AboutMe: '%s'\n", u.AboutMe)
-			*/
 			err = fmt.Errorf("stmt.Exec() failed with %s", err)
 			return 0, err
 		}
@@ -83,6 +77,7 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 		return 0, err
 	}
 	err = stmt.Close()
+	stmt = nil
 	if err != nil {
 		err = fmt.Errorf("stmt.Close() failed with %s", err)
 		return 0, err

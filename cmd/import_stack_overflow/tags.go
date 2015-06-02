@@ -10,7 +10,6 @@ import (
 )
 
 func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
-	fmt.Printf("importTagsIntoDB()\n")
 	txn, err := db.Begin()
 	if err != nil {
 		return 0, err

@@ -10,7 +10,6 @@ import (
 )
 
 func importPostHistoryIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
-	fmt.Printf("importPostHistoryIntoDB()\n")
 	txn, err := db.Begin()
 	if err != nil {
 		return 0, err

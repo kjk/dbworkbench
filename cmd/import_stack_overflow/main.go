@@ -55,7 +55,7 @@ CREATE TABLE posts (
   score                    INTEGER NOT NULL,
   view_count               INTEGER NOT NULL,
   body                     TEXT NOT NULL,
-  owner_user_id            INTEGER,
+  owner_user_id            INTEGER NOT NULL,
   owner_display_name       VARCHAR(512),
   last_editor_user_id      INTEGER,
   last_editor_display_name VARCHAR(512),
@@ -101,7 +101,7 @@ CREATE TABLE posthistory (
 	post_id 							INTEGER NOT NULL,
 	revision_guid 				VARCHAR(256),
 	creation_date 				TIMESTAMP WITHOUT TIME ZONE,
-	user_id 							INTEGER,
+	user_id 							INTEGER NOT NULL,
 	user_display_name 		VARCHAR(512),
 	text 									VARCHAR(32000),
 	comment 							VARCHAR(32000)
@@ -123,7 +123,6 @@ CREATE TABLE votes (
 	bounty_amount INTEGER NOT NULL,
 	creation_date TIMESTAMP WITHOUT TIME ZONE
 );
-
 `
 	// http://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist
 	createDemodbRoleIfNotExistsStmt = `
@@ -178,7 +177,11 @@ func LogVerbosef(format string, arg ...interface{}) {
 
 // LogFatalf logs a message and quits
 func LogFatalf(format string, arg ...interface{}) {
-	LogVerbosef(format, arg)
+	s := fmt.Sprintf(format, arg...)
+	/*if pc, _, _, ok := runtime.Caller(1); ok {
+		s = FunctionFromPc(pc) + ": " + s
+	}*/
+	fmt.Print(s)
 	os.Exit(1)
 }
 
@@ -201,7 +204,7 @@ func getCreateDbStatementsMust() []string {
 }
 
 func createDatabaseMust(dbName string) *sql.DB {
-	LogVerbosef("trying to create the database\n")
+	LogVerbosef("trying to create the database '%s'\n", dbName)
 	db, err := sql.Open("postgres", getSqlConnectionRoot())
 	fatalIfErr(err, "sql.Open()")
 	LogVerbosef("got root connection\n")
@@ -226,14 +229,9 @@ func createDatabaseMust(dbName string) *sql.DB {
 
 	// grant demoDBUser read-only access to the database
 	execMust(db, fmt.Sprintf(`GRANT USAGE ON SCHEMA public TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON users TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON posts TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON badges TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON tags TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON comments TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON posthistory TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON postlinks TO %s;`, demoDBUser))
-	execMust(db, fmt.Sprintf(`GRANT SELECT ON votes TO %s;`, demoDBUser))
+	for _, tableName := range []string{"users", "posts", "badges", "tags", "comments", "posthistory", "postlinks", "votes"} {
+		execMust(db, fmt.Sprintf(`GRANT SELECT ON %s TO %s;`, tableName, demoDBUser))
+	}
 
 	LogVerbosef("created database\n")
 	err = db.Ping()
@@ -327,42 +325,40 @@ func importSite(name string) error {
 		LogFatalf("lzmadec.NewArchive('%s') failed with '%s'\n", dstPath, err)
 	}
 
-	/*
-			err = importPosts(archive, db)
-			if err != nil {
-				LogFatalf("importPosts() failed with %s\n", err)
-			}
+	err = importUsers(archive, db)
+	if err != nil {
+		LogFatalf("importUsers() failed with %s\n", err)
+	}
 
-			err = importUsers(archive, db)
-			if err != nil {
-				LogFatalf("importUsers() failed with %s\n", err)
-			}
+	err = importPosts(archive, db)
+	if err != nil {
+		LogFatalf("importPosts() failed with %s\n", err)
+	}
 
-		err = importBadges(archive, db)
-		if err != nil {
-			LogFatalf("importBadges() failed with %s\n", err)
-		}
-		err = importComments(archive, db)
-		if err != nil {
-			LogFatalf("importComments() failed with %s\n", err)
-		}
+	err = importBadges(archive, db)
+	if err != nil {
+		LogFatalf("importBadges() failed with %s\n", err)
+	}
 
-		err = importTags(archive, db)
-		if err != nil {
-			LogFatalf("importTags() failed with %s\n", err)
-		}
+	err = importComments(archive, db)
+	if err != nil {
+		LogFatalf("importComments() failed with %s\n", err)
+	}
 
-		err = importComments(archive, db)
-		if err != nil {
-			LogFatalf("importComments() failed with %s\n", err)
-		}
+	err = importTags(archive, db)
+	if err != nil {
+		LogFatalf("importTags() failed with %s\n", err)
+	}
 
-		err = importPostLinks(archive, db)
-		if err != nil {
-			LogFatalf("importPostLinks() failed with %s\n", err)
-		}
+	err = importPostHistory(archive, db)
+	if err != nil {
+		LogFatalf("importPostHistory() failed with %s\n", err)
+	}
 
-	*/
+	err = importPostLinks(archive, db)
+	if err != nil {
+		LogFatalf("importPostLinks() failed with %s\n", err)
+	}
 
 	err = importVotes(archive, db)
 	if err != nil {
