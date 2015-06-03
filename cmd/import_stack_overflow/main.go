@@ -23,6 +23,7 @@ var (
 	dataDir string
 
 	sites = []string{
+		"stackoverflow",
 		"academia",
 		"android",
 		"anime",
@@ -168,13 +169,8 @@ func getSqlConnectionForDB(name string) string {
 	return fmt.Sprintf("postgres://localhost/%s?sslmode=disable", name)
 }
 
-func getDataURL(name string) string {
-	return fmt.Sprintf("https://archive.org/download/stackexchange/%s.stackexchange.com.7z", name)
-}
-
-func getDataPath(name string) string {
-	name = fmt.Sprintf("%s.stackexchange.com.7z", name)
-	return filepath.Join(dataDir, name)
+func multiFileSiteName(siteName string) bool {
+	return strings.EqualFold(siteName, "stackoverflow")
 }
 
 // LogVerbosef logs in a verbose manner
@@ -318,6 +314,31 @@ func getEntryForFile(archive *lzmadec.Archive, name string) *lzmadec.Entry {
 	return nil
 }
 
+// fileName is "Users", "Badges" etc.
+func getStackOverflowReader(siteName, fileName string) (io.ReadCloser, error) {
+	archiveName := siteName + ".stackexchange.com.7z"
+	if multiFileSiteName(siteName) {
+		archiveName = siteName + ".com-" + fileName + ".7z"
+	}
+	archivePath := filepath.Join(dataDir, archiveName)
+	uri := fmt.Sprintf("https://archive.org/download/stackexchange/%s.stackexchange.com.7z", archiveName)
+	err := httpDlAtomicCached(archivePath, uri)
+	if err != nil {
+		return nil, err
+	}
+
+	archive, err := lzmadec.NewArchive(archivePath)
+	if err != nil {
+		return nil, fmt.Errorf("lzmadec.NewArchive('%s') failed with '%s'", archivePath, err)
+	}
+
+	entry := getEntryForFile(archive, fileName+".xml")
+	if entry == nil {
+		return nil, fmt.Errorf("genEntryForFile('%s') returned nil", fileName+".xml")
+	}
+	return archive.ExtractReader(entry.Path)
+}
+
 func toIntPtr(n int) *int {
 	if n == 0 {
 		return nil
@@ -339,63 +360,52 @@ func toStringPtr(s string) *string {
 	return &s
 }
 
-func importSite(name string) error {
+func importSite(siteName string) error {
 	timeStart := time.Now()
-	db := createDatabaseMust(name)
-	dstPath := getDataPath(name)
-	uri := getDataURL(name)
-	err := httpDlAtomicCached(dstPath, uri)
-	if err != nil {
-		return err
-	}
+	db := createDatabaseMust(siteName)
 
-	archive, err := lzmadec.NewArchive(dstPath)
-	if err != nil {
-		LogFatalf("lzmadec.NewArchive('%s') failed with '%s'\n", dstPath, err)
-	}
-
-	err = importUsers(archive, db)
+	err := importUsers(siteName, db)
 	if err != nil {
 		LogFatalf("importUsers() failed with %s\n", err)
 	}
 
-	err = importPosts(archive, db)
+	err = importPosts(siteName, db)
 	if err != nil {
 		LogFatalf("importPosts() failed with %s\n", err)
 	}
 
-	err = importBadges(archive, db)
+	err = importBadges(siteName, db)
 	if err != nil {
 		LogFatalf("importBadges() failed with %s\n", err)
 	}
 
-	err = importComments(archive, db)
+	err = importComments(siteName, db)
 	if err != nil {
 		LogFatalf("importComments() failed with %s\n", err)
 	}
 
-	err = importTags(archive, db)
+	err = importTags(siteName, db)
 	if err != nil {
 		LogFatalf("importTags() failed with %s\n", err)
 	}
-	err = importPostHistory(archive, db)
+	err = importPostHistory(siteName, db)
 	if err != nil {
 		LogFatalf("importPostHistory() failed with %s\n", err)
 	}
 
-	err = importPostLinks(archive, db)
+	err = importPostLinks(siteName, db)
 	if err != nil {
 		LogFatalf("importPostLinks() failed with %s\n", err)
 	}
 
-	err = importVotes(archive, db)
+	err = importVotes(siteName, db)
 	if err != nil {
 		LogFatalf("importVotes() failed with %s\n", err)
 	}
 
 	createIndexesMust(db)
 	runAnalyzeMust(db)
-	LogVerbosef("imported site '%s' in %s\n", name, time.Since(timeStart))
+	LogVerbosef("imported site '%s' in %s\n", siteName, time.Since(timeStart))
 	return nil
 }
 

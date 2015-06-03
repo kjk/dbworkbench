@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/kjk/lzmadec"
 	"github.com/kjk/stackoverflow"
 	"github.com/lib/pq"
 )
@@ -70,18 +69,13 @@ func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importTags(archive *lzmadec.Archive, db *sql.DB) error {
-	name := "Tags.xml"
-	entry := getEntryForFile(archive, name)
-	if entry == nil {
-		return fmt.Errorf("genEntryForFile('%s') returned nil", name)
-	}
-
-	reader, err := archive.ExtractReader(entry.Path)
+func importTags(siteName string, db *sql.DB) error {
+	reader, err := getStackOverflowReader(siteName, "Tags")
 	if err != nil {
-		return fmt.Errorf("ExtractReader('%s') failed with %s", entry.Path, err)
+		return err
 	}
 	defer reader.Close()
+
 	r, err := stackoverflow.NewTagsReader(reader)
 	if err != nil {
 		return fmt.Errorf("stackoverflow.NewTagsReader() failed with %s", err)
