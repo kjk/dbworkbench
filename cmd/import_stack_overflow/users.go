@@ -34,7 +34,6 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 
 	defer func() {
 		if txn != nil {
-			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
 			txn.Rollback()
 		}
 	}()
@@ -63,6 +62,7 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 			toStringPtr(u.ProfileImageURL),
 		)
 		if err != nil {
+			LogVerbosef("n: %+v\n", u)
 			err = fmt.Errorf("stmt.Exec() failed with %s", err)
 			return 0, err
 		}

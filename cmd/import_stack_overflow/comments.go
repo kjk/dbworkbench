@@ -17,7 +17,6 @@ func importCommentsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 
 	defer func() {
 		if txn != nil {
-			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
 			txn.Rollback()
 		}
 	}()
@@ -48,6 +47,7 @@ func importCommentsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 			c.UserDisplayName,
 		)
 		if err != nil {
+			LogVerbosef("c: %+v\n", c)
 			err = fmt.Errorf("stmt.Exec() failed with %s", err)
 			return 0, err
 		}
@@ -79,19 +79,16 @@ func importComments(archive *lzmadec.Archive, db *sql.DB) error {
 	name := "Comments.xml"
 	entry := getEntryForFile(archive, name)
 	if entry == nil {
-		LogVerbosef("genEntryForFile('%s') returned nil", name)
 		return fmt.Errorf("genEntryForFile('%s') returned nil", name)
 	}
 
 	reader, err := archive.ExtractReader(entry.Path)
 	if err != nil {
-		LogVerbosef("ExtractReader('%s') failed with %s", entry.Path, err)
 		return fmt.Errorf("ExtractReader('%s') failed with %s", entry.Path, err)
 	}
 	defer reader.Close()
 	r, err := stackoverflow.NewCommentsReader(reader)
 	if err != nil {
-		LogVerbosef("NewCommentsReader failed with %s", err)
 		return fmt.Errorf("stackoverflow.NewCommentsReader() failed with %s", err)
 	}
 	defer r.Close()

@@ -28,6 +28,12 @@ var (
 		"anime",
 	}
 
+	createIndexes = `
+CREATE INDEX post_type_id_idx ON posts (post_type_id);
+
+CREATE INDEX view_count_idx ON posts (view_count);
+	`
+
 	initialSchema = `
 CREATE TABLE users (
   id                  SERIAL NOT NULL PRIMARY KEY,
@@ -55,9 +61,9 @@ CREATE TABLE posts (
   score                    INTEGER NOT NULL,
   view_count               INTEGER NOT NULL,
   body                     TEXT NOT NULL,
-  owner_user_id            INTEGER NOT NULL,
+  owner_user_id            INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
   owner_display_name       VARCHAR(512),
-  last_editor_user_id      INTEGER,
+  last_editor_user_id      INTEGER  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
   last_editor_display_name VARCHAR(512),
   last_edit_date           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   last_activity_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -72,18 +78,18 @@ CREATE TABLE posts (
 
 CREATE TABLE badges (
 	id 				SERIAL NOT NULL PRIMARY KEY,
-	user_id 	INTEGER NOT NULL,
+	user_id 	INTEGER NOT NULL  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	name 			VARCHAR(256),
 	date 			TIMESTAMP WITHOUT TIME ZONE
 );
 
 CREATE TABLE comments (
 	id 								SERIAL NOT NULL PRIMARY KEY,
-	post_id 					INTEGER NOT NULL,
+	post_id 					INTEGER NOT NULL REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	score 						INTEGER NOT NULL,
 	text 							VARCHAR(32000),
 	creation_date 		TIMESTAMP WITHOUT TIME ZONE,
-	user_id 					INTEGER NOT NULL,
+	user_id 					INTEGER NOT NULL  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	user_display_name VARCHAR(256)
 );
 
@@ -98,10 +104,10 @@ CREATE TABLE tags (
 CREATE TABLE posthistory (
 	id 										SERIAL NOT NULL PRIMARY KEY,
 	post_history_type_id 	INTEGER NOT NULL,
-	post_id 							INTEGER NOT NULL,
+	post_id 							INTEGER NOT NULL REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	revision_guid 				VARCHAR(256),
 	creation_date 				TIMESTAMP WITHOUT TIME ZONE,
-	user_id 							INTEGER NOT NULL,
+	user_id 							INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	user_display_name 		VARCHAR(512),
 	text 									VARCHAR(32000),
 	comment 							VARCHAR(32000)
@@ -110,16 +116,16 @@ CREATE TABLE posthistory (
 CREATE TABLE postlinks (
 	id 							SERIAL NOT NULL PRIMARY KEY,
 	creation_date 	TIMESTAMP WITHOUT TIME ZONE,
-	post_id 				INTEGER NOT NULL,
-	related_post_id INTEGER NOT NULL,
+	post_id 				INTEGER NOT NULL, -- REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	related_post_id INTEGER,
 	link_type_id 		INTEGER NOT NULL
 );
 
 CREATE TABLE votes (
 	id 						SERIAL NOT NULL PRIMARY KEY,
-	post_id 			INTEGER NOT NULL,
+	post_id 			INTEGER NOT NULL, -- REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	vote_type_id 	INTEGER NOT NULL,
-	user_id 			INTEGER NOT NULL,
+	user_id 			INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	bounty_amount INTEGER NOT NULL,
 	creation_date TIMESTAMP WITHOUT TIME ZONE
 );
@@ -201,6 +207,10 @@ func getCreateDbStatementsMust() []string {
 	// can't execute multiple sql statements at once, so break the file
 	// into separate statements
 	return strings.Split(initialSchema, "\n\n")
+}
+
+func createIndexesMust(db *sql.DB) {
+
 }
 
 func createDatabaseMust(dbName string) *sql.DB {
@@ -349,7 +359,6 @@ func importSite(name string) error {
 	if err != nil {
 		LogFatalf("importTags() failed with %s\n", err)
 	}
-
 	err = importPostHistory(archive, db)
 	if err != nil {
 		LogFatalf("importPostHistory() failed with %s\n", err)
@@ -364,6 +373,8 @@ func importSite(name string) error {
 	if err != nil {
 		LogFatalf("importVotes() failed with %s\n", err)
 	}
+
+	createIndexesMust(db)
 
 	return nil
 }

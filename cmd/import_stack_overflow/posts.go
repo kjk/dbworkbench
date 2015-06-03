@@ -28,7 +28,6 @@ func importPostsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 
 	defer func() {
 		if txn != nil {
-			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
 			txn.Rollback()
 		}
 	}()
@@ -62,6 +61,9 @@ func importPostsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	n := 0
 	for r.Next() {
 		p := &r.Post
+		if false && p.ID == 41258 {
+			fmt.Printf("p: %#v\n", p)
+		}
 		_, err = stmt.Exec(
 			p.ID,
 			p.PostTypeID,
@@ -86,6 +88,7 @@ func importPostsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 			toTimePtr(p.ClosedDate),
 		)
 		if err != nil {
+			LogVerbosef("p: #+v\n", p)
 			err = fmt.Errorf("stmt.Exec() failed with %s", err)
 			return 0, err
 		}

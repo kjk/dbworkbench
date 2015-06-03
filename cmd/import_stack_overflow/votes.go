@@ -17,7 +17,6 @@ func importVotesIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 
 	defer func() {
 		if txn != nil {
-			LogVerbosef("calling txn.Rollback(), err: %s\n", err)
 			txn.Rollback()
 		}
 	}()
@@ -46,7 +45,7 @@ func importVotesIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 			v.CreationDate,
 		)
 		if err != nil {
-			err = fmt.Errorf("stmt.Exec() failed with %s", err)
+			err = fmt.Errorf("stmt.Exec() 1 failed with %s", err)
 			return 0, err
 		}
 		n++
@@ -56,7 +55,7 @@ func importVotesIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	}
 	_, err = stmt.Exec()
 	if err != nil {
-		err = fmt.Errorf("stmt.Exec() failed with %s", err)
+		err = fmt.Errorf("stmt.Exec() 2 failed with %s", err)
 		return 0, err
 	}
 	err = stmt.Close()
@@ -77,19 +76,16 @@ func importVotes(archive *lzmadec.Archive, db *sql.DB) error {
 	name := "Votes.xml"
 	entry := getEntryForFile(archive, name)
 	if entry == nil {
-		LogVerbosef("genEntryForFile('%s') returned nil", name)
 		return fmt.Errorf("genEntryForFile('%s') returned nil", name)
 	}
 
 	reader, err := archive.ExtractReader(entry.Path)
 	if err != nil {
-		LogVerbosef("ExtractReader('%s') failed with %s", entry.Path, err)
 		return fmt.Errorf("ExtractReader('%s') failed with %s", entry.Path, err)
 	}
 	defer reader.Close()
 	r, err := stackoverflow.NewVotesReader(reader)
 	if err != nil {
-		LogVerbosef("NewVotesReader failed with %s", err)
 		return fmt.Errorf("stackoverflow.NewVotesReader() failed with %s", err)
 	}
 	defer r.Close()
