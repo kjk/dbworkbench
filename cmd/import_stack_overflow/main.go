@@ -150,16 +150,24 @@ $body$
 )
 
 func init() {
+	if u.PathExists("data") {
+		dir, err := os.Getwd()
+		if err == nil {
+			dataDir = filepath.Join(dir, "data")
+			return
+		}
+		LogVerbosef("os.Getwd() failed with %s\n", err)
+	}
 	dataDir = u.ExpandTildeInPath("~/data/import_stack_overflow")
 	os.MkdirAll(dataDir, 0755)
 }
 
 func getSqlConnectionRoot() string {
-	return "postgres://localhost/postgres?sslmode=disable"
+	return "postgres:///postgres?sslmode=disable"
 }
 
 func getSqlConnectionForDB(name string) string {
-	return fmt.Sprintf("postgres://localhost/%s?sslmode=disable", name)
+	return fmt.Sprintf("postgres:///%s?sslmode=disable", name)
 }
 
 func multiFileSiteName(siteName string) bool {
@@ -280,6 +288,9 @@ func httpDlAtomicCached(dstPath, uri string) error {
 	if err != nil {
 		return err
 	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("download of '%s' failed with %d", uri, resp.StatusCode)
+	}
 	_, err = io.Copy(fTmp, resp.Body)
 	resp.Body.Close()
 	if err != nil {
@@ -322,7 +333,7 @@ func getArchiveCached(siteName, fileName string) (*lzmadec.Archive, error) {
 		archiveName = siteName + ".com-" + fileName + ".7z"
 	}
 	archivePath := filepath.Join(dataDir, archiveName)
-	uri := fmt.Sprintf("https://archive.org/download/stackexchange/%s.stackexchange.com.7z", archiveName)
+	uri := fmt.Sprintf("https://archive.org/download/stackexchange/%s", archiveName)
 	err := httpDlAtomicCached(archivePath, uri)
 	if err != nil {
 		return nil, err

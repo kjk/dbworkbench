@@ -6,7 +6,7 @@
     local_action: command python build-import.py
   - name: copy to the server
     copy: src=import_stack_overflow_linux dest=/home/demodb/import_stack_overflow mode=0755
-  - name: run it
-    command: su -c "/home/demodb/import_stack_overflow stackoverflow" postgres
+  #- name: run it
+  #  command: su -c "/home/demodb/import_stack_overflow stackoverflow" postgres
   - name: delete file locally
     local_action: command rm import_stack_overflow_linux
