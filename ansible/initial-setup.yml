@@ -3,7 +3,6 @@
   hosts: dbworkbench-initial
   sudo: True
   tasks:
-  tasks:
     - name: create a group for the user
       group: name=dbworkbench state=present
     - name: create a user
