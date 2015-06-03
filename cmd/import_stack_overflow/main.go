@@ -108,7 +108,7 @@ CREATE TABLE posthistory (
 	creation_date 				TIMESTAMP WITHOUT TIME ZONE,
 	user_id 							INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	user_display_name 		VARCHAR(512),
-	text 									VARCHAR(32000),
+	text 									VARCHAR(64000),
 	comment 							VARCHAR(32000)
 );
 
