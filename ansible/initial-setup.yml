@@ -62,9 +62,9 @@
         state=link
     - name: restart nginx
       service: name=nginx state=restarted
-    - name: copy postfres config file
-      copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf
-    - name: chown postgres config file
-      command: chown postgres:postgres /etc/postgresql/9.4/main/postgresql.conf
+    - name: copy postgres config file
+      copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf owner=postgres group=postgres mode=0644
+      register: pgconfig
     - name: restart postgres
       service: name=postgresql state=restarted
+      when: pgconfig.changed
