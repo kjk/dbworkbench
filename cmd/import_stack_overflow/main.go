@@ -169,14 +169,14 @@ func isLinux() bool {
 
 func getSqlConnectionRoot() string {
 	if isLinux() {
-		return "postgres:///postgres?host=/var/run/postgresql"
+		return "postgres:///postgres?host=/var/run/postgresql&sslmode=disable"
 	}
 	return "postgres:///postgres?sslmode=disable"
 }
 
 func getSqlConnectionForDB(name string) string {
 	if isLinux() {
-		return fmt.Sprintf("postgres:///%s?host=/var/run/postgresql", name)
+		return fmt.Sprintf("postgres:///%s?host=/var/run/postgresql&sslmode=disable", name)
 	}
 	return fmt.Sprintf("postgres:///%s?sslmode=disable", name)
 }
