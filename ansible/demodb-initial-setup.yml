@@ -37,3 +37,5 @@
       apt: name=unzip state=latest update_cache=yes cache_valid_time=120
     - name: install tar
       apt: name=tar state=latest update_cache=yes cache_valid_time=120
+    - name: install tmux
+      apt: name=tmux state=latest update_cache=yes cache_valid_time=120
