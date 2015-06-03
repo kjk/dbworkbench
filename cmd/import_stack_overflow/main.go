@@ -61,9 +61,9 @@ CREATE TABLE posts (
   score                    INTEGER NOT NULL,
   view_count               INTEGER NOT NULL,
   body                     TEXT NOT NULL,
-  owner_user_id            INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  owner_user_id            INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
   owner_display_name       VARCHAR(512),
-  last_editor_user_id      INTEGER  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  last_editor_user_id      INTEGER, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
   last_editor_display_name VARCHAR(512),
   last_edit_date           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   last_activity_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -78,18 +78,18 @@ CREATE TABLE posts (
 
 CREATE TABLE badges (
 	id 				SERIAL NOT NULL PRIMARY KEY,
-	user_id 	INTEGER NOT NULL  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	user_id 	INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	name 			VARCHAR(256),
 	date 			TIMESTAMP WITHOUT TIME ZONE
 );
 
 CREATE TABLE comments (
 	id 								SERIAL NOT NULL PRIMARY KEY,
-	post_id 					INTEGER NOT NULL REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	post_id 					INTEGER NOT NULL, -- REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	score 						INTEGER NOT NULL,
 	text 							VARCHAR(32000),
 	creation_date 		TIMESTAMP WITHOUT TIME ZONE,
-	user_id 					INTEGER NOT NULL  REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	user_id 					INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	user_display_name VARCHAR(256)
 );
 
@@ -104,10 +104,10 @@ CREATE TABLE tags (
 CREATE TABLE posthistory (
 	id 										SERIAL NOT NULL PRIMARY KEY,
 	post_history_type_id 	INTEGER NOT NULL,
-	post_id 							INTEGER NOT NULL REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	post_id 							INTEGER NOT NULL, -- REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	revision_guid 				VARCHAR(256),
 	creation_date 				TIMESTAMP WITHOUT TIME ZONE,
-	user_id 							INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	user_id 							INTEGER NOT NULL, -- REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	user_display_name 		VARCHAR(512),
 	text 									VARCHAR(32000),
 	comment 							VARCHAR(32000)
