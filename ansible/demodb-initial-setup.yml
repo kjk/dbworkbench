@@ -29,18 +29,15 @@
       copy: src=dbworkbench_rsa.pub dest=/home/demodb/.ssh/authorized_keys
     - name: configure authorized_keys
       file: path=/home/demodb/.ssh/authorized_keys mode=0644 owner=demodb group=demodb
-    - name: install unzip
-      apt: name=unzip state=latest update_cache=yes cache_valid_time=120
-    - name: install tar
-      apt: name=tar state=latest update_cache=yes cache_valid_time=120
-    - name: install tmux
-      apt: name=tmux state=latest update_cache=yes cache_valid_time=120
-    - name: install 7zip
-      apt: name=p7zip-full state=latest update_cache=yes cache_valid_time=120
-    - name: install postgres
-      apt: name=postgresql state=latest update_cache=yes cache_valid_time=120
-    - name: install postgres hstore extension
-      apt: name=postgresql-contrib state=latest update_cache=yes cache_valid_time=120
+    - name: install unzip, tar, tmux, 7zip, postgres
+      apt: name={{ item }} state=latest update_cache=yes cache_valid_time=120
+      with_items:
+        - unzip
+        - tar
+        - tmux
+        - p7zip-full
+        - postgresql
+        - postgresql-contrib
     - name: copy postgres config file
       copy: src=demodb-postgresql.conf dest=/etc/postgresql/9.3/main/postgresql.conf owner=postgres group=postgres mode=0644
       register: pgconfig
