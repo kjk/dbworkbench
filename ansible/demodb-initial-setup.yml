@@ -29,7 +29,7 @@
       copy: src=dbworkbench_rsa.pub dest=/home/demodb/.ssh/authorized_keys
     - name: configure authorized_keys
       file: path=/home/demodb/.ssh/authorized_keys mode=0644 owner=demodb group=demodb
-    - name: install unzip, tar, tmux, 7zip, postgres
+    - name: install desired software
       apt: name={{ item }} state=latest update_cache=yes cache_valid_time=120
       with_items:
         - unzip
