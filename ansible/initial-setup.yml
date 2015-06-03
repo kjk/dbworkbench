@@ -65,6 +65,9 @@
     - name: copy postgres config file
       copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf owner=postgres group=postgres mode=0644
       register: pgconfig
+    - name: copy ppostgres config file
+      copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf owner=postgres group=postgres mode=0644
+      register: pgconfig2
     - name: restart postgres
       service: name=postgresql state=restarted
-      when: pgconfig.changed
+      when: pgconfig.changed or pgconfig2.chagned
