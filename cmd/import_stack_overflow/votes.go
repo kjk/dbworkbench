@@ -71,22 +71,17 @@ func importVotesIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importVotes(siteName string, db *sql.DB) error {
+func importVotes(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "Votes")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 
 	r, err := stackoverflow.NewVotesReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewVotesReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewVotesReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importVotesIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importVotesIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d votes records\n", n)
-	return nil
+	return importVotesIntoDB(r, db)
 }

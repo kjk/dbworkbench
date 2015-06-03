@@ -69,22 +69,17 @@ func importTagsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importTags(siteName string, db *sql.DB) error {
+func importTags(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "Tags")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 
 	r, err := stackoverflow.NewTagsReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewTagsReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewTagsReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importTagsIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importTagsIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d tags records\n", n)
-	return nil
+	return importTagsIntoDB(r, db)
 }

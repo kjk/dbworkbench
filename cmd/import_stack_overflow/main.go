@@ -22,13 +22,6 @@ const (
 var (
 	dataDir string
 
-	sites = []string{
-		"stackoverflow",
-		"academia",
-		"android",
-		"anime",
-	}
-
 	tableNames = []string{
 		"users", "posts", "badges", "tags", "comments",
 		"posthistory", "postlinks", "votes",
@@ -314,8 +307,16 @@ func getEntryForFile(archive *lzmadec.Archive, name string) *lzmadec.Entry {
 	return nil
 }
 
-// fileName is "Users", "Badges" etc.
-func getStackOverflowReader(siteName, fileName string) (io.ReadCloser, error) {
+var (
+	cachedArchive         *lzmadec.Archive
+	cachedArchiveSiteName string
+)
+
+func getArchiveCached(siteName, fileName string) (*lzmadec.Archive, error) {
+	if siteName == cachedArchiveSiteName && cachedArchive != nil {
+		return cachedArchive, nil
+	}
+
 	archiveName := siteName + ".stackexchange.com.7z"
 	if multiFileSiteName(siteName) {
 		archiveName = siteName + ".com-" + fileName + ".7z"
@@ -331,12 +332,25 @@ func getStackOverflowReader(siteName, fileName string) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, fmt.Errorf("lzmadec.NewArchive('%s') failed with '%s'", archivePath, err)
 	}
+	if !multiFileSiteName(siteName) {
+		cachedArchive = archive
+		cachedArchiveSiteName = siteName
+	}
+	return archive, err
+}
+
+// fileName is "Users", "Badges" etc.
+func getStackOverflowReader(siteName, fileName string) (io.ReadCloser, error) {
+	archive, err := getArchiveCached(siteName, fileName)
+	if err != nil {
+		return nil, err
+	}
 
 	entry := getEntryForFile(archive, fileName+".xml")
 	if entry == nil {
 		return nil, fmt.Errorf("genEntryForFile('%s') returned nil", fileName+".xml")
 	}
-	return archive.ExtractReader(entry.Path)
+	return archive.GetFileReader(entry.Path)
 }
 
 func toIntPtr(n int) *int {
@@ -361,56 +375,82 @@ func toStringPtr(s string) *string {
 }
 
 func importSite(siteName string) error {
-	timeStart := time.Now()
+	timeTotalStart := time.Now()
 	db := createDatabaseMust(siteName)
 
-	err := importUsers(siteName, db)
+	timeStart := time.Now()
+	n, err := importUsers(siteName, db)
 	if err != nil {
 		LogFatalf("importUsers() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d users in %s\n", n, time.Since(timeStart))
 
-	err = importPosts(siteName, db)
+	timeStart = time.Now()
+	n, err = importPosts(siteName, db)
 	if err != nil {
 		LogFatalf("importPosts() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d posts in %s\n", n, time.Since(timeStart))
 
-	err = importBadges(siteName, db)
+	timeStart = time.Now()
+	n, err = importBadges(siteName, db)
 	if err != nil {
 		LogFatalf("importBadges() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d badges in %s\n", n, time.Since(timeStart))
 
-	err = importComments(siteName, db)
+	timeStart = time.Now()
+	n, err = importComments(siteName, db)
 	if err != nil {
 		LogFatalf("importComments() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d comments in %s\n", n, time.Since(timeStart))
 
-	err = importTags(siteName, db)
+	timeStart = time.Now()
+	n, err = importTags(siteName, db)
 	if err != nil {
 		LogFatalf("importTags() failed with %s\n", err)
 	}
-	err = importPostHistory(siteName, db)
+	LogVerbosef("imported %d tags in %s\n", n, time.Since(timeStart))
+
+	timeStart = time.Now()
+	n, err = importPostHistory(siteName, db)
 	if err != nil {
 		LogFatalf("importPostHistory() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d post histories in %s\n", n, time.Since(timeStart))
 
-	err = importPostLinks(siteName, db)
+	timeStart = time.Now()
+	n, err = importPostLinks(siteName, db)
 	if err != nil {
 		LogFatalf("importPostLinks() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d post links in %s\n", n, time.Since(timeStart))
 
-	err = importVotes(siteName, db)
+	timeStart = time.Now()
+	n, err = importVotes(siteName, db)
 	if err != nil {
 		LogFatalf("importVotes() failed with %s\n", err)
 	}
+	LogVerbosef("imported %d votes in %s\n", n, time.Since(timeStart))
 
 	createIndexesMust(db)
 	runAnalyzeMust(db)
-	LogVerbosef("imported site '%s' in %s\n", siteName, time.Since(timeStart))
+	LogVerbosef("imported site '%s' in %s\n", siteName, time.Since(timeTotalStart))
 	return nil
 }
 
+func usageAndExit() {
+	fmt.Printf("usage: import_stack_overflow site_name\n")
+	os.Exit(1)
+}
+
 func main() {
-	err := importSite(sites[0])
+	if len(os.Args) != 2 {
+		usageAndExit()
+	}
+	site := os.Args[1]
+	err := importSite(site)
 	if err != nil {
 		LogVerbosef("importSite() failed with %s\n", err)
 	}

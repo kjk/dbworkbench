@@ -78,22 +78,17 @@ func importPostHistoryIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importPostHistory(siteName string, db *sql.DB) error {
+func importPostHistory(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "PostHistory")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 
 	r, err := stackoverflow.NewPostHistoryReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewPostHistoryReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewPostHistoryReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importPostHistoryIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importPostHistoryIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d postshistory records\n", n)
-	return nil
+	return importPostHistoryIntoDB(r, db)
 }

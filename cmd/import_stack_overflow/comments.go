@@ -74,22 +74,17 @@ func importCommentsIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importComments(siteName string, db *sql.DB) error {
+func importComments(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "Comments")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 
 	r, err := stackoverflow.NewCommentsReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewCommentsReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewCommentsReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importCommentsIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importCommentsIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d comments records\n", n)
-	return nil
+	return importCommentsIntoDB(r, db)
 }

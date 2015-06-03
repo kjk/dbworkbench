@@ -90,21 +90,16 @@ func importUsersIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importUsers(siteName string, db *sql.DB) error {
+func importUsers(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "Users")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 	r, err := stackoverflow.NewUsersReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewUsersReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importUsersIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importUsersIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d user records\n", n)
-	return nil
+	return importUsersIntoDB(r, db)
 }

@@ -67,21 +67,16 @@ func importBadgesIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importBadges(siteName string, db *sql.DB) error {
+func importBadges(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "Badges")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 	r, err := stackoverflow.NewBadgesReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewBadgesReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewBadgesReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importBadgesIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importBadgesIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d badges records\n", n)
-	return nil
+	return importBadgesIntoDB(r, db)
 }

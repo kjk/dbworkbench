@@ -70,22 +70,17 @@ func importPostLinksIntoDB(r *stackoverflow.Reader, db *sql.DB) (int, error) {
 	return n, nil
 }
 
-func importPostLinks(siteName string, db *sql.DB) error {
+func importPostLinks(siteName string, db *sql.DB) (int, error) {
 	reader, err := getStackOverflowReader(siteName, "PostLinks")
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer reader.Close()
 
 	r, err := stackoverflow.NewPostLinksReader(reader)
 	if err != nil {
-		return fmt.Errorf("stackoverflow.NewPostLinksReader() failed with %s", err)
+		return 0, fmt.Errorf("stackoverflow.NewPostLinksReader() failed with %s", err)
 	}
 	defer r.Close()
-	n, err := importPostLinksIntoDB(r, db)
-	if err != nil {
-		return fmt.Errorf("importPostLinksIntoDB() failed with %s", err)
-	}
-	LogVerbosef("processed %d postlinks records\n", n)
-	return nil
+	return importPostLinksIntoDB(r, db)
 }
