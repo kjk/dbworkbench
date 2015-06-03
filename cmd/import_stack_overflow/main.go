@@ -28,7 +28,12 @@ var (
 		"anime",
 	}
 
-	createIndexes = `
+	tableNames = []string{
+		"users", "posts", "badges", "tags", "comments",
+		"posthistory", "postlinks", "votes",
+	}
+
+	createIndexesStatements = `
 CREATE INDEX post_type_id_idx ON posts (post_type_id);
 
 CREATE INDEX view_count_idx ON posts (view_count);
@@ -210,7 +215,20 @@ func getCreateDbStatementsMust() []string {
 }
 
 func createIndexesMust(db *sql.DB) {
+	stmts := strings.Split(createIndexesStatements, "\n\n")
+	for _, stm := range stmts {
+		// skip empty lines
+		stm = strings.TrimSpace(stm)
+		if len(stm) > 0 {
+			execMust(db, stm)
+		}
+	}
+}
 
+func runAnalyzeMust(db *sql.DB) {
+	for _, tableName := range tableNames {
+		execMust(db, fmt.Sprintf(`VACUUM ANALYZE %s;`, tableName))
+	}
 }
 
 func createDatabaseMust(dbName string) *sql.DB {
@@ -239,7 +257,7 @@ func createDatabaseMust(dbName string) *sql.DB {
 
 	// grant demoDBUser read-only access to the database
 	execMust(db, fmt.Sprintf(`GRANT USAGE ON SCHEMA public TO %s;`, demoDBUser))
-	for _, tableName := range []string{"users", "posts", "badges", "tags", "comments", "posthistory", "postlinks", "votes"} {
+	for _, tableName := range tableNames {
 		execMust(db, fmt.Sprintf(`GRANT SELECT ON %s TO %s;`, tableName, demoDBUser))
 	}
 
@@ -322,6 +340,7 @@ func toStringPtr(s string) *string {
 }
 
 func importSite(name string) error {
+	timeStart := time.Now()
 	db := createDatabaseMust(name)
 	dstPath := getDataPath(name)
 	uri := getDataURL(name)
@@ -375,7 +394,8 @@ func importSite(name string) error {
 	}
 
 	createIndexesMust(db)
-
+	runAnalyzeMust(db)
+	LogVerbosef("imported site '%s' in %s\n", name, time.Since(timeStart))
 	return nil
 }
 
