@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"mime"
+	"net/http"
 	"path/filepath"
 	"strings"
 )
@@ -54,4 +55,15 @@ func IntAppendIfNotExists(arr []int, n int) []int {
 		return arr
 	}
 	return append(arr, n)
+}
+
+func getMyHost(r *http.Request) string {
+	// on production we force https, but it's done on nginx level, so we have to
+	// hardcode the scheme
+	scheme := "https"
+	if options.IsLocal {
+		scheme = "http"
+	}
+	res := scheme + "://" + r.Host
+	return res
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,32 +9,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/gorilla/securecookie"
-)
-
-const (
-	cookieAuthKeyHex = "4d1e71694154384ee43b20d06c710a2e6149126efadd140c66a4fa9bed9cb0bd"
-	cookieEncrKeyHex = "514171b116075c359db13549dc4b15924a5c0d0615c8b9d81436ba4d712132a1"
-	cookieName       = "dbwckie" // "database workbench cookie"
-)
-
-var (
-	cookieAuthKey []byte
-	cookieEncrKey []byte
-
-	secureCookie *securecookie.SecureCookie
 )
 
 // HandlerWithCtxFunc is like http.HandlerFunc but with additional ReqContext argument
 type HandlerWithCtxFunc func(*ReqContext, http.ResponseWriter, *http.Request)
-
-// CookieValue contains data we set in browser cookie
-type CookieValue struct {
-	UserID            int
-	IsLoggedIn        bool
-	GoogleAnalyticsID string
-}
 
 // ReqOpts is a set of flags passed to withCtx
 type ReqOpts uint
@@ -45,10 +22,8 @@ const (
 	OnlyGet ReqOpts = 1 << iota
 	// OnlyPost tells to reject non-POST requests
 	OnlyPost
-	// MustBeLoggedIn tells to reject requests if user is not logged in
-	MustBeLoggedIn
 	// MustHaveConnection tells to reject requests if conn_id request arg is not
-	// present. Implies MustBeLoggedIn
+	// present
 	MustHaveConnection
 	// IsJSON denotes a handler that is serving JSON requests and should send
 	// errors as { "error": "error message" }
@@ -57,80 +32,10 @@ const (
 
 // ReqContext contains data that is useful to access in every http handler
 type ReqContext struct {
-	Cookie       *CookieValue
-	User         *User
-	IsAdmin      bool
 	TimeStart    time.Time
 	ConnectionID int
+	ConnInfo     *ConnectionInfo
 	Client       *Client
-}
-
-func isAdminUser(u *DbUser) bool {
-	if u != nil {
-		switch u.Email {
-		case "kkowalczyk@gmail.com":
-			return true
-		}
-	}
-	return false
-}
-
-func initCookieMust() {
-	var err error
-	cookieAuthKey, err = hex.DecodeString(cookieAuthKeyHex)
-	fatalIfErr(err, "hex.DecodeString(cookieAuthKeyHex)")
-	cookieEncrKey, err = hex.DecodeString(cookieEncrKeyHex)
-	fatalIfErr(err, "hex.DecodeString(cookieEncrKeyHex)")
-	secureCookie = securecookie.New(cookieAuthKey, cookieEncrKey)
-	// verify auth/encr keys are correct
-	val := map[string]string{
-		"foo": "bar",
-	}
-	_, err = secureCookie.Encode(cookieName, val)
-	fatalIfErr(err, "secureCookie.Encode")
-}
-
-func setCookie(w http.ResponseWriter, cookieVal *CookieValue) {
-	if encoded, err := secureCookie.Encode(cookieName, cookieVal); err == nil {
-		// TODO: set expiration (Expires    time.Time) long time in the future?
-		cookie := &http.Cookie{
-			Name:     cookieName,
-			Value:    encoded,
-			Path:     "/",
-			HttpOnly: true,
-		}
-		http.SetCookie(w, cookie)
-	} else {
-		LogErrorf("secureCookie.Encode() failed with '%s'\n", err)
-	}
-}
-
-func genAndSetNewCookieValue(w http.ResponseWriter) *CookieValue {
-	c := &CookieValue{
-		GoogleAnalyticsID: generateUUID(),
-	}
-	setCookie(w, c)
-	return c
-}
-
-func getOrCreateCookie(w http.ResponseWriter, r *http.Request) *CookieValue {
-	cookie, err := r.Cookie(cookieName)
-	if err != nil {
-		return genAndSetNewCookieValue(w)
-	}
-	var cv CookieValue
-	if err = secureCookie.Decode(cookieName, cookie.Value, &cv); err != nil {
-		// most likely expired cookie, so ignore and delete
-		LogErrorf("secureCookie.Decode() failed with %s\n", err)
-		return genAndSetNewCookieValue(w)
-	}
-	//LogVerbosef("Got cookie %#v\n", ret)
-	if cv.GoogleAnalyticsID == "" {
-		LogError("cv.GoogleAnalyticsID is empty string\n")
-		cv.GoogleAnalyticsID = generateUUID()
-		setCookie(w, &cv)
-	}
-	return &cv
 }
 
 func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
@@ -153,27 +58,9 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 		}
 
 		ctx := &ReqContext{
-			Cookie:    getOrCreateCookie(w, r),
 			TimeStart: time.Now(),
 		}
 
-		if opts&MustBeLoggedIn != 0 || opts&MustHaveConnection != 0 {
-			if !ctx.Cookie.IsLoggedIn || ctx.Cookie.UserID == -1 {
-				serveError(w, r, isJSON, "must be logged")
-				return
-			}
-		}
-
-		if ctx.Cookie.UserID != -1 {
-			ctx.User, _ = dbGetUserCopyByIDCached(ctx.Cookie.UserID)
-			if ctx.User == nil {
-				// if we have valid UserID, we should be able to look up the user
-				serveError(w, r, isJSON, fmt.Sprintf("dbGetUserByIDCached() returned nil for userId %d", ctx.Cookie.UserID))
-				return
-			}
-			ctx.IsAdmin = isAdminUser(ctx.User.DbUser)
-		}
-		user := ctx.User
 
 		if opts&MustHaveConnection != 0 {
 			connID, err := strconv.Atoi(r.FormValue("conn_id"))
@@ -187,18 +74,15 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 				serveError(w, r, isJSON, errMsg)
 				return
 			}
-			if user.ConnInfo == nil || user.ConnInfo.ConnectionID != connID {
-				var errMsg string
-				if user.ConnInfo == nil {
-					errMsg = "ctx.User.ConnInfo == nil"
-				} else {
-					errMsg = fmt.Sprintf("ctx.User.ConnInfo.ConnectionID != connID (%d != %d)", user.ConnInfo.ConnectionID, connID)
-				}
+			connInfo := getConnectionInfoByID(connID)
+			if nil == connInfo {
+				errMsg := fmt.Sprintf("invalid conn_id %d", connID)
 				serveError(w, r, isJSON, errMsg)
 				return
 			}
 			ctx.ConnectionID = connID
-			ctx.Client = user.ConnInfo.Client
+			ctx.ConnInfo = connInfo
+			ctx.Client = connInfo.Client
 		}
 
 		f(ctx, cw, r)
@@ -206,14 +90,6 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			// TODO: log this to a file for further analysis
 			LogInfof("%s took %s, code: %d\n", r.RequestURI, time.Since(ctx.TimeStart), cw.Code)
 		}
-
-		go func(r *http.Request, gaID string) {
-			err := gaLogPageView(r.UserAgent(), gaID, getClientIP(r), r.URL.Path, "", nil)
-
-			if err != nil {
-				log.Printf("Unable to log GA PageView: %v\n", err)
-			}
-		}(r, ctx.Cookie.GoogleAnalyticsID)
 	}
 }
 
@@ -290,9 +166,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := ctx.User.DbUser.ID
-	removeCurrentUserConnectionInfo(userID)
-	connInfo := addConnectionInfo(url, userID, client)
+	connInfo := addConnectionInfo(url, client)
 
 	i := info.Format()[0]
 	currDb, ok := i["current_database"]
@@ -315,10 +189,12 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, v)
 }
 
+// TODO: this should disconnect from a database
 // POST /api/disconnect
 func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	userID := ctx.User.DbUser.ID
+	/*userID := ctx.User.DbUser.ID
 	removeCurrentUserConnectionInfo(userID)
+	*/
 	v := struct {
 		Message string
 	}{
@@ -329,8 +205,8 @@ func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/databases
 func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	names, err := ctx.User.ConnInfo.Client.Databases()
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	names, err := ctx.ConnInfo.Client.Databases()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -339,8 +215,8 @@ func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 }
 
 func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	result, err := ctx.User.ConnInfo.Client.Query(query)
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	result, err := ctx.ConnInfo.Client.Query(query)
 
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -388,7 +264,7 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 // GET /api/history
 func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, ctx.User.ConnInfo.Client.history)
+	serveJSON(w, r, ctx.ConnInfo.Client.history)
 }
 
 // GET /api/bookmarks
@@ -404,8 +280,8 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/connection
 func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	res, err := ctx.User.ConnInfo.Client.Info()
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	res, err := ctx.ConnInfo.Client.Info()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -416,8 +292,8 @@ func handleConnectionInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 
 // GET /api/activity
 func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	res, err := ctx.User.ConnInfo.Client.Activity()
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	res, err := ctx.ConnInfo.Client.Activity()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -428,8 +304,8 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/schemas
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	names, err := ctx.User.ConnInfo.Client.Schemas()
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	names, err := ctx.ConnInfo.Client.Schemas()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -441,8 +317,8 @@ func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 // GET /api/tables
 func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	//LogInfof("connID: %d\n", ctx.ConnectionID)
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	names, err := ctx.User.ConnInfo.Client.Tables()
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	names, err := ctx.ConnInfo.Client.Tables()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -452,8 +328,8 @@ func handleGetTables(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	res, err := ctx.User.ConnInfo.Client.Table(table)
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	res, err := ctx.ConnInfo.Client.Table(table)
 	//LogInfof("table: '%s'\n", table)
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -465,7 +341,7 @@ func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, tab
 
 func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
 	limit := 1000 // Number of rows to fetch
 	limitVal := r.FormValue("limit")
 
@@ -490,7 +366,7 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 		SortOrder:  r.FormValue("sort_order"),
 	}
 
-	res, err := ctx.User.ConnInfo.Client.TableRows(table, opts)
+	res, err := ctx.ConnInfo.Client.TableRows(table, opts)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -500,7 +376,7 @@ func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 }
 
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	res, err := ctx.User.ConnInfo.Client.TableInfo(table)
+	res, err := ctx.ConnInfo.Client.TableInfo(table)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -511,8 +387,8 @@ func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 
 func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	LogInfof("table='%s'\n", table)
-	updateConnectionLastAccess(ctx.User.ConnInfo.ConnectionID)
-	res, err := ctx.User.ConnInfo.Client.TableIndexes(table)
+	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
+	res, err := ctx.ConnInfo.Client.TableIndexes(table)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
@@ -552,20 +428,19 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 //  - jsonp : jsonp wrapper, optional
 func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
-	LogInfof("User: %#v\n", ctx.User)
+	//LogInfof("User: %#v\n", ctx.User)
 
 	v := struct {
-		Email        string
-		IsLoggedIn   bool
+		Email        string // TODO: remove
+		IsLoggedIn   bool  // TODO: remove
 		ConnectionID int
 	}{
-		IsLoggedIn: ctx.Cookie.IsLoggedIn,
+		Email: "foo@bar.com",
+		IsLoggedIn: true,
 	}
-	if ctx.User != nil && ctx.User.DbUser != nil {
-		v.Email = ctx.User.DbUser.Email
-	}
-	if ctx.User.ConnInfo != nil {
-		v.ConnectionID = ctx.User.ConnInfo.ConnectionID
+	connID := getFirstConnectionId()
+	if -1 != connID {
+		v.ConnectionID = connID
 	}
 	LogInfof("v: %#v\n", v)
 	serveJSONP(w, r, v, jsonp)
@@ -577,7 +452,7 @@ func registerHTTPHandlers() {
 
 	http.HandleFunc("/api/activity", withCtx(handleActivity, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/bookmarks", handleBookmarks)
-	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|MustBeLoggedIn|IsJSON))
+	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|IsJSON))
 	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/disconnect", withCtx(handleDisconnect, OnlyPost|MustHaveConnection|IsJSON))
@@ -587,11 +462,8 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection|IsJSON))
-	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, MustBeLoggedIn|IsJSON))
+	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, IsJSON))
 
-	http.HandleFunc("/logingoogle", handleLoginGoogle)
-	http.HandleFunc("/logout", withCtx(handleLogout, 0))
-	http.HandleFunc("/googleoauth2cb", withCtx(handleOauthGoogleCallback, 0))
 	http.HandleFunc("/showmyhost", handleShowMyHost)
 }
 

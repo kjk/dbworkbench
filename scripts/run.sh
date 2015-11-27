@@ -11,7 +11,7 @@ godep go vet github.com/kjk/dbworkbench
 #godep go tool vet -printfuncs=LogInfof,LogErrorf,LogVerbosef .
 
 rm -rf dbworkbench.test
-godep go test -c ./...
+godep go test ./...
 rm -rf dbworkbench.test
 
 echo "building"

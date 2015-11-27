@@ -114,14 +114,6 @@ func main() {
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
-	initCookieMust()
-
-	if options.TestSendMail {
-		sendTestEmail()
-		return
-	}
-
-	getDbMust()
 
 	if options.IsLocal {
 		startGulp()
