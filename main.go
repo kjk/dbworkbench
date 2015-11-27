@@ -27,9 +27,7 @@ type Options struct {
 	HTTPPort     uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
 	AuthUser     string `long:"auth-user" description:"HTTP basic auth user"`
 	AuthPass     string `long:"auth-pass" description:"HTTP basic auth password"`
-	SkipOpen     bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
 	IsLocal      bool   `long:"local" description:"is true if running locally (dev mode)"`
-	TestSendMail bool   `long:"test-send-email" description:"send a test e-mail"`
 }
 
 var options Options
@@ -51,22 +49,6 @@ func handleSignals() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
 	<-c
-}
-
-func openPage() {
-	if options.SkipOpen {
-		return
-	}
-
-	url := fmt.Sprintf("http://%v:%v", options.HTTPHost, options.HTTPPort)
-	fmt.Println("To view database open", url, "in browser")
-
-	_, err := exec.Command("which", "open").Output()
-	if err != nil {
-		return
-	}
-
-	exec.Command("open", url).Output()
 }
 
 func verifyDirs() {
@@ -122,6 +104,5 @@ func main() {
 	}
 
 	go startWebServer()
-	openPage()
 	handleSignals()
 }

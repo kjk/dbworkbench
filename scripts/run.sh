@@ -10,14 +10,14 @@ godep go vet github.com/kjk/dbworkbench
 #to filter out Godeps becase . is recursive
 #godep go tool vet -printfuncs=LogInfof,LogErrorf,LogVerbosef .
 
-rm -rf dbworkbench.test
-godep go test ./...
-rm -rf dbworkbench.test
+#rm -rf dbworkbench.test
+#godep go test ./...
+#rm -rf dbworkbench.test
 
 echo "building"
 godep go build -o dbworkbench
 #gdep go build -race -o dbworkbench
 
 echo "starting dbworkbench"
-./dbworkbench --local --skip-open || true
+./dbworkbench --local || true
 rm dbworkbench
