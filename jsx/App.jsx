@@ -275,10 +275,9 @@ var App = React.createClass({
 
     // when showing sql query, results are below editor window
     var notFull = (this.state.selectedView === view.SQLQuery);
-    var isLoggedIn = gUserInfo.IsLoggedIn;
     return (
       <div>
-        <TopNav isLoggedIn={isLoggedIn}/>
+        <TopNav/>
         <DbNav view={this.state.selectedView}/>
         <Sidebar
           tables={this.state.tables}

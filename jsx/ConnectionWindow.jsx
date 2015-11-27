@@ -301,12 +301,10 @@ var ConnectionWindow = React.createClass({
   },
 
   render: function() {
-    var isLoggedIn = gUserInfo ? gUserInfo.IsLoggedIn : false;
-    console.log("isLoggedIn: ", isLoggedIn);
     return (
       <div>
-        <TopNav isLoggedIn={isLoggedIn}/>
-        {isLoggedIn ? this.renderConnectionWindow() : this.renderPleaseSignIn() }
+        <TopNav/>
+        {this.renderConnectionWindow()}
       </div>
     );
   }

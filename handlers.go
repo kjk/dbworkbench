@@ -432,11 +432,9 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 	v := struct {
 		Email        string // TODO: remove
-		IsLoggedIn   bool  // TODO: remove
 		ConnectionID int
 	}{
 		Email: "foo@bar.com",
-		IsLoggedIn: true,
 	}
 	connID := getFirstConnectionId()
 	if -1 != connID {
