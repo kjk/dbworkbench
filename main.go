@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
@@ -15,19 +16,19 @@ import (
 
 // Options represents command-line options
 type Options struct {
-	Debug        bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
-	URL          string `long:"url" description:"Database connection string"`
-	Host         string `long:"host" description:"Server hostname or IP"`
-	Port         int    `long:"port" description:"Server port" default:"5432"`
-	User         string `long:"user" description:"Database user"`
-	Pass         string `long:"pass" description:"Password for user"`
-	DbName       string `long:"db" description:"Database name"`
-	Ssl          string `long:"ssl" description:"SSL option"`
-	HTTPHost     string `long:"bind" description:"HTTP server host" default:"localhost"`
-	HTTPPort     uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
-	AuthUser     string `long:"auth-user" description:"HTTP basic auth user"`
-	AuthPass     string `long:"auth-pass" description:"HTTP basic auth password"`
-	IsLocal      bool   `long:"local" description:"is true if running locally (dev mode)"`
+	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
+	URL      string `long:"url" description:"Database connection string"`
+	Host     string `long:"host" description:"Server hostname or IP"`
+	Port     int    `long:"port" description:"Server port" default:"5432"`
+	User     string `long:"user" description:"Database user"`
+	Pass     string `long:"pass" description:"Password for user"`
+	DbName   string `long:"db" description:"Database name"`
+	Ssl      string `long:"ssl" description:"SSL option"`
+	HTTPHost string `long:"bind" description:"HTTP server host" default:"localhost"`
+	HTTPPort uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
+	AuthUser string `long:"auth-user" description:"HTTP basic auth user"`
+	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
+	IsDev    bool   `long:"dev" description:"is true if running in dev mode"`
 }
 
 var options Options
@@ -61,18 +62,14 @@ func verifyDirs() {
 }
 
 func getDataDir() string {
-	if options.IsLocal {
-		return u.ExpandTildeInPath("~/data/dbworkbench")
-	}
-	//  on the server it's in /home/dbworkbench/www/data
-	return u.ExpandTildeInPath("~/www/data")
+	return u.ExpandTildeInPath("~/data/dbworkbench")
 }
 
 func getLogDir() string {
 	return filepath.Join(getDataDir(), "log")
 }
 
-func startGulp() {
+func startGulpUnix() {
 	cmd := exec.Command("./scripts/run_gulp_watch.sh")
 	cmdStr := strings.Join(cmd.Args, " ")
 	fmt.Printf("starting '%s'\n", cmdStr)
@@ -93,10 +90,10 @@ func main() {
 	verifyDirs()
 	OpenLogFiles()
 	IncLogVerbosity()
-	LogInfof("local: %v, data dir: %s\n", options.IsLocal, getDataDir())
+	LogInfof("Data dir: %s\n", getDataDir())
 
-	if options.IsLocal {
-		startGulp()
+	if options.IsDev && runtime.GOOS != "windows" {
+		startGulpUnix()
 	}
 
 	if options.Debug {

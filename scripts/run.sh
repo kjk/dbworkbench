@@ -19,5 +19,5 @@ godep go build -o dbworkbench
 #gdep go build -race -o dbworkbench
 
 echo "starting dbworkbench"
-./dbworkbench --local || true
+./dbworkbench --dev || true
 rm dbworkbench
