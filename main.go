@@ -105,7 +105,6 @@ func startGulp() {
 
 func main() {
 	fmt.Printf("starting\n")
-	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	initOptions()
 
