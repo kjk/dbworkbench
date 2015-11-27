@@ -10,3 +10,5 @@ s/js/bundle.js
 s/js/bundle.js.map
 s/dist
 node_modules
+cmd/import_stack_overflow/data/
+cmd/import_stack_overflow/import_stack_overflow
