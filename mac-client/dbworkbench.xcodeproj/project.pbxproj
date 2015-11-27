@@ -14,7 +14,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DC1793681C08210B00C46C69 /* dbworkbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbworkbench.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F5B149C1C091E8E00954D35 /* dbworkbench copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "dbworkbench copy-Info.plist"; path = "/Users/kkowalczyk/src/go/src/github.com/kjk/dbworkbench/mac-client/dbworkbench copy-Info.plist"; sourceTree = "<absolute>"; };
+		DC1793681C08210B00C46C69 /* Database Workbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Database Workbench.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC17936B1C08210B00C46C69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC17936D1C08210B00C46C69 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DC17936F1C08210B00C46C69 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -38,13 +39,14 @@
 			children = (
 				DC17936A1C08210B00C46C69 /* dbworkbench */,
 				DC1793691C08210B00C46C69 /* Products */,
+				7F5B149C1C091E8E00954D35 /* dbworkbench copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
 		DC1793691C08210B00C46C69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DC1793681C08210B00C46C69 /* dbworkbench.app */,
+				DC1793681C08210B00C46C69 /* Database Workbench.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -64,9 +66,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DC1793671C08210B00C46C69 /* dbworkbench */ = {
+		DC1793671C08210B00C46C69 /* Database Workbench */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "dbworkbench" */;
+			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "Database Workbench" */;
 			buildPhases = (
 				DC1793641C08210B00C46C69 /* Sources */,
 				DC1793651C08210B00C46C69 /* Frameworks */,
@@ -76,9 +78,9 @@
 			);
 			dependencies = (
 			);
-			name = dbworkbench;
+			name = "Database Workbench";
 			productName = dbworkbench;
-			productReference = DC1793681C08210B00C46C69 /* dbworkbench.app */;
+			productReference = DC1793681C08210B00C46C69 /* Database Workbench.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -109,7 +111,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DC1793671C08210B00C46C69 /* dbworkbench */,
+				DC1793671C08210B00C46C69 /* Database Workbench */,
 			);
 		};
 /* End PBXProject section */
@@ -266,13 +268,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "dbworkbench" */ = {
+		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "Database Workbench" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DC1793781C08210B00C46C69 /* Debug */,
 				DC1793791C08210B00C46C69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
