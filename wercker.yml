@@ -2,3 +2,8 @@ box: golang
 
 build:
   steps:
+    - script:
+        name: go get
+        code: |
+          cd $WERCKER_SOURCE_DIR
+          go version
