@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
