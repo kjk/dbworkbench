@@ -23,12 +23,13 @@ var (
 	logToStdout      = false
 )
 
-// io.Writer that keeps track about how much data was written to it
+// MeasuringWriter is an io.Writer that keeps track about how much data was written to it
 type MeasuringWriter struct {
 	Total int64
 	w     io.Writer
 }
 
+// NewMeasuringWriter creates a new MeasuringWriter
 func NewMeasuringWriter(w io.Writer, initialSize int64) *MeasuringWriter {
 	return &MeasuringWriter{
 		Total: initialSize,
@@ -41,6 +42,7 @@ func (w *MeasuringWriter) Write(p []byte) (int, error) {
 	return w.w.Write(p)
 }
 
+// LogRotateCommon is a common part of a logger
 type LogRotateCommon struct {
 	sync.Mutex
 	rotateThreshold int64
@@ -51,6 +53,7 @@ type LogRotateCommon struct {
 	logger          *log.Logger
 }
 
+// LogRotate is for logging
 type LogRotate struct {
 	LogRotateCommon
 }
@@ -87,11 +90,13 @@ func (l *LogRotateCommon) open() (err error) {
 	return err
 }
 
+// ArchivedFileName represents a compressed log
 type ArchivedFileName struct {
 	name string
 	n    int
 }
 
+// NewArchivedFileName creates ArchivedFileName
 func NewArchivedFileName(name string) *ArchivedFileName {
 	// name should be in the format: foo.log.${n}.gz
 	// we extract ${n} and remember it
@@ -107,7 +112,7 @@ func NewArchivedFileName(name string) *ArchivedFileName {
 }
 
 const (
-	MAX_ARCHIVED_TO_KEEP = 10
+	maxArchivedToKeep = 10
 )
 
 func gzipFile(path string) error {
@@ -156,6 +161,7 @@ func gzipFileUnderMutex(path string) {
 	rotationLogMutex.RUnlock()
 }
 
+// WaitAllLogRotationsToFinish waits for log ratation process to finish
 func WaitAllLogRotationsToFinish() {
 	// gzipFileUnderMutex() takes read lock so trying to lock for writing waits
 	// for them all to fnish. at this point there should be no new
@@ -174,7 +180,7 @@ func (l *LogRotateCommon) rotate() bool {
 	// we rotate to $dir/foo.log.$n.gz and keep last N
 	dir, baseName := l.dirAndBaseName()
 	allFiles, err := ioutil.ReadDir(dir)
-	archived := make([]*ArchivedFileName, 0)
+	var archived []*ArchivedFileName
 	for _, fi := range allFiles {
 		name := fi.Name()
 		if !strings.HasPrefix(name, baseName) {
@@ -194,7 +200,7 @@ func (l *LogRotateCommon) rotate() bool {
 		})
 		last := archived[len(archived)-1]
 		newN = last.n + 1
-		toDelete := len(archived) - MAX_ARCHIVED_TO_KEEP
+		toDelete := len(archived) - maxArchivedToKeep
 		for i := 0; i < toDelete; i++ {
 			path := filepath.Join(dir, archived[i].name)
 			err := os.Remove(path)
@@ -221,6 +227,7 @@ func (l *LogRotateCommon) rotate() bool {
 	return true
 }
 
+// NewLogRotate creates LogRotate
 func NewLogRotate(path string, rotateThreshold int64) (*LogRotate, error) {
 	res := &LogRotate{
 		LogRotateCommon{
@@ -244,6 +251,7 @@ func (l *LogRotate) rotateIfNeeded() {
 	l.open()
 }
 
+// Close closes a log file
 func (l *LogRotate) Close() {
 	if l == nil {
 		return
@@ -253,6 +261,7 @@ func (l *LogRotate) Close() {
 	l.Unlock()
 }
 
+// Print writes to log file
 func (l *LogRotate) Print(s string) {
 	if logToStdout {
 		fmt.Print(s)
@@ -268,6 +277,7 @@ func (l *LogRotate) Print(s string) {
 	l.rotateIfNeeded()
 }
 
+// Printf writes to log file
 func (l *LogRotate) Printf(format string, arg ...interface{}) {
 	l.Print(fmt.Sprintf(format, arg...))
 }
