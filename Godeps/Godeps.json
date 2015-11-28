@@ -14,11 +14,6 @@
 			"Rev": "8e98dd730fc43f1383f19615db6f2e702c9738e8"
 		},
 		{
-			"ImportPath": "github.com/jessevdk/go-flags",
-			"Comment": "v1-285-g1679536",
-			"Rev": "1679536dcc895411a9f5848d9a0250be7856448c"
-		},
-		{
 			"ImportPath": "github.com/jmoiron/sqlx",
 			"Comment": "sqlx-v1.0-61-gb468c08",
 			"Rev": "b468c08552f4efac78b94708eb040170a8184c47"
