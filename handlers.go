@@ -191,6 +191,8 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // POST /api/disconnect
 func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	LogInfof("conn id='%d'\n", ctx.ConnectionID)
+
 	err := connectionDisconnect(ctx.ConnectionID)
 	if err != nil {
 		serveJSONError(w, r, err)
