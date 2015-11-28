@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
-
+ 
 func Test_MimeTypeByExtensionExt(t *testing.T) {
 	samples := map[string]string{
 		"foo.html": "text/html; charset=utf-8",

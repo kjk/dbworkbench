@@ -3,7 +3,7 @@ package main
 import "net/http"
 
 // CountingResponseWriter wraps http.ResponseWriter and counts how many
-// bytes were written and which code was sent
+// bytes were written and which http code was sent
 type CountingResponseWriter struct {
 	w            http.ResponseWriter
 	BytesWritten int

@@ -438,7 +438,7 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}{
 		Email: "foo@bar.com",
 	}
-	connID := getFirstConnectionId()
+	connID := getFirstConnectionID()
 	if -1 != connID {
 		v.ConnectionID = connID
 	}
