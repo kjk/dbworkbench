@@ -7,7 +7,6 @@ var action = require('./action.js');
 var view = require('./view.js');
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var TopNav = require('./TopNav.jsx');
 var DbNav = require('./DbNav.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var Input = require('./Input.jsx');
@@ -277,7 +276,6 @@ var App = React.createClass({
     var notFull = (this.state.selectedView === view.SQLQuery);
     return (
       <div>
-        <TopNav/>
         <DbNav view={this.state.selectedView}/>
         <Sidebar
           tables={this.state.tables}
