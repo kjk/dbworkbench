@@ -2,6 +2,7 @@
 'use strict';
 
 var action = require('./action.js');
+var api = require('./api.js');
 
 var TableInformation = React.createClass({
   renderTableInfo: function(info) {
@@ -31,11 +32,21 @@ var TableInformation = React.createClass({
 });
 
 var Sidebar = React.createClass({
+  getInitialState: function() {
+    return {
+      tables: this.props.tables,
+    };
+  },
+
+  componentWillMount: function() {
+    var tables = this.refreshTables();
+  },
+
 
   handleRefreshDatabase: function(e) {
     e.preventDefault();
-    console.log("handleRefreshDatabase");
-    // TODO: do the refresh
+
+    this.refreshTables();
   },
 
   handleSelectTable: function(e, table) {
@@ -43,8 +54,20 @@ var Sidebar = React.createClass({
     action.tableSelected(table);
   },
 
+  refreshTables: function() {
+    var connectionId = gUserInfo ? gUserInfo.ConnectionID : 0;
+
+    var self = this;
+    api.getTables(connectionId, function(data) {
+      self.setState({
+        tables: data,
+      });
+    });
+  },
+
   renderTables: function(tables) {
     var self = this;
+
     var res = tables.map(function(table) {
       var cls = (table == self.props.selectedTable) ? ' selected' : '';
       var handler = function(e) {
@@ -61,7 +84,8 @@ var Sidebar = React.createClass({
 
   // TODO: remove id="tables"
   render: function() {
-    var tables = this.props.tables ? this.renderTables(this.props.tables) : null;
+
+    var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
 
     return (
       <div id="sidebar">
