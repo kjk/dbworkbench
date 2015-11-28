@@ -246,7 +246,6 @@ var App = React.createClass({
   handleDisconnectDatabase: function() {
     var self = this;
     api.disconnect(this.state.connectionId, function(data) {
-        // TODO: make sure this works after deleting server side cache
         console.log("disconnect");
 
         self.setState({
