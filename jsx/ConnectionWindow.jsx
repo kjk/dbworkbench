@@ -12,9 +12,17 @@ var ConnectionWindow = React.createClass({
   getInitialState: function() {
     return {
       connectionType: ConnectionScheme,
-      connectionScheme: "",
       connectionErrorMessage: "",
       isConnecting: false,
+
+      schemeURL: "",
+
+      standardHost: "",
+      standardUsername: "",
+      standardPassword: "",
+      standardDatabase: "",
+      standardPort: "",
+      standardSSL: "require",
     };
   },
 
@@ -45,16 +53,34 @@ var ConnectionWindow = React.createClass({
     });
   },
 
-  handleConnectScheme: function() {
-    var url = this.state.connectionScheme.trim();
-    console.log("handleConnectScheme: url: ", url);
+  handleConnectStandardChanged: function(name, e) {
+    var change = {};
+    change[name] = e.target.value;
+    console.log("handleConnectStandardChanged: ", change);
+    this.setState(change);
+  },
+
+  handleConnectionSchemeChanged: function(e) {
+    var scheme = e.target.value;
+    console.log("handleConnectionSchemeChanged: ", scheme);
+    this.setState({
+      schemeURL: scheme
+    });
+  },
+
+  handleConnect: function(e) {
+    e.preventDefault();
+    console.log("handleConnect");
+
+    var url = this.getConnectionString();
+    console.log("URL:" + url);
     var self = this;
     this.setState({
       isConnecting: true,
     });
     api.connect(url, function(resp) {
       if (resp.error) {
-        console.log("handleConnectScheme: resp.error: ", resp.error);
+        console.log("handleConnect: resp.error: ", resp.error);
         self.setState({
           connectionErrorMessage: resp.error,
           isConnecting: false,
@@ -63,32 +89,45 @@ var ConnectionWindow = React.createClass({
       else {
         console.log("did connect");
         var connId = resp.ConnectionID;
-        var connStr = self.state.connectionScheme;
+        var connStr = url;
         var databaseName = resp.CurrentDatabase;
         self.props.onDidConnect(connStr, connId, databaseName);
       }
     });
   },
 
-  handleConnectStandard: function() {
-    // TODO: need to construct connection url out of fields
-  },
-
-  handleConnect: function(e) {
-    e.preventDefault();
-    console.log("handleConnect");
-    switch (this.state.connectionType) {
-      case ConnectionScheme:
-        this.handleConnectScheme();
-        break;
-      default:
-        console.log("ConnectionWindow.handleConnect: connection type ", this.state.connectionType, " not yet supported");
-    }
-  },
-
   handleCancel: function(e) {
     e.preventDefault();
     console.log("handleCancel");
+  },
+
+  getConnectionString: function() {
+    var url;
+
+    switch (this.state.connectionType) {
+      case ConnectionScheme:
+        url = this.state.schemeURL.trim();
+        break;
+      case ConnectionStandard:
+        var host = this.state.standardHost;
+        var port = this.state.standardPort;
+        var user = this.state.standardUsername;
+        var pass = this.state.standardPassword; // TODO: encoding?
+        var db = this.state.standardDatabase;
+        var ssl = this.state.standardSSL;
+
+        if (port.length == 0) {
+          port = "5432";
+        }
+
+        url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db + "?sslmode=" + ssl;
+
+        break;
+      default:
+        console.log("This shouldn't happen");
+    }
+
+    return url;
   },
 
   renderConnectionFormHeader: function() {
@@ -133,42 +172,42 @@ var ConnectionWindow = React.createClass({
         <div className="form-group">
           <label className="col-sm-3 control-label">Host</label>
           <div className="col-sm-9">
-            <input type="text" id="pg_host" className="form-control" />
+            <input type="text" id="pg_host" value={this.state.standardHost} onChange={this.handleConnectStandardChanged.bind(this, 'standardHost')} className="form-control" />
           </div>
         </div>
 
         <div className="form-group">
           <label className="col-sm-3 control-label">Username</label>
           <div className="col-sm-9">
-            <input type="text" id="pg_user" className="form-control" />
+            <input type="text" id="pg_user" value={this.state.standardUsername} onChange={this.handleConnectStandardChanged.bind(this, 'standardUsername')} className="form-control" />
           </div>
         </div>
 
         <div className="form-group">
           <label className="col-sm-3 control-label">Password</label>
           <div className="col-sm-9">
-            <input type="text" id="pg_password" className="form-control" />
+            <input type="password" id="pg_password" value={this.state.standardPassword} onChange={this.handleConnectStandardChanged.bind(this, 'standardPassword')} className="form-control" />
           </div>
         </div>
 
         <div className="form-group">
           <label className="col-sm-3 control-label">Database</label>
           <div className="col-sm-9">
-            <input type="text" id="pg_db" className="form-control" />
+            <input type="text" id="pg_db" value={this.state.standardDatabase} onChange={this.handleConnectStandardChanged.bind(this, 'standardDatabase')} className="form-control" />
           </div>
         </div>
 
         <div className="form-group">
           <label className="col-sm-3 control-label">Port</label>
           <div className="col-sm-9">
-            <input type="text" id="pg_port" className="form-control" placeholder="5432" />
+            <input type="text" id="pg_port" value={this.state.standardPort} onChange={this.handleConnectStandardChanged.bind(this, 'standardPort')} className="form-control" placeholder="5432" />
           </div>
         </div>
 
         <div className="form-group">
           <label className="col-sm-3 control-label">SSL</label>
           <div className="col-sm-9">
-            <select className="form-control" id="connection_ssl" defaultValue="require">
+            <select className="form-control" id="connection_ssl" value={this.state.standardSSL} onChange={this.handleConnectStandardChanged.bind(this, 'standardSSL')} >
               <option value="disable">disable</option>
               <option value="require">require</option>
               <option value="verify-full">verify-full</option>
@@ -179,21 +218,13 @@ var ConnectionWindow = React.createClass({
     );
   },
 
-  handleConnectionSchemeChanged: function(e) {
-    var scheme = e.target.value;
-    console.log("handleConnectionSchemeChanged: ", scheme);
-    this.setState({
-      connectionScheme: scheme
-    });
-  },
-
   renderSchemeGroup: function() {
     return (
       <div className="connection-scheme-group">
         <div className="form-group">
           <div className="col-sm-12">
             <label>Enter server URL scheme</label>
-            <input type="text" value={this.state.connectionScheme} onChange={this.handleConnectionSchemeChanged} className="form-control"/>
+            <input type="text" value={this.state.schemeURL} onChange={this.handleConnectionSchemeChanged} className="form-control"/>
             <p className="help-block">URL format: postgres://user:password@host:port/db?sslmode=mode
             </p>
             <p className="help-block">Test database: postgres://localhost/world</p>

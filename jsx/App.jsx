@@ -301,6 +301,7 @@ var App = React.createClass({
       <div>
         <DbNav view={this.state.selectedView}/>
         <Sidebar
+          connectionId={this.state.connectionId}
           tables={this.state.tables}
           selectedTable={this.state.selectedTable}
           selectedTableInfo={this.state.selectedTableInfo}

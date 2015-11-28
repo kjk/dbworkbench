@@ -34,19 +34,20 @@ var TableInformation = React.createClass({
 var Sidebar = React.createClass({
   getInitialState: function() {
     return {
-      tables: this.props.tables,
+      tables: [],
     };
   },
 
   componentWillMount: function() {
-    var tables = this.refreshTables();
+    this.refreshTables();
   },
 
 
   handleRefreshDatabase: function(e) {
     e.preventDefault();
 
-    this.refreshTables();
+    console.log("handleRefreshDatabase");
+    this.refreshTables();;
   },
 
   handleSelectTable: function(e, table) {
@@ -55,10 +56,11 @@ var Sidebar = React.createClass({
   },
 
   refreshTables: function() {
-    var connectionId = gUserInfo ? gUserInfo.ConnectionID : 0;
+    var connectionId = this.props.connectionId;
 
     var self = this;
     api.getTables(connectionId, function(data) {
+      // console.log("Refreshing.. " + JSON.stringify(data));
       self.setState({
         tables: data,
       });
@@ -84,7 +86,6 @@ var Sidebar = React.createClass({
 
   // TODO: remove id="tables"
   render: function() {
-
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
 
     return (

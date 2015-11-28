@@ -369,9 +369,9 @@
 
 #connection_window {
   z-index: 3;
-  position: relative;
+  position: absolute;
   background: #ebeef0;
-  /*top: 0px;*/
+  top: 0px;
   left: 0px;
   bottom: 0px;
   right: 0px;
