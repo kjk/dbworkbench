@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/kjk/u"
+	"github.com/mitchellh/go-homedir"
 )
 
 // Options represents command-line options
@@ -58,16 +59,48 @@ func handleSignals() {
 }
 
 func verifyDirs() {
-	if !u.PathExists(getLogDir()) {
-		log.Fatalf("directory '%s' doesn't exist. Please create! \n", getLogDir())
+	logDir := getLogDir()
+	os.MkdirAll(logDir, 0755)
+	if !u.PathExists(logDir) {
+		log.Fatalf("directory '%s' doesn't exist. Please create!\n", logDir)
 	}
 	if !u.PathExists(getDataDir()) {
 		log.Fatalf("directory '%s' doesn't exist\n", getDataDir())
 	}
 }
 
-func getDataDir() string {
+func isMac() bool {
+	return runtime.GOOS == "darwin"
+}
+
+func isWindows() bool {
+	return runtime.GOOS == "windows"
+}
+
+func getDataDirMac() string {
+	d, err := homedir.Dir()
+	if err != nil {
+		log.Fatalf("homedir.Dir() failed with %s", err)
+	}
+	d = filepath.Join(d, "Library", "Application Support", "Database Workbench")
+	return d
+}
+
+func getDataDirWindows() string {
+	// TODO: fixme
 	return u.ExpandTildeInPath("~/data/dbworkbench")
+}
+
+func getDataDir() string {
+	if isMac() {
+		return getDataDirMac()
+	}
+
+	if isWindows() {
+		return getDataDirWindows()
+	}
+	log.Fatalf("not windows or mac")
+	return ""
 }
 
 func getLogDir() string {
@@ -97,7 +130,7 @@ func main() {
 	IncLogVerbosity()
 	LogInfof("Data dir: %s\n", getDataDir())
 
-	if options.IsDev && runtime.GOOS != "windows" {
+	if options.IsDev && !isWindows() {
 		startGulpUnix()
 	}
 

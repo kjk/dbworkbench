@@ -189,12 +189,13 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, v)
 }
 
-// TODO: this should disconnect from a database
 // POST /api/disconnect
 func handleDisconnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	/*userID := ctx.User.DbUser.ID
-	removeCurrentUserConnectionInfo(userID)
-	*/
+	err := connectionDisconnect(ctx.ConnectionID)
+	if err != nil {
+		serveJSONError(w, r, err)
+		return
+	}
 	v := struct {
 		Message string
 	}{

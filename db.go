@@ -60,6 +60,17 @@ func addConnectionInfo(connString string, client *Client) *ConnectionInfo {
 	return conn
 }
 
+func connectionDisconnect(connID int) error {
+	muCache.Lock()
+	defer muCache.Unlock()
+	connInfo := connections[connID]
+	if connInfo == nil {
+		return fmt.Errorf("disconnect: unknown connection id '%d'", connID)
+	}
+	delete(connections, connID)
+	return connInfo.Client.db.Close()
+}
+
 func getConnectionInfoByID(connID int) *ConnectionInfo {
 	muCache.Lock()
 	defer muCache.Unlock()

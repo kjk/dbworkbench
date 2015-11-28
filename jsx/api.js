@@ -18,8 +18,8 @@ function connect(url, cb) {
   apiCall("post", "/connect", opts, cb);
 }
 
-function disconnect(conn_id, cb) {
-  var opts = { conn_id: conn_id }
+function disconnect(connId, cb) {
+  var opts = { conn_id : connId }
   apiCall("post", "/disconnect", opts, cb);
 }
 
