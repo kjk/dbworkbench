@@ -11,17 +11,14 @@ import (
 )
 
 var (
-	logInfo  *LogRotate
-	logError *LogRotate
+	logInfo  *LogFile
+	logError *LogFile
 
 	dot               = []byte(".")
 	centerDot         = []byte("·")
 	logVerbosityLevel int32
 )
 
-const (
-	rotateThreshold = 1024 * 1024 * 1024 // 1 GB
-)
 
 // the idea of verbose logging is to provide a way to turn detailed logging
 // on a per-request basis. This is an approximate solution: since there is
@@ -60,21 +57,25 @@ func StopVerboseLog() {
 	DecLogVerbosity()
 }
 
-func OpenLogMust(fileName string, logPtr **LogRotate) {
+// OpenLogMust opens a log file
+func OpenLogMust(fileName string, logPtr **LogFile) {
 	path := filepath.Join(getLogDir(), fileName)
 	fmt.Printf("log file: %s\n", path)
-	logTmp, err := NewLogRotate(path, rotateThreshold)
+	logTmp, err := NewLogFile(path)
 	if logTmp == nil {
-		log.Fatalf("OpenLogMust: NewLogRotate(%q) failed with %q\n", path, err)
+		log.Fatalf("OpenLogMust: NewLogFile(%q) failed with %q\n", path, err)
 	}
 	*logPtr = logTmp
 }
 
+
+// OpenLogFiles open error and info log files
 func OpenLogFiles() {
 	OpenLogMust("info.log", &logInfo)
 	OpenLogMust("err.log", &logError)
 }
 
+// CloseLogFiles closes log files
 func CloseLogFiles() {
 	logInfo.Close()
 	logInfo = nil
@@ -82,7 +83,7 @@ func CloseLogFiles() {
 	logError = nil
 }
 
-func FunctionFromPc(pc uintptr) string {
+func functionFromPc(pc uintptr) string {
 	fn := runtime.FuncForPC(pc)
 	if fn == nil {
 		return ""
@@ -106,7 +107,7 @@ func FunctionFromPc(pc uintptr) string {
 func LogFatalf(format string, arg ...interface{}) {
 	s := fmt.Sprintf(format, arg...)
 	if pc, _, _, ok := runtime.Caller(1); ok {
-		s = FunctionFromPc(pc) + ": " + s
+		s = functionFromPc(pc) + ": " + s
 	}
 	fmt.Print(s)
 	logError.Print(s)
@@ -119,15 +120,16 @@ func LogFatalf(format string, arg ...interface{}) {
 func LogErrorf(format string, arg ...interface{}) {
 	s := fmt.Sprintf(format, arg...)
 	if pc, _, _, ok := runtime.Caller(1); ok {
-		s = FunctionFromPc(pc) + ": " + s
+		s = functionFromPc(pc) + ": " + s
 	}
 
 	logError.Print(s)
 }
 
+// LogError logs an error
 func LogError(s string) {
 	if pc, _, _, ok := runtime.Caller(1); ok {
-		s = FunctionFromPc(pc) + ": " + s
+		s = functionFromPc(pc) + ": " + s
 	}
 	logError.Print(s)
 }
@@ -136,7 +138,7 @@ func LogError(s string) {
 func LogInfof(format string, arg ...interface{}) {
 	s := fmt.Sprintf(format, arg...)
 	if pc, _, _, ok := runtime.Caller(1); ok {
-		s = FunctionFromPc(pc) + ": " + s
+		s = functionFromPc(pc) + ": " + s
 	}
 	logInfo.Print(s)
 }
@@ -149,7 +151,7 @@ func LogVerbosef(format string, arg ...interface{}) {
 	}
 	s := fmt.Sprintf(format, arg...)
 	if pc, _, _, ok := runtime.Caller(1); ok {
-		s = FunctionFromPc(pc) + ": " + s
+		s = functionFromPc(pc) + ": " + s
 	}
 	logInfo.Print(s)
 }
