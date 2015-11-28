@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace DatabaseWorkbench
@@ -26,9 +27,49 @@ namespace DatabaseWorkbench
             ResumeLayout(true);
         }
 
+        // Find directory where dbworkbench.exe is
+        // Returns "" if not found
+        private string FindGoBackendDirectory()
+        {
+            var path = Application.ExecutablePath;
+            var dir = Path.GetDirectoryName(path);
+            while (dir != null)
+            {
+                path = Path.Combine(dir, "dbworkbench.exe");
+                if (File.Exists(path))
+                {
+                    return dir;
+                }
+                var newDir = Path.GetDirectoryName(dir);
+                if (dir == newDir)
+                {
+                    return "";
+                }
+                dir = newDir;
+            }
+            return "";
+        }
+
+        private bool StartGoBackend()
+        {
+            var path = FindGoBackendDirectory();
+            if (path == "")
+            {
+                // TODO: log
+                return false;
+            }
+            // TODO: start dbworkbench.exe
+            return true;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-            Console.WriteLine($"{_webBrowser.AllowNavigation}");
+            if (!StartGoBackend())
+            {
+                // TODO: show error message
+                Close();
+                return;
+            }
             _webBrowser.Navigate("http://127.0.0.1:5444");
         }
 
