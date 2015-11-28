@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,40 +11,44 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/jessevdk/go-flags"
 	"github.com/kjk/u"
 )
 
 // Options represents command-line options
 type Options struct {
-	Debug    bool   `short:"d" long:"debug" description:"Enable debugging mode" default:"false"`
-	URL      string `long:"url" description:"Database connection string"`
-	Host     string `long:"host" description:"Server hostname or IP"`
-	Port     int    `long:"port" description:"Server port" default:"5432"`
-	User     string `long:"user" description:"Database user"`
-	Pass     string `long:"pass" description:"Password for user"`
-	DbName   string `long:"db" description:"Database name"`
-	Ssl      string `long:"ssl" description:"SSL option"`
-	HTTPHost string `long:"bind" description:"HTTP server host" default:"localhost"`
-	HTTPPort uint   `long:"listen" description:"HTTP server listen port" default:"5444"`
-	AuthUser string `long:"auth-user" description:"HTTP basic auth user"`
-	AuthPass string `long:"auth-pass" description:"HTTP basic auth password"`
-	IsDev    bool   `long:"dev" description:"is true if running in dev mode"`
+	Debug    bool
+	URL      string
+	Host     string
+	Port     int
+	User     string
+	Pass     string
+	DbName   string
+	Ssl      string
+	HTTPHost string
+	HTTPPort int
+	IsDev    bool
 }
 
 var options Options
 
+func parseCmdLine() {
+	flag.BoolVar(&options.Debug, "debug", false, "enable debug mode")
+	flag.StringVar(&options.URL, "url", "", "database connection string")
+	flag.StringVar(&options.Host, "host", "", "database host name or ip address")
+	flag.IntVar(&options.Port, "port", 5432, "database port")
+	flag.StringVar(&options.User, "user", "", "database user")
+	flag.StringVar(&options.Pass, "pass", "", "database password for user")
+	flag.StringVar(&options.DbName, "db", "", "database name")
+	flag.StringVar(&options.Ssl, "ssl", "", "SSL options")
+	flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
+	flag.IntVar(&options.HTTPPort, "listen", 5444, "HTTP server listen port")
+	flag.BoolVar(&options.IsDev, "dev", false, "true for running in dev mode")
+	flag.Parse()
+}
+
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
 	os.Exit(1)
-}
-
-func initOptions() {
-	_, err := flags.ParseArgs(&options, os.Args)
-
-	if err != nil {
-		log.Fatalf("flags.ParseArgs() failed with %s", err)
-	}
 }
 
 func handleSignals() {
@@ -84,7 +89,7 @@ func startGulpUnix() {
 func main() {
 	fmt.Printf("starting\n")
 
-	initOptions()
+	parseCmdLine()
 
 	logToStdout = true
 	verifyDirs()
