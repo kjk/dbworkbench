@@ -5,6 +5,7 @@ cover.out
 dbworkbench
 dbworkbench_linux
 dbworkbench.exe
+dbworkbench.dat
 ansible/*.zip
 s/js/bundle.js
 s/js/bundle.js.map

@@ -2,16 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
 
 	_ "github.com/lib/pq"
-)
-
-var (
-	errNYI = errors.New("NYI")
 )
 
 var (
@@ -80,11 +75,11 @@ func getConnectionInfoByID(connID int) *ConnectionInfo {
 // TODO: temporary, returns first available connection id
 // needs to support multiple connections
 // Retruns -1 if there are no connections
-func getFirstConnectionId() int {
+func getFirstConnectionID() int {
 	muCache.Lock()
 	muCache.Unlock()
-	for connId, _ := range connections {
-		return connId
+	for connID := range connections {
+		return connID
 	}
 	return -1
 }
