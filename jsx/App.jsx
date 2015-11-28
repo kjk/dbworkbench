@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var _ = require('underscore');
+
 var utils = require('./utils.js');
 var api = require('./api.js');
 var action = require('./action.js');
@@ -255,6 +257,12 @@ var App = React.createClass({
       api.getTables(connId, function(data) {
         self.setState({
           tables: data,
+        });
+      });
+
+      api.getConnectionInfo(connId, function(data) {
+        self.setState({
+          databaseName: _.filter(data.rows, function (el) { return (el[0] == "current_database"); })[0][1],
         });
       });
     }
