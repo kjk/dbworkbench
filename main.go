@@ -101,10 +101,6 @@ func main() {
 		startGulpUnix()
 	}
 
-	if options.Debug {
-		startRuntimeProfiler()
-	}
-
 	go startWebServer()
 	handleSignals()
 }
