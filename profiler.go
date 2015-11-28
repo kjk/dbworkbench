@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const MEGABYTE = 1024 * 1024
+const megabyte = 1024 * 1024
 
 func startRuntimeProfiler() {
 	go func() {
@@ -20,8 +20,8 @@ func startRuntimeProfiler() {
 			logger.Printf(
 				"[DEBUG] Goroutines: %v, Mem used: %v (%v mb), Mem acquired: %v (%v mb)\n",
 				runtime.NumGoroutine(),
-				m.Alloc, m.Alloc/MEGABYTE,
-				m.Sys, m.Sys/MEGABYTE,
+				m.Alloc, m.Alloc/megabyte,
+				m.Sys, m.Sys/megabyte,
 			)
 
 			time.Sleep(time.Second * 30)
