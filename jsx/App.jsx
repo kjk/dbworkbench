@@ -243,6 +243,20 @@ var App = React.createClass({
     action.offViewSelected(18);
   },
 
+  handleDisconnectDatabase: function() {
+    var self = this;
+    api.disconnect(this.state.connectionId, function(data) {
+        // TODO: make sure this works after deleting server side cache
+        console.log("disconnect");
+
+        self.setState({
+            connectionId: 0,
+            connected: false
+        });
+
+    });
+  },
+
   componentDidMount: function() {
     //this.adHocTest();
 
@@ -250,6 +264,7 @@ var App = React.createClass({
     this.cidTableSelected = action.onTableSelected(this.handleTableSelected);
     this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
+    this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
 
     var connId = this.state.connectionId;
     var self = this;
@@ -273,6 +288,7 @@ var App = React.createClass({
     action.offTableSelected(this.cidTableSelected);
     action.offExecuteQuery(this.cidExecuteQuery);
     action.offExplainQuery(this.cidExplainQuery);
+    action.offDisconnectDatabase(this.cidDisconnectDatabase);
   },
 
   render: function() {

@@ -4,8 +4,18 @@
 var action = require('./action.js');
 var view = require('./view.js');
 
-var DbNav = React.createClass({
+var EditConnectionButton = React.createClass({
+    handleClick: function(event) {
+        action.disconnectDatabase();
+    },
+    render: function() {
+        return (
+            <a href="#" id="edit_connection" className="btn btn-primary btn-sm" onClick={this.handleClick}><i className="fa fa-gear"></i> Edit Connection</a>
+        )
+    }
+});
 
+var DbNav = React.createClass({
   render: function() {
     //console.log("DbNav.render: view: ", this.props.view);
     var currentView = this.props.view;
@@ -23,7 +33,7 @@ var DbNav = React.createClass({
           {children}
         </ul>
 
-        <a href="#" id="edit_connection" className="btn btn-primary btn-sm"><i className="fa fa-gear"></i> Edit Connection</a>
+        <EditConnectionButton />
       </div>
     );
   },

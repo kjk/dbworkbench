@@ -74,13 +74,15 @@ var tableSelectedIdx = 0;
 var viewSelectedIdx = 1;
 var executeQueryIdx = 2;
 var explainQueryIdx = 3;
+var disconnectDatabaseIdx = 4;
 
 // must be in same order as *Idx above
 var actionNames = [
   "tableSelected",
   "viewSelected",
   "executeQuery",
-  "explainQuery"
+  "explainQuery",
+  "disconnectDatabase"
 ];
 
 function tableSelected(name) {
@@ -131,6 +133,18 @@ function offExplainQuery(cbId) {
   off(explainQueryIdx, cbId);
 }
 
+function disconnectDatabase(query) {
+  broadcast(disconnectDatabaseIdx, query);
+}
+
+function onDisconnectDatabase(cb) {
+  return on(disconnectDatabaseIdx, cb);
+}
+
+function offDisconnectDatabase(cbId) {
+  off(disconnectDatabaseIdx, cbId);
+}
+
 module.exports = {
   tableSelected: tableSelected,
   onTableSelected: onTableSelected,
@@ -146,5 +160,9 @@ module.exports = {
 
   explainQuery: explainQuery,
   onExplainQuery: onExplainQuery,
-  offExplainQuery: offExplainQuery
+  offExplainQuery: offExplainQuery,
+
+  disconnectDatabase: disconnectDatabase,
+  onDisconnectDatabase: onDisconnectDatabase,
+  offDisconnectDatabase: offDisconnectDatabase
 };
