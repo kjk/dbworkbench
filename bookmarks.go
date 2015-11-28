@@ -1,17 +1,14 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/mitchellh/go-homedir"
-)
+import "path/filepath"
 
 /*
-TODO: implement
+TODO: implement.
 */
 
+// Bookmark defines info about a database
 type Bookmark struct {
-	Url      string `json:"url"`      // Postgres connection URL
+	URL      string `json:"url"`      // Postgres connection URL
 	Host     string `json:"host"`     // Server hostname
 	Port     string `json:"port"`     // Server port
 	User     string `json:"user"`     // Database user
@@ -20,13 +17,11 @@ type Bookmark struct {
 	Ssl      string `json:"ssl"`      // Connection SSL mode
 }
 
-func bookmarksPath() string {
-	path, _ := homedir.Dir()
-	return fmt.Sprintf("%s/.pgweb/bookmarks", path)
+func bookmarksFilePath() string {
+	return filepath.Join(getDataDir(), "bookmarks.json")
 }
 
-func readAllBookmarks(path string) (map[string]Bookmark, error) {
+func readAllBookmarks() (map[string]Bookmark, error) {
 	res := map[string]Bookmark{}
 	return res, nil
-
 }

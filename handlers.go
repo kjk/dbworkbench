@@ -61,7 +61,6 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 			TimeStart: time.Now(),
 		}
 
-
 		if opts&MustHaveConnection != 0 {
 			connID, err := strconv.Atoi(r.FormValue("conn_id"))
 			if err != nil || connID <= 0 {
@@ -272,7 +271,7 @@ func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/bookmarks
 func handleBookmarks(w http.ResponseWriter, r *http.Request) {
-	bookmarks, err := readAllBookmarks(bookmarksPath())
+	bookmarks, err := readAllBookmarks()
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
