@@ -27,14 +27,16 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         loadAddressURL()
         
         // Do any additional setup after loading the view, typically from a nib.
     }
     
-    override func viewDidLayout() {
-//        self.view = webView;
+    override func viewWillDisappear() {
+        // CMD + W
+        print("CMD + W")
+        ServerController.closeServer()
     }
+
 }
 
