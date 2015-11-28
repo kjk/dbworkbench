@@ -107,8 +107,9 @@ func getLogDir() string {
 	return filepath.Join(getDataDir(), "log")
 }
 
-func startGulpUnix() {
-	cmd := exec.Command("./scripts/run_gulp_watch.sh")
+func startGulp() {
+	gulpPath := filepath.Join("node_modules", ".bin", "gulp")
+	cmd := exec.Command(gulpPath, "build_and_watch")
 	cmdStr := strings.Join(cmd.Args, " ")
 	fmt.Printf("starting '%s'\n", cmdStr)
 	cmd.Stdout = os.Stdout
@@ -131,8 +132,8 @@ func main() {
 	IncLogVerbosity()
 	LogInfof("Data dir: %s\n", getDataDir())
 
-	if options.IsDev && !isWindows() {
-		startGulpUnix()
+	if options.IsDev {
+		startGulp()
 	}
 
 	go startWebServer()
