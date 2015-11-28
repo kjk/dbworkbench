@@ -285,7 +285,7 @@ var App = React.createClass({
         />
         <div id="body">
           {this.renderInput()}
-          <Output results={this.state.results} notFull={notFull}/>
+          <Output selectedView={this.state.selectedView} results={this.state.results} notFull={notFull}/>
         </div>
       </div>
     );
