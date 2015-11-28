@@ -57,14 +57,13 @@ var App = React.createClass({
 
     // must delay otherwise this.state.selectedTable will not be visible yet
     // in handleViewSelected
+    var self = this;
     setTimeout(function() {
-      action.viewSelected(view.Content);
+      self.handleViewSelected(view.Content);
     }, 200);
 
-    var self = this;
     var connId = this.state.connectionId;
     api.getTableInfo(connId, table, function(data) {
-      //console.log("handleTableSelected: tableInfo: ", data);
       self.setState({
         selectedTableInfo: data,
       });
