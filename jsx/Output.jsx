@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var view = require('./view.js');
+
 /*
 function buildTable(results, sortColumn, sortOrder) {
   results.columns.forEach(function(col) {
@@ -112,6 +114,11 @@ var Output = React.createClass({
     if (this.props.notFull) {
       clsOutput = "";
     }
+
+    if (view.SQLQuery != this.props.selectedView) {
+      clsOutput = "full";
+    }
+
     return (
       <div id="output" className={clsOutput}>
         <div className="wrapper">

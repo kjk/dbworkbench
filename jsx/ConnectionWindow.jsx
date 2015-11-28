@@ -2,7 +2,6 @@
 'use strict';
 
 var api = require('./api.js');
-var TopNav = require('./TopNav.jsx');
 
 var ConnectionScheme = 0;
 var ConnectionStandard = 1;
@@ -303,7 +302,6 @@ var ConnectionWindow = React.createClass({
   render: function() {
     return (
       <div>
-        <TopNav/>
         {this.renderConnectionWindow()}
       </div>
     );

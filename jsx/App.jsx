@@ -1,13 +1,14 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var _ = require('underscore');
+
 var utils = require('./utils.js');
 var api = require('./api.js');
 var action = require('./action.js');
 var view = require('./view.js');
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var TopNav = require('./TopNav.jsx');
 var DbNav = require('./DbNav.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var Input = require('./Input.jsx');
@@ -258,6 +259,12 @@ var App = React.createClass({
           tables: data,
         });
       });
+
+      api.getConnectionInfo(connId, function(data) {
+        self.setState({
+          databaseName: _.filter(data.rows, function (el) { return (el[0] == "current_database"); })[0][1],
+        });
+      });
     }
   },
 
@@ -277,7 +284,6 @@ var App = React.createClass({
     var notFull = (this.state.selectedView === view.SQLQuery);
     return (
       <div>
-        <TopNav/>
         <DbNav view={this.state.selectedView}/>
         <Sidebar
           tables={this.state.tables}
@@ -287,7 +293,7 @@ var App = React.createClass({
         />
         <div id="body">
           {this.renderInput()}
-          <Output results={this.state.results} notFull={notFull}/>
+          <Output selectedView={this.state.selectedView} results={this.state.results} notFull={notFull}/>
         </div>
       </div>
     );
