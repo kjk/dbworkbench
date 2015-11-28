@@ -1,17 +1,10 @@
 {
 	"ImportPath": "github.com/kjk/dbworkbench",
-	"GoVersion": "go1.4.2",
-	"Packages": [
-		"."
-	],
+	"GoVersion": "go1.5",
 	"Deps": [
 		{
-			"ImportPath": "github.com/bradfitz/slice",
-			"Rev": "a665b5dbaad5fc7474c1193c67ed138df1e1b0e7"
-		},
-		{
-			"ImportPath": "github.com/gorilla/securecookie",
-			"Rev": "8e98dd730fc43f1383f19615db6f2e702c9738e8"
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Rev": "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d"
 		},
 		{
 			"ImportPath": "github.com/jmoiron/sqlx",
@@ -32,24 +25,12 @@
 			"Rev": "7d2d8c8a4e078ce3c58736ab521a40b37a504c52"
 		},
 		{
+			"ImportPath": "github.com/pmezard/go-difflib/difflib",
+			"Rev": "d8ed2627bdf02c080bf22230dbb337003b7aba2d"
+		},
+		{
 			"ImportPath": "github.com/stretchr/testify/assert",
 			"Rev": "2eaa4b48b8954bf871229043b8064ca156a542a5"
-		},
-		{
-			"ImportPath": "golang.org/x/net/context",
-			"Rev": "a8c61998a557a37435f719980da368469c10bfed"
-		},
-		{
-			"ImportPath": "golang.org/x/oauth2",
-			"Rev": "ec6d5d770f531108a6464462b2201b74fcd09314"
-		},
-		{
-			"ImportPath": "google.golang.org/api/googleapi",
-			"Rev": "a59c1355aff5abf0f60c182f9fe9b8acb31ac40e"
-		},
-		{
-			"ImportPath": "google.golang.org/api/oauth2/v2",
-			"Rev": "a59c1355aff5abf0f60c182f9fe9b8acb31ac40e"
 		}
 	]
 }
