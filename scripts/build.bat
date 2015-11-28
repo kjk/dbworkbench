@@ -1,3 +1,1 @@
-@rem TODO: use godep
-
-go build -o dbworkbench.exe
+godep go build -o dbworkbench.exe

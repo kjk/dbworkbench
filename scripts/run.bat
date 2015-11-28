@@ -1,4 +1,6 @@
 @rem TODO: use godep
 
-go build -o dbworkbench.exe
+godep go vet github.com/kjk/dbworkbench
+
+godep go build -o dbworkbench.exe
 dbworkbench.exe -dev
