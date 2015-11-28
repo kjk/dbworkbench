@@ -126,6 +126,7 @@ func main() {
 
 	logToStdout = true
 	verifyDirs()
+	RemoveOldLogFiles()
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("Data dir: %s\n", getDataDir())
