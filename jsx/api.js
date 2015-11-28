@@ -18,6 +18,11 @@ function connect(url, cb) {
   apiCall("post", "/connect", opts, cb);
 }
 
+function disconnect(connId, cb) {
+  var opts = { conn_id : connId }
+  apiCall("post", "/disconnect", opts, cb);
+}
+
 function getTables(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables", opts, cb);
@@ -94,6 +99,7 @@ function getConnectionInfo(connId, cb) {
 
 module.exports = {
   connect: connect,
+  disconnect: disconnect,
   getTables: getTables,
   getTableRows: getTableRows,
   getTableStructure: getTableStructure,
