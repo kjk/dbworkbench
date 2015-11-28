@@ -73,6 +73,10 @@ func isMac() bool {
 	return runtime.GOOS == "darwin"
 }
 
+func isLinux() bool {
+	return runtime.GOOS == "linux"
+}
+
 func isWindows() bool {
 	return runtime.GOOS == "windows"
 }
@@ -87,8 +91,11 @@ func getDataDirMac() string {
 }
 
 func getDataDirWindows() string {
-	// TODO: fixme
-	return u.ExpandTildeInPath("~/data/dbworkbench")
+	dir := os.Getenv("LOCALAPPDATA")
+	if dir == "" {
+		log.Fatalf("LOCALAPPDATA not set")
+	}
+	return filepath.Join(dir, "Database Workbench")
 }
 
 func getDataDir() string {
@@ -99,7 +106,7 @@ func getDataDir() string {
 	if isWindows() {
 		return getDataDirWindows()
 	}
-	log.Fatalf("not windows or mac")
+	log.Fatalf("unsupported runtime.GOOS value: '%s", runtime.GOOS)
 	return ""
 }
 
@@ -121,11 +128,11 @@ func startGulp() {
 }
 
 func main() {
-	fmt.Printf("starting\n")
-
 	parseCmdLine()
 
-	logToStdout = true
+	if options.IsDev {
+		logToStdout = true
+	}
 	verifyDirs()
 	RemoveOldLogFiles()
 	OpenLogFiles()
