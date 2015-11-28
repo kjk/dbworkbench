@@ -473,7 +473,7 @@ func handleShowMyHost(w http.ResponseWriter, r *http.Request) {
 
 func startWebServer() {
 	registerHTTPHandlers()
-	httpAddr := fmt.Sprintf(":%v", options.HTTPPort)
+	httpAddr := fmt.Sprintf("127.0.0.1:%v", options.HTTPPort)
 	fmt.Printf("Started running on %s\n", httpAddr)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		log.Fatalf("http.ListendAndServer() failed with %s\n", err)
