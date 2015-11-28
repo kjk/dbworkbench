@@ -12,6 +12,8 @@ import (
 
 // to run: go run scripts/build_release.go
 
+// TODO: add a way to blacklist some files (e.g. s/dist/bundle.js)
+
 func pj(elem ...string) string {
 	return filepath.Join(elem...)
 }
@@ -49,7 +51,8 @@ func zipFileName(path, baseDir string) string {
 	if path[0] == '/' || path[0] == '\\' {
 		path = path[1:]
 	}
-	// always use unix path separator inside zip files
+	// always use unix path separator inside zip files because that's what
+	// the browser uses in url and we must match that
 	return strings.Replace(path, "\\", "/", -1)
 }
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/zip"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -37,6 +38,12 @@ type ReqContext struct {
 	ConnInfo     *ConnectionInfo
 	Client       *Client
 }
+
+var (
+	// loaded only once at startup. maps a file path of the resource
+	// to its data
+	resourcesFromZip map[string][]byte
+)
 
 func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -124,11 +131,62 @@ func handleIndex(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveStatic(w, r, path)
 }
 
+func loadResourcesFromZipReader(zr *zip.Reader) error {
+	for _, f := range zr.File {
+		name := f.Name
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		d, err := ioutil.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			return err
+		}
+		//LogInfof("Loaded '%s' of size %d bytes\n", name, len(d))
+		resourcesFromZip[name] = d
+	}
+	return nil
+}
+
+// call this only once at startup
+func loadResourcesFromZip(path string) error {
+	resourcesFromZip = make(map[string][]byte)
+	zrc, err := zip.OpenReader(path)
+	if err != nil {
+		return err
+	}
+	defer zrc.Close()
+	return loadResourcesFromZipReader(&zrc.Reader)
+}
+
+func serveResourceFromZip(w http.ResponseWriter, r *http.Request, path string) {
+	//LogInfof("serving '%s' from zip\n", path)
+	data := resourcesFromZip[path]
+
+	if data == nil {
+		LogErrorf("no data for file '%s'\n", path)
+		servePlainText(w, r, 404, fmt.Sprintf("file '%s' not found", path))
+		return
+	}
+
+	if len(data) == 0 {
+		servePlainText(w, r, 404, "Asset is empty")
+		return
+	}
+
+	serveData(w, r, 200, MimeTypeByExtensionExt(path), data)
+}
+
 // GET /s/:path
 func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	path := "s/" + r.URL.Path[len("/s/"):]
+	resourcePath := "s/" + r.URL.Path[len("/s/"):]
 	//LogInfof("path='%s'\n", path)
-	serveStatic(w, r, path)
+	if options.ResourcesFromZip {
+		serveResourceFromZip(w, r, resourcePath)
+	} else {
+		serveStatic(w, r, resourcePath)
+	}
 }
 
 // POST /api/connect
