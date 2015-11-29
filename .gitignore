@@ -16,3 +16,4 @@ cmd/import_stack_overflow/import_stack_overflow
 mac-client/dbworkbench.xcodeproj/xcuserdata/
 mac-client/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
 win/DatabaseWorkbench/obj/
+.vs/

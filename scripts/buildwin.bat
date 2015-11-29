@@ -12,7 +12,7 @@ go run scripts\build_release.go
 godep go build -o dbworkbench.exe
 @IF ERRORLEVEL 1 goto Error
 
-go run tools\buildwin\main.go tools\buildwin\util.go tools\buildwin\cmd.go 
+go run tools\build\main.go tools\build\util.go tools\build\cmd.go -win -no-clean-check
 @IF ERRORLEVEL 1 goto Error
 	
 goto EndOk
