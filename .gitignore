@@ -17,3 +17,4 @@ mac-client/dbworkbench.xcodeproj/xcuserdata/
 mac-client/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
 win/DatabaseWorkbench/obj/
 .vs/
+cert.pfx
