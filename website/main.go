@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 var (
@@ -27,7 +28,39 @@ func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
 func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
 }
 
+// heuristic to determine if request is coming from Windows
+func isWindowsUserAgent(ua string) bool {
+	return strings.Contains(ua, "Windows")
+}
+
+// heuristic to determine if request is coming from Mac
+func isMacUserAgent(ua string) bool {
+	return strings.Contains(ua, "Macintosh")
+}
+
+func redirectIndex(w http.ResponseWriter, r *http.Request) {
+	ua := r.UserAgent()
+	if isMacUserAgent(ua) {
+		http.Redirect(w, r, "for-mac.html", http.StatusFound /* 302 */)
+		return
+	}
+
+	// for windows and everything else
+	http.Redirect(w, r, "for-windows.html", http.StatusFound /* 302 */)
+}
+
+// url: /*
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	uri := r.URL.Path
+	if uri == "/" {
+		redirectIndex(w, r)
+		return
+	}
+
+}
+
 func initHandlers() {
+	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/api/winupdatecheck", handleWinUpdateCheck)
 	http.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
 }
