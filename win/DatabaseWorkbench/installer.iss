@@ -23,7 +23,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={784A5D3A-FB9F-4E09-809C-40F639F408D6}
+AppId={{784A5D3A-FB9F-4E09-809C-40F639F408D6}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -55,8 +55,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "bin\Release\DatabaseWorkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\DatabaseWorkbench.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\dbworkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\dbworkbench.dat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dbworkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dbworkbench.dat"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

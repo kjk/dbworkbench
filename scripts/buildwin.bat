@@ -1,6 +1,6 @@
 @echo on
 
-go run tools\build\main.go tools\build\util.go tools\build\cmd.go -no-clean-check
+go run tools\build\main.go tools\build\util.go tools\build\cmd.go tools\build\s3.go tools\build\win.go  -no-clean-check
 @IF ERRORLEVEL 1 goto Error
 @goto EndOk
 
@@ -16,7 +16,7 @@ go run scripts\build_release.go
 godep go build -o dbworkbench.exe
 @IF ERRORLEVEL 1 goto Error
 
-go run tools\build\main.go tools\build\util.go tools\build\cmd.go -win -no-clean-check
+go run tools\build\main.go tools\build\util.go tools\build\cmd.go tools\build\s3.go tools\build\win.go -no-clean-check
 @IF ERRORLEVEL 1 goto Error
 	
 goto EndOk

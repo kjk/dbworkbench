@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -12,9 +13,14 @@ import (
 	"strings"
 )
 
+const (
+	s3Dir = "software/databaseworkbench/"
+)
+
 var (
-	flgNoCleanCheck bool
-	flgUpload       bool
+	flgNoCleanCheck     bool
+	flgUpload           bool
+	flgUploadAutoUpdate bool
 
 	programVersionWin string
 	programVersionMac string
@@ -74,6 +80,42 @@ func verifyGitCleanMust() {
 	fatalif(!isGitCleanMust(), "git has unsaved changes\n")
 }
 
+func readSecretsMust(path string) *Secrets {
+	if cachedSecrets != nil {
+		return cachedSecrets
+	}
+	d, err := ioutil.ReadFile(path)
+	fatalif(err != nil, "readSecretsMust(): error %s reading file '%s'\n", err, path)
+	var s Secrets
+	err = json.Unmarshal(d, &s)
+	fatalif(err != nil, "readSecretsMust(): failed to json-decode file '%s'. err: %s, data:\n%s\n", path, err, string(d))
+	cachedSecrets = &s
+	return cachedSecrets
+}
+
+func verifyHasSecretsMust() {
+	certPath = pj("scripts", "cert.pfx")
+	if !fileExists(certPath) {
+		certPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "cert.pfx")
+		fatalif(!fileExists(certPath), "didn't find cert.pfx in scripts/ or ../../../sumatrapdf/scripts/")
+	}
+	absPath, err := filepath.Abs(certPath)
+	fataliferr(err)
+	certPath = absPath
+	fmt.Printf("signing certificate: '%s'\n", certPath)
+
+	secretsPath := pj("scripts", "secrets.json")
+	if !fileExists(secretsPath) {
+		secretsPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "secrets.json")
+		fatalif(!fileExists(secretsPath), "didn't find secrets.json in scripts/ or ../../../sumatrapdf/scripts/")
+	}
+	secrets := readSecretsMust(secretsPath)
+	if flgUpload || flgUploadAutoUpdate {
+		// when uploading must have s3 credentials
+		s3SetSecrets(secrets.AwsAccess, secrets.AwsSecret)
+	}
+}
+
 func isWin() bool {
 	return runtime.GOOS == "windows"
 }
@@ -116,6 +158,11 @@ func extractVersionMust() {
 	fmt.Printf("programVersion: %s\n", programVersion)
 }
 
+func buildMac() {
+	// TODO: write me
+	fatalf("not yet implemented")
+}
+
 func main() {
 	parseCmdLine()
 	if isWin() {
@@ -128,7 +175,15 @@ func main() {
 	verifyGitCleanMust()
 	extractVersionMust()
 	if isWin() {
+		verifyHasSecretsMust()
+
 		detectInnoSetupMust()
+		build()
+		buildSetup()
+	}
+
+	if isMac() {
+		buildMac()
 	}
 
 }
