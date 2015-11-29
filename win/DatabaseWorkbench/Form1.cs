@@ -72,6 +72,8 @@ namespace DatabaseWorkbench
                 // TODO: log
                 return false;
             }
+            // explanation of StartInfo flags:
+            // http://blogs.msdn.com/b/jmstall/archive/2006/09/28/createnowindow.aspx
             var p = new Process();
             _backendProcess = p;
             p.StartInfo.WorkingDirectory = dir;
