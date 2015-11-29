@@ -1,7 +1,7 @@
 @echo on
 
-@rem ./node_modules/.bin/gulp default
-@rem IF ERRORLEVEL 1 goto Error
+call ./node_modules/.bin/gulp default
+@IF ERRORLEVEL 1 goto Error
 
 godep go vet github.com/kjk/dbworkbench
 @IF ERRORLEVEL 1 goto Error
@@ -25,4 +25,3 @@ goto End
 echo finished ok!
 
 :End
-
