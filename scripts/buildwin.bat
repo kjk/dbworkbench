@@ -1,5 +1,9 @@
 @echo on
 
+go run tools\build\main.go tools\build\util.go tools\build\cmd.go -no-clean-check
+@IF ERRORLEVEL 1 goto Error
+@goto EndOk
+
 call ./node_modules/.bin/gulp default
 @IF ERRORLEVEL 1 goto Error
 
