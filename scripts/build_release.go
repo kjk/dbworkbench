@@ -12,7 +12,30 @@ import (
 
 // to run: go run scripts/build_release.go
 
-// TODO: add a way to blacklist some files (e.g. s/dist/bundle.js)
+var (
+	blaclisted = []string{
+		"s/dist/bundle.js.map",
+		".gitkeep",
+		// TODO: eventually simply delete files we don't use
+		// we use bootstrap-flatly.css
+		"s/css/bootstrap.css",
+		"s/css/bootstrap-lumen.css",
+		"s/css/bootstrap-paper.css",
+		"s/css/bootstrap-simplex.css",
+		"s/css/normalize.css",
+		"s/css/primer.css",
+		"s/css/pure-min.css",
+	}
+)
+
+func isBlacklisted(path string) bool {
+	for _, s := range blaclisted {
+		if path == s {
+			return true
+		}
+	}
+	return false
+}
 
 func pj(elem ...string) string {
 	return filepath.Join(elem...)
@@ -88,7 +111,9 @@ func addZipDirMust(zw *zip.Writer, dir, baseDir string) {
 				dirsToVisit = append(dirsToVisit, path)
 			} else if fi.Mode().IsRegular() {
 				zipName := zipFileName(path, baseDir)
-				addZipFileMust(zw, path, zipName)
+				if !isBlacklisted(zipName) {
+					addZipFileMust(zw, path, zipName)
+				}
 			}
 		}
 	}
