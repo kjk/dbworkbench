@@ -80,7 +80,7 @@ func OpenLogMust(fileName string) *LogFile {
 
 func dumpStrArr(arr []string) {
 	for _, s := range arr {
-		fmt.Printf("%s\n", s)
+		LogInfof("%s\n", s)
 	}
 }
 
@@ -98,13 +98,20 @@ func RemoveOldLogFiles() {
 		}
 	}
 	sort.Strings(fileNames)
-	// keep last 10 log files for easier debugging
+	// keep last few log files for easier debugging, delete the oldest
 	maxToKeep := 10
 	n := len(fileNames)
+	//LogInfof("%d log files\n", n)
 	if n <= maxToKeep {
+		//LogInfof("not deleting log files because less or equal than maxToKeep (%d)\n", maxToKeep)
 		return
 	}
-	fileNames = fileNames[n-maxToKeep:]
+	//LogInfof("All log files:\n")
+	//dumpStrArr(fileNames)
+	fileNames = fileNames[:n-maxToKeep]
+	//LogInfof("\nwill delete log files:\n")
+	//dumpStrArr(fileNames)
+
 	for _, name := range fileNames {
 		path := filepath.Join(getLogDir(), name)
 		os.Remove(path)
