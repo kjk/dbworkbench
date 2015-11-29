@@ -44,8 +44,7 @@ func signMust(path string) {
 		"/du", "http://databaseworkbench.com", "/f", "cert.pfx",
 		"/p", certPwd, fileName)
 	cmd.Dir = fileDir
-	_, err := runCmd(cmd, true)
-	fataliferr(err)
+	runCmdMust(cmd, true)
 }
 
 func clean() {
@@ -93,8 +92,8 @@ func buildSetupWin() {
 
 	ver := fmt.Sprintf("/dMyAppVersion=%s", programVersion)
 	cmd := exec.Command(innoSetupPath, "/Qp", ver, "installer.iss")
-	_, err := runCmd(cmd, true)
-	fataliferr(err)
+	fmt.Printf("Running %s\n", cmd.Args)
+	runCmdMust(cmd, true)
 	signMust(exeSetupTmpPath())
 	fileCopyMust(exeSetupPath(), exeSetupTmpPath())
 }
@@ -106,11 +105,11 @@ func uploadToS3Win() {
 	s3UploadFile(s3ExeSetupPath(), exeSetupPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3ExeSetupPath()
 	buildOn := time.Now().Format("2006-01-02")
-	jsTxt := fmt.Sprintf(`var fotofiLatestVer = "%s";
-var fotofiLatestUrl = "%s";
-var fotofiBuiltOn = "%s";
+	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
+var LatestUrlWin = "%s";
+var BuiltOnWin = "%s";
 `, programVersion, s3Url, buildOn)
-	s3UploadString(s3Dir+"latestver.js", jsTxt, true)
+	s3UploadString(s3Dir+"latestverwin.js", jsTxt, true)
 }
 
 func buildWinAll() {
