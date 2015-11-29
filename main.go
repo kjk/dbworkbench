@@ -15,8 +15,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-// Options represents command-line options
 type Options struct {
+	// options that come from command-line
 	Debug    bool
 	URL      string
 	Host     string
@@ -28,6 +28,9 @@ type Options struct {
 	HTTPHost string
 	HTTPPort int
 	IsDev    bool
+
+	// computed options
+	ResourcesFromZip bool
 }
 
 var options Options
@@ -138,9 +141,20 @@ func main() {
 	OpenLogFiles()
 	IncLogVerbosity()
 	LogInfof("Data dir: %s\n", getDataDir())
+	if !options.IsDev {
+		options.ResourcesFromZip = true
+		LogInfof("reading resources from zip\n")
+	}
 
 	if options.IsDev {
 		startGulp()
+	}
+
+	if options.ResourcesFromZip {
+		err := loadResourcesFromZip("dbworkbench.dat")
+		if err != nil {
+			LogFatalf("loadResourcesFromZip() failed with '%s'\n", err)
+		}
 	}
 
 	go startWebServer()
