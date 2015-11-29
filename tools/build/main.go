@@ -175,15 +175,10 @@ func main() {
 	verifyGitCleanMust()
 	extractVersionMust()
 	if isWin() {
-		verifyHasSecretsMust()
-
-		detectInnoSetupMust()
-		build()
-		buildSetup()
+		buildWinAll()
 	}
 
 	if isMac() {
 		buildMac()
 	}
-
 }
