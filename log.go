@@ -78,6 +78,12 @@ func OpenLogMust(fileName string) *LogFile {
 	return logTmp
 }
 
+func dumpStrArr(arr []string) {
+	for _, s := range arr {
+		fmt.Printf("%s\n", s)
+	}
+}
+
 // RemoveOldLogFiles removes old log files
 func RemoveOldLogFiles() {
 	files, err := ioutil.ReadDir(getLogDir())
@@ -92,12 +98,13 @@ func RemoveOldLogFiles() {
 		}
 	}
 	sort.Strings(fileNames)
-	// keep last 10 files
+	// keep last 10 log files for easier debugging
 	maxToKeep := 10
 	n := len(fileNames)
-	if n > maxToKeep {
-		fileNames = fileNames[n-maxToKeep:]
+	if n <= maxToKeep {
+		return
 	}
+	fileNames = fileNames[n-maxToKeep:]
 	for _, name := range fileNames {
 		path := filepath.Join(getLogDir(), name)
 		os.Remove(path)
