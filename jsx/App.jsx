@@ -11,6 +11,7 @@ var view = require('./view.js');
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 var DbNav = require('./DbNav.jsx');
 var Sidebar = require('./Sidebar.jsx');
+var AlertBar = require('./AlertBar.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
 
@@ -25,6 +26,8 @@ var App = React.createClass({
       selectedTable: "",
       selectedTableInfo: null,
       results: null,
+      errorMessage: "",
+      errorVisible: false
     };
   },
 
@@ -255,6 +258,25 @@ var App = React.createClass({
     });
   },
 
+  handleAlertBar: function(message) {
+    console.log("Create Alert Bar");
+
+    this.setState({
+      errorVisible: true,
+      errorMessage: message,
+    });
+
+    // Dissmiss AlertBar with timer
+    // var self = this;
+    // setTimeout(function() {
+    //   self.handleCloseAlertBar()
+    // }, 5000);
+  },
+
+  handleCloseAlertBar: function() {
+    this.setState({errorVisible: false});
+  },
+
   componentDidMount: function() {
     //this.adHocTest();
 
@@ -263,6 +285,7 @@ var App = React.createClass({
     this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
     this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
+    this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
 
     var connId = this.state.connectionId;
     var self = this;
@@ -287,6 +310,7 @@ var App = React.createClass({
     action.offExecuteQuery(this.cidExecuteQuery);
     action.offExplainQuery(this.cidExplainQuery);
     action.offDisconnectDatabase(this.cidDisconnectDatabase);
+    action.offAlertBar(this.cidDiscidAlertBarconnectDatabase);
   },
 
   render: function() {
@@ -298,18 +322,24 @@ var App = React.createClass({
     var notFull = (this.state.selectedView === view.SQLQuery);
     return (
       <div>
-        <DbNav view={this.state.selectedView}/>
-        <Sidebar
-          connectionId={this.state.connectionId}
-          tables={this.state.tables}
-          selectedTable={this.state.selectedTable}
-          selectedTableInfo={this.state.selectedTableInfo}
-          databaseName={this.state.databaseName}
-        />
-        <div id="body">
-          {this.renderInput()}
-          <Output selectedView={this.state.selectedView} results={this.state.results} notFull={notFull}/>
+        <div onClick={this.handleCloseAlertBar} >
+          { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>
+        <div>
+          <DbNav view={this.state.selectedView}/>
+          <Sidebar
+            connectionId={this.state.connectionId}
+            tables={this.state.tables}
+            selectedTable={this.state.selectedTable}
+            selectedTableInfo={this.state.selectedTableInfo}
+            databaseName={this.state.databaseName}
+          />
+          <div id="body">
+            {this.renderInput()}
+            <Output selectedView={this.state.selectedView} results={this.state.results} notFull={notFull}/>
+          </div>
+        </div>
+
       </div>
     );
   }
