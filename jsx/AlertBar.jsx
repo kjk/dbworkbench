@@ -3,7 +3,7 @@
 
 var AlertBar = React.createClass({
   render: function(){
-    return <div id="note">{this.props.errorMessage}</div>;
+    return <div id="note">{this.props.errorMessage} <span><strong>Close</strong></span></div>;
   }
 });
 
