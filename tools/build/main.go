@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -143,8 +144,19 @@ func extractVersionWinMust() {
 }
 
 func extractVersionMacMust() {
-	// TODO: write me
-	programVersionMac = programVersionWin
+	args := []string{
+		"-c",
+		"Print CFBundleShortVersionString",
+		"./mac-client/dbworkbench/Info.plist",
+	}
+
+	// /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "./mac-client/dbworkbench/Info.plist"
+	macVersionByteArray, err := exec.Command("/usr/libexec/PlistBuddy", args...).Output()
+	fataliferr(err)
+
+	// Can't convert directly with macVersionByteArray[:]
+	// because comparasion fails for the last character
+	programVersionMac = string(macVersionByteArray[:3])
 
 	verifyCorrectVersionMust(programVersionMac)
 	fmt.Printf("programVersionMac: %s\n", programVersionMac)
@@ -161,6 +173,12 @@ func extractVersionMust() {
 func buildMac() {
 	// TODO: write me
 	fatalf("not yet implemented")
+
+	// TODO: Build xCode
+
+	// TODO: Zip it
+
+	// TODO: Upload to S3
 }
 
 func main() {
