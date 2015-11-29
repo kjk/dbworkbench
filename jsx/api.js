@@ -1,3 +1,5 @@
+var action = require('./action.js');
+
 function apiCall(method, path, params, cb) {
   $.ajax({
     url: "/api" + path,
@@ -8,6 +10,12 @@ function apiCall(method, path, params, cb) {
       cb(data);
     },
     error: function(xhr, status, data) {
+      if (xhr.status == "0") {
+        // Backend is down
+        action.alertBar("Something is wrong. Please restart")
+      } else {
+        // API call failed
+      }
       cb(jQuery.parseJSON(xhr.responseText));
     }
   });
