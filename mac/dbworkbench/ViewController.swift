@@ -13,29 +13,64 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var webView: WebView!
 
-    var urlpath = "http://localhost:5444/"
+    let urlpath = "http://localhost:5444/"
+    var once = false
     
-    func loadAddressURL(){
-        let requesturl = NSURL(string: urlpath)
-        let request = NSURLRequest(URL: requesturl!)
+    override func awakeFromNib() {
+        NSLog("viewDidLoad")
         
-//        webView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-//        self.view = webView;
-        webView.mainFrame.loadRequest(request)
+        if !once {
+            redirectLogToDocuments()
+            once = true
+        }
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSLog("viewDidLoad")
         
-        loadAddressURL()
+        SingletonObject.viewController = self
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        NSLog("viewWillAppear")
         
-        // Do any additional setup after loading the view, typically from a nib.
+        preferredContentSize = view.fittingSize
     }
     
     override func viewWillDisappear() {
-        // CMD + W
-        print("CMD + W")
+        NSLog("viewWillDisappear")
+        
         ServerController.closeServer()
+    }
+    
+    func loadURL() {
+        NSLog("loadURL")
+        let requesturl = NSURL(string: urlpath)
+        let request = NSURLRequest(URL: requesturl!)
+        
+        webView.mainFrame.loadRequest(request)
+    }
+    
+    func redirectLogToDocuments() {
+        
+//        let homeDirectory = NSHomeDirectory() as NSString
+        let dataPath = NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "Database Workbench", "log"])
+
+        if (!NSFileManager.defaultManager().fileExistsAtPath(dataPath)) {
+            do {
+                try NSFileManager.defaultManager().createDirectoryAtPath(dataPath, withIntermediateDirectories: true, attributes: nil)
+            } catch _ {
+                // failed
+            }
+
+        }
+        
+        let logDirectory: NSString = dataPath
+        let logpath = logDirectory.stringByAppendingPathComponent("maclog.txt")
+        freopen(logpath.cStringUsingEncoding(NSASCIIStringEncoding)!, "a+", stderr)
     }
 
 }
