@@ -7,11 +7,18 @@
     register: sha1
   - name: build
     local_action: command python build.py
-  - name: create .initd file
-    copy: src=dbworkbench.initd dest=/etc/init.d/dbworkbench owner=root group=root mode=0755
+  - name: stop currently running
+    command: systemctl stop website
     sudo: yes
-  - name: make changes to /etc/init.d/dbworkbench visible
+    ignore_errors: yes
+  - name: create systemd file
+    copy: src=website.service dest=/lib/systemd/system/website.service owner=root group=root mode=0644
+    sudo: yes
+  - name: make changes to website.service visible
     command: systemctl daemon-reload
+    sudo: yes
+  - name: enable the service so that it restarts on reboot
+    command: systemctl enable website
     sudo: yes
   - name: create directory for the app
     file: >
@@ -25,9 +32,6 @@
       owner=dbworkbench group=dbworkbench
   - name: unzip files
     unarchive: src={{ sha1.stdout }}.zip dest=/home/dbworkbench/www/app/{{ sha1.stdout }}
-  - name: stop existing
-    command: /etc/init.d/dbworkbench stop
-    sudo: yes
   - name: stat current
     stat: path=/home/dbworkbench/www/app/current
     register: current_stat
@@ -44,7 +48,12 @@
       dest=/home/dbworkbench/www/app/current
       state=link
   - name: start it
-    command: /etc/init.d/dbworkbench start
+    command: systemctl start website
     sudo: yes
   - name: delete .zip file
     local_action: command rm {{ sha1.stdout }}.zip
+  - name: show status
+    command: systemctl status website
+    sudo: yes
+    register: website_status
+  - debug: var=website_status.stdout_lines
