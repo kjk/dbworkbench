@@ -65,10 +65,6 @@ func copyDbWorkbench() {
 	dst := filepath.Join(winDir(), "dbworkbench.exe")
 	src := "dbworkbench.exe"
 	fileCopyMust(dst, src)
-
-	dst = filepath.Join(winDir(), "dbworkbench.dat")
-	src = "dbworkbench.dat"
-	fileCopyMust(dst, src)
 }
 
 func buildWin() {
