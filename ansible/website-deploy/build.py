@@ -49,7 +49,7 @@ def zip_files(zip_path):
     zf = zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED)
     zf.write("website_linux", "website")
     zf.write(pj("ansible", "website_run.sh"), "website_run.sh")
-    add_dir_files(zf, "s")
+    add_dir_files(zf, pj("website", "www"), "www")
     zf.close()
 
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if os.path.exists(zip_name):
         os.remove(zip_name)
     zip_files(zip_name)
-    os.remove("dbworkbench_linux")
+    os.remove(pj("website", "dbworkbench_linux"))
     os.chdir(script_dir)
     if os.path.exists(zip_name):
         os.remove(zip_name)
