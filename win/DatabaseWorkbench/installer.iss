@@ -14,8 +14,9 @@
 #include <idp.iss>
 
 #define MyAppName "Database Workbench"
-#define MyAppVersion "9.9"
-#define MyAppPublisher "Krzysztof Kowalczyk"
+;MyAppVersion is set from cmd-line
+;#define MyAppVersion "9.9"
+#define MyAppPublisher "Database Experts"
 #define MyAppURL "http://www.databaseworkbench.com"
 #define MyAppExeName "DatabaseWorkbench.exe"
 
@@ -26,7 +27,10 @@
 AppId={{784A5D3A-FB9F-4E09-809C-40F639F408D6}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+; name shown in control panel's list of installed apps
+; some apps show version there as well but it's redundant
+; as it's shown anyway in another column
+AppVerName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}

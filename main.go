@@ -44,6 +44,8 @@ func parseCmdLine() {
 	flag.StringVar(&options.Pass, "pass", "", "database password for user")
 	flag.StringVar(&options.DbName, "db", "", "database name")
 	flag.StringVar(&options.Ssl, "ssl", "", "SSL options")
+	// using 127.0.0.1 so that windows firewall doesn't complain about
+	// opening externally-accessible ports
 	flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
 	flag.IntVar(&options.HTTPPort, "listen", 5444, "HTTP server listen port")
 	flag.BoolVar(&options.IsDev, "dev", false, "true for running in dev mode")

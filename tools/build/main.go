@@ -165,9 +165,14 @@ func extractVersionMacMust() {
 
 func extractVersionMust() {
 	extractVersionWinMust()
-	extractVersionMacMust()
-	fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
-	programVersion = programVersionMac
+	if isMac() {
+		// TODO: implement in a way that works on windows
+		extractVersionMacMust()
+		fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
+		programVersion = programVersionMac
+	} else {
+		programVersion = programVersionWin
+	}
 	fmt.Printf("programVersion: %s\n", programVersion)
 }
 
