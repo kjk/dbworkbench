@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7F5B149C1C091E8E00954D35 /* dbworkbench copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "dbworkbench copy-Info.plist"; path = "/Users/kkowalczyk/src/go/src/github.com/kjk/dbworkbench/mac-client/dbworkbench copy-Info.plist"; sourceTree = "<absolute>"; };
+		7F5B149C1C091E8E00954D35 /* dbworkbench copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "dbworkbench copy-Info.plist"; path = "/Users/kkowalczyk/src/go/src/github.com/kjk/dbworkbench/mac/dbworkbench copy-Info.plist"; sourceTree = "<absolute>"; };
 		DC1793681C08210B00C46C69 /* Database Workbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Database Workbench.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC17936B1C08210B00C46C69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC17936D1C08210B00C46C69 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };

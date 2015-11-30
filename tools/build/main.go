@@ -147,10 +147,10 @@ func extractVersionMacMust() {
 	args := []string{
 		"-c",
 		"Print CFBundleShortVersionString",
-		"./mac-client/dbworkbench/Info.plist",
+		"./mac/dbworkbench/Info.plist",
 	}
 
-	// /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "./mac-client/dbworkbench/Info.plist"
+	// /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "./mac/dbworkbench/Info.plist"
 	cmd := exec.Command("/usr/libexec/PlistBuddy", args...)
 	macVersionByteArray, err := runCmd(cmd, true)
 	fataliferr(err)
