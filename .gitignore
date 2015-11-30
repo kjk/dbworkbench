@@ -13,8 +13,11 @@ s/dist
 node_modules
 cmd/import_stack_overflow/data/
 cmd/import_stack_overflow/import_stack_overflow
-mac-client/dbworkbench.xcodeproj/xcuserdata/
-mac-client/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
+mac/dbworkbench.xcodeproj/xcuserdata/
+mac/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
+mac/build/
+mac/dbworkbench.dat
+mac/dbworkbench.exe
 win/DatabaseWorkbench/obj/
 .vs/
 cert.pfx
