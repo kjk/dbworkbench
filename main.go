@@ -153,9 +153,9 @@ func main() {
 	}
 
 	if options.ResourcesFromZip {
-		err := loadResourcesFromZip("dbworkbench.dat")
+		err := loadResourcesFromEmbeddedZip()
 		if err != nil {
-			LogFatalf("loadResourcesFromZip() failed with '%s'\n", err)
+			LogFatalf("loadResourcesFromEmbeddedZip() failed with '%s'\n", err)
 		}
 	}
 

@@ -6,6 +6,7 @@ dbworkbench
 dbworkbench_linux
 dbworkbench.exe
 dbworkbench.dat
+dbworkbench.zip
 ansible/*.zip
 s/js/bundle.js
 s/js/bundle.js.map
@@ -22,3 +23,4 @@ win/DatabaseWorkbench/obj/
 .vs/
 cert.pfx
 website/website_linux
+resources.go

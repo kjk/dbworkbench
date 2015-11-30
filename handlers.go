@@ -2,6 +2,8 @@ package main
 
 import (
 	"archive/zip"
+	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -130,6 +132,21 @@ func loadResourcesFromZip(path string) error {
 	}
 	defer zrc.Close()
 	return loadResourcesFromZipReader(&zrc.Reader)
+}
+
+func loadResourcesFromEmbeddedZip() error {
+	//LogInfof("loadResourcesFromEmbeddedZip()\n")
+	n := len(resourcesZipData)
+	if n == 0 {
+		return errors.New("len(resourcesZipData) == 0")
+	}
+	resourcesFromZip = make(map[string][]byte)
+	r := bytes.NewReader(resourcesZipData)
+	zrc, err := zip.NewReader(r, int64(n))
+	if err != nil {
+		return err
+	}
+	return loadResourcesFromZipReader(zrc)
 }
 
 func serveResourceFromZip(w http.ResponseWriter, r *http.Request, path string) {
@@ -541,7 +558,7 @@ func handleShowMyHost(w http.ResponseWriter, r *http.Request) {
 func startWebServer() {
 	registerHTTPHandlers()
 	httpAddr := fmt.Sprintf("%s:%v", options.HTTPHost, options.HTTPPort)
-	fmt.Printf("Started running on %s\n", httpAddr)
+	fmt.Printf("Started running on %s, dev mode: %v\n", httpAddr, options.IsDev)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		log.Fatalf("http.ListendAndServer() failed with %s\n", err)
 	}

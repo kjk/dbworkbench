@@ -19,8 +19,8 @@ go run tools/build/*.go -gen-resources
 #rm -rf dbworkbench.test
 
 echo "building"
-godep go build -o dbworkbench
-#gdep go build -race -o dbworkbench
+godep go build -tags embeded_resources -o dbworkbench
+#gdep go build -tags embeded_resources -race -o dbworkbench
 
 echo "starting dbworkbench in no dev mode"
 ./dbworkbench || true
