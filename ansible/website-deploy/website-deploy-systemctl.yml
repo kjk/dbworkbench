@@ -55,3 +55,5 @@
   - name: show status
     command: systemctl status website
     sudo: yes
+    register: website_status
+  - debug: var=website_status.stdout_lines
