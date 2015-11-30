@@ -17,8 +17,6 @@ class ServerController {
         
         let resPath = NSBundle.mainBundle().resourcePath
         let serverGoExePath = resPath! + "/dbworkbench.exe"
-        print(resPath)
-        
         
         serverTask.launchPath = serverGoExePath
         serverTask.currentDirectoryPath = resPath!
@@ -29,21 +27,9 @@ class ServerController {
         serverTask.standardError = pipe
         
         serverTask.launch()
-        
-//        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-//        let output: String = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-        
-//        print(output)
     }
     
     static func closeServer() {
         serverTask.interrupt()
     }
-    
-    func findGoServerDirectory() -> String? {
-        // TODO: find the directory
-        
-        return ""
-    }
-    
 }

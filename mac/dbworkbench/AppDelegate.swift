@@ -23,6 +23,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // CMD + Q
         print("CMD + Q")
     }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+        return true
+    }
 
 
 }
