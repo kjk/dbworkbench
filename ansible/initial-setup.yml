@@ -35,12 +35,6 @@
         - unzip
         - tar
         - nginx
-        - postgresql
-        - postgresql-contrib
-    - script: postgres_setup.sh creates=/var/lib/postgresql/db_inited
-      become: yes
-      become_method: sudo
-      become_user: postgres
     - name: create directory for nginx logs
       file: >
         path=/var/log/nginx/dbworkbench/ state=directory mode=0755
@@ -60,9 +54,3 @@
         state=link
     - name: restart nginx
       service: name=nginx state=restarted
-    - name: copy postgres config file
-      copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf owner=postgres group=postgres mode=0644
-      register: pgconfig
-    - name: restart postgres
-      service: name=postgresql state=restarted
-      when: pgconfig.changed
