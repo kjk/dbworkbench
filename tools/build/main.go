@@ -151,7 +151,8 @@ func extractVersionMacMust() {
 	}
 
 	// /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "./mac-client/dbworkbench/Info.plist"
-	macVersionByteArray, err := exec.Command("/usr/libexec/PlistBuddy", args...).Output()
+	cmd := exec.Command("/usr/libexec/PlistBuddy", args...)
+	macVersionByteArray, err := runCmd(cmd, true)
 	fataliferr(err)
 
 	// Can't convert directly with macVersionByteArray[:]
@@ -172,13 +173,11 @@ func extractVersionMust() {
 
 func buildMac() {
 	// TODO: write me
-	fatalf("not yet implemented")
+	// fatalf("not yet implemented")
 
-	// TODO: Build xCode
+	// TODO: Zip the bundle
 
-	// TODO: Zip it
-
-	// TODO: Upload to S3
+	// MAybe TODO: Upload to S3
 }
 
 func main() {
