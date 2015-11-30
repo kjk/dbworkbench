@@ -5,8 +5,10 @@ set -o errexit
 set -o pipefail
 
 ./node_modules/.bin/gulp default
-go run scripts/build_release.go
+
 godep go vet github.com/kjk/dbworkbench
+
+go run tools/build/*.go -gen-resources
 
 #TODO: use go tool vet so that I can pass printfuncs, but needs
 #to filter out Godeps becase . is recursive

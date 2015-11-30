@@ -10,7 +10,7 @@ godep go vet github.com/kjk/dbworkbench
 
 ./node_modules/.bin/gulp default
 
-go run scripts/build_release.go
+go run tools/build/*.go -gen-resources
 
 godep go build -o dbworkbench
 
@@ -19,4 +19,4 @@ cp dbworkbench.dat mac/
 
 xcodebuild -parallelizeTargets -project mac/dbworkbench.xcodeproj/
 
-go run tools/build/main.go tools/build/util.go tools/build/cmd.go tools/build/s3.go tools/build/win.go -no-clean-check
+go run tools/build/*.go

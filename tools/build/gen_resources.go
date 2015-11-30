@@ -2,15 +2,11 @@ package main
 
 import (
 	"archive/zip"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
-
-// to run: go run scripts/build_release.go
 
 var (
 	blaclisted = []string{
@@ -35,36 +31,6 @@ func isBlacklisted(path string) bool {
 		}
 	}
 	return false
-}
-
-func pj(elem ...string) string {
-	return filepath.Join(elem...)
-}
-
-func printStack() {
-	buf := make([]byte, 1024*164)
-	n := runtime.Stack(buf, false)
-	fmt.Printf("%s", buf[:n])
-}
-
-func fataliferr(err error) {
-	if err != nil {
-		fatalf("%s\n", err.Error())
-	}
-}
-
-func fatalf(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
-	printStack()
-	os.Exit(1)
-}
-
-func fatalif(cond bool, format string, args ...interface{}) {
-	if cond {
-		fmt.Printf(format, args...)
-		printStack()
-		os.Exit(1)
-	}
 }
 
 func zipFileName(path, baseDir string) string {
@@ -131,8 +97,4 @@ func createResourcesZip() {
 	addZipDirMust(zw, dir, currDir)
 	err = zw.Close()
 	fataliferr(err)
-}
-
-func main() {
-	createResourcesZip()
 }

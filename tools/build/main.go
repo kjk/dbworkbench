@@ -23,6 +23,7 @@ var (
 	flgNoCleanCheck     bool
 	flgUpload           bool
 	flgUploadAutoUpdate bool
+	flgBuildResources   bool
 
 	programVersionWin string
 	programVersionMac string
@@ -65,6 +66,7 @@ func parseCmdLine() {
 	// -no-clean-check is useful when testing changes to this build script
 	flag.BoolVar(&flgNoCleanCheck, "no-clean-check", false, "allow running if repo has changes (for testing build script)")
 	flag.BoolVar(&flgUpload, "upload", false, "if true, upload the files")
+	flag.BoolVar(&flgBuildResources, "gen-resources", false, "if true, genereates resources in a zip file")
 	flag.Parse()
 }
 
@@ -195,6 +197,11 @@ func buildMac() {
 
 func main() {
 	parseCmdLine()
+	if flgBuildResources {
+		createResourcesZip()
+		return
+	}
+
 	if isWin() {
 		fmt.Printf("Starting windows build\n")
 	} else if isMac() {
