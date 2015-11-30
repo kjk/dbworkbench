@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if os.path.exists(zip_name):
         os.remove(zip_name)
     zip_files(zip_name)
-    os.remove(pj("website", "dbworkbench_linux"))
+    os.remove(pj("website", "website_linux"))
     os.chdir(script_dir)
     if os.path.exists(zip_name):
         os.remove(zip_name)
