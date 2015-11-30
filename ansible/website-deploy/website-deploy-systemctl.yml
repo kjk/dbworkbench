@@ -12,7 +12,7 @@
     register: website_stat
   - name: stop currently running
     command: systemctl stop website
-     when: website_stat.stat.exists
+    when: website_stat.stat.exists
   - name: create systemd file
     copy: src=website.service dest=/lib/systemd/system/website.service owner=root group=root mode=0644
     sudo: yes
