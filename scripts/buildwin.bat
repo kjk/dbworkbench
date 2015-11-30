@@ -6,13 +6,13 @@ godep go vet github.com/kjk/dbworkbench
 call ./node_modules/.bin/gulp default
 @IF ERRORLEVEL 1 goto Error
 
-go run tools\build\main.go tools\build\util.go tools\build\cmd.go tools\build\s3.go tools\build\win.go tools\build\gen_resources.go -gen-resources -no-clean-check
+go run tools\build\cmd.go tools\build\gen_resources.go tools\build\main.go tools\build\s3.go tools\build\util.go tools\build\win.go -gen-resources
 @IF ERRORLEVEL 1 goto Error
 
-godep go build -o dbworkbench.exe
+godep go build -tags embeded_resources -o dbworkbench.exe
 @IF ERRORLEVEL 1 goto Error
 
-go run tools\build\main.go tools\build\util.go tools\build\cmd.go tools\build\s3.go tools\build\win.go tools\build\gen_resources.go -no-clean-check
+go run tools\build\cmd.go tools\build\gen_resources.go tools\build\main.go tools\build\s3.go tools\build\util.go tools\build\win.go -no-clean-check
 @IF ERRORLEVEL 1 goto Error
 
 goto EndOk
