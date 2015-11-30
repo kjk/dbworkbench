@@ -17,6 +17,6 @@ godep go build -o dbworkbench
 cp dbworkbench mac/dbworkbench.exe
 cp dbworkbench.dat mac/
 
-go run tools/build/main.go tools/build/util.go tools/build/cmd.go tools/build/s3.go tools/build/win.go -no-clean-check
-
 xcodebuild -parallelizeTargets -project mac/dbworkbench.xcodeproj/
+
+go run tools/build/main.go tools/build/util.go tools/build/cmd.go tools/build/s3.go tools/build/win.go -no-clean-check
