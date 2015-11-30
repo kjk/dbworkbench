@@ -7,8 +7,12 @@
     register: sha1
   - name: build
     local_action: command python build.py
+  - name: stat website.service
+    stat: path=/lib/systemd/system/website.service
+    register: website_stat
   - name: stop currently running
     command: systemctl stop website
+     when: website_stat.stat.exists
   - name: create systemd file
     copy: src=website.service dest=/lib/systemd/system/website.service owner=root group=root mode=0644
     sudo: yes
