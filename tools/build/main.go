@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/kjk/u"
 )
 
 const (
@@ -144,35 +145,42 @@ func extractVersionWinMust() {
 }
 
 func extractVersionMacMust() {
-	args := []string{
-		"-c",
-		"Print CFBundleShortVersionString",
-		"./mac/dbworkbench/Info.plist",
-	}
-
-	// /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "./mac/dbworkbench/Info.plist"
-	cmd := exec.Command("/usr/libexec/PlistBuddy", args...)
-	macVersionByteArray, err := runCmd(cmd, true)
+	path := filepath.Join("mac", "dbworkbench", "Info.plist")
+	lines, err := u.ReadLinesFromFile(path)
 	fataliferr(err)
-
-	// Can't convert directly with macVersionByteArray[:]
-	// because comparasion fails for the last character
-	programVersionMac = string(macVersionByteArray[:3])
-
-	verifyCorrectVersionMust(programVersionMac)
+	// extract from:
+	// 	<key>CFBundleShortVersionString</key>
+	//  <string>0.1</string>
+	idx := -1
+	for i, l := range lines {
+		l = strings.ToLower(strings.TrimSpace(l))
+		if strings.Contains(l, "<key>cfbundleshortversionstring</key>") {
+			idx = i
+			break
+		}
+	}
+	fatalif(idx == -1, "didn't find <key>CFBundleShortVersionString</key>")
+	s := strings.TrimSpace(lines[idx+1])
+	if strings.HasPrefix(s, "<string>") {
+		s = s[len("<string>"):]
+	} else {
+		fatalf("invalid s: '%s'\n", s)
+	}
+	if strings.HasSuffix(s, "</string>") {
+		s = s[:len(s)-len("</string>")]
+	} else {
+		fatalf("invalid s: '%s'\n", s)
+	}
+	verifyCorrectVersionMust(s)
+	programVersionMac = s
 	fmt.Printf("programVersionMac: %s\n", programVersionMac)
 }
 
 func extractVersionMust() {
 	extractVersionWinMust()
-	if isMac() {
-		// TODO: implement in a way that works on windows
-		extractVersionMacMust()
-		fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
-		programVersion = programVersionMac
-	} else {
-		programVersion = programVersionWin
-	}
+	extractVersionMacMust()
+	fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
+	programVersion = programVersionMac
 	fmt.Printf("programVersion: %s\n", programVersion)
 }
 
