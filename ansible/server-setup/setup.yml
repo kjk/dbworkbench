@@ -1,5 +1,5 @@
 ---
-- name: initial setup for dbworkbench service
+- name: initial setup for databaseworkbench.com server
   hosts: dbworkbench-initial
   sudo: True
   tasks:
@@ -26,7 +26,7 @@
     - name: create users .ssh directory
       file: path=/home/dbworkbench/.ssh state=directory owner=dbworkbench group=dbworkbench mode=0755
     - name: copy ssh key
-      copy: src=dbworkbench_rsa.pub dest=/home/dbworkbench/.ssh/authorized_keys
+      copy: src=../dbworkbench_rsa.pub dest=/home/dbworkbench/.ssh/authorized_keys
     - name: configure authorized_keys
       file: path=/home/dbworkbench/.ssh/authorized_keys mode=0644 owner=dbworkbench group=dbworkbench
     - name: install desired software
