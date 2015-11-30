@@ -48,7 +48,6 @@ def add_dir_files(zip_file, dir, dirInZip=None):
 def zip_files(zip_path):
     zf = zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED)
     zf.write(pj("website", "website_linux"), "website")
-    zf.write(pj("ansible", "website-deploy", "website_run.sh"), "website_run.sh")
     add_dir_files(zf, pj("website", "www"), "www")
     zf.close()
 
