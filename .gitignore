@@ -2,7 +2,6 @@
 bin
 tmp/
 cover.out
-dbworkbench
 dbworkbench_linux
 dbworkbench.exe
 dbworkbench.dat
