@@ -1,6 +1,6 @@
 ---
 - name: initial setup for demodb server
-  hosts: demodb-initial
+  hosts: demodb-server-setup
   sudo: True
   tasks:
     - name: create a group for the user
@@ -26,7 +26,7 @@
     - name: create users .ssh directory
       file: path=/home/demodb/.ssh state=directory owner=demodb group=demodb mode=0755
     - name: copy ssh key
-      copy: src=dbworkbench_rsa.pub dest=/home/demodb/.ssh/authorized_keys
+      copy: src=../dbworkbench_rsa.pub dest=/home/demodb/.ssh/authorized_keys
     - name: configure authorized_keys
       file: path=/home/demodb/.ssh/authorized_keys mode=0644 owner=demodb group=demodb
     - name: install desired software

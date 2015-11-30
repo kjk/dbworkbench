@@ -1,6 +1,6 @@
 ---
 - name: create demo database
-  hosts: demodb
+  hosts: demodb-db-create
   tasks:
   - name: build
     local_action: command python build-import.py
