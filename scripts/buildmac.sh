@@ -16,4 +16,5 @@ cp dbworkbench mac/dbworkbench.exe
 
 xcodebuild -parallelizeTargets -project mac/dbworkbench.xcodeproj/
 
+rm mac/build/Release/dbworkbenchmacapp.zip
 go run tools/build/*.go

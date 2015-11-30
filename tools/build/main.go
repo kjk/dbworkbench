@@ -187,12 +187,13 @@ func extractVersionMust() {
 }
 
 func buildMac() {
-	// TODO: write me
-	// fatalf("not yet implemented")
+	// Zip the bundle
+	sourceToZip := filepath.Join("mac", "build", "Release", "Database Workbench.app")
+	targetForZip := filepath.Join("mac", "build", "Release", "dbworkbenchmacapp.zip")
+	err := ZipDirectory(sourceToZip, targetForZip)
+	fataliferr(err)
 
-	// TODO: Zip the bundle
-
-	// MAybe TODO: Upload to S3
+	// Maybe TODO: Upload to S3
 }
 
 func main() {
