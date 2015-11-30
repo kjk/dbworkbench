@@ -4,9 +4,9 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-./node_modules/.bin/gulp default
-
 godep go vet github.com/kjk/dbworkbench
+
+./node_modules/.bin/gulp default
 
 go run tools/build/*.go -gen-resources
 
