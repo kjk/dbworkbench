@@ -7,10 +7,10 @@ pj = os.path.join
 script_dir = os.path.realpath(os.path.dirname(__file__))
 
 gopath = os.environ["GOPATH"]
-src_dir = os.path.dirname(script_dir)
+src_dir = os.path.dirname(os.path.dirname(script_dir))
 
 assert os.path.exists(src_dir), "%s doesn't exist" % src_dir
-assert os.path.exists(pj(src_dir, "main.go")), "%s doesn't exist" % pj(src_dir, "main.go")
+assert os.path.exists(pj(src_dir, "website", "main.go")), "%s doesn't exist" % pj(src_dir, "main.go")
 
 
 def abort(s):
@@ -48,7 +48,7 @@ def add_dir_files(zip_file, dir, dirInZip=None):
 def zip_files(zip_path):
     zf = zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED)
     zf.write("dbworkbench_linux", "dbworkbench")
-    zf.write(pj("scripts", "server_run.sh"), "server_run.sh")
+    zf.write(pj("ansible", "website_run.sh"), "website_run.sh")
     add_dir_files(zf, "s")
     zf.close()
 
@@ -56,7 +56,7 @@ def zip_files(zip_path):
 if __name__ == "__main__":
     os.chdir(src_dir)
     git_ensure_clean()
-    subprocess.check_output(["./scripts/build_linux.sh"])
+    subprocess.check_output(["./ansible/website-deploy/website_build_linux.sh"])
     sha1 = git_trunk_sha1()
     zip_name = sha1 + ".zip"
     zip_path = os.path.join(src_dir, zip_name)

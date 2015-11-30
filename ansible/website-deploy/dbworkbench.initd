@@ -13,7 +13,7 @@
 # goes into: /etc/init.d/dbworkbench
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/home/dbworkbench/www/app/current/server_run.sh
+DAEMON=/home/dbworkbench/www/app/current/website_run.sh
 DAEMON_ARGS=
 
 test -x $DAEMON || exit 0

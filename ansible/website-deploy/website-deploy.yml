@@ -3,7 +3,7 @@
   hosts: dbworkbench
   tasks:
   - name: get repo sha1
-    local_action: command ./get-sha1.sh
+    local_action: command ../get-sha1.sh
     register: sha1
   - name: build
     local_action: command python build.py
