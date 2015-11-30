@@ -5,4 +5,4 @@ set -o errexit
 set -o pipefail
 
 cd /home/dbworkbench/www/app/current
-exec ./dbworkbench -s "$@" &>>crash.log
+exec ./website -s "$@" &>>crash.log

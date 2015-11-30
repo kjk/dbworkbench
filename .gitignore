@@ -21,3 +21,4 @@ mac/dbworkbench.exe
 win/DatabaseWorkbench/obj/
 .vs/
 cert.pfx
+website/website_linux
