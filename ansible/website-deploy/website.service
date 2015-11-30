@@ -1,5 +1,6 @@
 # should this go in /usr/lib/systemd/user ?
 # /etc/systemd/system ?
+# /lib/systemd/system ? (this is where nginx.service is)
 # TODO: should create pid file?
 # TODO: how do I get logs from a crash?
 # To start: systemctl start website
@@ -15,8 +16,10 @@ Type=simple
 User=dbworkbench
 Group=dbworkbench
 WorkingDirectory=/home/dbworkbench/www/app/current
-ExecStart=/home/dbworkbench/www/app/current/website -s
-Restart=on-failure
+ExecStart=/home/dbworkbench/www/app/current/website
+# http://www.freedesktop.org/software/systemd/man/systemd.service.html
+# only on unclean signal
+Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target
