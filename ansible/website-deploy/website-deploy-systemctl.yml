@@ -9,6 +9,7 @@
     local_action: command python build.py
   - name: stop currently running
     command: systemctl stop website
+    sudo: yes
     ignore_errors: yes
   - name: create systemd file
     copy: src=website.service dest=/lib/systemd/system/website.service owner=root group=root mode=0644
@@ -18,6 +19,7 @@
     sudo: yes
   - name: enable the service so that it restarts on reboot
     command: systemctl enable website
+    sudo: yes
   - name: create directory for the app
     file: >
       path=/home/dbworkbench/www/app/{{ sha1.stdout }}
