@@ -11,6 +11,11 @@ import (
 
 var (
 	httpAddr = ":5555"
+	// for auto-update
+	latestMacVersion     = "0.1"
+	latestMacDownloadURL = ""
+	latestWinVersion     = "0.2"
+	latestWinDownloadURL = "https://kjkpub.s3.amazonaws.com/software/databaseworkbench/rel/DatabaseWorkbench-setup-0.1.exe"
 )
 
 // LogInfof logs additional info
@@ -76,12 +81,26 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 	w.Write(data)
 }
 
-// url: /api/macupdatecheck
+// url: /api/winupdatecheck?ver=${ver}
 func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
+	// TODO: log request for analytics
+	// TODO: also this should recive usage data which should be saved
+	// for analytics
+	LogInfof("handleWinUpdateCheck\n")
+	s := fmt.Sprintf(`ver: %s
+url: %s`, latestWinVersion, latestWinDownloadURL)
+	servePlainText(w, r, 200, s)
 }
 
-// url: /api/macupdatecheck
+// url: /api/macupdatecheck?ver=${ver}
 func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
+	// TODO: log request for analytics
+	// TODO: also this should recive usage data which should be saved
+	// for analytics
+	LogInfof("handleMacUpdateCheck\n")
+	s := fmt.Sprintf(`ver: %s
+url: %s`, latestMacVersion, latestMacDownloadURL)
+	servePlainText(w, r, 200, s)
 }
 
 // heuristic to determine if request is coming from Windows
@@ -108,10 +127,12 @@ func redirectIndex(w http.ResponseWriter, r *http.Request) {
 // url: /
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
+	LogInfof("handleIndex: '%s'\n", uri)
 	if uri == "/" {
 		redirectIndex(w, r)
 		return
 	}
+	http.NotFound(w, r)
 }
 
 func serveStatic(w http.ResponseWriter, r *http.Request, path string) {

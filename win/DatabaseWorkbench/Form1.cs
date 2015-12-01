@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using System.Net.Http;
+using System.Reflection;
 
 namespace DatabaseWorkbench
 {
@@ -16,13 +18,16 @@ namespace DatabaseWorkbench
     {
         WebBrowser _webBrowser;
         Process _backendProcess;
+        string _websiteURL = "http://localhost:5555";
+        //string _websiteURL = "http://databaseworkbench.com";
         bool _cleanFinish = false;
+        string _updateInstallerPath;
 
         private void InitializeComponent2()
         {
             Layout += Form1_Layout;
             Load += Form1_Load;
-            this.FormClosed += Form1_FormClosed;
+            FormClosing += Form1_FormClosing;
             SuspendLayout();
             _webBrowser = new WebBrowser()
             {
@@ -32,11 +37,16 @@ namespace DatabaseWorkbench
             ResumeLayout(true);
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
+            // but before Console.WriteLine().
+            _cleanFinish = true;
+            Console.WriteLine($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+            // TODO: if we have multiple forms, only when last form is being closed
             if (_backendProcess != null && !_backendProcess.HasExited)
             {
-                _cleanFinish = true;
+                Console.WriteLine($"Form1_FormClosing: killing backend");
                 _backendProcess.Kill();
             }
         }
@@ -81,33 +91,116 @@ namespace DatabaseWorkbench
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.Exited += Process_Exited;
+            p.Exited += Backend_Exited;
             var ok = p.Start();
             return ok;
         }
 
         // happens when go backend process has finished e.g. because of an error
-        private void Process_Exited(object sender, EventArgs e)
+        private void Backend_Exited(object sender, EventArgs e)
         {
-            // TODO:
-            // - show error message
-            // - exit the application
+            Console.WriteLine($"Backend_Exited. _clienFinish:{_cleanFinish}");
             if (_cleanFinish)
             {
                 // we killed the process ourselves
                 return;
             }
+            // TODO: show better error message
+            MessageBox.Show("backend exited unexpectedly!");
+            Close();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public static string AppVer()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return Util.CleanAppVer(fvi.ProductVersion);
+        }
+
+        private async Task AutoUpdateCheck()
+        {
+            // we might have downloaded installer previously, in which case
+            // don't re-download
+            var tmpInstallerPath = Util.UpdateInstallerTmpPath();
+            if (File.Exists(tmpInstallerPath))
+            {
+                _updateInstallerPath = tmpInstallerPath;
+                NotifyUpdateAvailable();
+                return;
+            }
+
+            var myVer = AppVer();
+            var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
+            var result = await Util.UrlDownloadAsStringAsync(uri);
+            if (result == null)
+            {
+                // TODO: log to a file
+                Console.WriteLine("AutoUpdateCheck(): result is null");
+                return;
+            }
+
+            Console.WriteLine($"result: {result}");
+            var verUrl = Util.ParseAutoUpdateCheckResponse(result);
+            var ver = verUrl.Item1;
+            // TODO: only trigger auto-update if ver > myVer
+            if (ver == "" || ver == myVer)
+            {
+                Console.WriteLine($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
+                return;
+            }
+            var dlUrl = verUrl.Item2;
+            var d = await Util.UrlDownloadAsync(dlUrl);
+            if (d == null)
+            {
+                Console.WriteLine($"AutoUpdateCheck: failed to download {dlUrl}");
+                return;
+            }
+            _updateInstallerPath = Util.UpdateInstallerTmpPath();
+            try
+            {
+                File.WriteAllBytes(_updateInstallerPath, d);
+            }
+            catch
+            {
+                File.Delete(_updateInstallerPath);
+                _updateInstallerPath = null;
+                return;
+            }
+            NotifyUpdateAvailable();
+        }
+
+        public void NotifyUpdateAvailable()
+        {
+            // TODO: show a nicer dialog
+            var res = MessageBox.Show("Update available. Update?", "Update available", MessageBoxButtons.YesNo);
+            if (res != DialogResult.Yes)
+            {
+                return;
+            }
+            Console.WriteLine($"should run an updater {_updateInstallerPath}");
+            // move the installer to another, temporary path, so that when the installation is finished
+            // and we restart the app, we won't think an update is available
+            var tmpInstallerPath = Path.GetTempFileName();
+            File.Delete(tmpInstallerPath);
+            tmpInstallerPath += ".exe";
+            File.Move(_updateInstallerPath, tmpInstallerPath);
+            _updateInstallerPath = null;
+            Util.TryLaunchUrl(tmpInstallerPath);
+            // exit ourselves so that the installer can over-write the file
+            Close();
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
         {
             if (!StartGoBackend())
             {
-                // TODO: show error message
+                // TODO: better way to show error message
+                MessageBox.Show("Backend didn't start. Quitting.");
                 Close();
                 return;
             }
             _webBrowser.Navigate("http://127.0.0.1:5444");
+            await AutoUpdateCheck();
         }
 
         private void Form1_Layout(object sender, LayoutEventArgs e)
