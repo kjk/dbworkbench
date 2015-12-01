@@ -367,63 +367,6 @@
   height: 205px;
 }
 
-#connection_window {
-  z-index: 3;
-  position: absolute;
-  background: #ebeef0;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
-}
-
-#edit_connection {
-  position: fixed;
-  right: 10px;
-  top: 7px;
-}
-
-#edit_connection i {
-  margin-right: 4px;
-}
-
-#close_connection_window {
-  display: none;
-}
-
-#connection_error {
-}
-
-.bookmarks {
-  display: none;
-}
-
-.connection-settings {
-  width: 600px;
-  margin: 0px auto;
-  margin-top: 50px;
-}
-
-.connection-settings h1 {
-  text-align: center;
-  text-shadow: 0px 1px 0px #fff;
-  margin-bottom: 25px;
-  color: #95A7B7;
-  font-weight: normal;
-}
-
-.connection-settings form {
-  background: #fff;
-  padding: 25px;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-}
-
-.connection-settings form p.help-block {
-  font-size: 12px;
-}
-
 .overlay {
   position: fixed;
   overflow: auto;
@@ -475,9 +418,105 @@
   color: black;
 }
 
+.fa-plus {
+  color: LightGray;
+}
+
+.fa-times {
+  color: LightGray;
+}
+
 .fa-refresh:hover {
   color: #b5c7d7;
 }
+
+/*******************************************************/
+/* Connection Window */
+
+#connection_window {
+  z-index: 3;
+  position: absolute;
+  background: #ebeef0;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+
+#connection_window h1 {
+  text-align: center;
+  text-shadow: 0px 1px 0px #fff;
+  margin-bottom: 25px;
+  color: #95A7B7;
+  font-weight: normal;
+}
+
+#close_connection_window {
+  display: none;
+}
+
+#connection_error {
+}
+
+.bookmarks {
+  display: none;
+}
+/*
+.connection-settings {
+  width: 600px;
+  margin: 0px auto;
+  margin-top: 50px;
+}*/
+
+.container.small {
+  max-width: 60%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.container.small h6 {
+  margin-left: 10px;
+}
+
+.form-group.center {
+  text-align: center; /* center checkbox horizontally */
+  vertical-align: middle; /* center checkbox vertically */
+}
+
+.btn.small {
+  min-width: 100%;
+}
+
+hr {
+  margin: 5px;
+}
+
+.list-group-item.active {
+  background-color: #758797 !important;
+}
+
+.connection-settings div.container {
+  background: #fff;
+  padding: 10px;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+}
+
+
+.connection-settings form p.help-block {
+  font-size: 12px;
+}
+
+.list-special .list-group-item {
+  border: 0px;
+}
+
+
+/*******************************************************/
+/* AlertBar */
 
 #note {
     position: absolute;
