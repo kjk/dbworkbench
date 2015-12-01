@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace DatabaseWorkbench
 {
@@ -28,6 +29,20 @@ namespace DatabaseWorkbench
         public static string UpdateInstallerTmpPath()
         {
             return Path.Combine(AppDataTmpDir(), "database-workbench-installer.exe");
+        }
+
+        // per some info on the web, Process.Start(url) might throw
+        // an exception, so swallow it
+        public static void TryLaunchUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e.ToString()}");
+            }
         }
 
         // returns ver, downloadUrl

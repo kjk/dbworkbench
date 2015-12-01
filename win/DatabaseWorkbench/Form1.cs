@@ -170,8 +170,17 @@ namespace DatabaseWorkbench
             {
                 return;
             }
-            // TODO: run an updater
             Console.WriteLine($"should run an updater {_updateInstallerPath}");
+            // move the installer to another, temporary path, so that when the installation is finished
+            // and we restart the app, we won't think an update is available
+            var tmpInstallerPath = Path.GetTempFileName();
+            File.Delete(tmpInstallerPath);
+            tmpInstallerPath += ".exe";
+            File.Move(_updateInstallerPath, tmpInstallerPath);
+            _updateInstallerPath = null;
+            Util.TryLaunchUrl(tmpInstallerPath);
+            // exit ourselves so that the installer can over-write the file
+            Close();
         }
 
         private async void Form1_Load(object sender, EventArgs e)
