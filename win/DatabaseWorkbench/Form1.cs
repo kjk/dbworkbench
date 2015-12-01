@@ -20,6 +20,7 @@ namespace DatabaseWorkbench
         string _websiteURL = "http://localhost:5555";
         //string _websiteURL = "http://databaseworkbench.com";
         bool _cleanFinish = false;
+        string _updateInstallerPath;
 
         private void InitializeComponent2()
         {
@@ -108,69 +109,21 @@ namespace DatabaseWorkbench
             Close();
         }
 
-        // returns null if failed to download
-        private async Task<string> UrlDownloadAsStringAsync(string uri)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                using (HttpResponseMessage response = await client.GetAsync(uri))
-                using (HttpContent content = response.Content)
-                {
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        // TODO: log to a file
-                        Console.WriteLine($"UrlDownloadAsStringAsync(): response.StatusCode: {response.StatusCode}");
-                        return null;
-                    }
-                    string result = await content.ReadAsStringAsync();
-                    return result;
-                }
-            }
-            catch
-            {
-                Console.WriteLine($"UrlDownloadAsStringAsync: exception happened");
-                return null;
-            }
-        }
-
-        // returns ver, downloadUrl
-        private Tuple<string, string> ParseAutoUpdateCheckResponse(string s)
-        {
-            var downloadUrl = "";
-            var ver = "";
-            var lines = s.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var line in lines)
-            {
-                var parts = line.Split(new char[] { ':' }, 2);
-                if (parts.Length != 2)
-                {
-                    Console.WriteLine($"AutoUpdateCheck: unexpected line: {line}");
-                    continue;
-                }
-                var name = parts[0];
-                var val = parts[1];
-                if (name == "ver")
-                {
-                    ver = val;
-                }
-                else if (name == "url")
-                {
-                    downloadUrl = val;
-                }
-            }
-            if (ver == "" || downloadUrl == "")
-            {
-                Console.WriteLine($"AutoUpdateCheck: unexpected response, missing 'ver' or 'url' lines");
-            }
-            return new Tuple<string, string>(ver, downloadUrl);
-        }
-
         private async Task AutoUpdateCheck()
         {
+            // we might have downloaded installer previously, in which case
+            // don't re-download
+            var tmpInstallerPath = Util.UpdateInstallerTmpPath();
+            if (File.Exists(tmpInstallerPath))
+            {
+                _updateInstallerPath = tmpInstallerPath;
+                NotifyUpdateAvailable();
+                return;
+            }
+
             var myVer = "0.1"; // TODO: get from AssemblyInfo.cs
             var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
-            var result = await UrlDownloadAsStringAsync(uri);
+            var result = await Util.UrlDownloadAsStringAsync(uri);
             if (result == null)
             {
                 // TODO: log to a file
@@ -179,7 +132,7 @@ namespace DatabaseWorkbench
             }
 
             Console.WriteLine($"result: {result}");
-            var verUrl = ParseAutoUpdateCheckResponse(result);
+            var verUrl = Util.ParseAutoUpdateCheckResponse(result);
             var ver = verUrl.Item1;
             // TODO: only trigger auto-update if ver > myVer
             if (ver == "" || ver == myVer)
@@ -187,6 +140,38 @@ namespace DatabaseWorkbench
                 Console.WriteLine($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
                 return;
             }
+            var dlUrl = verUrl.Item2;
+            var d = await Util.UrlDownloadAsync(dlUrl);
+            if (d == null)
+            {
+                Console.WriteLine($"AutoUpdateCheck: failed to download {dlUrl}");
+                return;
+            }
+            _updateInstallerPath = Util.UpdateInstallerTmpPath();
+            try
+            {
+                File.WriteAllBytes(_updateInstallerPath, d);
+            }
+            catch
+            {
+                // delete temp file if failed downloading
+                File.Delete(_updateInstallerPath);
+                _updateInstallerPath = null;
+                return;
+            }
+            NotifyUpdateAvailable();
+        }
+
+        public void NotifyUpdateAvailable()
+        {
+            // TODO: show a nicer dialog saying that
+            var res = MessageBox.Show("Update available. Update?", "Update available", MessageBoxButtons.YesNo);
+            if (res != DialogResult.Yes)
+            {
+                return;
+            }
+            // TODO: run an updater
+            Console.WriteLine($"should run an updater {_updateInstallerPath}");
         }
 
         private async void Form1_Load(object sender, EventArgs e)
