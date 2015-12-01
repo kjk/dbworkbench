@@ -45,6 +45,18 @@ namespace DatabaseWorkbench
             }
         }
 
+        public static string CleanAppVer(string appVer)
+        {
+            string[] parts = appVer.Split('.');
+            int n = parts.Length;
+            while ((n > 0) && ((parts[n - 1] == "") || (parts[n - 1] == "0")))
+                --n;
+            appVer = string.Join(".", parts, 0, n);
+            if (1 == n)
+                appVer += ".0"; // turn "1" into "1.0"
+            return appVer;
+        }
+
         // returns ver, downloadUrl
         public static Tuple<string, string> ParseAutoUpdateCheckResponse(string s)
         {

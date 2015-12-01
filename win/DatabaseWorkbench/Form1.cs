@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Net.Http;
+using System.Reflection;
 
 namespace DatabaseWorkbench
 {
@@ -109,6 +110,13 @@ namespace DatabaseWorkbench
             Close();
         }
 
+        public static string AppVer()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return Util.CleanAppVer(fvi.ProductVersion);
+        }
+
         private async Task AutoUpdateCheck()
         {
             // we might have downloaded installer previously, in which case
@@ -121,7 +129,7 @@ namespace DatabaseWorkbench
                 return;
             }
 
-            var myVer = "0.1"; // TODO: get from AssemblyInfo.cs
+            var myVer = AppVer();
             var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
             var result = await Util.UrlDownloadAsStringAsync(uri);
             if (result == null)
@@ -154,7 +162,6 @@ namespace DatabaseWorkbench
             }
             catch
             {
-                // delete temp file if failed downloading
                 File.Delete(_updateInstallerPath);
                 _updateInstallerPath = null;
                 return;
@@ -164,7 +171,7 @@ namespace DatabaseWorkbench
 
         public void NotifyUpdateAvailable()
         {
-            // TODO: show a nicer dialog saying that
+            // TODO: show a nicer dialog
             var res = MessageBox.Show("Update available. Update?", "Update available", MessageBoxButtons.YesNo);
             if (res != DialogResult.Yes)
             {
