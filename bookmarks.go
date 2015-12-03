@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-var bookmarkMutex = &sync.Mutex{}
+var bookmarkMutex = sync.Mutex{}
 
 // TODO encript password
 
