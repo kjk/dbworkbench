@@ -241,6 +241,8 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recordDatabaseOpened()
+
 	info, err := client.Info()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -330,6 +332,7 @@ func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recordQueryExecuted()
 	handleQuery(ctx, w, r, query)
 }
 
