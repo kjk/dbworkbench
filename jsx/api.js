@@ -6,7 +6,7 @@ function apiCall(method, path, params, cb) {
     method: method,
     cache: false,
     data: params,
-    async: false, // TODO: find a way to remove this. Currently it's used in ConnectionWindow.jsx getInitialState
+    async: true,
     success: function(data) {
       cb(data);
     },

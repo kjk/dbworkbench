@@ -86,7 +86,7 @@ func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 	}
 
 	// Path exist
-	res, err := readAllBookmarks()
+	res, err = readAllBookmarks()
 	if err != nil {
 		// If the file is empty this will send an error so ignore
 		LogInfof("Bookmark file is empty %v", err)

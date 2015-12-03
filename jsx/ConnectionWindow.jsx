@@ -10,26 +10,12 @@ var initName = "Unnamed Connection";
 var ConnectionWindow = React.createClass({
 
   getInitialState: function() {
-    // TODO: need a solution for this not making apicall sync
-    var bookmarks = [];
-    api.getBookmarks(function(data) {
-      console.log("getBookmarks: ", data);
-      if (data != undefined && data["error"] == null) {
-        bookmarks = data;
-      }
-    });
-
-    var activeBookmark = 0;
-    if (bookmarks.length !== 0) {
-      activeBookmark = bookmarks[0];
-    }
-
     return {
       connectionErrorMessage: "",
       isConnecting: false,
 
-      bookmarks: bookmarks,
-      activeBookmark: activeBookmark,
+      bookmarks: gBookmarkInfo,
+      activeBookmark: (gBookmarkInfo.length !== 0) ? 0 : -1,
     };
   },
 
