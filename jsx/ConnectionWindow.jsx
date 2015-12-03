@@ -14,11 +14,13 @@ var ConnectionWindow = React.createClass({
     var bookmarks = {}
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
-      bookmarks = data;
+      if (data != undefined && data["error"] == null) {
+        bookmarks = data;
+      }
     });
 
     var activeBookmark = ""
-    if (bookmarks != undefined) {
+    if (Object.keys(bookmarks).length !== 0) {
       activeBookmark = Object.keys(bookmarks)[0];
     }
 
@@ -70,6 +72,7 @@ var ConnectionWindow = React.createClass({
       console.log("bookmark added: ", data);
       self.setState({
         bookmarks: data,
+        activeBookmark: newName,
       });
     });
   },
@@ -216,8 +219,14 @@ var ConnectionWindow = React.createClass({
   },
 
   renderFormElements: function() {
-    var formData = _.clone(this.state.bookmarks[this.state.activeBookmark])
-    if (formData["database"].startsWith(initName)) {
+
+    var formData = {};
+    if (Object.keys(this.state.bookmarks).length !== 0) {
+      formData = _.clone(this.state.bookmarks[this.state.activeBookmark])
+      if (formData["database"].startsWith(initName)) {
+        formData["database"] = "";
+      }
+    } else {
       formData["database"] = "";
     }
 
@@ -301,7 +310,7 @@ var ConnectionWindow = React.createClass({
   },
 
   renderForm: function() {
-    if (this.state.activeBookmark != "") {
+    if (this.state.activeBookmark !== "") {
       var formElements = this.renderFormElements()
     } else {
       var formElements = (

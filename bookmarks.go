@@ -25,16 +25,32 @@ func bookmarksFilePath() string {
 	return filepath.Join(getDataDir(), "bookmarks.json")
 }
 
-func readAllBookmarks() (map[string]Bookmark, error) {
-	res := map[string]Bookmark{}
+func ifNotCreateBookmarksFile() error {
+    if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
+        // Path does not exist
+        file, err := os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
+        if err != nil {
+            fmt.Println(err)
+            return err
+        }
+        defer file.Close()
+    }
 
-	file, err := ioutil.ReadFile(bookmarksFilePath())
+    return nil
+}
+
+func readAllBookmarks() (map[string]Bookmark, error) {
+    ifNotCreateBookmarksFile()
+
+    res := map[string]Bookmark{}
+
+	fileData, err := ioutil.ReadFile(bookmarksFilePath())
     if err != nil {
         fmt.Printf("File error: %v\n", err)
         return res, err
     }
 
-    err = json.Unmarshal(file, &res)
+    err = json.Unmarshal(fileData, &res)
     if err != nil {
         fmt.Printf("JSON Parse error: %v\n", err)
     	return res, err
@@ -44,26 +60,18 @@ func readAllBookmarks() (map[string]Bookmark, error) {
 }
 
 func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
+    ifNotCreateBookmarksFile()
+
     res := map[string]Bookmark{}
 
-    var file *os.File
-    var err error
-    if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
-        // Path does not exist
-        file, err = os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
-        if err != nil {
-            fmt.Println(err)
-        }
-        defer file.Close()
-    } else {
-        // Path exist
-        res, err = readAllBookmarks()
-        if err != nil {
-            return res, err
-        }
-    }
 
-    fmt.Println(bookmarksFilePath())
+    // Path exist
+    res, err := readAllBookmarks()
+    if err != nil {
+        // If the file is empty this will send an error so ignore
+        fmt.Printf("readAllBookmarks error: %v\n", err)
+        // return res, err
+    }
 
     res[bookmark.Database] = bookmark
 
@@ -77,18 +85,14 @@ func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 }
 
 func removeBookmark(databaseName string) (map[string]Bookmark, error) {
+    ifNotCreateBookmarksFile()
+
     res := map[string]Bookmark{}
 
-    if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
-        // Path does not exist
-        // TODO: maybe a check?
+    // Path exist
+    res, err := readAllBookmarks()
+    if err != nil {
         return res, err
-    } else {
-        // Path exist
-        res, err = readAllBookmarks()
-        if err != nil {
-            return res, err
-        }
     }
 
     delete(res, databaseName)
