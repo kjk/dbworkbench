@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 )
+
+var bookmarkMutex = &sync.Mutex{}
 
 // TODO encript password
 
@@ -30,52 +32,71 @@ func ifNotCreateBookmarksFile() error {
 		// Path does not exist
 		file, err := os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
 		if err != nil {
-			fmt.Println(err)
+			LogErrorf("Bookmark file creation %v", err)
 			return err
 		}
-		defer file.Close()
+		file.Close()
 	}
 
 	return nil
 }
 
 func readAllBookmarks() (map[string]Bookmark, error) {
-	ifNotCreateBookmarksFile()
-
 	res := map[string]Bookmark{}
 
 	fileData, err := ioutil.ReadFile(bookmarksFilePath())
 	if err != nil {
-		fmt.Printf("File error: %v\n", err)
+		LogErrorf("Bookmark file read %v", err)
 		return res, err
 	}
 
 	err = json.Unmarshal(fileData, &res)
 	if err != nil {
-		fmt.Printf("JSON Parse error: %v\n", err)
+		LogErrorf("Bookmark unmarshall %v", err)
 		return res, err
 	}
 
 	return res, nil
 }
 
+func readBookmarks() (map[string]Bookmark, error) {
+	bookmarkMutex.Lock()
+	defer bookmarkMutex.Unlock()
+
+	res, err := readAllBookmarks()
+	if err != nil {
+		if err == os.ErrNotExist {
+			return res, nil
+		}
+		return res, err
+	}
+	return res, nil
+}
+
 func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
-	ifNotCreateBookmarksFile()
+	bookmarkMutex.Lock()
+	defer bookmarkMutex.Unlock()
 
 	res := map[string]Bookmark{}
 
 	// Path exist
 	res, err := readAllBookmarks()
 	if err != nil {
+		if err == os.ErrNotExist {
+			err := ifNotCreateBookmarksFile()
+			if err != nil {
+				return res, err
+			}
+		}
 		// If the file is empty this will send an error so ignore
-		fmt.Printf("readAllBookmarks error: %v\n", err)
-		// return res, err
+		LogInfof("Bookmark file is empty %v", err)
 	}
 
 	res[bookmark.Database] = bookmark
 
 	b, err := json.MarshalIndent(res, "", "  ")
 	if err != nil {
+		LogErrorf("Bookmark MarshalIndent %v", err)
 		return res, err
 	}
 
@@ -84,19 +105,25 @@ func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 }
 
 func removeBookmark(databaseName string) (map[string]Bookmark, error) {
-	ifNotCreateBookmarksFile()
+	bookmarkMutex.Lock()
+	defer bookmarkMutex.Unlock()
 
 	res := map[string]Bookmark{}
 
 	// Path exist
 	res, err := readAllBookmarks()
 	if err != nil {
+		if err == os.ErrNotExist {
+			return res, nil
+		}
+		LogErrorf("Bookmark readall %v", err)
 		return res, err
 	}
 
 	delete(res, databaseName)
 	b, err := json.MarshalIndent(res, "", "  ")
 	if err != nil {
+		LogErrorf("Bookmark MarshalIndent %v", err)
 		return res, err
 	}
 
