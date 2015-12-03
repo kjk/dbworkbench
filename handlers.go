@@ -362,7 +362,9 @@ func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	serveJSON(w, r, bookmarks)
+	sortedBookmarks := sortBookmarks(bookmarks)
+
+	serveJSON(w, r, sortedBookmarks)
 }
 
 // POST /api/addbookmark
@@ -383,8 +385,9 @@ func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	serveJSON(w, r, bookmarks)
+	sortedBookmarks := sortBookmarks(bookmarks)
 
+	serveJSON(w, r, sortedBookmarks)
 }
 
 // POST /api/removebookmark
@@ -395,7 +398,9 @@ func handleRemoveBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	serveJSON(w, r, bookmarks)
+	sortedBookmarks := sortBookmarks(bookmarks)
+
+	serveJSON(w, r, sortedBookmarks)
 }
 
 // GET /api/connection
