@@ -3,19 +3,25 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	"github.com/kjk/u"
 )
 
 var (
 	httpAddr = ":5555"
+
 	// for auto-update
 	latestMacVersion     = "0.1"
 	latestMacDownloadURL = ""
 	latestWinVersion     = "0.2"
 	latestWinDownloadURL = "https://kjkpub.s3.amazonaws.com/software/databaseworkbench/rel/DatabaseWorkbench-setup-0.1.exe"
+
+	dataDir string
 )
 
 // LogInfof logs additional info
@@ -28,6 +34,13 @@ func LogInfof(format string, args ...interface{}) {
 func LogErrorf(format string, args ...interface{}) {
 	s := fmt.Sprintf(format, args...)
 	fmt.Print(s)
+}
+
+// LogFatalf logs an error and terminates the app
+func LogFatalf(format string, args ...interface{}) {
+	s := fmt.Sprintf(format, args...)
+	fmt.Print(s)
+	log.Fatal(s)
 }
 
 var extraMimeTypes = map[string]string{
@@ -53,6 +66,26 @@ func MimeTypeByExtensionExt(name string) string {
 	}
 
 	return result
+}
+
+// data dir is ../../data on the server or ~/data/dbworkbench-website locally
+// the important part is that it's outside of directory with the code
+func getDataDir() string {
+	if dataDir != "" {
+		return dataDir
+	}
+	// on the server, must be done first because ExpandTildeInPath()
+	// doesn't work when cross-compiled on mac for linux
+	dataDir = filepath.Join("..", "..", "data")
+	if u.PathExists(dataDir) {
+		return dataDir
+	}
+	dataDir = u.ExpandTildeInPath("~/data/dbworkbench-website")
+	if u.PathExists(dataDir) {
+		return dataDir
+	}
+	log.Fatal("data directory (../../data or ../dbworkench-website) doesn't exist")
+	return ""
 }
 
 func writeHeader(w http.ResponseWriter, code int, contentType string) {
@@ -169,6 +202,8 @@ func initHandlers() {
 
 func main() {
 	initHandlers()
+	// TODO: open log files
+	openUsageFileMust()
 	LogInfof("starting website on %s\n", httpAddr)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		LogErrorf("http.ListendAndServe() failed with '%s'\n", err)

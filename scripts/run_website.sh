@@ -7,4 +7,6 @@ set -o pipefail
 cd website
 go vet ./...
 
+go test .
+
 go run *.go
