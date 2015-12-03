@@ -121,7 +121,9 @@ func RemoveOldLogFiles() {
 // OpenLogFiles open error and info log files
 func OpenLogFiles() {
 	t := time.Now()
-	fileName := t.Format("log-06-01-02_15_04_05.txt")
+	// create a log file per day to balance size of the log file
+	// and number of log files.
+	fileName := t.Format("log-06-01-02-backend.txt")
 	logFile = OpenLogMust(fileName)
 }
 
@@ -246,7 +248,7 @@ func (l *LogFile) open() (err error) {
 	return err
 }
 
-// NewLogFile creates LogRotate
+// NewLogFile opens a new log file (creates if doesn't exist, will append if exists)
 func NewLogFile(path string) (*LogFile, error) {
 	res := &LogFile{
 		path:      path,
