@@ -47,6 +47,9 @@ func readAllBookmarks() (map[string]Bookmark, error) {
 
 	fileData, err := ioutil.ReadFile(bookmarksFilePath())
 	if err != nil {
+		if err == os.ErrNotExist {
+			return res, nil
+		}
 		LogErrorf("Bookmark file read %v", err)
 		return res, err
 	}
@@ -66,9 +69,6 @@ func readBookmarks() (map[string]Bookmark, error) {
 
 	res, err := readAllBookmarks()
 	if err != nil {
-		if err == os.ErrNotExist {
-			return res, nil
-		}
 		return res, err
 	}
 	return res, nil
@@ -80,15 +80,14 @@ func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 
 	res := map[string]Bookmark{}
 
+	err := ifNotCreateBookmarksFile()
+	if err != nil {
+		return res, err
+	}
+
 	// Path exist
 	res, err := readAllBookmarks()
 	if err != nil {
-		if err == os.ErrNotExist {
-			err := ifNotCreateBookmarksFile()
-			if err != nil {
-				return res, err
-			}
-		}
 		// If the file is empty this will send an error so ignore
 		LogInfof("Bookmark file is empty %v", err)
 	}
@@ -114,9 +113,6 @@ func removeBookmark(databaseName string) (map[string]Bookmark, error) {
 	// Path exist
 	res, err := readAllBookmarks()
 	if err != nil {
-		if err == os.ErrNotExist {
-			return res, nil
-		}
 		LogErrorf("Bookmark readall %v", err)
 		return res, err
 	}
