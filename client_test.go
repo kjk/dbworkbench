@@ -280,17 +280,17 @@ func TestAll(t *testing.T) {
 	testTables(t)
 	// TODO: update for world database
 	/*
-	testTable(t)
-	testTableRows(t)
-	testTableInfo(t)
-	testTableIndexes(t)
-	testQuery(t)
-	testQueryError(t)
-	testQueryInvalidTable(t)
-	testResultCsv(t)
-	testHistory(t)
-	testHistoryError(t)
-*/
+		testTable(t)
+		testTableRows(t)
+		testTableInfo(t)
+		testTableIndexes(t)
+		testQuery(t)
+		testQueryError(t)
+		testQueryInvalidTable(t)
+		testResultCsv(t)
+		testHistory(t)
+		testHistoryError(t)
+	*/
 	teardownClient()
 	teardown()
 }

@@ -73,7 +73,14 @@ function getBookmarks(cb) {
 }
 
 function addBookmark(bookmark, cb) {
-  var opts = { url : bookmark["url"], host: bookmark["host"], port: bookmark["port"], user: bookmark["user"], password: bookmark["password"], database: bookmark["database"], ssl: bookmark["ssl"] };
+  var opts = { url : bookmark["url"],
+              host: bookmark["host"],
+              port: bookmark["port"],
+              user: bookmark["user"],
+              password: bookmark["password"],
+              database: bookmark["database"],
+              ssl: bookmark["ssl"]
+            };
   apiCall("post", "/addbookmark", opts, cb);
 }
 

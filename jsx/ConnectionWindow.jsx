@@ -11,7 +11,7 @@ var ConnectionWindow = React.createClass({
 
   getInitialState: function() {
     // TODO: need a solution for this not making apicall sync
-    var bookmarks = {}
+    var bookmarks = {};
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
       if (data != undefined && data["error"] == null) {
@@ -19,7 +19,7 @@ var ConnectionWindow = React.createClass({
       }
     });
 
-    var activeBookmark = ""
+    var activeBookmark = "";
     if (Object.keys(bookmarks).length !== 0) {
       activeBookmark = Object.keys(bookmarks)[0];
     }
@@ -34,7 +34,6 @@ var ConnectionWindow = React.createClass({
   },
 
   addBookmark: function(e) {
-
     var bookmarkLimit = 10;
     if (Object.keys(this.state.bookmarks).length >= bookmarkLimit) {
       action.alertBar("Max Connection Limit is " + bookmarkLimit);
@@ -48,8 +47,8 @@ var ConnectionWindow = React.createClass({
     };
 
     var bookmarkTitles = [];
-    for (var key in this.state.bookmarks) {
-      bookmarkTitles.push(key);
+    for (var bookmarkName in this.state.bookmarks) {
+      bookmarkTitles.push(bookmarkName);
     }
 
     var usedNames = _.intersection(possibleNames, bookmarkTitles);
@@ -62,10 +61,16 @@ var ConnectionWindow = React.createClass({
       return;
     }
 
-
     console.log("new bookmark name" + newName);
 
-    var initialBookmark = {url: "", host: "", database: newName, user: "", password: "", port: "" ,ssl: ""}
+    var initialBookmark = { url: "",
+                            host: "",
+                            database: newName,
+                            user: "",
+                            password: "",
+                            port: "" ,
+                            ssl: ""
+                          };
 
     var self = this;
     api.addBookmark(initialBookmark, function(data) {
@@ -192,18 +197,18 @@ var ConnectionWindow = React.createClass({
 
   renderBookMarks: function() {
     var bookmarks = [];
-    for (var key in this.state.bookmarks) {
-      var databaseName = this.state.bookmarks[key]["database"];
-      var removeButton = <i id={key} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
+    for (var bookmarkName in this.state.bookmarks) {
+      var databaseName = this.state.bookmarks[bookmarkName]["database"];
+      var removeButton = <i id={bookmarkName} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       var className = "list-group-item"
-      if (key == this.state.activeBookmark) {
+      if (bookmarkName == this.state.activeBookmark) {
         className = "list-group-item active"
       }
 
       bookmarks.push(
-        <a id={key} href="#" className={className} onClick={this.selectBookmark}>
-          <em id={key}>{databaseName}</em>
+        <a id={bookmarkName} href="#" className={className} onClick={this.selectBookmark}>
+          <em id={bookmarkName}>{databaseName}</em>
           {removeButton}
         </a>
       );
@@ -213,7 +218,7 @@ var ConnectionWindow = React.createClass({
       <div className="list-group list-special">
         <a href="#" className="list-group-item">
           Connection List
-          <i id={key} onClick={this.addBookmark} className="fa fa-plus pull-right"></i>
+          <i id={bookmarkName} onClick={this.addBookmark} className="fa fa-plus pull-right"></i>
         </a>
 
         <hr/>
