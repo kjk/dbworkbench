@@ -15,6 +15,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
+// Options defines cmd-line and computed configuration options
 type Options struct {
 	// options that come from command-line
 	Debug    bool
@@ -148,6 +149,8 @@ func main() {
 		LogInfof("reading resources from zip\n")
 	}
 
+	openUsageFileMust()
+
 	if options.IsDev {
 		startGulp()
 	}
@@ -161,4 +164,5 @@ func main() {
 
 	go startWebServer()
 	handleSignals()
+
 }
