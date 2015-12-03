@@ -9,4 +9,7 @@ go vet ./...
 
 go test .
 
-go run *.go
+go build
+./website | true
+rm website
+

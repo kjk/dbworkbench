@@ -27,7 +27,7 @@ func sanitizeUsage(d []byte) []byte {
 	d = bytes.Replace(d, []byte{'\r', '\n'}, []byte{'\n'}, -1)
 	d = bytes.Replace(d, []byte{'\r'}, []byte{'\n'}, -1)
 	// remove empty-lines ('\n\n') until none are left
-	prevSize := len(d) - 1 // just to make it different
+	prevSize := -1 // at first iteration must be != len(d)
 	for prevSize != len(d) {
 		prevSize = len(d)
 		d = bytes.Replace(d, []byte{'\n', '\n'}, []byte{'\n'}, -1)
