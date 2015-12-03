@@ -430,6 +430,16 @@
   color: #b5c7d7;
 }
 
+#edit_connection {
+  position: fixed;
+  right: 10px;
+  top: 7px;
+}
+
+#edit_connection i {
+  margin-right: 4px;
+}
+
 /*******************************************************/
 /* Connection Window */
 
