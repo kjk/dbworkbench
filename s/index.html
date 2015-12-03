@@ -18,8 +18,14 @@
     function setUserInfo(json) {
       gUserInfo = json;
     }
+
+    var gBookmarkInfo = [];
+    function setBookmarkInfo(json) {
+      gBookmarkInfo = json;
+    }
   </script>
   <script type="text/javascript" src="/api/userinfo?jsonp=setUserInfo"></script>
+  <script type="text/javascript" src="/api/getbookmarks?jsonp=setBookmarkInfo"></script>
 </head>
 
 <body>

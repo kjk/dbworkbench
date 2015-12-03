@@ -356,6 +356,8 @@ func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/getbookmarks
 func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
+
 	bookmarks, err := readBookmarks()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -364,7 +366,8 @@ func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 	sortedBookmarks := sortBookmarks(bookmarks)
 
-	serveJSON(w, r, sortedBookmarks)
+	// serveJSON(w, r, sortedBookmarks)
+	serveJSONP(w, r, sortedBookmarks, jsonp)
 }
 
 // POST /api/addbookmark
