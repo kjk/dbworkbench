@@ -351,45 +351,45 @@ func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, ctx.ConnInfo.Client.history)
 }
 
-// GET | POST /api/bookmarks
-func handleBookmarks(w http.ResponseWriter, r *http.Request) {
-	method := strings.ToUpper(r.Method)
+// GET /api/getbookmarks
+func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	bookmarks, err := readBookmarks()
+	if err != nil {
+		serveJSONError(w, r, err)
+		return
+	}
 
-	var bookmarks map[string]Bookmark
-	var err error
-	if method == "GET" {
-		bookmarks, err = readAllBookmarks()
-		if err != nil {
-			serveJSONError(w, r, err)
-			return
-		}
+	serveJSON(w, r, bookmarks)
+}
 
-	} else if method == "POST" {
-		isDelete := r.FormValue("remove") // TODO: Get bool
+// POST /api/addbookmark
+func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	newBookmark := Bookmark{
+		URL:      r.FormValue("url"),
+		Host:     r.FormValue("host"),
+		Port:     r.FormValue("port"),
+		User:     r.FormValue("user"),
+		Password: r.FormValue("password"),
+		Database: r.FormValue("database"),
+		Ssl:      r.FormValue("ssl"),
+	}
 
-		if isDelete == "true" {
-			bookmarks, err = removeBookmark(r.FormValue("database"))
-			if err != nil {
-				serveJSONError(w, r, err)
-				return
-			}
-		} else {
-			newBookmark := Bookmark{
-				URL: r.FormValue("url"),
-				Host: r.FormValue("host"),
-				Port: r.FormValue("port"),
-				User: r.FormValue("user"),
-				Password: r.FormValue("password"),
-				Database: r.FormValue("database"),
-				Ssl: r.FormValue("ssl"),
-			}
+	bookmarks, err := addBookmark(newBookmark)
+	if err != nil {
+		serveJSONError(w, r, err)
+		return
+	}
 
-			bookmarks, err = addBookmark(newBookmark)
-			if err != nil {
-				serveJSONError(w, r, err)
-				return
-			}
-		}
+	serveJSON(w, r, bookmarks)
+
+}
+
+// POST /api/removebookmark
+func handleRemoveBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	bookmarks, err := removeBookmark(r.FormValue("database"))
+	if err != nil {
+		serveJSONError(w, r, err)
+		return
 	}
 
 	serveJSON(w, r, bookmarks)
@@ -566,7 +566,9 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/s/", withCtx(handleStatic, OnlyGet))
 
 	http.HandleFunc("/api/activity", withCtx(handleActivity, MustHaveConnection|IsJSON))
-	http.HandleFunc("/api/bookmarks", handleBookmarks)
+	http.HandleFunc("/api/getbookmarks", withCtx(handleGetBookmarks, IsJSON))
+	http.HandleFunc("/api/addbookmark", withCtx(handleAddBookmark, OnlyPost|IsJSON))
+	http.HandleFunc("/api/removebookmark", withCtx(handleRemoveBookmark, OnlyPost|IsJSON))
 	http.HandleFunc("/api/connect", withCtx(handleConnect, OnlyPost|IsJSON))
 	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection|IsJSON))

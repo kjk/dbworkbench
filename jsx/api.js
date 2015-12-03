@@ -69,17 +69,17 @@ function getHistory(connId, cb) {
 }
 
 function getBookmarks(cb) {
-  apiCall("get", "/bookmarks", {}, cb);
+  apiCall("get", "/getbookmarks", {}, cb);
 }
 
 function addBookmark(bookmark, cb) {
   var opts = { url : bookmark["url"], host: bookmark["host"], port: bookmark["port"], user: bookmark["user"], password: bookmark["password"], database: bookmark["database"], ssl: bookmark["ssl"] };
-  apiCall("post", "/bookmarks", opts, cb);
+  apiCall("post", "/addbookmark", opts, cb);
 }
 
 function removeBookmark(db, cb) {
-  var opts = { database: db, remove: "true" };
-  apiCall("post", "/bookmarks", opts, cb);
+  var opts = { database: db };
+  apiCall("post", "/removebookmark", opts, cb);
 }
 
 function getActivity(connId, cb) {
