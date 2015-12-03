@@ -515,7 +515,6 @@ hr {
   -webkit-border-radius: 2px;
 }
 
-
 .connection-settings form p.help-block {
   font-size: 12px;
 }
@@ -524,6 +523,10 @@ hr {
   border: 0px;
 }
 
+#small-img {
+  width: 220px;
+  margin-top: 20px;
+}
 
 /*******************************************************/
 /* AlertBar */
