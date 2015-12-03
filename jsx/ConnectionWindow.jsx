@@ -97,12 +97,16 @@ var ConnectionWindow = React.createClass({
     api.removeBookmark(dbName, function(data) {
       console.log("removeBookmarks: ", data);
 
-      if (data != undefined) {
+      if (data !== undefined && Object.keys(data).length > 0) {
         var activeBookmark = Object.keys(data)[0];
+        var bookmarks = data;
+      } else {
+        var bookmarks = {};
+        var activeBookmark = "";
       }
 
       self.setState({
-        bookmarks: data,
+        bookmarks: bookmarks,
         activeBookmark: activeBookmark,
       });
     });
@@ -190,10 +194,7 @@ var ConnectionWindow = React.createClass({
     var bookmarks = [];
     for (var key in this.state.bookmarks) {
       var databaseName = this.state.bookmarks[key]["database"];
-
-      if (Object.keys(this.state.bookmarks).length > 1) {
-        var removeButton = <i id={key} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
-      }
+      var removeButton = <i id={key} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       bookmarks.push(
         <a id={key} href="#" className="list-group-item" onClick={this.selectBookmark}>
@@ -206,8 +207,8 @@ var ConnectionWindow = React.createClass({
     return (
       <div className="list-group list-special">
         <a href="#" className="list-group-item">
-          Saved Connections
-          <i id={key} onClick={this.addBookmark} className="fa fa-plus pull-right"></i>;
+          Connection List
+          <i id={key} onClick={this.addBookmark} className="fa fa-plus pull-right"></i>
         </a>
 
         <hr/>
@@ -313,10 +314,16 @@ var ConnectionWindow = React.createClass({
     if (this.state.activeBookmark !== "") {
       var formElements = this.renderFormElements()
     } else {
+      var imageStyle = {
+        width: "30%",
+        height: "30%"
+      };
+
       var formElements = (
         <div className="col-md-12 text-center">
-            <img class="img-responsive center-block" src="/s/img/icon.png" alt=""/>
-            <h4>Please select a connection</h4>
+            <img class="img-responsive center-block small" src="/s/img/icon.png" alt="" style={imageStyle}/>​
+
+            <h5>Please add a connection</h5>
         </div>
       );
     }
