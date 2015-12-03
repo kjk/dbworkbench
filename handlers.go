@@ -241,6 +241,8 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recordDatabaseOpened()
+
 	info, err := client.Info()
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -330,6 +332,7 @@ func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recordQueryExecuted()
 	handleQuery(ctx, w, r, query)
 }
 
@@ -375,13 +378,13 @@ func handleBookmarks(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			newBookmark := Bookmark{
-				URL: r.FormValue("url"),
-				Host: r.FormValue("host"),
-				Port: r.FormValue("port"),
-				User: r.FormValue("user"),
+				URL:      r.FormValue("url"),
+				Host:     r.FormValue("host"),
+				Port:     r.FormValue("port"),
+				User:     r.FormValue("user"),
 				Password: r.FormValue("password"),
 				Database: r.FormValue("database"),
-				Ssl: r.FormValue("ssl"),
+				Ssl:      r.FormValue("ssl"),
 			}
 
 			bookmarks, err = addBookmark(newBookmark)
