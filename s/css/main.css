@@ -504,6 +504,7 @@ hr {
 }
 
 .list-group-item.active {
+  border-radius: 5px;
   background-color: #758797 !important;
 }
 

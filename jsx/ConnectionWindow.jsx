@@ -196,8 +196,13 @@ var ConnectionWindow = React.createClass({
       var databaseName = this.state.bookmarks[key]["database"];
       var removeButton = <i id={key} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
+      var className = "list-group-item"
+      if (key == this.state.activeBookmark) {
+        className = "list-group-item active"
+      }
+
       bookmarks.push(
-        <a id={key} href="#" className="list-group-item" onClick={this.selectBookmark}>
+        <a id={key} href="#" className={className} onClick={this.selectBookmark}>
           <em id={key}>{databaseName}</em>
           {removeButton}
         </a>
