@@ -23,4 +23,5 @@ win/DatabaseWorkbench/obj/
 .vs/
 cert.pfx
 website/website_linux
+website/website
 resources.go

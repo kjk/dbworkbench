@@ -84,7 +84,7 @@ func getDataDir() string {
 	if u.PathExists(dataDir) {
 		return dataDir
 	}
-	log.Fatal("data directory (../../data or ../dbworkench-website) doesn't exist")
+	log.Fatal("data directory (../../data or ~/data/dbworkench-website) doesn't exist")
 	return ""
 }
 
@@ -114,26 +114,51 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 	w.Write(data)
 }
 
+// returns nil if not POST or error reading data
+func readRawPostData(r *http.Request) []byte {
+	if r.Method != "POST" {
+		return nil
+	}
+	d, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		LogErrorf("ioutil.ReadAll() failed with '%s'\n", err)
+		return nil
+	}
+	if len(d) == 0 {
+		return nil
+	}
+	return d
+}
+
 // url: /api/winupdatecheck?ver=${ver}
 func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	// TODO: log request for analytics
-	// TODO: also this should recive usage data which should be saved
-	// for analytics
+	// TODO: pre-pend ip address and ver
 	LogInfof("handleWinUpdateCheck\n")
+
+	d := readRawPostData(r)
 	s := fmt.Sprintf(`ver: %s
 url: %s`, latestWinVersion, latestWinDownloadURL)
 	servePlainText(w, r, 200, s)
+
+	if len(d) > 0 {
+		go recordUsage(d)
+	}
 }
 
 // url: /api/macupdatecheck?ver=${ver}
 func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	// TODO: log request for analytics
-	// TODO: also this should recive usage data which should be saved
-	// for analytics
+	// TODO: pre-pend ip address and ver
 	LogInfof("handleMacUpdateCheck\n")
+
+	d := readRawPostData(r)
+
 	s := fmt.Sprintf(`ver: %s
 url: %s`, latestMacVersion, latestMacDownloadURL)
 	servePlainText(w, r, 200, s)
+
+	if len(d) > 0 {
+		go recordUsage(d)
+	}
 }
 
 // heuristic to determine if request is coming from Windows
