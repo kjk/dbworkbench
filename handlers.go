@@ -351,12 +351,45 @@ func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, ctx.ConnInfo.Client.history)
 }
 
-// GET /api/bookmarks
+// GET | POST /api/bookmarks
 func handleBookmarks(w http.ResponseWriter, r *http.Request) {
-	bookmarks, err := readAllBookmarks()
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
+	method := strings.ToUpper(r.Method)
+
+	var bookmarks map[string]Bookmark
+	var err error
+	if method == "GET" {
+		bookmarks, err = readAllBookmarks()
+		if err != nil {
+			serveJSONError(w, r, err)
+			return
+		}
+
+	} else if method == "POST" {
+		isDelete := r.FormValue("remove") // TODO: Get bool
+
+		if isDelete == "true" {
+			bookmarks, err = removeBookmark(r.FormValue("database"))
+			if err != nil {
+				serveJSONError(w, r, err)
+				return
+			}
+		} else {
+			newBookmark := Bookmark{
+				URL: r.FormValue("url"),
+				Host: r.FormValue("host"),
+				Port: r.FormValue("port"),
+				User: r.FormValue("user"),
+				Password: r.FormValue("password"),
+				Database: r.FormValue("database"),
+				Ssl: r.FormValue("ssl"),
+			}
+
+			bookmarks, err = addBookmark(newBookmark)
+			if err != nil {
+				serveJSONError(w, r, err)
+				return
+			}
+		}
 	}
 
 	serveJSON(w, r, bookmarks)
