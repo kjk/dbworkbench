@@ -6,6 +6,7 @@ function apiCall(method, path, params, cb) {
     method: method,
     cache: false,
     data: params,
+    async: false, // TODO: find a way to remove this. Currently it's used in ConnectionWindow.jsx getInitialState
     success: function(data) {
       cb(data);
     },
@@ -71,6 +72,16 @@ function getBookmarks(cb) {
   apiCall("get", "/bookmarks", {}, cb);
 }
 
+function addBookmark(bookmark, cb) {
+  var opts = { url : bookmark["url"], host: bookmark["host"], port: bookmark["port"], user: bookmark["user"], password: bookmark["password"], database: bookmark["database"], ssl: bookmark["ssl"] };
+  apiCall("post", "/bookmarks", opts, cb);
+}
+
+function removeBookmark(db, cb) {
+  var opts = { database: db, remove: "true" };
+  apiCall("post", "/bookmarks", opts, cb);
+}
+
 function getActivity(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/activity", opts, cb);
@@ -115,6 +126,8 @@ module.exports = {
   getTableInfo: getTableInfo,
   getHistory: getHistory,
   getBookmarks: getBookmarks,
+  addBookmark: addBookmark,
+  removeBookmark: removeBookmark,
   getActivity: getActivity,
   executeQuery: executeQuery,
   explainQuery: explainQuery,
