@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using System.Net.Http;
 using System.Reflection;
 
+using Yepi;
+
 namespace DatabaseWorkbench
 {
     public partial class Form1 : Form
@@ -114,7 +116,7 @@ namespace DatabaseWorkbench
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return Util.CleanAppVer(fvi.ProductVersion);
+            return Utils.CleanAppVer(fvi.ProductVersion);
         }
 
         private async Task AutoUpdateCheck()
@@ -131,7 +133,7 @@ namespace DatabaseWorkbench
 
             var myVer = AppVer();
             var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
-            var result = await Util.UrlDownloadAsStringAsync(uri);
+            var result = await Http.UrlDownloadAsStringAsync(uri);
             if (result == null)
             {
                 // TODO: log to a file
@@ -140,16 +142,20 @@ namespace DatabaseWorkbench
             }
 
             Console.WriteLine($"result: {result}");
-            var verUrl = Util.ParseAutoUpdateCheckResponse(result);
-            var ver = verUrl.Item1;
+            string ver, dlUrl;
+            var ok = Utils.ParseUpdateResponse(result, out ver, out dlUrl);
+            if (!ok)
+            {
+
+                return;
+            }
             // TODO: only trigger auto-update if ver > myVer
             if (ver == "" || ver == myVer)
             {
-                Console.WriteLine($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
+                Log.L($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
                 return;
             }
-            var dlUrl = verUrl.Item2;
-            var d = await Util.UrlDownloadAsync(dlUrl);
+            var d = await Http.UrlDownloadAsync(dlUrl);
             if (d == null)
             {
                 Console.WriteLine($"AutoUpdateCheck: failed to download {dlUrl}");
@@ -185,7 +191,7 @@ namespace DatabaseWorkbench
             tmpInstallerPath += ".exe";
             File.Move(_updateInstallerPath, tmpInstallerPath);
             _updateInstallerPath = null;
-            Util.TryLaunchUrl(tmpInstallerPath);
+            Utils.TryLaunchUrl(tmpInstallerPath);
             // exit ourselves so that the installer can over-write the file
             Close();
         }
