@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	PG_DATABASES = `SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY datname ASC`
+	pgDatabasesStmt = `SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY datname ASC`
 
-	PG_SCHEMAS = `SELECT schema_name FROM information_schema.schemata ORDER BY schema_name ASC`
+	pgSchemasStmt = `SELECT schema_name FROM information_schema.schemata ORDER BY schema_name ASC`
 
-	PG_INFO = `SELECT
+	pgInfoStmt = `SELECT
   session_user
 , current_user
 , current_database()
@@ -24,22 +24,22 @@ const (
 , inet_server_port()
 , version()`
 
-	PG_TABLE_INDEXES = `SELECT indexname, indexdef FROM pg_indexes WHERE tablename = $1`
+	pgTableIndexesStmt = `SELECT indexname, indexdef FROM pg_indexes WHERE tablename = $1`
 
-	PG_TABLE_INFO = `SELECT
+	pgTableInfoStmt = `SELECT
   pg_size_pretty(pg_table_size($1)) AS data_size
 , pg_size_pretty(pg_indexes_size($1)) AS index_size
 , pg_size_pretty(pg_total_relation_size($1)) AS total_size
 , (SELECT reltuples FROM pg_class WHERE oid = $1::regclass) AS rows_count`
 
-	PG_TABLE_SCHEMA = `SELECT
+	pgTableSchemaStmt = `SELECT
 column_name, data_type, is_nullable, character_maximum_length, character_set_catalog, column_default
 FROM information_schema.columns
 WHERE table_name = $1`
 
-	PG_TABLES = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_schema,table_name`
+	pgTablesStmt = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_schema,table_name`
 
-	PG_ACTIVITY = `SELECT
+	pgActivityStmt = `SELECT
   datname,
   query,
   state,
@@ -89,27 +89,27 @@ func (c *ClientPg) Test() error {
 
 // Info returns information about a postgres db connection
 func (c *ClientPg) Info() (*Result, error) {
-	return c.query(PG_INFO)
+	return c.query(pgInfoStmt)
 }
 
 // Databases returns list of databases in a given postgres connection
 func (c *ClientPg) Databases() ([]string, error) {
-	return c.fetchRows(PG_DATABASES)
+	return c.fetchRows(pgDatabasesStmt)
 }
 
 // Schemas returns list of schemas
 func (c *ClientPg) Schemas() ([]string, error) {
-	return c.fetchRows(PG_SCHEMAS)
+	return c.fetchRows(pgSchemasStmt)
 }
 
 // Tables returns list of tables
 func (c *ClientPg) Tables() ([]string, error) {
-	return c.fetchRows(PG_TABLES)
+	return c.fetchRows(pgTablesStmt)
 }
 
 // Table returns schema for a given table
 func (c *ClientPg) Table(table string) (*Result, error) {
-	return c.query(PG_TABLE_SCHEMA, table)
+	return c.query(pgTableSchemaStmt, table)
 }
 
 // TableRows returns all rows from a query
@@ -133,12 +133,12 @@ func (c *ClientPg) TableRows(table string, opts RowsOptions) (*Result, error) {
 
 // TableInfo returns information about a given table
 func (c *ClientPg) TableInfo(table string) (*Result, error) {
-	return c.query(PG_TABLE_INFO, table)
+	return c.query(pgTableInfoStmt, table)
 }
 
 // TableIndexes returns info about indexes for a given table
 func (c *ClientPg) TableIndexes(table string) (*Result, error) {
-	res, err := c.query(PG_TABLE_INDEXES, table)
+	res, err := c.query(pgTableIndexesStmt, table)
 
 	if err != nil {
 		return nil, err
@@ -149,7 +149,7 @@ func (c *ClientPg) TableIndexes(table string) (*Result, error) {
 
 // Activity returns all active queriers on the server
 func (c *ClientPg) Activity() (*Result, error) {
-	return c.query(PG_ACTIVITY)
+	return c.query(pgActivityStmt)
 }
 
 // Query executes a given query and returns the results
