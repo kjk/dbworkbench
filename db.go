@@ -20,7 +20,7 @@ type ConnectionInfo struct {
 	ConnectionID     int
 	CreatedAt        time.Time
 	LastAccessAt     time.Time
-	Client           *ClientPg
+	Client           Client
 }
 
 func copyConnectionInfo(ci *ConnectionInfo) *ConnectionInfo {
@@ -38,7 +38,7 @@ func copyConnectionInfo(ci *ConnectionInfo) *ConnectionInfo {
 
 // creates new ConnectionInfo for a user and update user info. make sure
 // to call removeCurrentUserConnectionInfo before calling this
-func addConnectionInfo(connString string, client *ClientPg) *ConnectionInfo {
+func addConnectionInfo(connString string, client Client) *ConnectionInfo {
 	muCache.Lock()
 	defer muCache.Unlock()
 	nextConnectionID++
@@ -61,7 +61,7 @@ func connectionDisconnect(connID int) error {
 		return fmt.Errorf("disconnect: unknown connection id '%d'", connID)
 	}
 	delete(connections, connID)
-	return connInfo.Client.db.Close()
+	return connInfo.Client.Close()
 }
 
 func getConnectionInfoByID(connID int) *ConnectionInfo {

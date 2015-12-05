@@ -38,7 +38,7 @@ type ReqContext struct {
 	TimeStart    time.Time
 	ConnectionID int
 	ConnInfo     *ConnectionInfo
-	Client       *ClientPg
+	Client       Client
 }
 
 var (
@@ -351,7 +351,7 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 // GET /api/history
 func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, ctx.ConnInfo.Client.history)
+	serveJSON(w, r, ctx.ConnInfo.Client.History())
 }
 
 // GET /api/getbookmarks

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -62,7 +61,7 @@ type ClientPg struct {
 }
 
 // NewClientPgFromURL opens a Postgres db connection
-func NewClientPgFromURL(url string) (*ClientPg, error) {
+func NewClientPgFromURL(url string) (Client, error) {
 	if options.Debug {
 		fmt.Println("Creating a new client for:", url)
 	}
@@ -89,27 +88,27 @@ func (c *ClientPg) Test() error {
 
 // Info returns information about a postgres db connection
 func (c *ClientPg) Info() (*Result, error) {
-	return c.query(pgInfoStmt)
+	return dbQuery(c.db, pgInfoStmt)
 }
 
 // Databases returns list of databases in a given postgres connection
 func (c *ClientPg) Databases() ([]string, error) {
-	return c.fetchRows(pgDatabasesStmt)
+	return dbFetchRows(c.db, pgDatabasesStmt)
 }
 
 // Schemas returns list of schemas
 func (c *ClientPg) Schemas() ([]string, error) {
-	return c.fetchRows(pgSchemasStmt)
+	return dbFetchRows(c.db, pgSchemasStmt)
 }
 
 // Tables returns list of tables
 func (c *ClientPg) Tables() ([]string, error) {
-	return c.fetchRows(pgTablesStmt)
+	return dbFetchRows(c.db, pgTablesStmt)
 }
 
 // Table returns schema for a given table
 func (c *ClientPg) Table(table string) (*Result, error) {
-	return c.query(pgTableSchemaStmt, table)
+	return dbQuery(c.db, pgTableSchemaStmt, table)
 }
 
 // TableRows returns all rows from a query
@@ -128,17 +127,17 @@ func (c *ClientPg) TableRows(table string, opts RowsOptions) (*Result, error) {
 		sql += fmt.Sprintf(" LIMIT %d", opts.Limit)
 	}
 
-	return c.query(sql)
+	return dbQuery(c.db, sql)
 }
 
 // TableInfo returns information about a given table
 func (c *ClientPg) TableInfo(table string) (*Result, error) {
-	return c.query(pgTableInfoStmt, table)
+	return dbQuery(c.db, pgTableInfoStmt, table)
 }
 
 // TableIndexes returns info about indexes for a given table
 func (c *ClientPg) TableIndexes(table string) (*Result, error) {
-	res, err := c.query(pgTableIndexesStmt, table)
+	res, err := dbQuery(c.db, pgTableIndexesStmt, table)
 
 	if err != nil {
 		return nil, err
@@ -149,12 +148,12 @@ func (c *ClientPg) TableIndexes(table string) (*Result, error) {
 
 // Activity returns all active queriers on the server
 func (c *ClientPg) Activity() (*Result, error) {
-	return c.query(pgActivityStmt)
+	return dbQuery(c.db, pgActivityStmt)
 }
 
 // Query executes a given query and returns the results
 func (c *ClientPg) Query(query string) (*Result, error) {
-	res, err := c.query(query)
+	res, err := dbQuery(c.db, query)
 
 	// Save history records only if query did not fail
 	if err == nil {
@@ -164,59 +163,12 @@ func (c *ClientPg) Query(query string) (*Result, error) {
 	return res, err
 }
 
-func (c *ClientPg) query(query string, args ...interface{}) (*Result, error) {
-	rows, err := c.db.Queryx(query, args...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	cols, err := rows.Columns()
-	if err != nil {
-		return nil, err
-	}
-
-	result := Result{Columns: cols}
-
-	for rows.Next() {
-		obj, err := rows.SliceScan()
-
-		for i, item := range obj {
-			if item == nil {
-				obj[i] = nil
-			} else {
-				t := reflect.TypeOf(item).Kind().String()
-
-				if t == "slice" {
-					obj[i] = string(item.([]byte))
-				}
-			}
-		}
-
-		if err == nil {
-			result.Rows = append(result.Rows, obj)
-		}
-	}
-
-	return &result, nil
+// History returns history of queries
+func (c *ClientPg) History() []HistoryRecord {
+	return c.history
 }
 
-// Fetch all rows as strings for a single column
-func (c *ClientPg) fetchRows(q string) ([]string, error) {
-	res, err := c.query(q)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Init empty slice so json.Marshal will encode it to "[]" instead of "null"
-	var results []string
-
-	for _, row := range res.Rows {
-		results = append(results, row[0].(string))
-	}
-
-	return results, nil
+// Close closes a database connection
+func (c *ClientPg) Close() error {
+	return c.db.Close()
 }
