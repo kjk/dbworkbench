@@ -61,12 +61,12 @@ type ClientPg struct {
 }
 
 // NewClientPgFromURL opens a Postgres db connection
-func NewClientPgFromURL(url string) (Client, error) {
+func NewClientPgFromURL(uri string) (Client, error) {
 	if options.Debug {
-		fmt.Println("Creating a new client for:", url)
+		fmt.Println("Creating a new client for:", uri)
 	}
 
-	db, err := sqlx.Open("postgres", url)
+	db, err := sqlx.Open("postgres", uri)
 
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func NewClientPgFromURL(url string) (Client, error) {
 
 	client := ClientPg{
 		db:               db,
-		connectionString: url,
+		connectionString: uri,
 		history:          NewHistory(),
 	}
 
