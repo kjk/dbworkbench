@@ -38,7 +38,7 @@ type ReqContext struct {
 	TimeStart    time.Time
 	ConnectionID int
 	ConnInfo     *ConnectionInfo
-	Client       *Client
+	Client       *ClientPg
 }
 
 var (
@@ -229,7 +229,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err := NewClientFromUrl(url)
+	client, err := NewClientPgFromURL(url)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	_ "github.com/lib/pq"
 )
 
 var (
@@ -22,7 +20,7 @@ type ConnectionInfo struct {
 	ConnectionID     int
 	CreatedAt        time.Time
 	LastAccessAt     time.Time
-	Client           *Client
+	Client           *ClientPg
 }
 
 func copyConnectionInfo(ci *ConnectionInfo) *ConnectionInfo {
@@ -40,7 +38,7 @@ func copyConnectionInfo(ci *ConnectionInfo) *ConnectionInfo {
 
 // creates new ConnectionInfo for a user and update user info. make sure
 // to call removeCurrentUserConnectionInfo before calling this
-func addConnectionInfo(connString string, client *Client) *ConnectionInfo {
+func addConnectionInfo(connString string, client *ClientPg) *ConnectionInfo {
 	muCache.Lock()
 	defer muCache.Unlock()
 	nextConnectionID++
