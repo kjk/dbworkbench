@@ -10,20 +10,20 @@ var Activity = "Activity";
 var Connection = "Connection";
 
 var AllViews = [
+  SQLQuery,
   Content,
   Structure,
   Indexes,
-  SQLQuery,
   History,
   Activity,
   Connection
 ];
 
 module.exports = {
+  SQLQuery: SQLQuery,
   Content: Content,
   Structure: Structure,
   Indexes: Indexes,
-  SQLQuery: SQLQuery,
   History: History,
   Activity: Activity,
   Connection: Connection,
