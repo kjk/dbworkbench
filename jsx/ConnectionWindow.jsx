@@ -214,9 +214,9 @@ var ConnectionWindow = React.createClass({
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item">
+        <a href="#" className="list-group-item" onClick={this.addBookmark} >
           Connection List
-          <i id={position} onClick={this.addBookmark} className="fa fa-plus pull-right"></i>
+          <i id={position} className="fa fa-plus pull-right"></i>
         </a>
 
         <hr/>
