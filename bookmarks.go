@@ -130,15 +130,9 @@ func removeBookmark(databaseName string) (map[string]Bookmark, error) {
 
 type ByDatabaseName []Bookmark
 
-func (s ByDatabaseName) Len() int {
-	return len(s)
-}
-func (s ByDatabaseName) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s ByDatabaseName) Less(i, j int) bool {
-	return s[i].Database < s[j].Database
-}
+func (s ByDatabaseName) Len() int           { return len(s) }
+func (s ByDatabaseName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s ByDatabaseName) Less(i, j int) bool { return s[i].Database < s[j].Database }
 
 func sortBookmarks(bookmarks map[string]Bookmark) []Bookmark {
 	bookmarkArr := make(ByDatabaseName, 0, len(bookmarks))

@@ -366,7 +366,6 @@ func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 
 	sortedBookmarks := sortBookmarks(bookmarks)
 
-	// serveJSON(w, r, sortedBookmarks)
 	serveJSONP(w, r, sortedBookmarks, jsonp)
 }
 
