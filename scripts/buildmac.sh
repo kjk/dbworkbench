@@ -12,9 +12,10 @@ go run tools/build/*.go -gen-resources
 
 godep go build -tags embeded_resources -o dbworkbench
 
+rm -rf mac/build/Release
+
 cp dbworkbench mac/dbworkbench.exe
 
 xcodebuild -parallelizeTargets -project mac/dbworkbench.xcodeproj/
 
-rm mac/build/Release/dbworkbenchmacapp.zip
 go run tools/build/*.go

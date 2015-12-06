@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -44,22 +43,6 @@ type Secrets struct {
 
 func finalizeThings(crashed bool) {
 	// nothing for us
-}
-
-func detectInnoSetupMust() {
-	path1 := pj(os.Getenv("ProgramFiles"), "Inno Setup 5", "iscc.exe")
-	if fileExists(path1) {
-		innoSetupPath = path1
-		fmt.Printf("Inno Setup: %s\n", innoSetupPath)
-		return
-	}
-	path2 := pj(os.Getenv("ProgramFiles(x86)"), "Inno Setup 5", "iscc.exe")
-	if fileExists(path2) {
-		innoSetupPath = path2
-		fmt.Printf("Inno Setup: %s\n", innoSetupPath)
-		return
-	}
-	fatalif(true, "didn't find Inno Setup (tried '%s' and '%s'). Download from http://www.jrsoftware.org/isinfo.php\n", path1, path2)
 }
 
 func parseCmdLine() {
@@ -187,10 +170,9 @@ func extractVersionMust() {
 }
 
 func buildMac() {
-	// Zip the bundle
-	sourceToZip := filepath.Join("mac", "build", "Release", "Database Workbench.app")
-	targetForZip := filepath.Join("mac", "build", "Release", "dbworkbenchmacapp.zip")
-	err := ZipDirectory(sourceToZip, targetForZip)
+	dirToZip := filepath.Join("mac", "build", "Release", "Database Workbench.app")
+	zipPath := filepath.Join("mac", "build", "Release", "dbworkbenchmacapp.zip")
+	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)
 
 	// Maybe TODO: Upload to S3

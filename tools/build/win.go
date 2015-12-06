@@ -47,7 +47,23 @@ func signMust(path string) {
 	runCmdMust(cmd, true)
 }
 
-func clean() {
+func detectInnoSetupMust() {
+	path1 := pj(os.Getenv("ProgramFiles"), "Inno Setup 5", "iscc.exe")
+	if fileExists(path1) {
+		innoSetupPath = path1
+		fmt.Printf("Inno Setup: %s\n", innoSetupPath)
+		return
+	}
+	path2 := pj(os.Getenv("ProgramFiles(x86)"), "Inno Setup 5", "iscc.exe")
+	if fileExists(path2) {
+		innoSetupPath = path2
+		fmt.Printf("Inno Setup: %s\n", innoSetupPath)
+		return
+	}
+	fatalif(true, "didn't find Inno Setup (tried '%s' and '%s'). Download from http://www.jrsoftware.org/isinfo.php\n", path1, path2)
+}
+
+func cleanWin() {
 	removeDirMust("obj")
 	removeDirMust("bin")
 }
@@ -73,7 +89,7 @@ func buildWin() {
 	}
 	copyDbWorkbench()
 	cdToWinDir()
-	clean()
+	cleanWin()
 
 	out, err := runMsbuildGetOutput(true, "DatabaseWorkbench.csproj", "/t:Rebuild", "/p:Configuration=Release", "/m")
 	if err != nil {
