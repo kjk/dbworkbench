@@ -28,6 +28,32 @@ func bookmarksFilePath() string {
 	return filepath.Join(getDataDir(), "bookmarks.json")
 }
 
+func openBookmarkFileWithInitialConnection() {
+	if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
+		// Path does not exist
+		file, err := os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
+		if err != nil {
+			LogErrorf("Bookmark file creation %v", err)
+			return
+		}
+
+		// Unnamed Connection is a predefined keyword which is used in frontend
+		// In frontend the Bookmark.Database is the bookmark name which needs to
+		// be set
+		res := map[string]Bookmark{}
+		res["Unnamed Connection"] = Bookmark{Database: "Unnamed Connection"}
+
+		b, err := json.MarshalIndent(res, "", "  ")
+		if err != nil {
+			LogErrorf("Bookmark MarshalIndent %v", err)
+			return
+		}
+
+		ioutil.WriteFile(bookmarksFilePath(), b, 0644)
+		file.Close()
+	}
+}
+
 func ifNotCreateBookmarksFile() error {
 	if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
 		// Path does not exist

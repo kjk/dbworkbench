@@ -150,6 +150,7 @@ func main() {
 	}
 
 	openUsageFileMust()
+	openBookmarkFileWithInitialConnection()
 
 	if options.IsDev {
 		startGulp()
