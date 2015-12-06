@@ -257,15 +257,28 @@ html {
   min-width: 100%;
 }
 
-#dragbar{
-   position: absolute;
-   /*background-color: red;*/
-   min-height:100%;
-   /*float: right;*/
-   width: 3px;
-   cursor: col-resize;
-   z-index: 1000;
+#side-dragbar {
+  position: absolute;
+  /*background-color: red;*/
+  min-height: 100%;
+  /*float: right;*/
+  width: 3px;
+  cursor: col-resize;
+  z-index: 1000;
 }
+
+
+/* Will be used for query dragbar
+#query-dragbar {
+  position: relative;
+  background-color: red;
+  min-width: 100%;
+  float: none;
+
+  height: 20px;
+  cursor: row-resize;
+  z-index: 1000;
+} */
 
 /*******************************************************/
 

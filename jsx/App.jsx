@@ -66,7 +66,6 @@ var App = React.createClass({
 
   onMouseDown: function (e) {
     // only left mouse button
-    console.log("onMouseDown");
     if (e.button !== 0) return;
     this.setState({
       dragging: true,
@@ -76,7 +75,6 @@ var App = React.createClass({
   },
 
   onMouseUp: function (e) {
-    console.log("onMouseUp");
     this.setState({
       dragging: false,
     })
@@ -85,9 +83,7 @@ var App = React.createClass({
   },
 
   onMouseMove: function (e) {
-    console.log("onMouseMove");
     if (!this.state.dragging) return;
-    console.log("Move", e.pageX)
     this.setState({
       dragBarPosition: e.pageX,
     });
@@ -379,7 +375,7 @@ var App = React.createClass({
             databaseName={this.state.databaseName}
             dragBarPosition={this.state.dragBarPosition} />
 
-          <div id="dragbar"
+          <div id="side-dragbar"
             style={divStyle}
             onMouseDown={this.onMouseDown}
             onMouseMove={this.onMouseMove}
