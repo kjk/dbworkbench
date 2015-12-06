@@ -1,19 +1,35 @@
+.theme-light-color { background-color: #3C2A3B; }
+.theme-lighter-color { background-color: #958994; }
+.theme-dark-color { background-color: #261C26; }
+.theme-light-brown { background-color: #6B5F6B; }
+
+.theme-active-icon-color { background-color: #A4CDBD; }
+.theme-light-active-color { background-color: #2E8679; }
+.theme-active-color { background-color: #3E8676: }
+.theme-hover-active-color { background-color: #2F242E; }
+
+.theme-text-black-color { background-color: #212224; }
+
+html {
+    height:100%;
+}
+
 #main {
 }
 
 #nav {
-  position: fixed;
-  left: 250px;
+  position: relative;
   right: 0;
-  height: 50px;
+  height:40px;
+  width: inherit;
   box-shadow: inset 0 -1px 0 0 #b8b7b5;
-  background: #d8d7d6;
+  background: #ffffff;
 }
 
 #nav ul {
   margin: 0px;
   padding: 0px;
-  height: 50px;
+  height: 40px;
   display: block;
 }
 
@@ -21,8 +37,8 @@
   margin: 0px;
   padding: 0px;
   float: left;
-  height: 49px;
-  line-height: 49px;
+  height: 40px;
+  line-height: 40px;
   font-size: 13px;
   padding: 0px 14px;
   color: #6c6b6b;
@@ -44,8 +60,8 @@
 
 #nav ul li.selected {
   position: relative;
-  background: #fff;
-  color: #000;
+  background: #eeeeee;
+  color: #6a6a6a;
   border-right: 1px solid #b8b7b5;
   border-left: 1px solid #b8b7b5;
   margin: 0;
@@ -53,7 +69,7 @@
 
 #nav ul li.selected:before {
   content: ' ';
-  position: absolute;
+  position: relative;
   bottom: -1px;
   left: 0; right: 0;
   height: 1px;
@@ -65,13 +81,35 @@
   border-left: none;
 }
 
+#edit_connection {
+  background-color: #ffffff;
+  color: #6c6b6b;
+  border-width: 1px;
+  border-color: #cacaca;
+  position: fixed;
+  right: 10px;
+  top: 7px;
+}
+
+#edit_connection:hover {
+  background: #bbb;
+  color: #ffffff;
+}
+
+#edit_connection i {
+  margin-right: 4px;
+}
+
+/*******************************************************/
+/* Sidebar */
+
 #sidebar {
   position: fixed;
-  width: 250px;
   left: 0px;
   top: 0px;
   bottom: 0px;
   border-right: 1px solid black;
+  background-color: #3C2A3B;
 }
 
 #sidebar .title {
@@ -82,12 +120,17 @@
   height: 33px;
   padding: 0px 8px;
   padding-left: 12px;
-  color: #fff;
+  color: #ffffff;
+  margin-left: auto;
+  margin-right: auto;
+  /*text-overflow: ellipsis;*/
+  white-space: nowrap;
+  overflow: hidden;
   /* background: #31373d; */
 }
 
 #sidebar div.tables-list {
-  position: absolute;
+  position: relative;
   right: 0;
   top: 0px;
   left: 0px;
@@ -102,8 +145,13 @@
 }
 
 #sidebar div.tables-list .title span.current-database {
-  color: #000000;
-  margin-left: 4px;
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+#sidebar span.current-table-information {
+  color: #ffffff;
+  margin-left: 10px;
 }
 
 #sidebar div.tables-list .title:hover span.refresh {
@@ -114,11 +162,11 @@
   float: right;
   margin-right: 4px;
   cursor: pointer;
-  color: #95a7b7;
+  color: #6B5F6B;
 }
 
 #sidebar div.tables-list .title span.refresh:hover {
-  color: #fff;
+  color: #ffffff;
 }
 
 #sidebar div.tables-list #tables {
@@ -128,7 +176,7 @@
 
 #sidebar div.table-information {
   position: fixed;
-  width: 250px;
+  width: inherit;
   left: 0px;
   height: 130px;
   bottom: 0px;
@@ -139,10 +187,10 @@
   height: 100%;
   overflow-y: auto;
 }
-
+/*
 #sidebar div.table-information .title {
   background: #272c30;
-}
+}*/
 
 #sidebar div.table-information ul {
   padding: 33px 0 0;
@@ -158,9 +206,13 @@
 }
 
 #sidebar div.table-information ul li span {
-  color: #95a7b7;
+  color: #ffffff;
   min-width: 0;
   padding-left: 0px;
+}
+
+#sidebar div.table-information ul li span.table-info-light {
+    color: #958994;
 }
 
 #sidebar ul {
@@ -175,22 +227,23 @@
   padding: 0px;
   margin: 0px;
   cursor: pointer;
-  /* color: #95a7b7 !important; */
+   color: #ffffff !important;
   color: black;
   white-space: nowrap;
 }
 
-#sidebar li.selected {
+#sidebar ul li.active,
+#sidebar ul li.selected {
   /*background: #272c30;
   color: #fff !important;*/
-  background: #eeeeee;
+  background: #3E8676;
   color: black;
   font-weight: bold;
   -webkit-font-smoothing: antialiased;
 }
 
-#sidebar ul li:hover span {
-  background: #dddddd;
+#sidebar ul li:not(.selected):hover {
+  background: #2F242E;
 }
 
 #sidebar ul li i {
@@ -204,12 +257,25 @@
   min-width: 100%;
 }
 
+#dragbar{
+   position: absolute;
+   /*background-color: red;*/
+   min-height:100%;
+   /*float: right;*/
+   width: 3px;
+   cursor: col-resize;
+   z-index: 1000;
+}
+
+/*******************************************************/
+
 #body {
-  position: fixed;
-  top: 50px;
+  position: relative;
+  top: 0px;
   left: 250px;
   bottom: 0px;
   right: 0px;
+  height: fill;
   overflow: auto;
 }
 
@@ -239,7 +305,7 @@
   color: #fff;
   border: none;
   box-shadow: none;
-  background: #7eb54e;
+  background: #48AA78;
   float: left;
   margin-right: 10px;
 }
@@ -262,7 +328,7 @@
 }
 
 #input .actions .btn:hover {
-  background: #7eb154;
+  background: #40A070;
 }
 
 #input .actions .btn-default:hover {
@@ -270,9 +336,9 @@
 }
 
 #output {
-  position: absolute;
+  position: relative;
   left: 0px;
-  top: 256px;
+  top: 0px;
   bottom: 0px;
   right: 0px;
   margin: 0px;
@@ -285,7 +351,7 @@
 }
 
 #results {
-  font-size: 12px;
+  font-size: 11px;
   margin: 0px;
   padding: 0px;
 }
@@ -296,7 +362,7 @@
 
 #results tr:nth-child(even) > td {
   border: none;
-  background: #f8f8f8;
+  background: #f0f0f0;
 }
 
 #results tr:nth-child(odd) > td {
@@ -305,7 +371,8 @@
 }
 
 #results th {
-  background: #f3f3f3;
+  /*font-weight: bold;*/
+  background: #eeeeee;
   border-top: none;
   border-bottom: 1px solid #eae9e9;
   padding: 3px 9px;
@@ -325,7 +392,7 @@
 }
 
 #results td {
-  color: #3a3633;
+  color: #212224;
   vertical-align: middle;
   border: 0px none;
 }
@@ -350,7 +417,7 @@
 }
 
 #results td textarea {
-  color: #000 !important;
+  color: #212224 !important;
   font-size: 12px;
 }
 
@@ -414,8 +481,9 @@
   padding: 100px 80px;
 }
 
+.fa-info
 .fa-database {
-  color: black;
+  color: #6B5F6B;
 }
 
 .fa-plus {
@@ -426,18 +494,11 @@
   color: LightGray;
 }
 
-.fa-refresh:hover {
-  color: #b5c7d7;
+.fa-table {
+  color: #958994;
 }
-
-#edit_connection {
-  position: fixed;
-  right: 10px;
-  top: 7px;
-}
-
-#edit_connection i {
-  margin-right: 4px;
+li.selected .fa-table {
+  color: #A4CDBD;
 }
 
 /*******************************************************/

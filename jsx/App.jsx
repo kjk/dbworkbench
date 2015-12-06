@@ -9,11 +9,9 @@ var action = require('./action.js');
 var view = require('./view.js');
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
-var DbNav = require('./DbNav.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var AlertBar = require('./AlertBar.jsx');
-var Input = require('./Input.jsx');
-var Output = require('./Output.jsx');
+var MainContainer = require('./MainContainer.jsx');
 
 var App = React.createClass({
   getInitialState: function() {
@@ -21,13 +19,18 @@ var App = React.createClass({
       selectedView: view.SQLQuery,
       connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
+
       databaseName: "fixme: db name", // TODO: get database name
       tables: null,
       selectedTable: "",
       selectedTableInfo: null,
       results: null,
+
       errorMessage: "",
-      errorVisible: false
+      errorVisible: false,
+
+      dragging: false,
+      dragBarPosition: 250,
     };
   },
 
@@ -46,10 +49,50 @@ var App = React.createClass({
     });
   },
 
-  renderInput: function() {
-    if (this.state.selectedView === view.SQLQuery) {
-      return <Input />;
+  onDragStart: function(e) {
+    console.log("onDragStart");
+
+  },
+
+  componentDidUpdate: function (props, state) {
+    if (this.state.dragging && !state.dragging) {
+      document.addEventListener('mousemove', this.onMouseMove)
+      document.addEventListener('mouseup', this.onMouseUp)
+    } else if (!this.state.dragging && state.dragging) {
+      document.removeEventListener('mousemove', this.onMouseMove)
+      document.removeEventListener('mouseup', this.onMouseUp)
     }
+  },
+
+  onMouseDown: function (e) {
+    // only left mouse button
+    console.log("onMouseDown");
+    if (e.button !== 0) return;
+    this.setState({
+      dragging: true,
+    })
+    e.stopPropagation()
+    e.preventDefault()
+  },
+
+  onMouseUp: function (e) {
+    console.log("onMouseUp");
+    this.setState({
+      dragging: false,
+    })
+    e.stopPropagation()
+    e.preventDefault()
+  },
+
+  onMouseMove: function (e) {
+    console.log("onMouseMove");
+    if (!this.state.dragging) return;
+    console.log("Move", e.pageX)
+    this.setState({
+      dragBarPosition: e.pageX,
+    });
+    e.stopPropagation()
+    e.preventDefault()
   },
 
   handleTableSelected: function(table) {
@@ -318,26 +361,35 @@ var App = React.createClass({
       return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     }
 
-    // when showing sql query, results are below editor window
-    var notFull = (this.state.selectedView === view.SQLQuery);
+    var divStyle = {
+        left: this.state.dragBarPosition + 'px',
+    }
+
     return (
       <div>
         <div onClick={this.handleCloseAlertBar} >
           { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>
         <div>
-          <DbNav view={this.state.selectedView}/>
           <Sidebar
             connectionId={this.state.connectionId}
             tables={this.state.tables}
             selectedTable={this.state.selectedTable}
             selectedTableInfo={this.state.selectedTableInfo}
             databaseName={this.state.databaseName}
-          />
-          <div id="body">
-            {this.renderInput()}
-            <Output selectedView={this.state.selectedView} results={this.state.results} notFull={notFull}/>
+            dragBarPosition={this.state.dragBarPosition} />
+
+          <div id="dragbar"
+            style={divStyle}
+            onMouseDown={this.onMouseDown}
+            onMouseMove={this.onMouseMove}
+            onMouseUp={this.onMouseUp}>
           </div>
+
+          <MainContainer
+            results={this.state.results}
+            dragBarPosition={this.state.dragBarPosition}
+            selectedView={this.state.selectedView} />
         </div>
 
       </div>

@@ -9,23 +9,37 @@ var TableInformation = React.createClass({
     if (info && !$.isEmptyObject(info)) {
       return (
         <ul>
-          <li>Size: <span>{info.total_size}</span></li>
-          <li>Data size: <span>{info.data_size}</span></li>
-          <li>Index size: <span>{info.index_size}</span></li>
-          <li>Estimated rows: <span>{info.rows_count}</span></li>
+          <li><span className="table-info-light">Size: </span><span>{info.total_size}</span></li>
+          <li><span className="table-info-light">Data size: </span><span>{info.data_size}</span></li>
+          <li><span className="table-info-light">Index size: </span><span>{info.index_size}</span></li>
+          <li><span className="table-info-light">Estimated rows: </span><span>{info.rows_count}</span></li>
         </ul>
       );
     }
+  },
+
+  renderTableInfoContainer: function() {
+    var info = this.renderTableInfo(this.props.tableInfo);
+    if (info) {
+      return (
+        <div className="wrap">
+          <div className="title">
+            <i className="fa fa-info"></i>
+            <span className="current-table-information">Table Information</span></div>
+            {info}
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
+
   },
 
   render: function() {
     var info = this.renderTableInfo(this.props.tableInfo);
     return (
       <div className="table-information">
-        <div className="wrap">
-          <div className="title">Table Information</div>
-          {info}
-        </div>
+        {this.renderTableInfoContainer()}
       </div>
     );
   }
@@ -34,6 +48,7 @@ var TableInformation = React.createClass({
 var Sidebar = React.createClass({
   getInitialState: function() {
     return {
+      dragging: false,
       tables: [],
     };
   },
@@ -41,7 +56,6 @@ var Sidebar = React.createClass({
   componentWillMount: function() {
     this.refreshTables();
   },
-
 
   handleRefreshDatabase: function(e) {
     e.preventDefault();
@@ -87,9 +101,12 @@ var Sidebar = React.createClass({
   // TODO: remove id="tables"
   render: function() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
+    var divStyle = {
+        width: this.props.dragBarPosition + 'px',
+    }
 
     return (
-      <div id="sidebar">
+      <div id="sidebar" style={divStyle}>
         <div className="tables-list">
           <div className="wrap">
             <div className="title">
@@ -105,6 +122,8 @@ var Sidebar = React.createClass({
           </div>
         </div>
         <TableInformation tableInfo={this.props.selectedTableInfo} />
+
+
       </div>
     );
   }

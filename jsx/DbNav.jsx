@@ -10,7 +10,7 @@ var EditConnectionButton = React.createClass({
     },
     render: function() {
         return (
-            <a href="#" id="edit_connection" className="btn btn-primary btn-sm" onClick={this.handleClick}><i className="fa fa-gear"></i> Disconnect</a>
+            <a href="#" id="edit_connection" className="btn btn-primary btn-xs" onClick={this.handleClick}>Disconnect</a>
         )
     }
 });
