@@ -1,4 +1,11 @@
 cd website
 go vet ./...
 
-go run main.go
+go test .
+
+go build
+
+website.exe
+
+rm website.exe
+

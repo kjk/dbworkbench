@@ -114,7 +114,7 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 	w.Write(data)
 }
 
-// returns nil if not POST or error reading data
+// returns nil if not a POST request or error reading data
 func readRawPostData(r *http.Request) []byte {
 	if r.Method != "POST" {
 		return nil
@@ -130,35 +130,41 @@ func readRawPostData(r *http.Request) []byte {
 	return d
 }
 
+func prependVerIP(d []byte, ip, ver string) []byte {
+	s := fmt.Sprintf("ip: %s\nver: %s\n", ip, ver)
+	return append([]byte(s), d...)
+}
+
 // url: /api/winupdatecheck?ver=${ver}
 func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	// TODO: pre-pend ip address and ver
 	LogInfof("handleWinUpdateCheck\n")
 
 	d := readRawPostData(r)
+	ver := r.FormValue("ver")
+	ip := getIPFromRequest(r)
+
 	s := fmt.Sprintf(`ver: %s
 url: %s`, latestWinVersion, latestWinDownloadURL)
 	servePlainText(w, r, 200, s)
 
-	if len(d) > 0 {
-		go recordUsage(d)
-	}
+	d = prependVerIP(d, ip, ver)
+	recordUsage(d)
 }
 
 // url: /api/macupdatecheck?ver=${ver}
 func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	// TODO: pre-pend ip address and ver
 	LogInfof("handleMacUpdateCheck\n")
 
 	d := readRawPostData(r)
+	ver := r.FormValue("ver")
+	ip := getIPFromRequest(r)
 
 	s := fmt.Sprintf(`ver: %s
 url: %s`, latestMacVersion, latestMacDownloadURL)
 	servePlainText(w, r, 200, s)
 
-	if len(d) > 0 {
-		go recordUsage(d)
-	}
+	d = prependVerIP(d, ip, ver)
+	recordUsage(d)
 }
 
 // heuristic to determine if request is coming from Windows

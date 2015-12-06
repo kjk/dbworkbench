@@ -1,0 +1,3 @@
+[submodule "win/DatabaseWorkbench/ext/yepi"]
+	path = win/DatabaseWorkbench/ext/yepi
+	url = git@github.com:kjk/yepi-csharp.git

@@ -98,7 +98,7 @@ func setup() {
 }
 
 func setupClient() {
-	testClient, _ = NewClientFromUrl(dbURL())
+	testClient, _ = NewClientPgFromURL(dbURL())
 }
 
 func teardownClient() {
@@ -120,7 +120,7 @@ func teardown() {
 
 func testNewClientFromURL(t *testing.T) {
 	url := dbURL()
-	client, err := NewClientFromUrl(url)
+	client, err := NewClientPgFromURL(url)
 
 	if err != nil {
 		defer client.db.Close()
