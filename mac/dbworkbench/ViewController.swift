@@ -13,11 +13,11 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var webView: WebView!
 
-    let urlpath = "http://localhost:5444/"
+    let urlpath = "http://localhost:5444"
     var once = false
     
     override func awakeFromNib() {
-        NSLog("viewDidLoad")
+        NSLog("awakeFromNib")
         
         if !once {
             redirectLogToDocuments()
@@ -30,7 +30,7 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         NSLog("viewDidLoad")
         
-        SingletonObject.viewController = self
+        viewController = self
     }
     
     override func viewWillAppear() {
@@ -42,8 +42,7 @@ class ViewController: NSViewController {
     
     override func viewWillDisappear() {
         NSLog("viewWillDisappear")
-        
-        ServerController.closeServer()
+        closeServer()
     }
     
     func loadURL() {

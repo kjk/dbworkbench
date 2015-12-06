@@ -12,8 +12,8 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        NSLog("App Opened")
-        ServerController.runServer()
+        NSLog("applicationDidFinishLaunching")
+        runServer()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
