@@ -152,11 +152,10 @@ namespace DatabaseWorkbench
             s += "program_ver: " + AppVer() + "\n";
             s += "os: " + "windows" + "\n"; // TODO: the exact os version
 
-            var serials = Util.GetHardDriveSerials();
-            int i = 0;
-            foreach (var serial in serials)
+            var cardId = Util.GetNetworkCardId();
+            if (cardId != "")
             {
-                s += $"hd{i}: {serial}\n";
+                s += $"networkCardId: {cardId}\n";
             }
             // TODO: some unique id of the machine
             s += "---------------\n"; // separator
