@@ -16,13 +16,19 @@ var (
 	httpAddr = ":5555"
 
 	// for auto-update
-	latestMacVersion     = "0.1"
-	latestMacDownloadURL = ""
-	latestWinVersion     = "0.2"
-	latestWinDownloadURL = "https://kjkpub.s3.amazonaws.com/software/databaseworkbench/rel/DatabaseWorkbench-setup-0.1.exe"
+	latestMacVersion = "0.1.1"
+	latestWinVersion = "0.1.1"
 
 	dataDir string
 )
+
+func latestMacDownloadURL() string {
+	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/databaseworkbench/rel/DatabaseWorkbench-%s.zip", latestMacVersion)
+}
+
+func latestWinDownloadURL() string {
+	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/databaseworkbench/rel/DatabaseWorkbench-setup-%s.exe", latestWinVersion)
+}
 
 // LogInfof logs additional info
 func LogInfof(format string, args ...interface{}) {
@@ -144,7 +150,7 @@ func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
 	ip := getIPFromRequest(r)
 
 	s := fmt.Sprintf(`ver: %s
-url: %s`, latestWinVersion, latestWinDownloadURL)
+url: %s`, latestWinVersion, latestWinDownloadURL())
 	servePlainText(w, r, 200, s)
 
 	d = prependVerIP(d, ip, ver)
@@ -160,7 +166,7 @@ func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
 	ip := getIPFromRequest(r)
 
 	s := fmt.Sprintf(`ver: %s
-url: %s`, latestMacVersion, latestMacDownloadURL)
+url: %s`, latestMacVersion, latestMacDownloadURL())
 	servePlainText(w, r, 200, s)
 
 	d = prependVerIP(d, ip, ver)

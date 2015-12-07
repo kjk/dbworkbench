@@ -47,7 +47,7 @@ func runServer(view : ViewController) {
     let resPath = NSBundle.mainBundle().resourcePath
     let serverGoExePath = resPath! + "/dbworkbench.exe"
     
-    killBackendIfRunning(serverGoExePath)
+    //killBackendIfRunning(serverGoExePath)
 
     serverTask.launchPath = serverGoExePath
     serverTask.currentDirectoryPath = resPath!
