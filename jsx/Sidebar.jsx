@@ -105,6 +105,10 @@ var Sidebar = React.createClass({
         width: this.props.dragBarPosition + 'px',
     }
 
+    // <span className="refresh" id="refresh_tables"
+    //                 title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
+    //           </span>
+
     return (
       <div id="sidebar" style={divStyle}>
         <div className="tables-list">
@@ -112,9 +116,7 @@ var Sidebar = React.createClass({
             <div className="title">
               <i className="fa fa-database"></i>
               <span className="current-database" id="current">{this.props.databaseName}</span>
-              <span className="refresh" id="refresh_tables"
-                    title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
-              </span>
+              <span className="dropdown"><i className="fa fa-angle-down fa-lg pull-right"></i></span>
             </div>
             <ul id="tables">
               {tables}

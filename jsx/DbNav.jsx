@@ -19,12 +19,17 @@ var DbNav = React.createClass({
   render: function() {
     //console.log("DbNav.render: view: ", this.props.view);
     var currentView = this.props.view;
-    var children = view.AllViews.map(function(viewName) {
+    var children = view.MainTabViews.map(function(viewName) {
       var handler = function() {
         action.viewSelected(viewName);
       };
-      var cls = (currentView == viewName) ? "selected" : "";
-      return <li key={viewName} onClick={handler} className={cls}>{viewName}</li>;
+
+      var selected = (currentView == viewName)
+      if (selected) {
+        return <li key={viewName} onClick={handler} className="selected"><u>{viewName}</u></li>;
+      } else {
+        return <li key={viewName} onClick={handler}>{viewName}</li>;
+      }
     });
 
     return (
