@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func s3ExeSetupPath() string {
+func s3SetupPathWin() string {
 	return s3Dir + fmt.Sprintf("rel/DatabaseWorkbench-setup-%s.exe", programVersion)
 }
 
@@ -85,7 +85,7 @@ func copyDbWorkbench() {
 
 func buildWin() {
 	if flgUpload {
-		s3VerifyNotExists(s3ExeSetupPath())
+		s3VerifyNotExists(s3SetupPathWin())
 	}
 	copyDbWorkbench()
 	cdToWinDir()
@@ -112,10 +112,14 @@ func buildSetupWin() {
 
 func uploadToS3Win() {
 	if !flgUpload {
+		fmt.Printf("skipping s3 upload because -upload not given\n")
 		return
 	}
-	s3UploadFile(s3ExeSetupPath(), exeSetupPath(), true)
-	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3ExeSetupPath()
+
+	verifyNotInS3Must(s3SetupPathWin())
+
+	s3UploadFile(s3SetupPathWin(), exeSetupPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathWin()
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
 var LatestUrlWin = "%s";

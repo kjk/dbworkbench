@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/kjk/u"
 )
@@ -80,7 +81,10 @@ func readSecretsMust(path string) *Secrets {
 	return cachedSecrets
 }
 
-func verifyHasSecretsMust() {
+func verifyHasCertWinMust() {
+	if !isWin() {
+		return
+	}
 	certPath = pj("scripts", "cert.pfx")
 	if !fileExists(certPath) {
 		certPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "cert.pfx")
@@ -90,7 +94,10 @@ func verifyHasSecretsMust() {
 	fataliferr(err)
 	certPath = absPath
 	fmt.Printf("signing certificate: '%s'\n", certPath)
+}
 
+func verifyHasSecretsMust() {
+	verifyHasCertWinMust()
 	secretsPath := pj("scripts", "secrets.json")
 	if !fileExists(secretsPath) {
 		secretsPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "secrets.json")
@@ -169,13 +176,41 @@ func extractVersionMust() {
 	fmt.Printf("programVersion: %s\n", programVersion)
 }
 
+func s3SetupPathMac() string {
+	return s3Dir + fmt.Sprintf("rel/DatabaseWorkbench-%s.zip", programVersion)
+}
+
+func macZipPath() string {
+	return pj("mac", "build", "Release", "DatabaseWorkbench.zip")
+}
+
+func uploadToS3Mac() {
+	if !flgUpload {
+		fmt.Printf("skipping s3 upload because -upload not given\n")
+		return
+	}
+
+	verifyNotInS3Must(s3SetupPathMac())
+
+	s3UploadFile(s3SetupPathMac(), macZipPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathMac()
+	buildOn := time.Now().Format("2006-01-02")
+	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
+var LatestUrlWin = "%s";
+var BuiltOnWin = "%s";
+`, programVersion, s3Url, buildOn)
+	s3UploadString(s3Dir+"latestvermac.js", jsTxt, true)
+}
+
 func buildMac() {
+	verifyHasSecretsMust()
+
 	dirToZip := filepath.Join("mac", "build", "Release", "Database Workbench.app")
-	zipPath := filepath.Join("mac", "build", "Release", "dbworkbenchmacapp.zip")
+	zipPath := filepath.Join("mac", "build", "Release", "DatabaseWorkbench.zip")
 	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)
 
-	// Maybe TODO: Upload to S3
+	uploadToS3Mac()
 }
 
 func main() {
@@ -196,9 +231,9 @@ func main() {
 	extractVersionMust()
 	if isWin() {
 		buildWinAll()
-	}
-
-	if isMac() {
+	} else if isMac() {
 		buildMac()
+	} else {
+		log.Fatalf("unsupported runtime.GOOS: '%s'\n", runtime.GOOS)
 	}
 }

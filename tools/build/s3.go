@@ -151,3 +151,10 @@ func s3Exists(s3Path string) bool {
 	}
 	return exists
 }
+
+func verifyNotInS3Must(s3Path string) {
+	bucket := s3GetBucket()
+	exists, err := bucket.Exists(s3Path)
+	fataliferr(err)
+	fatalif(exists, "'%s' already exists in s3", s3Path)
+}
