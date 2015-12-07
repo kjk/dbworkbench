@@ -44,7 +44,10 @@ namespace DatabaseWorkbench
             // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
             // but before Console.WriteLine().
             _cleanFinish = true;
-            Console.WriteLine($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+            if (_backendProcess != null)
+            {
+                Console.WriteLine($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+            }
             // TODO: if we have multiple forms, only when last form is being closed
             if (_backendProcess != null && !_backendProcess.HasExited)
             {
@@ -55,7 +58,7 @@ namespace DatabaseWorkbench
 
         // Find directory where dbworkbench.exe is
         // Returns "" if not found
-        private string FindGoBackendDirectory()
+        private string FindBackendDirectory()
         {
             var path = Application.ExecutablePath;
             var dir = Path.GetDirectoryName(path);
@@ -76,9 +79,9 @@ namespace DatabaseWorkbench
             return "";
         }
 
-        private bool StartGoBackend()
+        private bool StartBackendServer()
         {
-            var dir = FindGoBackendDirectory();
+            var dir = FindBackendDirectory();
             if (dir == "")
             {
                 // TODO: log
@@ -119,6 +122,51 @@ namespace DatabaseWorkbench
             return Utils.CleanAppVer(fvi.ProductVersion);
         }
 
+        // must happen before StartBackendServer()
+        string _backendUsage = "";
+        public void LoadUsage()
+        {
+            // can happen because UsageFilePath() might not exist on first run
+            // TODO: make it File.TryReadAllText()
+            try
+            {
+                _backendUsage = File.ReadAllText(Util.UsageFilePath());
+            }
+            catch (Exception e)
+            {
+                Log.Le(e);
+            }
+            Utils.TryFileDelete(Util.UsageFilePath());
+        }
+
+        /* the data we POST as part of auto-update check is in format:
+        ver: ${ver}
+        os: 6.1
+        other: ${other_val}
+        -----------
+        ${usage data from backend}
+        */
+        private string BuildAutoUpdatePostData()
+        {
+            var s = "";
+            s += "program_ver: " + AppVer() + "\n";
+            s += "os: " + "windows" + "\n"; // TODO: the exact os version
+
+            var serials = Util.GetHardDriveSerials();
+            int i = 0;
+            foreach (var serial in serials)
+            {
+                s += $"hd{i}: {serial}\n";
+            }
+            // TODO: some unique id of the machine
+            s += "---------------\n"; // separator
+            if (_backendUsage != "")
+            {
+                s += _backendUsage + "\n";
+            }
+            return s;
+        }
+
         private async Task AutoUpdateCheck()
         {
             // we might have downloaded installer previously, in which case
@@ -132,6 +180,10 @@ namespace DatabaseWorkbench
             }
 
             var myVer = AppVer();
+            // TODO: make it a POST request
+            var postData = BuildAutoUpdatePostData();
+            Log.L(postData);
+
             var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
             var result = await Http.UrlDownloadAsStringAsync(uri);
             if (result == null)
@@ -198,7 +250,8 @@ namespace DatabaseWorkbench
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-            if (!StartGoBackend())
+            LoadUsage();
+            if (!StartBackendServer())
             {
                 // TODO: better way to show error message
                 MessageBox.Show("Backend didn't start. Quitting.");
