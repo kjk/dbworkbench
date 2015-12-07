@@ -4,19 +4,19 @@
 var Content = "Content";
 var Structure = "Structure";
 var Indexes = "Indexes";
-var SQLQuery = "SQL Query";
+var SQLQuery = "Query";
 var History = "History";
 var Activity = "Activity";
 var Connection = "Connection";
 
-var AllViews = [
+var MainTabViews = [
   SQLQuery,
   Content,
   Structure,
   Indexes,
   History,
-  Activity,
-  Connection
+  // Activity,
+  // Connection
 ];
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
   Structure: Structure,
   Indexes: Indexes,
   History: History,
-  Activity: Activity,
-  Connection: Connection,
-  AllViews: AllViews
+  // Activity: Activity,
+  // Connection: Connection,
+  MainTabViews: MainTabViews
 };
