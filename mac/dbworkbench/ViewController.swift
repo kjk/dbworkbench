@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  dbworkbench
-//
-//  Created by Furkan Yilmaz on 26/11/15.
-//  Copyright © 2015 Furkan Yilmaz. All rights reserved.
-//
-
 import Cocoa
 import WebKit
 
@@ -14,23 +6,22 @@ class ViewController: NSViewController {
     @IBOutlet weak var webView: WebView!
 
     let urlpath = "http://localhost:5444"
-    var once = false
+    var awakeFromNibHappened = false
     
     override func awakeFromNib() {
         NSLog("awakeFromNib")
-        
-        if !once {
+
+        // can happen more than once
+        if !awakeFromNibHappened {
+            runServer(self)
             redirectLogToDocuments()
-            once = true
+            awakeFromNibHappened = true
         }
-        
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         NSLog("viewDidLoad")
-        
-        viewController = self
     }
     
     override func viewWillAppear() {
