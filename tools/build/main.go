@@ -136,22 +136,17 @@ func extractVersionWinMust() {
 	fmt.Printf("programVersionWin: %s\n", programVersionWin)
 }
 
-func extractVersionMacMust() {
-	path := filepath.Join("mac", "dbworkbench", "Info.plist")
-	lines, err := u.ReadLinesFromFile(path)
-	fataliferr(err)
-	// extract from:
-	// 	<key>CFBundleShortVersionString</key>
-	//  <string>0.1</string>
+func plistGetStrVal(lines []string, keyName string) string {
 	idx := -1
+	key := fmt.Sprintf("<key>%s</key>", strings.ToLower(keyName))
 	for i, l := range lines {
 		l = strings.ToLower(strings.TrimSpace(l))
-		if strings.Contains(l, "<key>cfbundleshortversionstring</key>") {
+		if strings.Contains(l, key) {
 			idx = i
 			break
 		}
 	}
-	fatalif(idx == -1, "didn't find <key>CFBundleShortVersionString</key>")
+	fatalif(idx == -1, "didn't find <key>%s</key>", keyName)
 	s := strings.TrimSpace(lines[idx+1])
 	if strings.HasPrefix(s, "<string>") {
 		s = s[len("<string>"):]
@@ -163,8 +158,22 @@ func extractVersionMacMust() {
 	} else {
 		fatalf("invalid s: '%s'\n", s)
 	}
-	verifyCorrectVersionMust(s)
-	programVersionMac = s
+	return s
+}
+
+func extractVersionMacMust() {
+	path := filepath.Join("mac", "dbworkbench", "Info.plist")
+	lines, err := u.ReadLinesFromFile(path)
+	fataliferr(err)
+	// extract from:
+	// 	<key>CFBundleShortVersionString</key>
+	//  <string>0.1</string>
+	shortVer := plistGetStrVal(lines, "CFBundleShortVersionString")
+	ver := plistGetStrVal(lines, "CFBundleVersion")
+	verifyCorrectVersionMust(shortVer)
+	verifyCorrectVersionMust(ver)
+	fatalif(shortVer != ver, "shortVer (%s) != ver (%s)\n", shortVer, ver)
+	programVersionMac = shortVer
 	fmt.Printf("programVersionMac: %s\n", programVersionMac)
 }
 
