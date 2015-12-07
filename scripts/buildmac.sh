@@ -1,9 +1,10 @@
 #!/bin/bash
 
+# add -upload flag to also upload to s3
+
 set -o nounset
 set -o errexit
 set -o pipefail
-
 
 rm -rf mac/build
 
@@ -24,4 +25,4 @@ codesign --force --deep --verbose -s "Developer ID Application: Krzysztof Kowalc
 
 codesign --verify --verbose "mac/build/Release/Database Workbench.app"
 
-go run tools/build/*.go
+go run tools/build/*.go $@
