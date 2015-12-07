@@ -51,6 +51,9 @@ class ViewController: NSViewController {
 //        let homeDirectory = NSHomeDirectory() as NSString
         let dataPath = NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "Database Workbench", "log"])
 
+        let dateFmt = NSDateFormatter()
+        dateFmt.dateFormat = "'log-'yy-MM-dd'-mac.txt"
+        let logPathName = dateFmt.stringFromDate(NSDate())
         if (!NSFileManager.defaultManager().fileExistsAtPath(dataPath)) {
             do {
                 try NSFileManager.defaultManager().createDirectoryAtPath(dataPath, withIntermediateDirectories: true, attributes: nil)
@@ -61,7 +64,7 @@ class ViewController: NSViewController {
         }
         
         let logDirectory: NSString = dataPath
-        let logpath = logDirectory.stringByAppendingPathComponent("maclog.txt")
+        let logpath = logDirectory.stringByAppendingPathComponent(logPathName)
         freopen(logpath.cStringUsingEncoding(NSASCIIStringEncoding)!, "a+", stderr)
     }
 
