@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Management;
 
@@ -33,7 +35,7 @@ namespace DatabaseWorkbench
         }
 
 #if false
-        // TODO: move to yepi-utils
+-        // TODO: move to yepi-utils
         // TODO: this doesn't seem to work without root priviledges
         // based on http://stackoverflow.com/questions/4084402/get-hard-disk-serial-number
         public static string[] GetHardDriveSerials()
@@ -73,7 +75,32 @@ namespace DatabaseWorkbench
         }
 #endif
 
-        // heuristic to pic 
+        // based on http://stackoverflow.com/questions/951856/is-there-an-easy-way-to-check-the-net-framework-version
+        public static string[] GetInstalledNetVersions()
+        {
+            var res = new List<string>();
+            // .net before 4.5
+            RegistryKey versions = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP");
+            string[] names = versions.GetSubKeyNames();
+            foreach (var name in names)
+            {
+                // filter things like "CDF"
+                if (name.StartsWith("v"))
+                {
+                    res.Add(name);
+                }
+            }
+
+            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
+            {
+                var ver = ndpKey.GetValue("Version");
+                var release = ndpKey.GetValue("Release");
+                var name = $"{ver} ({release})";
+                res.Add(name);
+            }
+            return res.ToArray();
+        }
+
         internal struct NetworkCardInfo
         {
             public int typ;
@@ -186,7 +213,8 @@ namespace DatabaseWorkbench
                 if (name != null)
                 {
                     card2.name = name.ToString();
-                } else if (caption != null)
+                }
+                else if (caption != null)
                 {
                     card2.name = caption.ToString();
                 }
@@ -207,6 +235,7 @@ namespace DatabaseWorkbench
             public string OsVersion;
             public string MachineName;
             public string NetworkCardId;
+            public string InstalledNetVersions;
         }
 
         // consider returning more info from:
@@ -216,12 +245,79 @@ namespace DatabaseWorkbench
         // Win32_MotherboardDevice https://msdn.microsoft.com/en-us/library/aa394204(v=vs.85).aspx
         public static ComputerInfo GetComputerInfo()
         {
+            GetVersionFromRegistry();
             ComputerInfo i;
             i.NetworkCardId = GetNetworkCardId();
             i.UserName = Environment.UserName;
             i.OsVersion = Environment.OSVersion.Version.ToString();
             i.MachineName = Environment.MachineName;
+            var vers = GetInstalledNetVersions();
+            i.InstalledNetVersions = string.Join(";", vers);
             return i;
         }
+
+        public static void GetVersionFromRegistry()
+        {
+            // Opens the registry key for the .NET Framework entry. 
+            using (RegistryKey ndpKey =
+                RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+            {
+                // As an alternative, if you know the computers you will query are running .NET Framework 4.5  
+                // or later, you can use: 
+                // using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,  
+                // RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+                foreach (string versionKeyName in ndpKey.GetSubKeyNames())
+                {
+                    if (versionKeyName.StartsWith("v"))
+                    {
+
+                        RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
+                        string name = (string)versionKey.GetValue("Version", "");
+                        string sp = versionKey.GetValue("SP", "").ToString();
+                        string install = versionKey.GetValue("Install", "").ToString();
+                        if (install == "") //no install info, must be later.
+                            Console.WriteLine(versionKeyName + "  " + name);
+                        else
+                        {
+                            if (sp != "" && install == "1")
+                            {
+                                Console.WriteLine(versionKeyName + "  " + name + "  SP" + sp);
+                            }
+
+                        }
+                        if (name != "")
+                        {
+                            continue;
+                        }
+                        foreach (string subKeyName in versionKey.GetSubKeyNames())
+                        {
+                            RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
+                            name = (string)subKey.GetValue("Version", "");
+                            if (name != "")
+                                sp = subKey.GetValue("SP", "").ToString();
+                            install = subKey.GetValue("Install", "").ToString();
+                            if (install == "") //no install info, must be later.
+                                Console.WriteLine(versionKeyName + "  " + name);
+                            else
+                            {
+                                if (sp != "" && install == "1")
+                                {
+                                    Console.WriteLine("  " + subKeyName + "  " + name + "  SP" + sp);
+                                }
+                                else if (install == "1")
+                                {
+                                    Console.WriteLine("  " + subKeyName + "  " + name);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+
     }
 }
