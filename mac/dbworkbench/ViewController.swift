@@ -9,6 +9,8 @@ class ViewController: NSViewController {
     var awakeFromNibHappened = false
     
     override func awakeFromNib() {
+        super.awakeFromNib()
+
         NSLog("awakeFromNib")
 
         // can happen more than once
