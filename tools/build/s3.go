@@ -142,19 +142,24 @@ func s3Delete(path string) error {
 	return bucket.Del(path)
 }
 
-func s3Exists(s3Path string) bool {
+func s3Exists(s3Path string) (bool, error) {
 	bucket := s3GetBucket()
 	exists, err := bucket.Exists(s3Path)
 	if err != nil {
 		fmt.Printf("bucket.Exists('%s') failed with %s\n", s3Path, err)
-		return false
+		return false, err
 	}
-	return exists
+	return exists, nil
 }
 
-func verifyNotInS3Must(s3Path string) {
-	bucket := s3GetBucket()
-	exists, err := bucket.Exists(s3Path)
+func s3VerifyExistsMust(s3Path string) {
+	exists, err := s3Exists(s3Path)
 	fataliferr(err)
-	fatalif(exists, "'%s' already exists in s3", s3Path)
+	fatalif(!exists, "'%s' doesn't exist in s3\n", s3Path)
+}
+
+func s3VerifyNotExistsMust(s3Path string) {
+	exists, err := s3Exists(s3Path)
+	fataliferr(err)
+	fatalif(exists, "'%s' already exist in s3\n", s3Path)
 }

@@ -190,7 +190,7 @@ func uploadToS3Mac() {
 		return
 	}
 
-	verifyNotInS3Must(s3SetupPathMac())
+	s3VerifyNotExistsMust(s3SetupPathMac())
 
 	s3UploadFile(s3SetupPathMac(), macZipPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathMac()

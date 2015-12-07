@@ -25,14 +25,6 @@ func exePath() string {
 	return pj("bin", "Release", "DatabaseWorkbench.exe")
 }
 
-func s3VerifyExists(s3Path string) {
-	fatalif(!s3Exists(s3Path), "'%s' doesn't exist in s3\n", s3Path)
-}
-
-func s3VerifyNotExists(s3Path string) {
-	fatalif(s3Exists(s3Path), "'%s' already exist in s3\n", s3Path)
-}
-
 func signMust(path string) {
 	// signtool is finicky so we copy cert.pfx to the directory where the file is
 	fileDir := filepath.Dir(path)
@@ -85,7 +77,7 @@ func copyDbWorkbench() {
 
 func buildWin() {
 	if flgUpload {
-		s3VerifyNotExists(s3SetupPathWin())
+		s3VerifyNotExistsMust(s3SetupPathWin())
 	}
 	copyDbWorkbench()
 	cdToWinDir()
@@ -116,7 +108,7 @@ func uploadToS3Win() {
 		return
 	}
 
-	verifyNotInS3Must(s3SetupPathWin())
+	s3VerifyNotExistsMust(s3SetupPathWin())
 
 	s3UploadFile(s3SetupPathWin(), exeSetupPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathWin()
