@@ -195,9 +195,9 @@ func uploadToS3Mac() {
 	s3UploadFile(s3SetupPathMac(), macZipPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathMac()
 	buildOn := time.Now().Format("2006-01-02")
-	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
-var LatestUrlWin = "%s";
-var BuiltOnWin = "%s";
+	jsTxt := fmt.Sprintf(`var LatestVerMac = "%s";
+var LatestUrlMac = "%s";
+var BuiltOnMac = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestvermac.js", jsTxt, true)
 }
