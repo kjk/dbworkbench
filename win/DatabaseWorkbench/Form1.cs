@@ -148,16 +148,18 @@ namespace DatabaseWorkbench
         */
         private string BuildAutoUpdatePostData()
         {
-            var s = "";
-            s += "program_ver: " + AppVer() + "\n";
-            s += "os: " + "windows" + "\n"; // TODO: the exact os version
+            var computerInfo = Util.GetComputerInfo();
 
-            var cardId = Util.GetNetworkCardId();
-            if (cardId != "")
+            var s = "";
+            s += $"ver: {AppVer()}\n";
+            s += "ostype: windows\n";
+            s += $"user: {computerInfo.UserName}\n";
+            s += $"osver: {computerInfo.OsVersion}\n";
+            if (computerInfo.NetworkCardId != "")
             {
-                s += $"networkCardId: {cardId}\n";
+                s += $"networkCardId: {computerInfo.NetworkCardId}\n";
             }
-            // TODO: some unique id of the machine
+
             s += "---------------\n"; // separator
             if (_backendUsage != "")
             {

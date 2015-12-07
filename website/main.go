@@ -137,7 +137,7 @@ func readRawPostData(r *http.Request) []byte {
 }
 
 func prependVerIP(d []byte, ip, ver string) []byte {
-	s := fmt.Sprintf("ip: %s\nver: %s\n", ip, ver)
+	s := fmt.Sprintf("ip: %s\nver_in_url: %s\n", ip, ver)
 	return append([]byte(s), d...)
 }
 

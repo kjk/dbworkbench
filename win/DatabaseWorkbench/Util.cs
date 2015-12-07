@@ -199,5 +199,29 @@ namespace DatabaseWorkbench
             }
             return card.guid;
         }
+
+        // basic information about OS and user
+        public struct ComputerInfo
+        {
+            public string UserName;
+            public string OsVersion;
+            public string MachineName;
+            public string NetworkCardId;
+        }
+
+        // consider returning more info from:
+        // Win32_OperatingSystem  https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+        // Win32_ComputerSystem  https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
+        // Win32_Processor https://msdn.microsoft.com/en-us/library/aa394373(VS.85).aspx
+        // Win32_MotherboardDevice https://msdn.microsoft.com/en-us/library/aa394204(v=vs.85).aspx
+        public static ComputerInfo GetComputerInfo()
+        {
+            ComputerInfo i;
+            i.NetworkCardId = GetNetworkCardId();
+            i.UserName = Environment.UserName;
+            i.OsVersion = Environment.OSVersion.Version.ToString();
+            i.MachineName = Environment.MachineName;
+            return i;
+        }
     }
 }
