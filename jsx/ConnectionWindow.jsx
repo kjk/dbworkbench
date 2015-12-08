@@ -110,9 +110,7 @@ class ConnectionWindow extends React.Component {
   deleteBookmark(e) {
     e.stopPropagation();
     var self = this;
-    var dbName = event.target.attributes["id"].value;
-    // console.log(dbName)
-    // console.log(event.target.attributes["id"])
+    var dbName = e.target.attributes["name"].value;
     api.removeBookmark(dbName, function(data) {
       console.log("removeBookmarks: ", data);
 
@@ -214,10 +212,9 @@ class ConnectionWindow extends React.Component {
     var bookmarks = [];
     for (var position = 0; position < this.state.bookmarks.length; position++) {
       var bookmark = this.state.bookmarks[position];
-
       var databaseName = bookmark["database"];
 
-      var removeButton = <i id={databaseName} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
+      var removeButton = <i name={databaseName} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       var className = "list-group-item"
       if (position == this.state.activeBookmark) {
@@ -225,8 +222,8 @@ class ConnectionWindow extends React.Component {
       }
 
       bookmarks.push(
-        <a id={position} href="#" className={className} onClick={this.selectBookmark}>
-          <em id={position}>{databaseName}</em>
+        <a id={position} key={position} href="#" className={className} onClick={this.selectBookmark}>
+          {databaseName}
           {removeButton}
         </a>
       );
@@ -234,9 +231,9 @@ class ConnectionWindow extends React.Component {
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item" onClick={this.addBookmark} >
-          Connection List
-          <i id={position} className="fa fa-plus pull-right"></i>
+        <a href="#" className="list-group-item title" onClick={this.addBookmark} >
+          Connections
+          <i className="fa fa-plus pull-right"></i>
         </a>
 
         <hr/>
@@ -382,7 +379,7 @@ class ConnectionWindow extends React.Component {
         <hr/>
 
 
-        <h6>Database crendentials are securely stored locally on your computer</h6>
+        <div className="connection-window-footer"><i className="fa fa-lock"></i>Database crendentials are securely stored locally on your computer</div>
 
       </div>
     );
@@ -403,9 +400,6 @@ class ConnectionWindow extends React.Component {
     return (
       <div id="connection_window">
           <h1>Postgres Database Workbench</h1>
-
-          <hr/>
-
           {this.renderConnectionPage()}
       </div>
     );

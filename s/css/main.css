@@ -614,14 +614,44 @@ html {
   left: 0px;
   bottom: 0px;
   right: 0px;
+  background-image:"linear-gradient(-135deg, #F5F5F5 0%, #F5F5F5 100%)";
 }
 
 #connection_window h1 {
   text-align: center;
-  text-shadow: 0px 1px 0px #fff;
-  margin-bottom: 25px;
-  color: #95A7B7;
-  font-weight: normal;
+  margin-top: 20px;
+  font-family:Lato-Light;
+  font-size:50px;
+  color:#4092F1;
+  line-height:60px;
+}
+
+#connection_window h3 {
+  text-align: center;
+  margin-top: 25px;
+  font-family:Lato-Light;
+  font-size:30px;
+  color:#9a9a9a;
+  line-height:36px;
+}
+
+#connection_window div.connection-window-footer {
+  text-align: center;
+  font-family:Lato-Regular;
+  font-size:18px;
+  color:#587CA7;
+}
+
+#connection_window i.fa.fa-lock {
+  font-size:18px;
+  color:#517FA4;
+  margin-right: 5px;
+}
+
+
+.connection-settings {
+  margin: 0px auto;
+  margin-top: 20px;
 }
 
 #close_connection_window {
@@ -634,12 +664,6 @@ html {
 .bookmarks {
   display: none;
 }
-/*
-.connection-settings {
-  width: 600px;
-  margin: 0px auto;
-  margin-top: 50px;
-}*/
 
 .container.small {
   max-width: 60%;
@@ -662,11 +686,6 @@ html {
   min-width: 100%;
 }
 
-.list-group-item.active {
-  border-radius: 5px;
-  background-color: #758797 !important;
-}
-
 .connection-settings div.container {
   background: #fff;
   padding: 10px;
@@ -679,14 +698,71 @@ html {
   font-size: 12px;
 }
 
+.connection-settings label.control-label {
+  font-family:Lato-Regular;
+  font-size:18px;
+  color:#517FA4;
+  line-height:22px;
+}
+
+.connection-settings input {
+  font-family:Lato-Medium;
+  font-size:16px;
+  color:#4A4A4A;
+  line-height:19px;
+  border:"1px solid #517FA4";
+  border-radius:5px;
+}
+
+.connection-settings button {
+  background:#4092F1;
+  border-radius:5px;
+  width:421px;
+  height:50px;
+  border-width: 0;
+}
+
 .list-special .list-group-item {
   border: 0px;
+  font-family:Lato-Regular;
+  font-size:14px;
+  color:#9a9a9a;
+  line-height:22px;
+}
+
+.list-group-item.active {
+  border-radius: 5px;
+  background-color: #c5e2fc !important;
+  font-size:15px;
+  color: #6EACE3;
+}
+
+.list-special .list-group-item:hover {
+  /*background-color: #c5e2fc;*/
+  font-size:15px;
+  color: #6EACE3;
+}
+
+.list-special .list-group-item.title:select
+.list-special .list-group-item.title:hover
+.list-special .list-group-item.title {
+  font-family:Lato-Regular;
+  font-size:18px;
+  color:#517FA4;
+  line-height:22px;
+}
+
+.connection-settings hr {
+  margin-top: 2px;
+  margin-bottom: 10px;
 }
 
 #small-img {
   width: 220px;
   margin-top: 20px;
 }
+
+
 
 /*******************************************************/
 /* AlertBar */
