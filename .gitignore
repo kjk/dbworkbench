@@ -5,8 +5,6 @@ cover.out
 dbworkbench
 dbworkbench_linux
 dbworkbench.exe
-dbworkbench.dat
-dbworkbench.zip
 ansible/*.zip
 s/js/bundle.js
 s/js/bundle.js.map
@@ -17,7 +15,6 @@ cmd/import_stack_overflow/import_stack_overflow
 mac/dbworkbench.xcodeproj/xcuserdata/
 mac/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
 mac/build/
-mac/dbworkbench.dat
 mac/dbworkbench.exe
 win/DatabaseWorkbench/obj/
 .vs/
@@ -26,3 +23,4 @@ website/website_linux
 website/website
 website/website.exe
 resources.go
+dbworkbench.zip

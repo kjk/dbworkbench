@@ -59,6 +59,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "bin\Release\DatabaseWorkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\DatabaseWorkbench.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\Yepi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dbworkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

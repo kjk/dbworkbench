@@ -20,8 +20,8 @@ namespace DatabaseWorkbench
     {
         WebBrowser _webBrowser;
         Process _backendProcess;
-        string _websiteURL = "http://localhost:5555";
-        //string _websiteURL = "http://databaseworkbench.com";
+        //string _websiteURL = "http://localhost:5555";
+        string _websiteURL = "http://databaseworkbench.com";
         bool _cleanFinish = false;
         string _updateInstallerPath;
 
@@ -115,7 +115,9 @@ namespace DatabaseWorkbench
             MessageBox.Show("backend exited unexpectedly!");
             Close();
         }
+        
 
+        // Note: can't be in utils, must be in this assembly
         public static string AppVer()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -137,6 +139,7 @@ namespace DatabaseWorkbench
             {
                 Log.E(e);
             }
+            // delete so that we don't the same data multiple times
             FileUtil.TryFileDelete(Util.UsageFilePath());
         }
 
@@ -195,18 +198,23 @@ namespace DatabaseWorkbench
                 return;
             }
 
-            Console.WriteLine($"result: {result}");
+            //Console.WriteLine($"result: {result}");
             string ver, dlUrl;
             var ok = Utils.ParseUpdateResponse(result, out ver, out dlUrl);
             if (!ok)
             {
-
+                Log.Line($"AutoUpdateCheck: failed to parse ver '{ver}'");
                 return;
             }
-            // TODO: only trigger auto-update if ver > myVer
-            if (ver == "" || ver == myVer)
+
+            if (ver == myVer)
             {
                 Log.Line($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
+                return;
+            }
+            if (!Utils.ProgramVersionGreater(ver, myVer))
+            {
+                Log.Line($"AutoUpdateCheck: my version{myVer}  is > than version on the server {ver}");
                 return;
             }
             var d = await Http.UrlDownloadAsync(dlUrl);
