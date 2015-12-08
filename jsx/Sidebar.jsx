@@ -2,6 +2,7 @@
 'use strict';
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 var Modal = require('react-modal');
 
 var action = require('./action.js');
@@ -25,12 +26,19 @@ class Dropdown extends React.Component {
     this.setState({modalIsOpen: false});
   }
 
+  handleModalCloseRequest() {
+    // opportunity to validate something and keep the modal open even if it
+    // requested to be closed
+    this.setState({modalIsOpen: false});
+  }
+
   handleConnection() {
     console.log("handleConnection");
   }
 
   handleActivity() {
     console.log("handleActivity");
+    this.setState({modalIsOpen: true});
   }
 
   handleDisconnect() {
@@ -50,7 +58,10 @@ class Dropdown extends React.Component {
       }
     };
 
-    Modal.setAppElement('#deneme');
+
+    var appElement = document.getElementById('deneme');
+    Modal.setAppElement(appElement);
+
 
     return (
         <div id="deneme" className='dropdown-window'>
@@ -59,6 +70,7 @@ class Dropdown extends React.Component {
             <a href="#" className="list-group-item" onClick={this.openModal}>Activity</a>
             <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
           </div>
+
 
           <Modal
             isOpen={this.state.modalIsOpen}
@@ -76,7 +88,6 @@ class Dropdown extends React.Component {
               <button>the modal</button>
             </form>
           </Modal>
-
         </div>
     )
   }
@@ -179,6 +190,7 @@ class Sidebar extends React.Component {
   }
 
   // TODO: remove id="tables"
+  // TODO: add refresh databases
   render() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
