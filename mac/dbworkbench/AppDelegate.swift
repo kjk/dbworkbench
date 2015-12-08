@@ -38,6 +38,42 @@ func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
     return (ver, url)
 }
 
+func versionArrayElToInt(a : [String], pos : Int) -> Int {
+    if pos >= a.count {
+        return 0
+    }
+
+    let s = a[pos]
+    if let n = Int(s) {
+        return n
+    }
+    NSLog("versionArrayElToInt: '\(s)' is not a valid number")
+    return 0
+}
+
+// return true if ver1 > ver2
+// version is in the format "0.1.3", "1.2" etc.
+func programVersionGreater(ver1 : String, ver2 : String) -> Bool {
+    let parts1 = ver1.componentsSeparatedByString(".")
+    let parts2 = ver2.componentsSeparatedByString(".")
+    var n = parts1.count
+    if parts2.count > n {
+        n = parts2.count
+    }
+    for (var i = 0; i < n; i++) {
+        let n1 = versionArrayElToInt(parts1, pos: i)
+        let n2 = versionArrayElToInt(parts2, pos: i)
+        if n1 > n2 {
+            return true
+        }
+        if n1 < n2 {
+            return false
+        }
+        // are equal so check the next element
+    }
+    return false // are equal so not greater
+}
+
 // http://stackoverflow.com/questions/5868567/unique-identifier-of-a-mac
 func getMacSerialNumber() -> String {
     let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
@@ -143,8 +179,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let dataStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
             NSLog("got post response \(dataStr)")
             let urlVer = parseAutoUpdateCheck(dataStr as! String)
-            // TODO: only if urlVer.ver > ver
-            if urlVer.ver != myVer {
+            if programVersionGreater(urlVer.ver!, ver2: myVer) {
                 self.notifyAboutUpdate(urlVer.ver!)
             }
         })
