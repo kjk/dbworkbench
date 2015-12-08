@@ -75,29 +75,62 @@ namespace DatabaseWorkbench
         }
 #endif
 
-        // based on http://stackoverflow.com/questions/951856/is-there-an-easy-way-to-check-the-net-framework-version
+        // https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx#net_c
         public static string[] GetInstalledNetVersions()
         {
             var res = new List<string>();
-            // .net before 4.5
-            RegistryKey versions = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP");
-            string[] names = versions.GetSubKeyNames();
-            foreach (var name in names)
+
+            // As an alternative, if you know the computers you will query are running .NET Framework 4.5  
+            // or later, you can use: 
+            // using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,  
+            // RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+            using (RegistryKey ndpKey =
+                RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
             {
-                // filter things like "CDF"
-                if (name.StartsWith("v"))
+                foreach (string versionKeyName in ndpKey.GetSubKeyNames())
                 {
-                    res.Add(name);
+                    if (!versionKeyName.StartsWith("v"))
+                    {
+                        continue;
+                    }
+
+                    RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
+                    string name = (string)versionKey.GetValue("Version", "");
+                    string install = versionKey.GetValue("Install", "").ToString();
+                    if (install == "1")
+                    {
+                        res.Add(name);
+                        Console.WriteLine($"{name}");
+                        continue;
+                    }
+
+                    if (name != "")
+                    {
+                        continue;
+                    }
+
+                    foreach (string subKeyName in versionKey.GetSubKeyNames())
+                    {
+                        RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
+                        name = (string)subKey.GetValue("Version", "");
+                        install = subKey.GetValue("Install", "").ToString();
+                        var release = subKey.GetValue("Release");
+                        if (install == "1" && name != "")
+                        {
+                            var releaseStr = "";
+                            if (release != null)
+                            {
+                                releaseStr = $" ({release})";
+                            }
+                            var fullName = $"{name}{releaseStr} {subKeyName}";
+                            res.Add(fullName);
+                            Console.WriteLine(fullName);
+                        }
+                    }
                 }
             }
 
-            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
-            {
-                var ver = ndpKey.GetValue("Version");
-                var release = ndpKey.GetValue("Release");
-                var name = $"{ver} ({release})";
-                res.Add(name);
-            }
             return res.ToArray();
         }
 
@@ -250,60 +283,9 @@ namespace DatabaseWorkbench
             i.UserName = Environment.UserName;
             i.OsVersion = Environment.OSVersion.Version.ToString();
             i.MachineName = Environment.MachineName;
-            var vers = GetInstalledNetVersions2();
+            var vers = GetInstalledNetVersions();
             i.InstalledNetVersions = string.Join(";", vers);
             return i;
-        }
-
-        public static string[] GetInstalledNetVersions2()
-        {
-            var res = new List<string>();
-
-            // As an alternative, if you know the computers you will query are running .NET Framework 4.5  
-            // or later, you can use: 
-            // using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,  
-            // RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
-            using (RegistryKey ndpKey =
-                RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
-                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
-            {
-                foreach (string versionKeyName in ndpKey.GetSubKeyNames())
-                {
-                    if (!versionKeyName.StartsWith("v"))
-                    {
-                        continue;
-                    }
-
-                    RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
-                    string name = (string)versionKey.GetValue("Version", "");
-                    string install = versionKey.GetValue("Install", "").ToString();
-                    if (install == "1")
-                    {
-                        res.Add(name);
-                        Console.WriteLine($"{name}");
-                        continue;
-                    }
-
-                    if (name != "")
-                    {
-                        continue;
-                    }
-
-                    foreach (string subKeyName in versionKey.GetSubKeyNames())
-                    {
-                        RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
-                        name = (string)subKey.GetValue("Version", "");
-                        install = subKey.GetValue("Install", "").ToString();
-                        if (install == "1" && name != "")
-                        {
-                            var fullName = $"{name} {subKeyName}";
-                            res.Add(fullName);
-                            Console.WriteLine(fullName);
-                        }
-                    }
-                }
-            }
-            return res.ToArray();
         }
 
     }
