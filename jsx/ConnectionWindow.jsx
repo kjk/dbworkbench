@@ -90,9 +90,6 @@ class ConnectionWindow extends React.Component {
     api.addBookmark(initialBookmark, function(data) {
       console.log("bookmark added: ", data);
 
-      api.removeBookmark(dbName, function(data) {
-      });
-
       self.setState({
         bookmarks: data,
         activeBookmark: self.findBookmarkByDatabaseName(newName),
@@ -172,6 +169,7 @@ class ConnectionWindow extends React.Component {
     var url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db + "?sslmode=" + ssl;
 
     console.log("URL:" + url);
+    var overwrittenBookmark = this.state.activeBookmark[this.state.activeBookmark];
     var self = this;
     this.setState({
       isConnecting: true,
@@ -189,7 +187,13 @@ class ConnectionWindow extends React.Component {
         console.log("did connect");
 
         api.addBookmark(self.state.bookmarks[self.state.activeBookmark], function(data) {
-          console.log("bookmark saved: ", data);
+          if (data !== undefined) {
+            console.log("self.state.overwrittenBookmark", overwrittenBookmark)
+            api.removeBookmark(overwrittenBookmark, function(data) {
+              console.log("bookmark saved2: ", data);
+            });
+          }
+          console.log("bookmark saved1: ", data);
         });
 
         var connId = resp.ConnectionID;
