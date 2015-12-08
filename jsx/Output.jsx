@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+
 var view = require('./view.js');
 
 /*
@@ -15,8 +17,8 @@ function buildTable(results, sortColumn, sortOrder) {
 }
 */
 
-var Output = React.createClass({
-  renderHeader: function(columns, sortColumn, sortOrder) {
+class Output extends React.Component {
+  renderHeader(columns, sortColumn, sortOrder) {
     var i = 0;
     if (!columns) {
       columns = [];
@@ -32,9 +34,9 @@ var Output = React.createClass({
     return (
       <thead><tr>{children}</tr></thead>
     );
-  },
+  }
 
-  renderRow: function(row, key) {
+  renderRow(row, key) {
     var i = 0;
     var children = row.map(function(col) {
       i = i + 1;
@@ -45,9 +47,9 @@ var Output = React.createClass({
     return (
       <tr key={key}>{children}</tr>
     );
-  },
+  }
 
-  renderRows: function(rows) {
+  renderRows(rows) {
     if (!rows) {
       return;
     }
@@ -62,9 +64,9 @@ var Output = React.createClass({
     return (
       <tbody>{children}</tbody>
     );
-  },
+  }
 
-  renderResults: function(results) {
+  renderResults(results) {
     var header = this.renderHeader(results.columns);
     var rows = this.renderRows(results.rows);
     return (
@@ -73,9 +75,9 @@ var Output = React.createClass({
         {rows}
       </table>
     );
-  },
+  }
 
-  renderNoResults: function() {
+  renderNoResults() {
     return (
       <table id="results" className="table empty no-crop">
         <tbody>
@@ -83,9 +85,9 @@ var Output = React.createClass({
         </tbody>
       </table>
     );
-  },
+  }
 
-  renderError: function(errorMsg) {
+  renderError(errorMsg) {
     return (
       <table id="results" className="table empty">
         <tbody>
@@ -93,9 +95,9 @@ var Output = React.createClass({
         </tbody>
       </table>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     var clsOutput, children;
     var results = this.props.results;
     if (!results) {
@@ -127,6 +129,6 @@ var Output = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Output;

@@ -1,9 +1,10 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var SignIn = React.createClass({
+var React = require('react');
 
-  render: function() {
+class SignIn extends React.Component {
+  render() {
     return (
       <div className="overlay-dialog overlay-dialog--signin " tabindex="-1">
         <h3 className="overlay-title">Database Workbench</h3>
@@ -23,6 +24,6 @@ var SignIn = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = SignIn;

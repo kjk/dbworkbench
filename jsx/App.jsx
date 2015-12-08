@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+var ReactDOM = require('react-dom');
 var _ = require('underscore');
 
 var utils = require('./utils.js');
@@ -13,9 +15,22 @@ var Sidebar = require('./Sidebar.jsx');
 var AlertBar = require('./AlertBar.jsx');
 var MainContainer = require('./MainContainer.jsx');
 
-var App = React.createClass({
-  getInitialState: function() {
-    return {
+class App extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.handleAlertBar = this.handleAlertBar.bind(this);
+    this.handleCloseAlertBar = this.handleCloseAlertBar.bind(this);
+    this.handleDidConnect = this.handleDidConnect.bind(this);
+    this.handleDisconnectDatabase = this.handleDisconnectDatabase.bind(this);
+    this.handleExecuteQuery = this.handleExecuteQuery.bind(this);
+    this.handleExplainQuery = this.handleExplainQuery.bind(this);
+    this.handleTableSelected = this.handleTableSelected.bind(this);
+    this.handleViewSelected = this.handleViewSelected.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+
+    this.state = {
       selectedView: view.SQLQuery,
       connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
@@ -32,9 +47,9 @@ var App = React.createClass({
       dragging: false,
       dragBarPosition: 250,
     };
-  },
+  }
 
-  handleDidConnect: function(connectionStr, connectionId, databaseName) {
+  handleDidConnect(connectionStr, connectionId, databaseName) {
     this.setState({
       connected: true,
       connectionId: connectionId,
@@ -47,14 +62,14 @@ var App = React.createClass({
         tables: data,
       });
     });
-  },
+  }
 
-  onDragStart: function(e) {
+  onDragStart(e) {
     console.log("onDragStart");
 
-  },
+  }
 
-  componentDidUpdate: function (props, state) {
+  componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove)
       document.addEventListener('mouseup', this.onMouseUp)
@@ -62,9 +77,9 @@ var App = React.createClass({
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
     }
-  },
+  }
 
-  onMouseDown: function (e) {
+  onMouseDown(e) {
     // only left mouse button
     if (e.button !== 0) return;
     this.setState({
@@ -72,26 +87,26 @@ var App = React.createClass({
     })
     e.stopPropagation()
     e.preventDefault()
-  },
+  }
 
-  onMouseUp: function (e) {
+  onMouseUp(e) {
     this.setState({
       dragging: false,
     })
     e.stopPropagation()
     e.preventDefault()
-  },
+  }
 
-  onMouseMove: function (e) {
+  onMouseMove(e) {
     if (!this.state.dragging) return;
     this.setState({
       dragBarPosition: e.pageX,
     });
     e.stopPropagation()
     e.preventDefault()
-  },
+  }
 
-  handleTableSelected: function(table) {
+  handleTableSelected(table) {
     console.log("handleTableSelected: table: ", table);
     this.setState({
       selectedTable: table,
@@ -110,9 +125,9 @@ var App = React.createClass({
         selectedTableInfo: data,
       });
     });
-  },
+  }
 
-  getTableContent: function() {
+  getTableContent() {
     var sortColumn = null;
     var sortOrder = null;
     var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
@@ -126,9 +141,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getTableStructure: function() {
+  getTableStructure() {
     var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
@@ -138,9 +153,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getTableIndexes: function() {
+  getTableIndexes() {
     var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
@@ -150,9 +165,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getHistory: function() {
+  getHistory() {
     var self = this;
     var connId = this.state.connectionId;
     api.getHistory(connId, function(data) {
@@ -161,9 +176,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getBookmarks: function() {
+  getBookmarks() {
     var self = this;
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
@@ -171,9 +186,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getActivity: function() {
+  getActivity() {
     var self = this;
     var connId = this.state.connectionId;
     api.getActivity(connId, function(data) {
@@ -182,9 +197,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  getConnectionInfo: function() {
+  getConnectionInfo() {
     var self = this;
     var connId = this.state.connectionId;
     api.getConnectionInfo(connId, function(data) {
@@ -192,9 +207,9 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  handleViewSelected: function(viewName) {
+  handleViewSelected(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({
       selectedView: viewName
@@ -241,9 +256,9 @@ var App = React.createClass({
       default:
         console.log("handleViewSelected: unknown view: ", viewName);
     }
-  },
+  }
 
-  handleExecuteQuery: function(query) {
+  handleExecuteQuery(query) {
     console.log("handleExecuteQuery", query);
     var self = this;
     var connId = this.state.connectionId;
@@ -262,9 +277,9 @@ var App = React.createClass({
         });
       }
     });
-  },
+  }
 
-  handleExplainQuery: function(query) {
+  handleExplainQuery(query) {
     console.log("handleExplainQuery", query);
     var self = this;
     var connId = this.state.connectionId;
@@ -274,17 +289,17 @@ var App = React.createClass({
         results: data
       });
     });
-  },
+  }
 
-  adHocTest: function() {
+  adHocTest() {
     var cid1 = action.onViewSelected(this.handleViewSelected);
     var cid2 = action.onViewSelected(this.handleViewSelected);
     action.offViewSelected(cid2);
     action.offViewSelected(cid1);
     action.offViewSelected(18);
-  },
+  }
 
-  handleDisconnectDatabase: function() {
+  handleDisconnectDatabase() {
     var self = this;
     api.disconnect(this.state.connectionId, function(data) {
         console.log("disconnect");
@@ -295,9 +310,9 @@ var App = React.createClass({
         });
 
     });
-  },
+  }
 
-  handleAlertBar: function(message) {
+  handleAlertBar(message) {
     console.log("Create Alert Bar");
 
     this.setState({
@@ -310,13 +325,13 @@ var App = React.createClass({
     // setTimeout(function() {
     //   self.handleCloseAlertBar()
     // }, 5000);
-  },
+  }
 
-  handleCloseAlertBar: function() {
+  handleCloseAlertBar() {
     this.setState({errorVisible: false});
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     //this.adHocTest();
 
     this.cidViewSelected = action.onViewSelected(this.handleViewSelected);
@@ -341,18 +356,18 @@ var App = React.createClass({
         });
       });
     }
-  },
+  }
 
-  componentDidUnmount: function() {
+  componentWillUnmount() {
     action.offViewSelected(this.cidViewSelected);
     action.offTableSelected(this.cidTableSelected);
     action.offExecuteQuery(this.cidExecuteQuery);
     action.offExplainQuery(this.cidExplainQuery);
     action.offDisconnectDatabase(this.cidDisconnectDatabase);
     action.offAlertBar(this.cidDiscidAlertBarconnectDatabase);
-  },
+  }
 
-  render: function() {
+  render() {
     if (!this.state.connected) {
       return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
     }
@@ -366,6 +381,8 @@ var App = React.createClass({
         <div onClick={this.handleCloseAlertBar} >
           { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>
+
+
         <div>
           <Sidebar
             connectionId={this.state.connectionId}
@@ -391,10 +408,10 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 function appStart() {
-  React.render(
+  ReactDOM.render(
     <App/>,
     document.getElementById('main')
   );

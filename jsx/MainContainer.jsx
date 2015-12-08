@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+
 // var action = require('./action.js');
 // var api = require('./api.js');
 var DbNav = require('./DbNav.jsx');
@@ -8,14 +10,14 @@ var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');
 var view = require('./view.js');
 
-var MainContainer = React.createClass({
-  renderInput: function() {
+class MainContainer extends React.Component {
+  renderInput() {
     if (this.props.selectedView === view.SQLQuery) {
       return <Input />;
     }
-  },
+  }
 
-  render: function() {
+  render() {
     // when showing sql query, results are below editor window
     var notFull = (this.props.selectedView === view.SQLQuery);
 
@@ -34,6 +36,6 @@ var MainContainer = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = MainContainer;

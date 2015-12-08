@@ -1,22 +1,13 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+
 var action = require('./action.js');
 var view = require('./view.js');
 
-var EditConnectionButton = React.createClass({
-    handleClick: function(event) {
-        action.disconnectDatabase();
-    },
-    render: function() {
-        return (
-            <a href="#" id="edit_connection" className="btn btn-primary btn-xs" onClick={this.handleClick}>Disconnect</a>
-        )
-    }
-});
-
-var DbNav = React.createClass({
-  render: function() {
+class DbNav extends React.Component {
+  render() {
     //console.log("DbNav.render: view: ", this.props.view);
     var currentView = this.props.view;
     var children = view.MainTabViews.map(function(viewName) {
@@ -37,11 +28,9 @@ var DbNav = React.createClass({
         <ul>
           {children}
         </ul>
-
-        <EditConnectionButton />
       </div>
     );
-  },
-});
+  }
+}
 
 module.exports = DbNav;

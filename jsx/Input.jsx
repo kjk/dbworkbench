@@ -1,11 +1,21 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+
+var ReactDOM = require('react-dom');
+
 var action = require('./action.js');
 
-var Input = React.createClass({
+class Input extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.exportToCSV = this.exportToCSV.bind(this);
+    this.runExplain = this.runExplain.bind(this);
+    this.runQuery = this.runQuery.bind(this);
+  }
 
-  runQuery: function(e) {
+  runQuery(e) {
     if (e) {
       e.preventDefault();
     }
@@ -14,9 +24,9 @@ var Input = React.createClass({
     if (query.length > 0) {
       action.executeQuery(query);
     }
-  },
+  }
 
-  runExplain: function(e) {
+  runExplain(e) {
     if (e) {
       e.preventDefault();
     }
@@ -25,9 +35,9 @@ var Input = React.createClass({
     if (query.length > 0) {
       action.explainQuery(query);
     }
-  },
+  }
 
-  exportToCSV: function(e) {
+  exportToCSV(e) {
     e.preventDefault();
     console.log("downloadCsv");
 
@@ -43,10 +53,10 @@ var Input = React.createClass({
     var url = window.location.protocol + "//" + window.location.host + "/api/query?format=csv&query=" + query;
     var win = window.open(url, '_blank');
     win.focus();
-  },
+  }
 
-  initEditor: function() {
-    var editorNode = React.findDOMNode(this.refs.editor);
+  initEditor() {
+    var editorNode = ReactDOM.findDOMNode(this.refs.editor);
     this.editor = ace.edit(editorNode);
     this.editor.getSession().setMode("ace/mode/pgsql");
     this.editor.getSession().setTabSize(2);
@@ -76,13 +86,13 @@ var Input = React.createClass({
       }
     ]);
     this.editor.focus();
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.initEditor();
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div id="input">
         <div className="wrapper">
@@ -100,6 +110,6 @@ var Input = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Input;
