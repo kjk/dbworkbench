@@ -65,14 +65,14 @@ func redirectNSLogToFile() {
     freopen(logPath.cStringUsingEncoding(NSASCIIStringEncoding)!, "a+", stderr)
 }
 
-var usageData = ""
+var backendUsage = ""
 
 // must be executed before starting backend in order to read usage.json
 func loadUsageData() {
     let path = NSString.pathWithComponents([getDataDir(), "usage.json"])
     do {
         let s = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-        usageData = s as String;
+        backendUsage = s as String;
         // delete so that we don't send duplicate data
         try NSFileManager.defaultManager().removeItemAtPath(path)
     }

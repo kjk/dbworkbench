@@ -38,6 +38,64 @@ func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
     return (ver, url)
 }
 
+// http://stackoverflow.com/questions/5868567/unique-identifier-of-a-mac
+func getMacSerialNumber() -> String {
+    let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
+    let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey, kCFAllocatorDefault, 0);
+    IOObjectRelease(platformExpert);
+    // Take the unretained value of the unmanaged-any-object
+    // (so we're not responsible for releasing it)
+    // and pass it back as a String or, if it fails, an empty string
+    return (serialNumberAsCFString.takeUnretainedValue() as? String) ?? ""
+}
+
+/*
+// if we decide to support 10.9, we'll need this version
+// return os version in the "10.11.1" form
+func getOsVersion2() -> String {
+    if #available(OSX 10.10, *) {
+        let os = NSProcessInfo().operatingSystemVersion
+        return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
+    } else {
+        let ver = rint(NSAppKitVersionNumber)
+        if ver >= Double(NSAppKitVersionNumber10_10_Max) {
+            return "10.10.5+"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_5) {
+            return "10.10.5"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_4) {
+            return "10.10.4"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_3) {
+            return "10.10.3"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_2) {
+            return "10.10.2"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10) {
+            return "10.10"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_9) {
+            return "10.9"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_8) {
+            return "10.8"
+        }
+        return "unknown: \(ver)"
+    }
+}
+*/
+
+func getOsVersion() -> String {
+    let os = NSProcessInfo().operatingSystemVersion
+    return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
+}
+
+func getHostName() -> String {
+    return NSProcessInfo.processInfo().hostName
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -45,15 +103,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
-
-        //Then just cast the object as a String, but be careful, you may want to double check for nil
         let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer);
         //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
         NSLog("url: \(url)")
         let req = NSMutableURLRequest(URL: url!)
         let session = NSURLSession.sharedSession()
         req.HTTPMethod = "POST"
-        let s = "ver: \(myVer)\n"
+        // should roughly match BuildAutoUpdatePostData() in Form1.cs for win
+        var s = "ver: \(myVer)\n"
+        s += "ostype: mac\n"
+        let osVer = getOsVersion()
+        let hostName = getHostName()
+        let userName = NSUserName()
+        let computerId = getMacSerialNumber()
+        s += "osversion: \(osVer)\n"
+        s += "user: \(userName)\n"
+        s += "machine: \(hostName)\n";
+        s += "serial: \(computerId)\n"
+        s += "---------------\n"; // separator
+        if backendUsage != "" {
+            s += backendUsage
+        }
+
         req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
