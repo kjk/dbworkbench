@@ -355,6 +355,11 @@ body {
   color: #fff;
 }
 
+h4.modal-title {
+  margin-top: -10px;
+  text-align: left;
+  margin-left: 10px;
+}
 
 /* Will be used for query dragbar
 #query-dragbar {
@@ -459,7 +464,7 @@ body {
 
 #results.empty td {
   border: 0px none;
-  font-size:17px;
+  font-size:12px;
   color:#4A4A4A;
   line-height:21px;
 }
@@ -634,12 +639,11 @@ body {
 
 #connection_window div.connection-window-footer {
   text-align: center;
-  font-size: 15px;
+  font-size: 13px;
   color: #587CA7;
 }
 
 #connection_window i.fa.fa-lock {
-  font-size:18px;
   color:#517FA4;
   margin-right: 5px;
 }
@@ -678,10 +682,6 @@ body {
   vertical-align: middle; /* center checkbox vertically */
 }
 
-.btn.small {
-  min-width: 100%;
-}
-
 .connection-settings div.container {
   background: #fff;
   padding: 10px;
@@ -695,9 +695,7 @@ body {
 }
 
 .connection-settings label.control-label {
-  font-size:18px;
   color:#517FA4;
-  line-height:22px;
 }
 
 .connection-settings input {
@@ -708,11 +706,13 @@ body {
   border-radius:5px;
 }
 
+.connection-settings button:hover {
+  background:#2082F1;
+}
+
 .connection-settings button {
   background:#4092F1;
   border-radius:5px;
-  width:421px;
-  height:50px;
   border-width: 0;
 }
 
@@ -732,7 +732,6 @@ body {
 
 .list-special .list-group-item:hover {
   /*background-color: #c5e2fc;*/
-  font-size:15px;
   color: #6EACE3;
 }
 
