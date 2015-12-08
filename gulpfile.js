@@ -24,7 +24,9 @@ var reactify    = require('reactify');
 gulp.task('js', function() {
   browserify({
     entries: ['jsx/App.jsx'],
-    transform: [reactify],
+    transform: [
+            ["reactify", {"es6": true}]
+        ],
     debug: true
   })
     .bundle()
