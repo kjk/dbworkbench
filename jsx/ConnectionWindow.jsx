@@ -37,14 +37,6 @@ class ConnectionWindow extends React.Component {
     };
   }
 
-  findBookmarkByDatabaseName(databaseName) {
-    var index = _.findIndex(this.state.bookmarks, function(obj) {
-      return (obj["database"] == databaseName)
-    });
-
-    return index;
-  }
-
   addBookmark(e) {
     var bookmarkLimit = 10;
     if (this.state.bookmarks.length >= bookmarkLimit) {
@@ -88,11 +80,15 @@ class ConnectionWindow extends React.Component {
 
     var self = this;
     api.addBookmark(initialBookmark, function(data) {
-      console.log("bookmark added: ", data);
+      console.log("bookmark added: ", newName, data);
+
+      var index = _.findIndex(data, function(obj) {
+        return (obj["database"] == newName)
+      });
 
       self.setState({
         bookmarks: data,
-        activeBookmark: self.findBookmarkByDatabaseName(newName),
+        activeBookmark: index,
       });
     });
   }
