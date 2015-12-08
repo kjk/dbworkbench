@@ -18,6 +18,7 @@ var react       = require('gulp-react');
 var rename      = require('gulp-rename');
 var streamify   = require('gulp-streamify');
 var source      = require('vinyl-source-stream');
+var buffer      = require('vinyl-buffer')
 var watchify    = require('watchify');
 var reactify    = require('reactify');
 
@@ -32,6 +33,25 @@ gulp.task('js', function() {
     .bundle()
     .pipe(exorcist('s/dist/bundle.js.map'))
     .pipe(source('bundle.js'))
+    .pipe(gulp.dest('s/dist'))
+});
+
+// TODO: doesn't work
+// http://stackoverflow.com/questions/24992980/how-to-uglify-output-with-browserify-in-gulp
+// https://wehavefaces.net/gulp-browserify-the-gulp-y-way-bb359b3f9623#.wbnxdlbi1
+gulp.task('jsmin', function() {
+  browserify({
+    entries: ['jsx/App.jsx'],
+    transform: [
+            ["reactify", {"es6": true}]
+        ],
+    debug: true
+  })
+    .bundle()
+    //.pipe(exorcist('s/dist/bundle.min.js.map'))
+    .pipe(source('bundle.min.js'))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest('s/dist'))
 });
 
