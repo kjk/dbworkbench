@@ -7,8 +7,81 @@ var Modal = require('react-modal');
 var action = require('./action.js');
 var api = require('./api.js');
 
-var TableInformation = React.createClass({
-  renderTableInfo: function(info) {
+class Dropdown extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.closeModal = this.closeModal.bind(this);
+    this.handleConnection = this.handleConnection.bind(this);
+    this.handleDisconnect = this.handleDisconnect.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.state = { modalIsOpen: false };
+  }
+
+  openModal() {
+    this.setState({modalIsOpen: true});
+  }
+
+  closeModal() {
+    this.setState({modalIsOpen: false});
+  }
+
+  handleConnection() {
+    console.log("handleConnection");
+  }
+
+  handleActivity() {
+    console.log("handleActivity");
+  }
+
+  handleDisconnect() {
+    console.log("handleDisconnect");
+    action.disconnectDatabase();
+  }
+
+  render() {
+    const customStyles = {
+      content : {
+        top                   : '50%',
+        left                  : '50%',
+        right                 : 'auto',
+        bottom                : 'auto',
+        marginRight           : '-50%',
+        transform             : 'translate(-50%, -50%)'
+      }
+    };
+
+    Modal.setAppElement('#deneme');
+
+    return (
+        <div id="deneme" className='dropdown-window'>
+          <div className="list-group">
+            <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection</a>
+            <a href="#" className="list-group-item" onClick={this.openModal}>Activity</a>
+            <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
+          </div>
+
+          <Modal
+            isOpen={this.state.modalIsOpen}
+            onRequestClose={this.closeModal}
+            style={customStyles} >
+
+            <h2>Hello</h2>
+            <button onClick={this.closeModal}>close</button>
+            <div>I am a modal</div>
+            <form>
+              <input />
+              <button>tab navigation</button>
+              <button>stays</button>
+              <button>inside</button>
+              <button>the modal</button>
+            </form>
+          </Modal>
+
+        </div>
+    )
+  }
+}
+
 class TableInformation extends React.Component {
   renderTableInfo(info) {
     if (info && !$.isEmptyObject(info)) {

@@ -86,8 +86,8 @@ html {
   border-width: 1px;
   border-color: #cacaca;
   position: fixed;
-  right: 10px;
-  top: 7px;
+  right: 12px;
+  top: 13px;
 }
 
 #edit_connection:hover {
@@ -126,12 +126,11 @@ html {
   margin-right: auto;
   /*text-overflow: ellipsis;*/
   white-space: nowrap;
-  overflow: hidden;
+  /*overflow: hidden;*/
   /* background: #31373d; */
 }
 
 #sidebar div.tables-list {
-  position: relative;
   right: 0;
   top: 0px;
   left: 0px;
@@ -155,22 +154,69 @@ html {
   margin-left: 10px;
 }
 
-#sidebar div.tables-list .title:hover span.dropdown {
-  display: inline-block;
-  opacity: 0.8;
+#sidebar div.tables-list .title div.dropdown-menu {
+  display: block;
+  position: absolute;
+  background-color: #00ff00;
+  padding: 0px;
+  top: 0px;
+  left:0;
+  right:0;
+  margin: 0px;
+  min-width: 0px;
 }
 
-#sidebar div.tables-list .title span.dropdown {
-  float: right;
-  margin-top: 15px;
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-cursor {
+  position: absolute;
+  display: block;
+  margin-top: 17px;
   margin-right: 15px;
   cursor: pointer;
   color: #ffffff;
+  top: 0px;
+  left:0;
+  right:0;
+  left: auto;
+  right: 0px;
+  overflow: visible;
 }
 
-#sidebar div.tables-list .title span.dropdown:hover {
-  opacity: 0.8;
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-cursor:hover + div.dropdown-window {
+  display: block;
+  /*opacity: 0.8;*/
   color: #ffffff;
+}
+
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-window {
+  display: none;
+  position: absolute;
+  background-color: #efefef;
+  top: 30px;
+  right: 15px;
+  height: 140px;
+  bottom: 0px;
+  width: 150px;
+  color: #0000ff;
+  line-height: 25px;
+}
+
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-window:hover {
+  display: block;
+}
+
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-window div.dropdown-element {
+  /*display: none;*/
+  /*position: absolute;*/
+  background-color: #f0ff0f;
+  padding: 10px;
+}
+
+#sidebar div.tables-list .title div.dropdown-menu div.dropdown-window div.blank-line {
+  border: 1px solid;
+  margin-left: 15px;
+  margin-right: 15px;
+  color: #9a9a9a;
+  background-color: #ffffff;
 }
 
 #sidebar div.tables-list #tables {
@@ -614,10 +660,6 @@ html {
 
 .btn.small {
   min-width: 100%;
-}
-
-hr {
-  margin: 5px;
 }
 
 .list-group-item.active {
