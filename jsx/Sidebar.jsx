@@ -76,7 +76,7 @@ class Dropdown extends React.Component {
         overflow              : 'auto',
         top                   : '40%',
         left                  : '50%',
-        'max-width'           : '60%',
+        maxWidth              : '60%',
         transform             : 'translate(-50%, -50%)',
         bottom                : 'none'
       }
