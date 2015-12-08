@@ -50,7 +50,9 @@ class ConnectionWindow extends React.Component {
     };
 
     var bookmarkTitles = [];
-    for (var bookmark of this.state.bookmarks) {
+    var n = this.state.bookmarks.length;
+    for (var i = 0; i < n; i++ ) {
+      var bookmark = this.state.bookmarks[i];
       bookmarkTitles.push(bookmark["database"]);
     }
 
