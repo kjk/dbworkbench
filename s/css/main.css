@@ -411,7 +411,7 @@ h4.modal-title {
   color: #fff;
   border: none;
   box-shadow: none;
-  background: #48AA78;
+  background: #1856b4;
   float: left;
   margin-right: 10px;
 }
@@ -434,11 +434,11 @@ h4.modal-title {
 }
 
 #input .actions .btn:hover {
-  background: #40A070;
+  opacity: 0.8;
 }
 
 #input .actions .btn-default:hover {
-  background: #bbb;
+  opacity: 0.8;
 }
 
 #output {
