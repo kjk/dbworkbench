@@ -89,6 +89,10 @@ class ConnectionWindow extends React.Component {
     var self = this;
     api.addBookmark(initialBookmark, function(data) {
       console.log("bookmark added: ", data);
+
+      api.removeBookmark(dbName, function(data) {
+      });
+
       self.setState({
         bookmarks: data,
         activeBookmark: self.findBookmarkByDatabaseName(newName),
