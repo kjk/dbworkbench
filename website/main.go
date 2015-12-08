@@ -140,8 +140,8 @@ func readRawPostData(r *http.Request) []byte {
 func prependVerIPTime(d []byte, ip, ver string) []byte {
 	now := time.Now()
 	t := now.Unix()
-	d := now.Format("2006-01-02")
-	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\n", t, d, ip, ver)
+	day := now.Format("2006-01-02")
+	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\n", t, day, ip, ver)
 	return append([]byte(s), d...)
 }
 
@@ -187,7 +187,7 @@ func isMacUserAgent(ua string) bool {
 	return strings.Contains(ua, "Macintosh")
 }
 
-func redirectIndex(w http.ResponseWriter, r *http.Request) {
+func redirectIndex2(w http.ResponseWriter, r *http.Request) {
 	ua := r.UserAgent()
 	if isMacUserAgent(ua) {
 		http.Redirect(w, r, "/s/for-mac.html", http.StatusFound /* 302 */)
@@ -196,6 +196,10 @@ func redirectIndex(w http.ResponseWriter, r *http.Request) {
 
 	// for windows and everything else
 	http.Redirect(w, r, "/s/for-windows.html", http.StatusFound /* 302 */)
+}
+
+func redirectIndex(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/s/index.html", http.StatusFound /* 302 */)
 }
 
 // url: /
