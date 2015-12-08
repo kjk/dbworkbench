@@ -386,7 +386,7 @@ class ConnectionWindow extends React.Component {
         <hr/>
 
 
-        <div className="connection-window-footer"><i className="fa fa-lock"></i>Database crendentials are securely stored locally on your computer</div>
+        <div className="connection-window-footer"><i className="fa fa-lock fa1"></i>Database crendentials are securely stored locally on your computer</div>
 
       </div>
     );
