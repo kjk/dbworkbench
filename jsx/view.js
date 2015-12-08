@@ -6,8 +6,6 @@ var Structure = "Structure";
 var Indexes = "Indexes";
 var SQLQuery = "Query";
 var History = "History";
-var Activity = "Activity";
-var Connection = "Connection";
 
 var MainTabViews = [
   SQLQuery,
@@ -15,8 +13,6 @@ var MainTabViews = [
   Structure,
   Indexes,
   History,
-  // Activity,
-  // Connection
 ];
 
 module.exports = {
@@ -25,7 +21,5 @@ module.exports = {
   Structure: Structure,
   Indexes: Indexes,
   History: History,
-  // Activity: Activity,
-  // Connection: Connection,
   MainTabViews: MainTabViews
 };

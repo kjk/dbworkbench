@@ -188,27 +188,6 @@ class App extends React.Component {
     });
   }
 
-  getActivity() {
-    var self = this;
-    var connId = this.state.connectionId;
-    api.getActivity(connId, function(data) {
-      console.log("getActivity: ", data);
-      self.setState({
-        results: data
-      });
-    });
-  }
-
-  getConnectionInfo() {
-    var self = this;
-    var connId = this.state.connectionId;
-    api.getConnectionInfo(connId, function(data) {
-      self.setState({
-        results: data
-      });
-    });
-  }
-
   handleViewSelected(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({
@@ -230,12 +209,6 @@ class App extends React.Component {
       case view.History:
         this.getHistory();
         break;
-      case view.Connection:
-        this.getConnectionInfo();
-        return;
-      case view.Activity:
-        this.getActivity();
-        return;
     }
 
     if (this.state.selectedTable === "") {
@@ -331,7 +304,7 @@ class App extends React.Component {
     this.setState({errorVisible: false});
   }
 
-  componentDidMount() {
+  componentWillMount() {
     //this.adHocTest();
 
     this.cidViewSelected = action.onViewSelected(this.handleViewSelected);

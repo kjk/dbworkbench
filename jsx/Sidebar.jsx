@@ -7,19 +7,21 @@ var Modal = require('react-modal');
 
 var action = require('./action.js');
 var api = require('./api.js');
+var Output = require('./Output.jsx');
 
 class Dropdown extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.closeModal = this.closeModal.bind(this);
     this.handleConnection = this.handleConnection.bind(this);
+    this.handleActivity = this.handleActivity.bind(this);
     this.handleDisconnect = this.handleDisconnect.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.state = { modalIsOpen: false };
-  }
 
-  openModal() {
-    this.setState({modalIsOpen: true});
+    this.state = {
+      modalIsOpen: false,
+      selectedView: "",
+      results: null
+    };
   }
 
   closeModal() {
@@ -34,11 +36,32 @@ class Dropdown extends React.Component {
 
   handleConnection() {
     console.log("handleConnection");
+
+    var self = this;
+    var connId = this.props.connectionId;
+    api.getConnectionInfo(connId, function(data) {
+      self.setState({
+        results: data,
+        modalIsOpen: true,
+        selectedView: "Connection Info"
+      });
+    });
   }
 
   handleActivity() {
     console.log("handleActivity");
-    this.setState({modalIsOpen: true});
+
+    var self = this;
+    var connId = this.props.connectionId;
+    api.getActivity(connId, function(data) {
+      console.log("getActivity: ", data);
+      self.setState({
+        results: data,
+        modalIsOpen: true,
+        selectedView: "Activity"
+      });
+    });
+
   }
 
   handleDisconnect() {
@@ -49,13 +72,22 @@ class Dropdown extends React.Component {
   render() {
     const customStyles = {
       content : {
-        top                   : '50%',
+        display               : 'block',
+        overflow              : 'auto',
+        top                   : '40%',
         left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)'
+        'max-width'           : '60%',
+        transform             : 'translate(-50%, -50%)',
+        bottom                : 'none'
       }
+    };
+
+    const outputStyles = {
+      display     :'table-row',
+      position    :'absolute',
+      padding     :'0',
+      margin      :'0',
+      top         :'60px',
     };
 
 
@@ -67,26 +99,34 @@ class Dropdown extends React.Component {
         <div id="deneme" className='dropdown-window'>
           <div className="list-group">
             <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection</a>
-            <a href="#" className="list-group-item" onClick={this.openModal}>Activity</a>
+            <a href="#" className="list-group-item" onClick={this.handleActivity}>Activity</a>
             <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
           </div>
 
 
           <Modal
+            id='nav'
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
             style={customStyles} >
 
-            <h2>Hello</h2>
-            <button onClick={this.closeModal}>close</button>
-            <div>I am a modal</div>
-            <form>
-              <input />
-              <button>tab navigation</button>
-              <button>stays</button>
-              <button>inside</button>
-              <button>the modal</button>
-            </form>
+            <div >
+              <div className="modal-header">
+                <button type="button" className="close" onClick={this.handleModalCloseRequest}>
+                  <span aria-hidden="true">&times;</span>
+                  <span className="sr-only">Close</span>
+                </button>
+                <h4 className="modal-title">{this.state.selectedView}</h4>
+              </div>
+              <div className="modal-body">
+
+              <Output
+                style={outputStyles}
+                selectedView={this.state.selectedView}
+                results={this.state.results} />
+              </div>
+            </div>
+
           </Modal>
         </div>
     )
@@ -213,7 +253,8 @@ class Sidebar extends React.Component {
                 <div className="dropdown-cursor">
                   <i className="fa fa-angle-down fa-lg pull-right"></i>
                 </div>
-                <Dropdown />
+                <Dropdown
+                  connectionId={this.props.connectionId}  />
               </div>
             </div>
             <ul id="tables">
