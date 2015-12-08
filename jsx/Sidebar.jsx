@@ -70,7 +70,7 @@ class Dropdown extends React.Component {
   }
 
   render() {
-    const customStyles = {
+    var customStyles = {
       content : {
         display               : 'block',
         overflow              : 'auto',
@@ -82,7 +82,7 @@ class Dropdown extends React.Component {
       }
     };
 
-    const outputStyles = {
+    var outputStyles = {
       display     :'table-row',
       position    :'absolute',
       padding     :'0',
