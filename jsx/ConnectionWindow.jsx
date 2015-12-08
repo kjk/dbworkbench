@@ -111,16 +111,15 @@ class ConnectionWindow extends React.Component {
   deleteBookmark(e) {
     e.stopPropagation();
     var self = this;
-    var dbName = e.target.attributes["name"].value;
-    api.removeBookmark(dbName, function(data) {
-      console.log("removeBookmarks: ", data);
 
+    var dbName = e.target.attributes["data-custom-attribute"].value;
+    api.removeBookmark(dbName, function(data) {
+      console.log("deleteBookmarks removing: ", dbName, " data: ", data);
+
+      var bookmarks = [];
+      var activeBookmark = 0;
       if (data !== undefined && data.length > 0) {
-        var activeBookmark = 0;
-        var bookmarks = data;
-      } else {
-        var bookmarks = [];
-        var activeBookmark = -1;
+        bookmarks = data;
       }
 
       self.setState({
@@ -143,6 +142,11 @@ class ConnectionWindow extends React.Component {
     console.log("handleFormChanged: ", e.target.value);
 
     var change = this.state.bookmarks;
+
+    if (change[this.state.activeBookmark]['oldDatabase'] === undefined) {
+      change[this.state.activeBookmark]['oldDatabase'] = change[this.state.activeBookmark]['database'];
+      console.log("here", change)
+    }
     change[this.state.activeBookmark][name] = e.target.value;
 
     this.setState({
@@ -169,7 +173,6 @@ class ConnectionWindow extends React.Component {
     var url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db + "?sslmode=" + ssl;
 
     console.log("URL:" + url);
-    var overwrittenBookmark = this.state.activeBookmark[this.state.activeBookmark];
     var self = this;
     this.setState({
       isConnecting: true,
@@ -186,14 +189,10 @@ class ConnectionWindow extends React.Component {
       } else {
         console.log("did connect");
 
-        api.addBookmark(self.state.bookmarks[self.state.activeBookmark], function(data) {
-          if (data !== undefined) {
-            console.log("self.state.overwrittenBookmark", overwrittenBookmark)
-            api.removeBookmark(overwrittenBookmark, function(data) {
-              console.log("bookmark saved2: ", data);
-            });
-          }
-          console.log("bookmark saved1: ", data);
+        api.removeBookmark(self.state.bookmarks[self.state.activeBookmark]["oldDatabase"], function(data) {
+          api.addBookmark(self.state.bookmarks[self.state.activeBookmark], function(data) {
+            console.log("bookmark saved: ", data);
+          });
         });
 
         var connId = resp.ConnectionID;
@@ -222,7 +221,7 @@ class ConnectionWindow extends React.Component {
       var bookmark = this.state.bookmarks[position];
       var databaseName = bookmark["database"];
 
-      var removeButton = <i name={databaseName} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
+      var removeButton = <i data-custom-attribute={databaseName} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       var className = "list-group-item"
       if (position == this.state.activeBookmark) {
