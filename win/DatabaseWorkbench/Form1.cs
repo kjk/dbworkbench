@@ -207,14 +207,9 @@ namespace DatabaseWorkbench
                 return;
             }
 
-            if (ver == myVer)
-            {
-                Log.Line($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
-                return;
-            }
             if (!Utils.ProgramVersionGreater(ver, myVer))
             {
-                Log.Line($"AutoUpdateCheck: my version{myVer}  is > than version on the server {ver}");
+                Log.Line($"AutoUpdateCheck: not updating because my version{myVer}  is >= than lateset available {ver}");
                 return;
             }
             var d = await Http.UrlDownloadAsync(dlUrl);
