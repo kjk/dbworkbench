@@ -9,6 +9,15 @@ var _ = require('underscore');
 
 var initName = "Unnamed Connection";
 
+// string.startsWith is es6
+// TODO: shouldn't this be taken care by es6 transform?
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
+
 class ConnectionWindow extends React.Component {
   constructor(props, context) {
     super(props, context);
