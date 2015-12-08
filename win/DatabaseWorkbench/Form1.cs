@@ -85,7 +85,7 @@ namespace DatabaseWorkbench
             var dir = FindBackendDirectory();
             if (dir == "")
             {
-                // TODO: log
+                Log.S("StartBackendServer: FindBackendDirectory() failed\n");
                 return false;
             }
             // explanation of StartInfo flags:
@@ -155,11 +155,13 @@ namespace DatabaseWorkbench
             s += $"ver: {AppVer()}\n";
             s += "ostype: windows\n";
             s += $"user: {computerInfo.UserName}\n";
-            s += $"osver: {computerInfo.OsVersion}\n";
+            s += $"os: {computerInfo.OsVersion}\n";
             if (computerInfo.NetworkCardId != "")
             {
                 s += $"networkCardId: {computerInfo.NetworkCardId}\n";
             }
+            s += $"machine: {computerInfo.MachineName}\n";
+            s += $"net: {computerInfo.InstalledNetVersions}\n";
 
             s += "---------------\n"; // separator
             if (_backendUsage != "")
@@ -182,16 +184,14 @@ namespace DatabaseWorkbench
             }
 
             var myVer = AppVer();
-            // TODO: make it a POST request
             var postData = BuildAutoUpdatePostData();
-            Log.L(postData);
+            Log.Line(postData);
 
-            var uri = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
-            var result = await Http.UrlDownloadAsStringAsync(uri);
+            var url = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
+            var result = await Http.PostStringAsync(url, postData);
             if (result == null)
             {
-                // TODO: log to a file
-                Console.WriteLine("AutoUpdateCheck(): result is null");
+                Log.Line("AutoUpdateCheck(): result is null");
                 return;
             }
 
@@ -206,13 +206,13 @@ namespace DatabaseWorkbench
             // TODO: only trigger auto-update if ver > myVer
             if (ver == "" || ver == myVer)
             {
-                Log.L($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
+                Log.Line($"AutoUpdateCheck: latest version {ver} is same as mine {myVer}");
                 return;
             }
             var d = await Http.UrlDownloadAsync(dlUrl);
             if (d == null)
             {
-                Console.WriteLine($"AutoUpdateCheck: failed to download {dlUrl}");
+                Log.Line($"AutoUpdateCheck: failed to download {dlUrl}");
                 return;
             }
             _updateInstallerPath = Util.UpdateInstallerTmpPath();

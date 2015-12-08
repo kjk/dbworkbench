@@ -20,6 +20,7 @@ func openUsageFileMust() {
 	if err != nil {
 		LogFatalf("os.OpenFile('%s') failed with '%s'\n", path, err)
 	}
+	LogInfof("usge file: '%s'\n", path)
 }
 
 func sanitizeUsage(d []byte) []byte {
@@ -32,6 +33,15 @@ func sanitizeUsage(d []byte) []byte {
 		prevSize = len(d)
 		d = bytes.Replace(d, []byte{'\n', '\n'}, []byte{'\n'}, -1)
 	}
+	n := len(d)
+	if n == 0 {
+		return d
+	}
+	last := d[n-1]
+	d = append(d, '\n')
+	if last != '\n' {
+		d = append(d, '\n')
+	}
 	return d
 }
 
@@ -39,6 +49,9 @@ func recordUsage(d []byte) {
 	// since we separate records with empty lines, make sure
 	// that data itself doesn't contain empty lines
 	d = sanitizeUsage(d)
+	if len(d) == 0 {
+		return
+	}
 	usageFileMutex.Lock()
 	defer usageFileMutex.Unlock()
 	_, err := usageFile.Write(d)

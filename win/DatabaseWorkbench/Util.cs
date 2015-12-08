@@ -108,7 +108,7 @@ namespace DatabaseWorkbench
                     if (install == "1")
                     {
                         res.Add(name);
-                        Console.WriteLine($"{name}");
+                        //Console.WriteLine($"{name}");
                         continue;
                     }
 
@@ -132,7 +132,7 @@ namespace DatabaseWorkbench
                             }
                             var fullName = $"{name}{releaseStr} {subKeyName}";
                             res.Add(fullName);
-                            Console.WriteLine(fullName);
+                            //Console.WriteLine(fullName);
                         }
                     }
                 }
