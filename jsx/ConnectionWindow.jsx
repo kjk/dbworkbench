@@ -1,33 +1,42 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+
 var api = require('./api.js');
 var action = require('./action.js');
 var _ = require('underscore');
 
 var initName = "Unnamed Connection";
 
-var ConnectionWindow = React.createClass({
+class ConnectionWindow extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.addBookmark = this.addBookmark.bind(this);
+    this.deleteBookmark = this.deleteBookmark.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleConnect = this.handleConnect.bind(this);
+    this.handleFormChanged = this.handleFormChanged.bind(this);
+    this.selectBookmark = this.selectBookmark.bind(this);
 
-  getInitialState: function() {
-    return {
+    this.state = {
       connectionErrorMessage: "",
       isConnecting: false,
 
       bookmarks: gBookmarkInfo,
       activeBookmark: (gBookmarkInfo.length !== 0) ? 0 : -1,
     };
-  },
+  }
 
-  findBookmarkByDatabaseName: function(databaseName) {
+  findBookmarkByDatabaseName(databaseName) {
     var index = _.findIndex(this.state.bookmarks, function(obj) {
       return (obj["database"] == databaseName)
     });
 
     return index;
-  },
+  }
 
-  addBookmark: function(e) {
+  addBookmark(e) {
     var bookmarkLimit = 10;
     if (this.state.bookmarks.length >= bookmarkLimit) {
       action.alertBar("Max Connection Limit is " + bookmarkLimit); // TODO: this doesn't work check why
@@ -74,9 +83,9 @@ var ConnectionWindow = React.createClass({
         activeBookmark: self.findBookmarkByDatabaseName(newName),
       });
     });
-  },
+  }
 
-  getBookmark: function(e) {
+  getBookmark(e) {
     var self = this;
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
@@ -85,9 +94,9 @@ var ConnectionWindow = React.createClass({
         bookmarks: data,
       });
     });
-  },
+  }
 
-  deleteBookmark: function(e) {
+  deleteBookmark(e) {
     e.stopPropagation();
     var self = this;
     var dbName = event.target.attributes["id"].value;
@@ -109,18 +118,18 @@ var ConnectionWindow = React.createClass({
         activeBookmark: activeBookmark,
       });
     });
-  },
+  }
 
-  selectBookmark: function(e) {
+  selectBookmark(e) {
     console.log("selectBookmark", e.target.attributes["id"].value);
 
     this.setState({
       activeBookmark: e.target.attributes["id"].value,
       connectionErrorMessage: ""
     });
-  },
+  }
 
-  handleFormChanged: function(name, e) {
+  handleFormChanged(name, e) {
     console.log("handleFormChanged: ", e.target.value);
 
     var change = this.state.bookmarks;
@@ -130,9 +139,9 @@ var ConnectionWindow = React.createClass({
       bookmarks: change,
       connectionErrorMessage: "",
     });
-  },
+  }
 
-  handleConnect: function(e) {
+  handleConnect(e) {
     e.preventDefault();
     console.log("handleConnect");
 
@@ -177,20 +186,20 @@ var ConnectionWindow = React.createClass({
 
       }
     });
-  },
+  }
 
-  handleCancel: function(e) {
+  handleCancel(e) {
     e.preventDefault();
     console.log("handleCancel");
-  },
+  }
 
-  renderError: function(errorText) {
+  renderError(errorText) {
     return (
       <div className="alert alert-danger">{errorText}</div>
     );
-  },
+  }
 
-  renderBookMarks: function() {
+  renderBookMarks() {
     var bookmarks = [];
     for (var position = 0; position < this.state.bookmarks.length; position++) {
       var bookmark = this.state.bookmarks[position];
@@ -225,9 +234,9 @@ var ConnectionWindow = React.createClass({
       </div>
 
     );
-  },
+  }
 
-  renderFormElements: function() {
+  renderFormElements() {
     var formData = [];
     if (this.state.bookmarks.length > 0) {
       formData = _.clone(this.state.bookmarks[this.state.activeBookmark])
@@ -316,9 +325,9 @@ var ConnectionWindow = React.createClass({
         </div>
       </div>
     );
-  },
+  }
 
-  renderForm: function() {
+  renderForm() {
     if (this.state.activeBookmark > -1) {
       var formElements = this.renderFormElements()
     } else {
@@ -342,9 +351,9 @@ var ConnectionWindow = React.createClass({
         {formElements}
       </form>
     );
-  },
+  }
 
-  renderConnectionWindow: function() {
+  renderConnectionWindow() {
     return (
       <div className="container small">
         <div className="row">
@@ -366,9 +375,9 @@ var ConnectionWindow = React.createClass({
 
       </div>
     );
-  },
+  }
 
-  renderConnectionPage: function() {
+  renderConnectionPage() {
     return (
       <div className="connection-settings">
 
@@ -377,9 +386,9 @@ var ConnectionWindow = React.createClass({
 
       </div>
     );
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div id="connection_window">
           <h1>Postgres Database Workbench</h1>
@@ -390,6 +399,6 @@ var ConnectionWindow = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ConnectionWindow;

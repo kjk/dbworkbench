@@ -1,11 +1,16 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+var React = require('react');
+var Modal = require('react-modal');
+
 var action = require('./action.js');
 var api = require('./api.js');
 
 var TableInformation = React.createClass({
   renderTableInfo: function(info) {
+class TableInformation extends React.Component {
+  renderTableInfo(info) {
     if (info && !$.isEmptyObject(info)) {
       return (
         <ul>
@@ -16,9 +21,9 @@ var TableInformation = React.createClass({
         </ul>
       );
     }
-  },
+  }
 
-  renderTableInfoContainer: function() {
+  renderTableInfoContainer() {
     var info = this.renderTableInfo(this.props.tableInfo);
     if (info) {
       return (
@@ -33,9 +38,9 @@ var TableInformation = React.createClass({
       return (<div></div>);
     }
 
-  },
+  }
 
-  render: function() {
+  render() {
     var info = this.renderTableInfo(this.props.tableInfo);
     return (
       <div className="table-information">
@@ -43,33 +48,35 @@ var TableInformation = React.createClass({
       </div>
     );
   }
-});
+}
 
-var Sidebar = React.createClass({
-  getInitialState: function() {
-    return {
+class Sidebar extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
       dragging: false,
       tables: [],
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.refreshTables();
-  },
+  }
 
-  handleRefreshDatabase: function(e) {
+  handleRefreshDatabase(e) {
     e.preventDefault();
 
     console.log("handleRefreshDatabase");
     this.refreshTables();;
-  },
+  }
 
-  handleSelectTable: function(e, table) {
+  handleSelectTable(e, table) {
     e.preventDefault();
     action.tableSelected(table);
-  },
+  }
 
-  refreshTables: function() {
+  refreshTables() {
     var connectionId = this.props.connectionId;
 
     var self = this;
@@ -79,9 +86,9 @@ var Sidebar = React.createClass({
         tables: data,
       });
     });
-  },
+  }
 
-  renderTables: function(tables) {
+  renderTables(tables) {
     var self = this;
 
     var res = tables.map(function(table) {
@@ -96,10 +103,10 @@ var Sidebar = React.createClass({
       );
     });
     return res;
-  },
+  }
 
   // TODO: remove id="tables"
-  render: function() {
+  render() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
         width: this.props.dragBarPosition + 'px',
@@ -109,6 +116,7 @@ var Sidebar = React.createClass({
     //                 title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
     //           </span>
 
+
     return (
       <div id="sidebar" style={divStyle}>
         <div className="tables-list">
@@ -116,7 +124,12 @@ var Sidebar = React.createClass({
             <div className="title">
               <i className="fa fa-database"></i>
               <span className="current-database" id="current">{this.props.databaseName}</span>
-              <span className="dropdown"><i className="fa fa-angle-down fa-lg pull-right"></i></span>
+              <div className='dropdown-menu'>
+                <div className="dropdown-cursor">
+                  <i className="fa fa-angle-down fa-lg pull-right"></i>
+                </div>
+                <Dropdown />
+              </div>
             </div>
             <ul id="tables">
               {tables}
@@ -129,7 +142,6 @@ var Sidebar = React.createClass({
       </div>
     );
   }
-
-});
+}
 
 module.exports = Sidebar;
