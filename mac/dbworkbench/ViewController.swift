@@ -28,6 +28,10 @@ class ViewController: NSViewController {
     
     override func viewWillAppear() {
         super.viewWillAppear()
+        let w = self.view.window
+        let d = NSApp.delegate as! AppDelegate
+        d.window = w;
+
         NSLog("viewWillAppear")
         
         preferredContentSize = view.fittingSize

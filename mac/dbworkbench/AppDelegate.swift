@@ -41,18 +41,19 @@ func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    
+    weak var window : NSWindow?
+
     func autoUpdateCheck() {
-        let ver = NSBundle.mainBundle().shortVersion
+        let myVer = NSBundle.mainBundle().shortVersion
 
         //Then just cast the object as a String, but be careful, you may want to double check for nil
-        //let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + ver);
-        let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver);
+        let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer);
+        //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
         NSLog("url: \(url)")
         let req = NSMutableURLRequest(URL: url!)
         let session = NSURLSession.sharedSession()
         req.HTTPMethod = "POST"
-        let s = "ver: \(ver)\n"
+        let s = "ver: \(myVer)\n"
         req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
@@ -71,14 +72,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let dataStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
             NSLog("got post response \(dataStr)")
             let urlVer = parseAutoUpdateCheck(dataStr as! String)
-            if urlVer.ver != ver {
-                // TODO: notify the user that update is available
-                NSLog("should autoUpdate because versions different! my ver: \(ver), latest ver: \(urlVer.ver)")
+            // TODO: only if urlVer.ver > ver
+            if urlVer.ver != myVer {
+                self.notifyAboutUpdate(urlVer.ver!)
             }
-            
-            
         })
         task.resume()
+    }
+
+    func notifyAboutUpdate(ver : String) {
+        let alert = NSAlert()
+        alert.messageText = "Update available"
+        alert.informativeText = "A new version \(ver) is available. Do you want to update?"
+        alert.addButtonWithTitle("Update")
+        alert.addButtonWithTitle("No")
+        alert.beginSheetModalForWindow(self.window!, completionHandler: {res -> Void in
+            if res == NSAlertFirstButtonReturn {
+                // TODO: a more specific page with just a download button to
+                // download new version and instructions on how to update
+                NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/s/for-mac.html")!)
+            }
+        })
     }
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
