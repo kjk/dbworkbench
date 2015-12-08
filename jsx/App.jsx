@@ -342,7 +342,14 @@ class App extends React.Component {
 
   render() {
     if (!this.state.connected) {
-      return <ConnectionWindow onDidConnect={this.handleDidConnect} />;
+      return (
+        <div>
+          <div onClick={this.handleCloseAlertBar} >
+            { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
+          </div>
+          <ConnectionWindow onDidConnect={this.handleDidConnect} />
+        </div>
+      );
     }
 
     var divStyle = {
