@@ -41,6 +41,46 @@ func killBackendIfRunning(backendPath : String) {
     }
 }
 
+func getDataDir() -> String {
+    return NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "Database Workbench"])
+}
+
+func redirectNSLogToFile() {
+    
+    let dir =  NSString.pathWithComponents([getDataDir(), "log"])
+    
+    let dateFmt = NSDateFormatter()
+    dateFmt.dateFormat = "'log-'yy-MM-dd'-mac.txt"
+    let logName = dateFmt.stringFromDate(NSDate())
+    if (!NSFileManager.defaultManager().fileExistsAtPath(dir)) {
+        do {
+            try NSFileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+        } catch _ {
+            // failed
+        }
+        
+    }
+    
+    let logPath = NSString.pathWithComponents([dir, logName])
+    freopen(logPath.cStringUsingEncoding(NSASCIIStringEncoding)!, "a+", stderr)
+}
+
+var usageData = ""
+
+// must be executed before starting backend in order to read usage.json
+func loadUsageData() {
+    let path = NSString.pathWithComponents([getDataDir(), "usage.json"])
+    do {
+        let s = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
+        usageData = s as String;
+        // delete so that we don't send duplicate data
+        try NSFileManager.defaultManager().removeItemAtPath(path)
+    }
+    catch let error as NSError {
+        NSLog("loadUsageData: error: \(error)")
+    }
+}
+
 func runServer(view : ViewController) {
     // TODO: this should not be necessary but without it serverTask is nil
     serverTask = NSTask()
