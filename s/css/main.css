@@ -93,8 +93,7 @@ body {
 }
 
 #edit_connection:hover {
-  background: #bbb;
-  color: #ffffff;
+  opacity: 0.8;
 }
 
 #edit_connection i {
@@ -314,6 +313,7 @@ body {
 #sidebar ul li:not(.selected):hover {
   background: #377CE4;
   color: #ffffff;
+  opacity: 0.8;
 }
 
 #sidebar ul li:not(.selected):hover .fa-table {
@@ -503,6 +503,7 @@ h4.modal-title {
 
 #results tbody tr:hover td {
   background: #c5e2fc;
+  opacity: 0.8;
 }
 
 /*#results tr.selected td {
