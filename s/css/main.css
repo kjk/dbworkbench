@@ -38,7 +38,7 @@ body {
   float: left;
   height: 50px;
   line-height: 50px;
-  font-size: 13px;
+  font-size: 12px;
   padding: 0px 22px;
   color: #6c6b6b;
   font-weight: 500;
@@ -47,7 +47,6 @@ body {
   display: block;
   list-style: none;
   list-style-type: none;
-  font-size: 15px;
   color: #555B6B;
 }
 
@@ -121,7 +120,7 @@ body {
   padding: 0px 8px;
   padding-left: 15px;
   color: #efefef;
-  font-size: 16px;
+  font-size: 14px;
   background-color: #377CE4;
   margin-left: auto;
   margin-right: auto;
@@ -224,7 +223,7 @@ body {
 
 #sidebar div.tables-list #tables {
   padding: 50px 0 0;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 #sidebar div.table-information {
@@ -268,7 +267,7 @@ body {
   height: 24px;
   margin: 0px;
   padding: 0 8px 0 12px;
-  font-size: 14px;
+  font-size: 12px;
   cursor: default;
   color: #5B5C59 !important;
 }
@@ -294,7 +293,7 @@ body {
   padding: 3px;
   margin: 0px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   color: #5B5C59;
   line-height: 25px;
   white-space: nowrap;
@@ -407,7 +406,7 @@ h4.modal-title {
   height: 30px;
   padding: 0px 13px;
   margin: 0px;
-  font-size: 13px;
+  font-size: 12px;
   color: #fff;
   border: none;
   box-shadow: none;
