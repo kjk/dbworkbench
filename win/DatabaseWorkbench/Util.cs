@@ -17,6 +17,13 @@ namespace DatabaseWorkbench
             return dir;
         }
 
+        public static string AppDataLogDir()
+        {
+            var dir = System.IO.Path.Combine(AppDataDir(), "log");
+            Directory.CreateDirectory(dir);
+            return dir;
+        }
+
         public static string AppDataTmpDir()
         {
             var dir = System.IO.Path.Combine(AppDataDir(), "tmp");

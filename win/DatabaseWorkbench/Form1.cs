@@ -42,18 +42,19 @@ namespace DatabaseWorkbench
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
-            // but before Console.WriteLine().
+            // but before Log.Line().
             _cleanFinish = true;
             if (_backendProcess != null)
             {
-                Console.WriteLine($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+                Log.Line($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
             }
             // TODO: if we have multiple forms, only when last form is being closed
             if (_backendProcess != null && !_backendProcess.HasExited)
             {
-                Console.WriteLine($"Form1_FormClosing: killing backend");
+                Log.Line($"Form1_FormClosing: killing backend");
                 _backendProcess.Kill();
             }
+            Log.Close();
         }
 
         // Find directory where dbworkbench.exe is
@@ -104,7 +105,7 @@ namespace DatabaseWorkbench
         // happens when go backend process has finished e.g. because of an error
         private void Backend_Exited(object sender, EventArgs e)
         {
-            Console.WriteLine($"Backend_Exited. _clienFinish:{_cleanFinish}");
+            Log.Line($"Backend_Exited. _clienFinish:{_cleanFinish}");
             if (_cleanFinish)
             {
                 // we killed the process ourselves
@@ -134,9 +135,9 @@ namespace DatabaseWorkbench
             }
             catch (Exception e)
             {
-                Log.Le(e);
+                Log.E(e);
             }
-            Utils.TryFileDelete(Util.UsageFilePath());
+            FileUtil.TryFileDelete(Util.UsageFilePath());
         }
 
         /* the data we POST as part of auto-update check is in format:
@@ -244,7 +245,7 @@ namespace DatabaseWorkbench
             tmpInstallerPath += ".exe";
             File.Move(_updateInstallerPath, tmpInstallerPath);
             _updateInstallerPath = null;
-            Utils.TryLaunchUrl(tmpInstallerPath);
+            FileUtil.TryLaunchUrl(tmpInstallerPath);
             // exit ourselves so that the installer can over-write the file
             Close();
         }
