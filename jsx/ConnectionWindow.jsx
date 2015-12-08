@@ -402,7 +402,7 @@ class ConnectionWindow extends React.Component {
   render() {
     return (
       <div id="connection_window">
-          <h1>Postgres Database Workbench</h1>
+          <h1>Database Workbench</h1>
           {this.renderConnectionPage()}
       </div>
     );

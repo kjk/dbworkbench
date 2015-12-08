@@ -98,7 +98,7 @@ class Dropdown extends React.Component {
     return (
         <div id="deneme" className='dropdown-window'>
           <div className="list-group">
-            <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection</a>
+            <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection Info</a>
             <a href="#" className="list-group-item" onClick={this.handleActivity}>Activity</a>
             <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
           </div>
