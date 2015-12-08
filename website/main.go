@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/kjk/u"
 )
@@ -136,8 +137,11 @@ func readRawPostData(r *http.Request) []byte {
 	return d
 }
 
-func prependVerIP(d []byte, ip, ver string) []byte {
-	s := fmt.Sprintf("ip: %s\nver_in_url: %s\n", ip, ver)
+func prependVerIPTime(d []byte, ip, ver string) []byte {
+	now := time.Now()
+	t := now.Unix()
+	d := now.Format("2006-01-02")
+	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\n", t, d, ip, ver)
 	return append([]byte(s), d...)
 }
 
@@ -153,7 +157,7 @@ func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
 url: %s`, latestWinVersion, latestWinDownloadURL())
 	servePlainText(w, r, 200, s)
 
-	d = prependVerIP(d, ip, ver)
+	d = prependVerIPTime(d, ip, ver)
 	recordUsage(d)
 }
 
@@ -169,7 +173,7 @@ func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
 url: %s`, latestMacVersion, latestMacDownloadURL())
 	servePlainText(w, r, 200, s)
 
-	d = prependVerIP(d, ip, ver)
+	d = prependVerIPTime(d, ip, ver)
 	recordUsage(d)
 }
 
