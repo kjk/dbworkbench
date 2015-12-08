@@ -5,6 +5,10 @@ html {
     height:100%;
 }
 
+body {
+   font-family: "Open Sans", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+}
+
 #main {
 }
 
@@ -43,7 +47,6 @@ html {
   display: block;
   list-style: none;
   list-style-type: none;
-  font-family: Lato-Regular;
   font-size: 15px;
   color: #555B6B;
 }
@@ -58,7 +61,6 @@ html {
 
 #nav ul li.selected {
   position: relative;
-  font-family:Lato-Semibold;
   color:#4092F1;
   font-weight:700;
   /*border-right: 1px solid #b8b7b5;
@@ -293,7 +295,6 @@ html {
   padding: 3px;
   margin: 0px;
   cursor: pointer;
-  font-family: Lato-Regular;
   font-size: 13px;
   color: #5B5C59;
   line-height: 25px;
@@ -458,7 +459,6 @@ html {
 
 #results.empty td {
   border: 0px none;
-  font-family:Lato-Medium;
   font-size:17px;
   color:#4A4A4A;
   line-height:21px;
@@ -466,7 +466,6 @@ html {
 
 #results td {
   border: 0px none;
-  font-family: Lato-Medium;
   font-size: 12px;
   color: #4A4A4A;
   line-height: 12px;
@@ -486,7 +485,6 @@ html {
 }
 
 #results th {
-  font-family:Lato-Semibold;
   font-size:12px;
   font-weight:700;
   background:#4592EA;
@@ -573,7 +571,6 @@ html {
   position: fixed;
   top: 0;
   right: 0;
-  font-family: "jaf-bernino-sans","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
   letter-spacing: -0.02em;
   font-weight: 300;
   font-style: normal;
@@ -622,7 +619,6 @@ html {
 #connection_window h1 {
   text-align: center;
   margin-top: 20px;
-  font-family:Lato-Light;
   font-size:50px;
   color:#4092F1;
   line-height:60px;
@@ -631,7 +627,6 @@ html {
 #connection_window h3 {
   text-align: center;
   margin-top: 25px;
-  font-family:Lato-Light;
   font-size:30px;
   color:#9a9a9a;
   line-height:36px;
@@ -639,7 +634,6 @@ html {
 
 #connection_window div.connection-window-footer {
   text-align: center;
-  font-family: Lato-Regular;
   font-size: 15px;
   color: #587CA7;
 }
@@ -701,14 +695,12 @@ html {
 }
 
 .connection-settings label.control-label {
-  font-family:Lato-Regular;
   font-size:18px;
   color:#517FA4;
   line-height:22px;
 }
 
 .connection-settings input {
-  font-family:Lato-Medium;
   font-size:16px;
   color:#4A4A4A;
   line-height:19px;
@@ -726,7 +718,6 @@ html {
 
 .list-special .list-group-item {
   border: 0px;
-  font-family:Lato-Regular;
   font-size:14px;
   color:#9a9a9a;
   line-height:22px;
@@ -748,7 +739,6 @@ html {
 .list-special .list-group-item.title:select
 .list-special .list-group-item.title:hover
 .list-special .list-group-item.title {
-  font-family:Lato-Regular;
   font-size:18px;
   color:#517FA4;
   line-height:22px;
