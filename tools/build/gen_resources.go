@@ -15,12 +15,7 @@ var (
 		// TODO: eventually delete the files we don't use
 		// currently we use bootstrap-flatly.css
 		"s/css/bootstrap.css",
-		"s/css/bootstrap-lumen.css",
-		"s/css/bootstrap-paper.css",
-		"s/css/bootstrap-simplex.css",
 		"s/css/normalize.css",
-		"s/css/primer.css",
-		"s/css/pure-min.css",
 	}
 )
 
