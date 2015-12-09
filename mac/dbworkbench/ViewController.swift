@@ -11,20 +11,19 @@ class ViewController: NSViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        NSLog("awakeFromNib")
+        log("awakeFromNib")
 
         // can happen more than once
         if !awakeFromNibHappened {
             loadUsageData()
             runServer(self)
-            redirectNSLogToFile()
             awakeFromNibHappened = true
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSLog("viewDidLoad")
+        log("viewDidLoad")
     }
     
     override func viewWillAppear() {
@@ -33,18 +32,18 @@ class ViewController: NSViewController {
         let d = NSApp.delegate as! AppDelegate
         d.window = w;
 
-        NSLog("viewWillAppear")
+        log("viewWillAppear")
         
         preferredContentSize = view.fittingSize
     }
     
     override func viewWillDisappear() {
-        NSLog("viewWillDisappear")
+        log("viewWillDisappear")
         closeServer()
     }
     
     func loadURL() {
-        NSLog("loadURL")
+        log("loadURL")
         let requesturl = NSURL(string: urlpath)
         let request = NSURLRequest(URL: requesturl!)
         

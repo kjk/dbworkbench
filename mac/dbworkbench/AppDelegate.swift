@@ -47,7 +47,7 @@ func versionArrayElToInt(a : [String], pos : Int) -> Int {
     if let n = Int(s) {
         return n
     }
-    NSLog("versionArrayElToInt: '\(s)' is not a valid number")
+    log("versionArrayElToInt: '\(s)' is not a valid number")
     return 0
 }
 
@@ -141,7 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let myVer = NSBundle.mainBundle().shortVersion
         let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer);
         //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
-        NSLog("url: \(url)")
+        log("url: \(url)")
         let req = NSMutableURLRequest(URL: url!)
         let session = NSURLSession.sharedSession()
         req.HTTPMethod = "POST"
@@ -165,19 +165,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
             if error != nil {
-                NSLog("autoUpdateCheck(): url download failed with error: \(error)")
+                log("autoUpdateCheck(): url download failed with error: \(error)")
                 return
             }
             guard let httpRsp = response as? NSHTTPURLResponse else {
-                NSLog("autoUpdateCheck(): '\(response)' is not NSHTTPURLResponse")
+                log("autoUpdateCheck(): '\(response)' is not NSHTTPURLResponse")
                 return
             }
             if httpRsp.statusCode != 200 {
-                NSLog("autoUpdateCheck(): response returned status code \(httpRsp.statusCode) which is not 200")
+                log("autoUpdateCheck(): response returned status code \(httpRsp.statusCode) which is not 200")
                 return
             }
             let dataStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-            NSLog("got post response \(dataStr)")
             let urlVer = parseAutoUpdateCheck(dataStr as! String)
             if programVersionGreater(urlVer.ver!, ver2: myVer) {
                 self.notifyAboutUpdate(urlVer.ver!)
@@ -202,12 +201,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        NSLog("applicationDidFinishLaunching")
+        log("applicationDidFinishLaunching")
         autoUpdateCheck()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        NSLog("applicationWillTerminate")
+        closeLogFile()
     }
     
     func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
