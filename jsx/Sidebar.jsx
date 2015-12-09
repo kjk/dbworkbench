@@ -78,7 +78,8 @@ class Dropdown extends React.Component {
         left                  : '50%',
         maxWidth              : '60%',
         transform             : 'translate(-50%, -50%)',
-        bottom                : 'none'
+        bottom                : 'none',
+        zIndex                : '1'
       }
     };
 
