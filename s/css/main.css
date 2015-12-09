@@ -375,13 +375,12 @@ h4.modal-title {
 /*******************************************************/
 
 #body {
-  position: relative;
-  top: 0px;
   left: 250px;
-  bottom: 0px;
-  right: 0px;
-  height: fill;
-  overflow: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: hidden;
 }
 
 #input {
