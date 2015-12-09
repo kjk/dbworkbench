@@ -139,10 +139,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
-        let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer);
+        let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer)!;
         //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
         log("url: \(url)")
-        let req = NSMutableURLRequest(URL: url!)
+        let req = NSMutableURLRequest(URL: url)
         let session = NSURLSession.sharedSession()
         req.HTTPMethod = "POST"
         // should roughly match BuildAutoUpdatePostData() in Form1.cs for win

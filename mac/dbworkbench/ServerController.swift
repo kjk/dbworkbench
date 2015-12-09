@@ -94,7 +94,7 @@ func startBackend(view : ViewController) {
             if (s.containsString("failed with")) {
                 // TODO: notify about the error in the UI
                 // this could be "http.ListendAndServer() failed with listen tcp 127.0.0.1:5444: bind: address already in use"
-                log("startBackend: failed because output is: '\(s)'")
+                log("startBackend: failed because output is: \(s)")
                 waitsForMoreServerOutput = false
                 getAppDelegate().showBackendFailedError()
                 return
