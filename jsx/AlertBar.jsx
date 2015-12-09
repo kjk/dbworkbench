@@ -5,7 +5,7 @@ var React = require('react');
 
 class AlertBar extends React.Component {
   render() {
-    return <div id="note">{this.props.errorMessage} <span><strong>Close</strong></span></div>;
+    return <div id="note">{this.props.errorMessage}</div>;
   }
 }
 
