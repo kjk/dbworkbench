@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7FCA08361C17B11100BBF9AC /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA08351C17B11100BBF9AC /* Log.swift */; };
 		DC17936C1C08210B00C46C69 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC17936B1C08210B00C46C69 /* AppDelegate.swift */; };
 		DC17936E1C08210B00C46C69 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC17936D1C08210B00C46C69 /* ViewController.swift */; };
 		DC1793701C08210B00C46C69 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC17936F1C08210B00C46C69 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7FCA08351C17B11100BBF9AC /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		DC1793681C08210B00C46C69 /* Database Workbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Database Workbench.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC17936B1C08210B00C46C69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC17936D1C08210B00C46C69 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		DC17936A1C08210B00C46C69 /* dbworkbench */ = {
 			isa = PBXGroup;
 			children = (
+				7FCA08351C17B11100BBF9AC /* Log.swift */,
 				DC17936B1C08210B00C46C69 /* AppDelegate.swift */,
 				DC17936D1C08210B00C46C69 /* ViewController.swift */,
 				DC3618591C0A49F4000AD79F /* ServerController.swift */,
@@ -140,6 +143,7 @@
 			files = (
 				DC17936E1C08210B00C46C69 /* ViewController.swift in Sources */,
 				DC17936C1C08210B00C46C69 /* AppDelegate.swift in Sources */,
+				7FCA08361C17B11100BBF9AC /* Log.swift in Sources */,
 				DC36185A1C0A49F4000AD79F /* ServerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
