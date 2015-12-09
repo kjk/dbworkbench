@@ -18,12 +18,18 @@ if (!String.prototype.startsWith) {
   };
 }
 
+// we need unique ids for unsaved bookmarks. We use negative numbers
+// to make sure they don't clash with saved bookmarks (those have positive numbers)
+var emptyBookmarkId = -1;
+
 function newEmptyBookmark() {
+  emptyBookmarkId -= 1;
   return {
-      id: 0,
+      id: emptyBookmarkId,
+      type: "postgres",
+      database: "New connection",
       url: "",
       host: "",
-      database: "New connection",
       user: "",
       password: "",
       port: "" ,
@@ -61,7 +67,7 @@ class ConnectionWindow extends React.Component {
     var bookmarkLimit = 10;
     var bookmarks = this.state.bookmarks;
     if (bookmarks.length >= bookmarkLimit) {
-      action.alertBar("Reached connections limist of " + bookmarkLimit);
+      action.alertBar("Reached connections limit of " + bookmarkLimit);
       return;
     }
 
@@ -118,7 +124,7 @@ class ConnectionWindow extends React.Component {
   }
 
   handleFormChanged(name, e) {
-    console.log("handleFormChanged: ", e.target.value);
+    // console.log("handleFormChanged: ", e.target.value);
 
     var change = this.state.bookmarks;
 
