@@ -1,7 +1,7 @@
 import Cocoa
 import AppKit
 
-var serverTask = NSTask()
+var backendTask = NSTask()
 var waitsForMoreServerOutput = true
 
 // TODO: use NSTak termination handler to get notified the backend process
@@ -61,21 +61,19 @@ func loadUsageData() {
     }
 }
 
-func runServer(view : ViewController) {
-    // TODO: this should not be necessary but without it serverTask is nil
-    serverTask = NSTask()
+func startBackend(view : ViewController) {
     let resPath = NSBundle.mainBundle().resourcePath
     let serverGoExePath = resPath! + "/dbworkbench.exe"
     
     //killBackendIfRunning(serverGoExePath)
 
-    serverTask.launchPath = serverGoExePath
-    serverTask.currentDirectoryPath = resPath!
+    backendTask.launchPath = serverGoExePath
+    backendTask.currentDirectoryPath = resPath!
     //        serverTask.arguments = ["-dev"]
     
     let pipe = NSPipe()
-    serverTask.standardOutput = pipe
-    serverTask.standardError = pipe
+    backendTask.standardOutput = pipe
+    backendTask.standardError = pipe
     
     let outHandle = pipe.fileHandleForReading
     outHandle.waitForDataInBackgroundAndNotify()
@@ -96,12 +94,13 @@ func runServer(view : ViewController) {
             if (s.containsString("failed with")) {
                 // TODO: notify about the error in the UI
                 // this could be "http.ListendAndServer() failed with listen tcp 127.0.0.1:5444: bind: address already in use"
-                log("runServer: failed because output is: '\(s)'")
+                log("startBackend: failed because output is: '\(s)'")
                 waitsForMoreServerOutput = false
+                getAppDelegate().showBackendFailedError()
                 return
             }
             if (s.containsString("Started running on")) {
-                log("runServer: ")
+                log("startBackend: backend started, loading url")
                 waitsForMoreServerOutput = false
                 view.loadURL()
                 return
@@ -110,13 +109,13 @@ func runServer(view : ViewController) {
         outHandle.waitForDataInBackgroundAndNotify()
     })
 
-    serverTask.launch()
-    let pid = serverTask.processIdentifier
+    backendTask.launch()
+    let pid = backendTask.processIdentifier
     log("backend started, pid: \(pid)")
 }
 
-func closeServer() {
-    log("closing backend")
-    serverTask.terminate()
+func stopBackend() {
+    log("stopping backend")
+    backendTask.terminate()
 }
 

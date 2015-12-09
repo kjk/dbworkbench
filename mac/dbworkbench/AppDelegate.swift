@@ -200,6 +200,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
 
+    func showBackendFailedError() {
+        let alert = NSAlert()
+        alert.messageText = "Backend failed"
+        alert.informativeText = "Failed to start"
+        alert.addButtonWithTitle("Exit the app")
+        // TODO: maybe a way to contact support
+        alert.beginSheetModalForWindow(self.window!, completionHandler: {res -> Void in
+            log("shutting down the app")
+            NSApp.terminate(nil)
+        })
+    }
+
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
         autoUpdateCheck()
@@ -214,3 +226,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+func getAppDelegate() -> AppDelegate {
+    return NSApp.delegate as! AppDelegate
+}
