@@ -98,6 +98,7 @@ class Dropdown extends React.Component {
     return (
         <div id="deneme" className='dropdown-window'>
           <div className="list-group">
+            <a href="#" className="list-group-item" onClick={this.props.handleRefresh}>Refresh Tables</a>
             <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection Info</a>
             <a href="#" className="list-group-item" onClick={this.handleActivity}>Activity</a>
             <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
@@ -192,6 +193,9 @@ class Sidebar extends React.Component {
     e.preventDefault();
 
     console.log("handleRefreshDatabase");
+
+    // TODO: make some kind of UI representation of refresh
+    // just to show users that the action was successful.
     this.refreshTables();;
   }
 
@@ -230,17 +234,11 @@ class Sidebar extends React.Component {
   }
 
   // TODO: remove id="tables"
-  // TODO: add refresh databases
   render() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
         width: this.props.dragBarPosition + 'px',
     }
-
-    // <span className="refresh" id="refresh_tables"
-    //                 title="Refresh tables list" onClick={this.handleRefreshDatabase}> <i className="fa fa-refresh"></i>
-    //           </span>
-
 
     return (
       <div id="sidebar" style={divStyle}>
@@ -254,7 +252,8 @@ class Sidebar extends React.Component {
                   <i className="fa fa-angle-down fa-lg pull-right"></i>
                 </div>
                 <Dropdown
-                  connectionId={this.props.connectionId}  />
+                  connectionId={this.props.connectionId}
+                  handleRefresh={this.handleRefreshDatabase.bind(this)} />
               </div>
             </div>
             <ul id="tables">
