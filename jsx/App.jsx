@@ -183,6 +183,7 @@ class App extends React.Component {
     });
   }
 
+  /*
   getBookmarks() {
     var self = this;
     api.getBookmarks(function(data) {
@@ -192,7 +193,8 @@ class App extends React.Component {
       });
     });
   }
-
+  */
+ 
   handleViewSelected(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({

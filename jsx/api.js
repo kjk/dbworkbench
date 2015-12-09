@@ -76,19 +76,21 @@ function getBookmarks(cb) {
 }
 
 function addBookmark(bookmark, cb) {
-  var opts = { url : bookmark["url"],
-              host: bookmark["host"],
-              port: bookmark["port"],
-              user: bookmark["user"],
-              password: bookmark["password"],
-              database: bookmark["database"],
-              ssl: bookmark["ssl"]
-            };
+  var opts = {
+    id: bookmark["id"],
+    type: bookmark["type"],
+    database: bookmark["database"],
+    host: bookmark["host"],
+    port: bookmark["port"],
+    user: bookmark["user"],
+    password: bookmark["password"],
+    ssl: bookmark["ssl"]
+  };
   apiCall("post", "/addbookmark", opts, cb);
 }
 
-function removeBookmark(db, cb) {
-  var opts = { database: db };
+function removeBookmark(id, cb) {
+  var opts = { id: id };
   apiCall("post", "/removebookmark", opts, cb);
 }
 

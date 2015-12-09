@@ -369,9 +369,20 @@ func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 	serveJSONP(w, r, sortedBookmarks, jsonp)
 }
 
+func getFormInt(r *http.Request, name string) (int, error) {
+	s := strings.TrimSpace(r.FormValue(name))
+	if s == "" {
+		return 0, fmt.Errorf("missing form value '%s'", name)
+	}
+	return strconv.Atoi(s)
+}
+
 // POST /api/addbookmark
 func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	id, err := getFormInt(r, "id")
 	newBookmark := Bookmark{
+		ID:       id,
+		Type:     r.FormValue("type"),
 		Host:     r.FormValue("host"),
 		Port:     r.FormValue("port"),
 		User:     r.FormValue("user"),
@@ -393,14 +404,18 @@ func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) 
 
 // POST /api/removebookmark
 func handleRemoveBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	bookmarks, err := removeBookmark(r.FormValue("database"))
+	id, err := getFormInt(r, "id")
+	if err != nil {
+		serveJSONError(w, r, err)
+		return
+	}
+	bookmarks, err := removeBookmark(id)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
 	}
 
 	sortedBookmarks := sortBookmarks(bookmarks)
-
 	serveJSON(w, r, sortedBookmarks)
 }
 

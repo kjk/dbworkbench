@@ -46,6 +46,9 @@ func testPoem(plaintext string) {
 }
 
 func encrypt(s string) string {
+	if s == "" {
+		return ""
+	}
 	plaintext := []byte(s)
 	block, err := aes.NewCipher(poem)
 	if err != nil {
