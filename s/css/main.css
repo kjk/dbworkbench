@@ -107,7 +107,7 @@ body {
   left: 0px;
   top: 0px;
   bottom: 0px;
-  /*border-right: 1px solid black;*/
+  border-right: 1px solid #e1e2e3;
   background-color: #fff;
 }
 
@@ -397,7 +397,7 @@ h4.modal-title {
   padding: 10px;
   height: 50px;
   border-top: solid 1px #e1e2e3;
-  border-bottom: solid 1px #b8b7b5;
+  border-bottom: solid 1px #e1e2e3;
 }
 
 #input .actions .btn {
