@@ -1,6 +1,7 @@
 var action = require('./action.js');
 
 function apiCall(method, path, params, cb) {
+  action.spinner(true);
   $.ajax({
     url: "/api" + path,
     method: method,
@@ -8,9 +9,11 @@ function apiCall(method, path, params, cb) {
     data: params,
     async: true,
     success: function(data) {
+      action.spinner(false);
       cb(data);
     },
     error: function(xhr, status, data) {
+      action.spinner(false);
       if (xhr.status == "0") {
         // Backend is down
         action.alertBar("Something is wrong. Please restart")

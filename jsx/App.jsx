@@ -3,6 +3,7 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Spinner = require('react-spinkit');
 var _ = require('underscore');
 
 var utils = require('./utils.js');
@@ -26,6 +27,7 @@ class App extends React.Component {
     this.handleExplainQuery = this.handleExplainQuery.bind(this);
     this.handleTableSelected = this.handleTableSelected.bind(this);
     this.handleViewSelected = this.handleViewSelected.bind(this);
+    this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -46,6 +48,8 @@ class App extends React.Component {
 
       dragging: false,
       dragBarPosition: 250,
+
+      spinnerVisible: false,
     };
   }
 
@@ -304,6 +308,11 @@ class App extends React.Component {
     this.setState({errorVisible: false});
   }
 
+  handleToggleSpinner(toggle) {
+    console.log("Toggling", this.state.spinnerVisible)
+    this.setState({spinnerVisible: toggle});
+  }
+
   componentWillMount() {
     //this.adHocTest();
 
@@ -313,6 +322,7 @@ class App extends React.Component {
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
     this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
     this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
+    this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
 
     var connId = this.state.connectionId;
     var self = this;
@@ -337,7 +347,23 @@ class App extends React.Component {
     action.offExecuteQuery(this.cidExecuteQuery);
     action.offExplainQuery(this.cidExplainQuery);
     action.offDisconnectDatabase(this.cidDisconnectDatabase);
-    action.offAlertBar(this.cidDiscidAlertBarconnectDatabase);
+    action.offAlertBar(this.cidAlertBar);
+    action.offSpinner(this.cidSpinner);
+  }
+
+  renderSpinner() {
+    if (this.state.spinnerVisible) {
+      var spinnerStyle = {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        zIndex: '5',
+      };
+
+      return <Spinner spinnerName='circle' style={spinnerStyle} />;
+    } else {
+      return null;
+    }
   }
 
   render() {
@@ -347,14 +373,14 @@ class App extends React.Component {
           <div onClick={this.handleCloseAlertBar} >
             { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
           </div>
+          {this.renderSpinner()}
           <ConnectionWindow onDidConnect={this.handleDidConnect} />
         </div>
       );
     }
 
-    var divStyle = {
-        left: this.state.dragBarPosition + 'px',
-    }
+    var divStyle = { left: this.state.dragBarPosition + 'px' }
+
 
     return (
       <div>
@@ -362,6 +388,7 @@ class App extends React.Component {
           { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>
 
+        {this.renderSpinner()}
 
         <div>
           <Sidebar

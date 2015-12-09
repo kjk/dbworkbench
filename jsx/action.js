@@ -76,7 +76,7 @@ var executeQueryIdx = 2;
 var explainQueryIdx = 3;
 var disconnectDatabaseIdx = 4;
 var alertBarIdx = 5;
-
+var spinnerIdx = 6;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -85,7 +85,8 @@ var actionNames = [
   "executeQuery",
   "explainQuery",
   "disconnectDatabase",
-  "alertBar"
+  "alertBar",
+  "spinner",
 ];
 
 function tableSelected(name) {
@@ -160,6 +161,19 @@ function offAlertBar(cbId) {
   off(alertBarIdx, cbId);
 }
 
+function spinner(toggle) {
+  broadcast(spinnerIdx, toggle);
+}
+
+function onSpinner(cb) {
+  return on(spinnerIdx, cb);
+}
+
+function offSpinner(cbId) {
+  off(spinnerIdx, cbId);
+}
+
+
 module.exports = {
   tableSelected: tableSelected,
   onTableSelected: onTableSelected,
@@ -184,4 +198,8 @@ module.exports = {
   alertBar: alertBar,
   onAlertBar: onAlertBar,
   offAlertBar: offAlertBar,
+
+  spinner: spinner,
+  onSpinner: onSpinner,
+  offSpinner: offSpinner,
 };
