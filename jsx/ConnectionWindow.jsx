@@ -34,7 +34,7 @@ function newBookmark(name) {
 class ConnectionWindow extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.addBookmark = this.addBookmark.bind(this);
+    this.newConnectionInfo = this.newConnectionInfo.bind(this);
     this.deleteBookmark = this.deleteBookmark.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConnect = this.handleConnect.bind(this);
@@ -57,52 +57,18 @@ class ConnectionWindow extends React.Component {
     };
   }
 
-  addBookmark(e) {
+  newConnectionInfo(e) {
     var bookmarkLimit = 10;
-    if (this.state.bookmarks.length >= bookmarkLimit) {
-      action.alertBar("Max Connection Limit is " + bookmarkLimit);
+    var bookmarks = this.state.bookmarks;
+    if (bookmarks.length >= bookmarkLimit) {
+      action.alertBar("Reached connections limist of " + bookmarkLimit);
       return;
     }
 
-    var possibleNames = [];
-    possibleNames.push(initName);
-    for (var i = 1; i <= bookmarkLimit; i++) {
-      possibleNames.push(initName + " " + String(i));
-    };
-
-    var bookmarkTitles = [];
-    var n = this.state.bookmarks.length;
-    for (var i = 0; i < n; i++ ) {
-      var bookmark = this.state.bookmarks[i];
-      bookmarkTitles.push(bookmark["database"]);
-    }
-
-    var usedNames = _.intersection(possibleNames, bookmarkTitles);
-    var notUsedNames = _.difference(possibleNames, usedNames);
-
-    if (notUsedNames.length > 0 ) {
-      var newName = notUsedNames[0];
-    } else {
-      console.log("Error: this should not be possible");
-      return;
-    }
-
-    console.log("new bookmark name" + newName);
-
-    var initialBookmark = newBookmark(newName);
-
-    var self = this;
-    api.addBookmark(initialBookmark, function(data) {
-      console.log("bookmark added: ", newName, data);
-
-      var index = _.findIndex(data, function(obj) {
-        return (obj["database"] == newName)
-      });
-
-      self.setState({
-        bookmarks: data,
-        activeBookmark: index,
-      });
+    bookmarks.push(newBookmark("New connection"))
+    this.setState({
+      bookmarks: bookmarks,
+      activeBookmark: bookmarks.length-1,
     });
   }
 
@@ -202,16 +168,10 @@ class ConnectionWindow extends React.Component {
           connectionErrorMessage: resp.error,
           isConnecting: false,
         });
-
       } else {
-        console.log("did connect");
-
         b = self.getActiveBookmark()
-        api.removeBookmark(b["oldDatabase"], function(data) {
-          api.addBookmark(b, function(data) {
-            console.log("bookmark saved: ", data);
-          });
-        });
+        console.log("did connect, saving bookmark " + b);
+        api.addBookmark(b);
 
         var connId = resp.ConnectionID;
         var connStr = url;
@@ -237,9 +197,9 @@ class ConnectionWindow extends React.Component {
     for (var i = 0; i < this.state.bookmarks.length; i++) {
       var bookmark = this.state.bookmarks[i];
       var name = bookmark["database"];
-      var k = bookmark["id"]
+      var id = bookmark["id"]
 
-      var removeButton = <i data-custom-attribute={name} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
+      var removeButton = <i data-custom-attribute={id} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       var className = "list-group-item"
       if (i == this.state.activeBookmark) {
@@ -247,7 +207,7 @@ class ConnectionWindow extends React.Component {
       }
 
       bookmarks.push(
-        <a id={i} key={k} href="#" className={className} onClick={this.selectBookmark}>
+        <a key={id} href="#" className={className} onClick={this.selectBookmark}>
           {name}
           {removeButton}
         </a>
@@ -256,7 +216,7 @@ class ConnectionWindow extends React.Component {
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={this.addBookmark} >
+        <a href="#" className="list-group-item title" onClick={this.newConnectionInfo} >
           Connections
           <i className="fa fa-plus pull-right"></i>
         </a>

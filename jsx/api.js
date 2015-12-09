@@ -10,7 +10,9 @@ function apiCall(method, path, params, cb) {
     async: true,
     success: function(data) {
       action.spinner(false);
-      cb(data);
+      if (cb) {
+        cb(data);
+      }
     },
     error: function(xhr, status, data) {
       action.spinner(false);
@@ -20,7 +22,9 @@ function apiCall(method, path, params, cb) {
       } else {
         // API call failed
       }
-      cb(jQuery.parseJSON(xhr.responseText));
+      if (cb) {
+        cb(jQuery.parseJSON(xhr.responseText));
+      }
     }
   });
 }
