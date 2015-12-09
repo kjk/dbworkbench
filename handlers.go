@@ -372,7 +372,6 @@ func handleGetBookmarks(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 // POST /api/addbookmark
 func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	newBookmark := Bookmark{
-		URL:      r.FormValue("url"),
 		Host:     r.FormValue("host"),
 		Port:     r.FormValue("port"),
 		User:     r.FormValue("user"),

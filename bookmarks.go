@@ -7,65 +7,35 @@ import (
 	"path/filepath"
 	"sort"
 	"sync"
+
+	"github.com/kjk/u"
 )
 
 var bookmarkMutex = sync.Mutex{}
 
-// TODO encript password
-
-// Bookmark defines info about a database
+// Bookmark defines info about a database connection
 type Bookmark struct {
-	URL      string `json:"url"`      // Postgres connection URL
-	Host     string `json:"host"`     // Server hostname
-	Port     string `json:"port"`     // Server port
-	User     string `json:"user"`     // Database user
-	Password string `json:"password"` // User password
-	Database string `json:"database"` // Database name
-	Ssl      string `json:"ssl"`      // Connection SSL mode
+	// DbType string `json:"dbtype"` // postgres, mysql etc.
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Database string `json:"database"`
+	Ssl      string `json:"ssl"`
 }
 
 func bookmarksFilePath() string {
 	return filepath.Join(getDataDir(), "bookmarks.json")
 }
 
-func openBookmarkFileWithInitialConnection() {
-	if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
-		// Path does not exist
-		file, err := os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
-		if err != nil {
-			LogErrorf("Bookmark file creation %v", err)
-			return
-		}
-
-		// Unnamed Connection is a predefined keyword which is used in frontend
-		// In frontend the Bookmark.Database is the bookmark name which needs to
-		// be set
-		res := map[string]Bookmark{}
-		res["Unnamed Connection"] = Bookmark{Database: "Unnamed Connection"}
-
-		b, err := json.MarshalIndent(res, "", "  ")
-		if err != nil {
-			LogErrorf("Bookmark MarshalIndent %v", err)
-			return
-		}
-
-		ioutil.WriteFile(bookmarksFilePath(), b, 0644)
-		file.Close()
+// Unnamed Connection is a predefined keyword which is used in frontend
+// In frontend the Bookmark.Database is the bookmark name which needs to
+// be set
+func createBookmarkForUnnamedConnection() {
+	if u.PathExists(bookmarksFilePath()) {
+		return
 	}
-}
-
-func ifNotCreateBookmarksFile() error {
-	if _, err := os.Stat(bookmarksFilePath()); os.IsNotExist(err) {
-		// Path does not exist
-		file, err := os.Create(bookmarksFilePath()) // Maybe use os.NewFile?
-		if err != nil {
-			LogErrorf("Bookmark file creation %v", err)
-			return err
-		}
-		file.Close()
-	}
-
-	return nil
+	addBookmark(Bookmark{Database: "Unnamed Connection"})
 }
 
 func readAllBookmarks() (map[string]Bookmark, error) {
@@ -104,56 +74,49 @@ func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	res := map[string]Bookmark{}
-
-	err := ifNotCreateBookmarksFile()
-	if err != nil {
-		return res, err
-	}
-
-	// Path exist
-	res, err = readAllBookmarks()
+	bookmarks, err := readAllBookmarks()
 	if err != nil {
 		// If the file is empty this will send an error so ignore
 		LogInfof("Bookmark file is empty %v", err)
 	}
 
-	res[bookmark.Database] = bookmark
+	bookmarks[bookmark.Database] = bookmark
 
-	b, err := json.MarshalIndent(res, "", "  ")
+	b, err := json.MarshalIndent(bookmarks, "", "  ")
 	if err != nil {
 		LogErrorf("Bookmark MarshalIndent %v", err)
-		return res, err
+		return bookmarks, err
 	}
 
-	ioutil.WriteFile(bookmarksFilePath(), b, 0644)
-	return res, nil
+	err = ioutil.WriteFile(bookmarksFilePath(), b, 0644)
+	if err != nil {
+		LogErrorf("ioutil.WriteFile() failed with '%s'\n", err)
+	}
+	return bookmarks, nil
 }
 
 func removeBookmark(databaseName string) (map[string]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	res := map[string]Bookmark{}
-
-	// Path exist
-	res, err := readAllBookmarks()
+	bookmarks, err := readAllBookmarks()
 	if err != nil {
-		LogErrorf("Bookmark readall %v", err)
-		return res, err
+		LogErrorf("readAllBookmarks() failed with '%s'\n", err)
+		return bookmarks, err
 	}
 
-	delete(res, databaseName)
-	b, err := json.MarshalIndent(res, "", "  ")
+	delete(bookmarks, databaseName)
+	b, err := json.MarshalIndent(bookmarks, "", "  ")
 	if err != nil {
 		LogErrorf("Bookmark MarshalIndent %v", err)
-		return res, err
+		return bookmarks, err
 	}
 
 	ioutil.WriteFile(bookmarksFilePath(), b, 0644)
-	return res, nil
+	return bookmarks, nil
 }
 
+// ByDatabaseName is for sorting by database name
 type ByDatabaseName []Bookmark
 
 func (s ByDatabaseName) Len() int           { return len(s) }

@@ -150,7 +150,7 @@ func main() {
 	}
 
 	openUsageFileMust()
-	openBookmarkFileWithInitialConnection()
+	createBookmarkForUnnamedConnection()
 
 	if options.IsDev {
 		startGulp()
