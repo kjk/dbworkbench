@@ -18,12 +18,12 @@ if (!String.prototype.startsWith) {
   };
 }
 
-function newBookmark(name) {
+function newEmptyBookmark() {
   return {
       id: 0,
       url: "",
       host: "",
-      database: name,
+      database: "New connection",
       user: "",
       password: "",
       port: "" ,
@@ -46,7 +46,7 @@ class ConnectionWindow extends React.Component {
     // add a default bookmark
     var bookmarks = gBookmarkInfo
     if (!bookmarks || bookmarks.Length == 0) {
-      bookmarks = [newBookmark("New connection")];
+      bookmarks = [newEmptyBookmark()];
     }
     this.state = {
       connectionErrorMessage: "",
@@ -65,7 +65,7 @@ class ConnectionWindow extends React.Component {
       return;
     }
 
-    bookmarks.push(newBookmark("New connection"))
+    bookmarks.push(newEmptyBookmark())
     this.setState({
       bookmarks: bookmarks,
       activeBookmark: bookmarks.length-1,
@@ -91,7 +91,7 @@ class ConnectionWindow extends React.Component {
     api.removeBookmark(id, function(data) {
       console.log("deleteBookmarks removing: ", id, " data: ", data);
 
-      var bookmarks = [];
+      var bookmarks = [newEmptyBookmark()];
       var activeBookmark = 0;
       if (data !== undefined && data.length > 0) {
         bookmarks = data;
@@ -105,10 +105,14 @@ class ConnectionWindow extends React.Component {
   }
 
   selectBookmark(e) {
-    console.log("selectBookmark", e.target.attributes["id"].value);
+    e.stopPropagation();
+
+    var idxStr = e.currentTarget.attributes["data-custom-attribute"].value;
+    var idx = parseInt(idxStr, 10);
+    console.log("selectBookmark", idx);
 
     this.setState({
-      activeBookmark: e.target.attributes["id"].value,
+      activeBookmark: idx,
       connectionErrorMessage: ""
     });
   }
@@ -207,7 +211,7 @@ class ConnectionWindow extends React.Component {
       }
 
       bookmarks.push(
-        <a key={id} href="#" className={className} onClick={this.selectBookmark}>
+        <a key={id} data-custom-attribute={i} href="#" className={className} onClick={this.selectBookmark}>
           {name}
           {removeButton}
         </a>
@@ -229,21 +233,18 @@ class ConnectionWindow extends React.Component {
   }
 
   renderFormElements() {
-    var formData = [];
-    if (this.state.bookmarks.length > 0) {
-      formData = _.clone(this.state.bookmarks[this.state.activeBookmark])
+    var b = this.getActiveBookmark();
+    var formData = _.clone(b);
 
-      if (formData["database"].startsWith(initName)) {
+    if (formData["database"].startsWith(initName)) {
         formData["database"] = "";
-      }
-    } else {
-      formData["database"] = "";
     }
 
-    if (this.state.connectionErrorMessage !== "") {
-      var error = this.renderError(this.state.connectionErrorMessage);
+    var error = "";
+    var errMsg = this.state.connectionErrorMessage;
+    if (errMsg !== "") {
+      error = this.renderError(errMsg);
     }
-
 
     return (
       <div>
@@ -359,12 +360,8 @@ class ConnectionWindow extends React.Component {
           </div>
 
         </div>
-
         <hr/>
-
-
         <div className="connection-window-footer"><i className="fa fa-lock fa1"></i>Database crendentials are securely stored locally on your computer</div>
-
       </div>
     );
   }

@@ -67,8 +67,11 @@ func readBookmarksDecryptPwd() ([]Bookmark, error) {
 
 	err = json.Unmarshal(fileData, &res)
 	if err != nil {
+		// ignore unmarshalling error. this might happen if the structure
+		// of bookmarks.json changes in incompatible ways. We don't want
+		// this error to propagate all the way to frontend
 		LogErrorf("json.Unmarshall() failed with '%s'\n", err)
-		return nil, err
+		return res, nil
 	}
 
 	for _, b := range res {
