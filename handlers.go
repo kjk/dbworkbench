@@ -570,15 +570,12 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
 	//LogInfof("User: %#v\n", ctx.User)
 
-	v := struct {
-		ConnectionID int
-	}
 	connID := getFirstConnectionID()
-	if -1 != connID {
-		v.ConnectionID = connID
+	if -1 == connID {
+		connID = 0
 	}
-	LogInfof("v: %#v\n", v)
-	serveJSONP(w, r, v, jsonp)
+	LogInfof("v: %#v\n", connID)
+	serveJSONP(w, r, connID, jsonp)
 }
 
 func registerHTTPHandlers() {
