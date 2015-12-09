@@ -63,16 +63,26 @@ func readBookmarks() (map[string]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	res, err := readAllBookmarks()
+	bookmarks, err := readAllBookmarks()
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-	return res, nil
+	for _, b := range bookmarks {
+		pwd := b.Password
+		b.Password, err = decrypt(pwd)
+		if err != nil {
+			LogErrorf("load1s('%s') failed with '%s'\n", pwd, err)
+			b.Password = ""
+		}
+	}
+	return bookmarks, nil
 }
 
 func addBookmark(bookmark Bookmark) (map[string]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
+
+	bookmark.Password = encrypt(bookmark.Password)
 
 	bookmarks, err := readAllBookmarks()
 	if err != nil {
