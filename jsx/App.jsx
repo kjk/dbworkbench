@@ -4,6 +4,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Spinner = require('react-spinkit');
+
 var _ = require('underscore');
 
 var utils = require('./utils.js');
@@ -309,7 +310,6 @@ class App extends React.Component {
   }
 
   handleToggleSpinner(toggle) {
-    console.log("Toggling", this.state.spinnerVisible)
     this.setState({spinnerVisible: toggle});
   }
 
@@ -380,7 +380,6 @@ class App extends React.Component {
     }
 
     var divStyle = { left: this.state.dragBarPosition + 'px' }
-
 
     return (
       <div>

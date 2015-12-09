@@ -91,7 +91,7 @@ class Dropdown extends React.Component {
     };
 
 
-    var appElement = document.getElementById('deneme');
+    var appElement = document.getElementById('main');
     Modal.setAppElement(appElement);
 
 
