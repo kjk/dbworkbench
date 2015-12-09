@@ -233,7 +233,6 @@ class Sidebar extends React.Component {
     return res;
   }
 
-  // TODO: remove id="tables"
   render() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
@@ -256,7 +255,7 @@ class Sidebar extends React.Component {
                   handleRefresh={this.handleRefreshDatabase.bind(this)} />
               </div>
             </div>
-            <ul id="tables">
+            <ul>
               {tables}
             </ul>
           </div>
