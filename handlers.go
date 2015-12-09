@@ -95,7 +95,6 @@ func withCtx(f HandlerWithCtxFunc, opts ReqOpts) http.HandlerFunc {
 
 		f(ctx, cw, r)
 		if !strings.HasPrefix(r.RequestURI, "/s/") {
-			// TODO: log this to a file for further analysis
 			LogInfof("%s took %s, code: %d\n", r.RequestURI, time.Since(ctx.TimeStart), cw.Code)
 		}
 	}
@@ -572,10 +571,7 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	//LogInfof("User: %#v\n", ctx.User)
 
 	v := struct {
-		Email        string // TODO: remove
 		ConnectionID int
-	}{
-		Email: "foo@bar.com",
 	}
 	connID := getFirstConnectionID()
 	if -1 != connID {

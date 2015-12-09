@@ -38,7 +38,7 @@ class App extends React.Component {
       connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
 
-      databaseName: "fixme: db name", // TODO: get database name
+      databaseName: "No Database Selected",
       tables: null,
       selectedTable: "",
       selectedTableInfo: null,
@@ -194,7 +194,7 @@ class App extends React.Component {
     });
   }
   */
- 
+
   handleViewSelected(viewName) {
     console.log("handleViewSelected: ", viewName);
     this.setState({
