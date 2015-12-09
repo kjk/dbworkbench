@@ -7,7 +7,7 @@ var api = require('./api.js');
 var action = require('./action.js');
 var _ = require('underscore');
 
-var initName = "Unnamed Connection";
+var initName = "New connection";
 
 // string.startsWith is es6
 // TODO: shouldn't this be taken care by es6 transform?
@@ -16,6 +16,19 @@ if (!String.prototype.startsWith) {
     position = position || 0;
     return this.indexOf(searchString, position) === position;
   };
+}
+
+function newBookmark(name) {
+  return {
+      id: 0,
+      url: "",
+      host: "",
+      database: name,
+      user: "",
+      password: "",
+      port: "" ,
+      ssl: ""
+    };
 }
 
 class ConnectionWindow extends React.Component {
@@ -29,12 +42,18 @@ class ConnectionWindow extends React.Component {
     this.selectBookmark = this.selectBookmark.bind(this);
     this.getActiveBookmark = this.getActiveBookmark.bind(this);
 
+    // if there are no bookmarks defined on the server,
+    // add a default bookmark
+    var bookmarks = gBookmarkInfo
+    if (!bookmarks || bookmarks.Length == 0) {
+      bookmarks = [newBookmark("New connection")];
+    }
     this.state = {
       connectionErrorMessage: "",
       isConnecting: false,
 
-      bookmarks: gBookmarkInfo,
-      activeBookmark: (gBookmarkInfo.length !== 0) ? 0 : -1,
+      bookmarks: bookmarks,
+      activeBookmark: 0,
     };
   }
 
@@ -70,15 +89,7 @@ class ConnectionWindow extends React.Component {
 
     console.log("new bookmark name" + newName);
 
-    var initialBookmark = {
-      url: "",
-      host: "",
-      database: newName,
-      user: "",
-      password: "",
-      port: "" ,
-      ssl: ""
-    };
+    var initialBookmark = newBookmark(newName);
 
     var self = this;
     api.addBookmark(initialBookmark, function(data) {

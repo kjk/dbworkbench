@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"sort"
 	"sync"
-
-	"github.com/kjk/u"
 )
 
 var bookmarkMutex = sync.Mutex{}
@@ -30,23 +28,8 @@ func bookmarksFilePath() string {
 	return filepath.Join(getDataDir(), "bookmarks.json")
 }
 
-// Unnamed Connection is a predefined keyword which is used in frontend
-// In frontend the Bookmark.Database is the bookmark name which needs to
-// be set
-func createBookmarkForUnnamedConnection() {
-	if u.PathExists(bookmarksFilePath()) {
-		return
-	}
-	b := Bookmark{
-		ID:       1,
-		Type:     "postgres",
-		Database: "Unnamed Connection",
-	}
-	addBookmark(b)
-}
-
 // find the lowest available id, starting with 1
-func findBookmarkID(bookmarks []Bookmark) int {
+func generateNewBookmarkID(bookmarks []Bookmark) int {
 	n := len(bookmarks)
 	if n == 0 {
 		return 1
@@ -68,22 +51,24 @@ func findBookmarkID(bookmarks []Bookmark) int {
 	return newID + 1
 }
 
-func readAllBookmarks() ([]Bookmark, error) {
+// must be called while holding bookmarkMutex lock
+func readBookmarksDecryptPwd() ([]Bookmark, error) {
 	var res []Bookmark
 
-	fileData, err := ioutil.ReadFile(bookmarksFilePath())
+	path := bookmarksFilePath()
+	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		if err == os.ErrNotExist {
+		if os.IsNotExist(err) {
 			return res, nil
 		}
-		LogErrorf("Bookmark file read %v", err)
-		return res, err
+		LogErrorf("ioutil.ReadFile('%s') failed with '%s'\n", path, err)
+		return nil, err
 	}
 
 	err = json.Unmarshal(fileData, &res)
 	if err != nil {
-		LogErrorf("Bookmark unmarshall %v", err)
-		return res, err
+		LogErrorf("json.Unmarshall() failed with '%s'\n", err)
+		return nil, err
 	}
 
 	for _, b := range res {
@@ -99,15 +84,37 @@ func readAllBookmarks() ([]Bookmark, error) {
 	return res, nil
 }
 
+// must be called while holding bookmarkMutex lock
+// encrypts passwords and writes bookmarks as json to bookmarks.json
+// returns original bookmarks + error for convenience of the caller
+func writeBookmarksEncryptPwd(bookmarks []Bookmark) ([]Bookmark, error) {
+	// encrypt passwords in a copy
+	n := len(bookmarks)
+	a := make([]Bookmark, n, n)
+	for i := 0; i < n; i++ {
+		a[i] = bookmarks[i]
+		a[i].Password = encrypt(a[i].Password)
+	}
+
+	d, err := json.MarshalIndent(a, "", "  ")
+	if err != nil {
+		LogErrorf("json.MarshalIndent() failed with '%s'", err)
+		return bookmarks, err
+	}
+
+	path := bookmarksFilePath()
+	err = ioutil.WriteFile(path, d, 0644)
+	if err != nil {
+		LogErrorf("ioutil.WriteFile('%s') failed with '%s'\n", path, err)
+	}
+	return bookmarks, err
+}
+
 func readBookmarks() ([]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	bookmarks, err := readAllBookmarks()
-	if err != nil {
-		return nil, err
-	}
-	return bookmarks, nil
+	return readBookmarksDecryptPwd()
 }
 
 // checks if database type is correct. Returns normalized
@@ -125,6 +132,16 @@ func validateDatabaseType(s string) string {
 	return ""
 }
 
+func findBookmarkIndexByID(arr []Bookmark, id int) int {
+	n := len(arr)
+	for i := 0; i < n; i++ {
+		if arr[i].ID == id {
+			return i
+		}
+	}
+	return -1
+}
+
 func addBookmark(bookmark Bookmark) ([]Bookmark, error) {
 	tp := validateDatabaseType(bookmark.Type)
 	if tp == "" {
@@ -134,26 +151,20 @@ func addBookmark(bookmark Bookmark) ([]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	bookmark.Password = encrypt(bookmark.Password)
-
-	bookmarks, err := readAllBookmarks()
+	bookmarks, err := readBookmarksDecryptPwd()
 	if err != nil {
-		// If the file is empty this will send an error so ignore
-		LogInfof("Bookmark file is empty %v", err)
+		return nil, err
 	}
 
-	bookmarks = append(bookmarks, bookmark)
-	b, err := json.MarshalIndent(bookmarks, "", "  ")
-	if err != nil {
-		LogErrorf("Bookmark MarshalIndent %v", err)
-		return bookmarks, err
-	}
+	idx := findBookmarkIndexByID(bookmarks, bookmark.ID)
 
-	err = ioutil.WriteFile(bookmarksFilePath(), b, 0644)
-	if err != nil {
-		LogErrorf("ioutil.WriteFile() failed with '%s'\n", err)
+	if idx == -1 {
+		bookmark.ID = generateNewBookmarkID(bookmarks)
+		bookmarks = append(bookmarks, bookmark)
+	} else {
+		bookmarks[idx] = bookmark
 	}
-	return bookmarks, nil
+	return writeBookmarksEncryptPwd(bookmarks)
 }
 
 func removeBookmarkByID(arr []Bookmark, id int) []Bookmark {
@@ -170,21 +181,13 @@ func removeBookmark(id int) ([]Bookmark, error) {
 	bookmarkMutex.Lock()
 	defer bookmarkMutex.Unlock()
 
-	bookmarks, err := readAllBookmarks()
+	bookmarks, err := readBookmarksDecryptPwd()
 	if err != nil {
-		LogErrorf("readAllBookmarks() failed with '%s'\n", err)
-		return bookmarks, err
+		return nil, err
 	}
 
 	bookmarks = removeBookmarkByID(bookmarks, id)
-	b, err := json.MarshalIndent(bookmarks, "", "  ")
-	if err != nil {
-		LogErrorf("Bookmark MarshalIndent %v", err)
-		return bookmarks, err
-	}
-
-	ioutil.WriteFile(bookmarksFilePath(), b, 0644)
-	return bookmarks, nil
+	return writeBookmarksEncryptPwd(bookmarks)
 }
 
 // ByDatabaseName is for sorting by database name
