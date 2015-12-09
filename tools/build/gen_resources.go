@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	blaclisted = []string{
+	blacklisted = []string{
 		"s/dist/bundle.js.map",
 		".gitkeep",
 		// TODO: eventually delete the files we don't use
@@ -20,7 +20,7 @@ var (
 )
 
 func isBlacklisted(path string) bool {
-	for _, s := range blaclisted {
+	for _, s := range blacklisted {
 		if path == s {
 			return true
 		}
