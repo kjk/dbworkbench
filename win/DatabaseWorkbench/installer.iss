@@ -7,18 +7,18 @@
 ;  http://stackoverflow.com/questions/22183811/how-to-skip-all-the-wizard-pages-and-go-directly-to-the-installation-process
 ;  http://stackoverflow.com/questions/13921535/skipping-custom-pages-based-on-optional-components-in-inno-setup
 ;  http://www.jrsoftware.org/ishelp/
-; 
+;
 ; TODO: fully custom page with just "Install" button
 ; TODO: always create desktop icon
 
 #include <idp.iss>
 
-#define MyAppName "Database Workbench"
+#define MyAppName "DBHero"
 ;MyAppVersion is set from cmd-line
 ;#define MyAppVersion "9.9"
 #define MyAppPublisher "Database Experts"
-#define MyAppURL "http://www.databaseworkbench.com"
-#define MyAppExeName "DatabaseWorkbench.exe"
+#define MyAppURL "http://www.dbhero.com"
+#define MyAppExeName "DBHero.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -60,7 +60,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "bin\Release\DatabaseWorkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\DatabaseWorkbench.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Yepi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dbworkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dbherohelper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

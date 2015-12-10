@@ -9,20 +9,20 @@ import (
 )
 
 func s3SetupPathWin() string {
-	return s3Dir + fmt.Sprintf("rel/DatabaseWorkbench-setup-%s.exe", programVersion)
+	return s3Dir + fmt.Sprintf("rel/DBHero-setup-%s.exe", programVersion)
 }
 
 func exeSetupPath() string {
-	exeName := fmt.Sprintf("DatabaseWorkbench-setup-%s.exe", programVersion)
+	exeName := fmt.Sprintf("DBHero-setup-%s.exe", programVersion)
 	return pj("bin", "Release", exeName)
 }
 
 func exeSetupTmpPath() string {
-	return pj("bin", "Release", "DatabaseWorkbench-setup-inno.exe")
+	return pj("bin", "Release", "DBHero-setup-inno.exe")
 }
 
 func exePath() string {
-	return pj("bin", "Release", "DatabaseWorkbench.exe")
+	return pj("bin", "Release", "DBHero.exe")
 }
 
 func signMust(path string) {
@@ -33,7 +33,7 @@ func signMust(path string) {
 	certDest := pj(fileDir, "cert.pfx")
 	fileCopyMust(certDest, certPath)
 	cmd := getCmdInEnv(getEnvForVS(), "signtool.exe", "sign", "/t", "http://timestamp.verisign.com/scripts/timstamp.dll",
-		"/du", "http://databaseworkbench.com", "/f", "cert.pfx",
+		"/du", "http://dbheroapp.com", "/f", "cert.pfx",
 		"/p", certPwd, fileName)
 	cmd.Dir = fileDir
 	runCmdMust(cmd, true)
@@ -70,8 +70,8 @@ func cdToWinDir() {
 }
 
 func copyDbWorkbench() {
-	dst := filepath.Join(winDir(), "dbworkbench.exe")
-	src := "dbworkbench.exe"
+	dst := filepath.Join(winDir(), "dbherohelper.exe")
+	src := "dbherohelper.exe"
 	fileCopyMust(dst, src)
 }
 
@@ -92,7 +92,7 @@ func buildWin() {
 
 func buildSetupWin() {
 	signMust(exePath())
-	signMust("dbworkbench.exe")
+	signMust("dbherohelper.exe")
 
 	ver := fmt.Sprintf("/dMyAppVersion=%s", programVersion)
 	cmd := exec.Command(innoSetupPath, "/Qp", ver, "installer.iss")

@@ -47,7 +47,11 @@ func parseCmdLine() {
 	flag.StringVar(&options.Ssl, "ssl", "", "SSL options")
 	// using 127.0.0.1 so that windows firewall doesn't complain about
 	// opening externally-accessible ports
-	flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
+	if isWindows() {
+		flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
+	} else {
+		flag.StringVar(&options.HTTPHost, "bind", "", "HTTP server host")
+	}
 	flag.IntVar(&options.HTTPPort, "listen", 5444, "HTTP server listen port")
 	flag.BoolVar(&options.IsDev, "dev", false, "true for running in dev mode")
 	flag.Parse()

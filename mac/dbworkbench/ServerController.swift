@@ -46,14 +46,14 @@ func killOtherAppInstances() {
     }
 }
 
-// kill all dbworkbench.exe processes because if they are running, we'll fail
+// kill all dbherohelper.exe processes because if they are running, we'll fail
 // to start. They might exist in case the mac app didn't exit cleanly and didn't
 // kill its backend. Or maybe the user launched another instance from a different
 // path (e.g. downloaded an upgrade and is still running the previous version)
 func killBackendIfRunning() {
     let procs = listProcesses()
     for p in procs {
-        if p.pathAndArgs.containsString("/dbworkbench.exe") {
+        if p.pathAndArgs.containsString("/dbherohelper.exe") {
             log("killing process \(p.pid) '\(p.pathAndArgs)'")
             kill(pid_t(p.pid), SIGKILL) // SIGINT ?
         }
@@ -82,24 +82,24 @@ func loadUsageData() {
 
 func startBackend(view : ViewController) {
     let resPath = NSBundle.mainBundle().resourcePath
-    let serverGoExePath = resPath! + "/dbworkbench.exe"
-    
+    let serverGoExePath = resPath! + "/dbherohelper.exe"
+
     killOtherAppInstances()
     killBackendIfRunning()
 
     backendTask.launchPath = serverGoExePath
     backendTask.currentDirectoryPath = resPath!
     //        serverTask.arguments = ["-dev"]
-    
+
     let pipe = NSPipe()
     backendTask.standardOutput = pipe
     backendTask.standardError = pipe
-    
+
     let outHandle = pipe.fileHandleForReading
     outHandle.waitForDataInBackgroundAndNotify()
-    
+
     let _ = NSNotificationCenter.defaultCenter().addObserverForName(NSFileHandleDataAvailableNotification, object: outHandle, queue: nil, usingBlock: { notification -> Void in
-        
+
         if !waitsForMoreServerOutput {
             return
         }

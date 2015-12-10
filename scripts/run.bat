@@ -2,5 +2,5 @@
 
 godep go vet github.com/kjk/dbworkbench
 
-godep go build -o dbworkbench.exe
-dbworkbench.exe -dev
+godep go build -o dbherohelper.exe
+dbherohelper.exe -dev

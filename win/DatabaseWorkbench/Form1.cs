@@ -58,7 +58,7 @@ namespace DatabaseWorkbench
             Log.Close();
         }
 
-        // Find directory where dbworkbench.exe is
+        // Find directory where dbherohelper.exe is
         // Returns "" if not found
         private string FindBackendDirectory()
         {
@@ -66,7 +66,7 @@ namespace DatabaseWorkbench
             var dir = Path.GetDirectoryName(path);
             while (dir != null)
             {
-                path = Path.Combine(dir, "dbworkbench.exe");
+                path = Path.Combine(dir, "dbherohelper.exe");
                 if (File.Exists(path))
                 {
                     return dir;
@@ -94,7 +94,7 @@ namespace DatabaseWorkbench
             var p = new Process();
             _backendProcess = p;
             p.StartInfo.WorkingDirectory = dir;
-            p.StartInfo.FileName = "dbworkbench.exe";
+            p.StartInfo.FileName = "dbherohelper.exe";
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -116,7 +116,7 @@ namespace DatabaseWorkbench
             MessageBox.Show("backend exited unexpectedly!");
             Close();
         }
-        
+
 
         // Note: can't be in utils, must be in this assembly
         public static string AppVer()

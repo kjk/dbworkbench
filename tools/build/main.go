@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	s3Dir = "software/databaseworkbench/"
+	s3Dir = "software/dbhero/"
 )
 
 var (
@@ -186,11 +186,11 @@ func extractVersionMust() {
 }
 
 func s3SetupPathMac() string {
-	return s3Dir + fmt.Sprintf("rel/DatabaseWorkbench-%s.zip", programVersion)
+	return s3Dir + fmt.Sprintf("rel/DBHero-%s.zip", programVersion)
 }
 
 func macZipPath() string {
-	return pj("mac", "build", "Release", "DatabaseWorkbench.zip")
+	return pj("mac", "build", "Release", "DBHero.zip")
 }
 
 func uploadToS3Mac() {
@@ -214,8 +214,8 @@ var BuiltOnMac = "%s";
 func buildMac() {
 	verifyHasSecretsMust()
 
-	dirToZip := filepath.Join("mac", "build", "Release", "Database Workbench.app")
-	zipPath := filepath.Join("mac", "build", "Release", "DatabaseWorkbench.zip")
+	dirToZip := filepath.Join("mac", "build", "Release", "DB Hero.app")
+	zipPath := filepath.Join("mac", "build", "Release", "DBHero.zip")
 	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)
 
