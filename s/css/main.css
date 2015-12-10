@@ -260,6 +260,8 @@ body {
 
 #sidebar div.table-information ul {
   padding: 33px 0 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #sidebar div.table-information ul li {
@@ -283,6 +285,8 @@ body {
 }
 
 #sidebar ul {
+  overflow-x: hidden;
+  overflow-y: auto;
   margin: 0px;
   padding: 0px;
 }
