@@ -124,7 +124,7 @@ func cleanVer(s string) string {
 }
 
 func extractVersionWinMust() {
-	path := filepath.Join("win", "DatabaseWorkbench", "Properties", "AssemblyInfo.cs")
+	path := filepath.Join("win", "dbhero", "Properties", "AssemblyInfo.cs")
 	d, err := ioutil.ReadFile(path)
 	fataliferr(err)
 	r := regexp.MustCompile(`(?mi)AssemblyFileVersion\("([^"]+)`)

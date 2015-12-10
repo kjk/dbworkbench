@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 using Yepi;
 
-namespace DatabaseWorkbench
+namespace DbHero
 {
     static class Program
     {

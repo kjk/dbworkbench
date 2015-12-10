@@ -14,7 +14,7 @@ using System.Reflection;
 
 using Yepi;
 
-namespace DatabaseWorkbench
+namespace DbHero
 {
     public partial class Form1 : Form
     {

@@ -1,4 +1,4 @@
-﻿namespace DatabaseWorkbench
+﻿namespace DbHero
 {
     partial class Form1
     {

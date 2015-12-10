@@ -5,14 +5,14 @@ using System.Globalization;
 using System.IO;
 using System.Management;
 
-namespace DatabaseWorkbench
+namespace DbHero
 {
     class Util
     {
         public static string AppDataDir()
         {
             var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            dir = System.IO.Path.Combine(dir, "Database Workbench");
+            dir = System.IO.Path.Combine(dir, "DBHero");
             Directory.CreateDirectory(dir);
             return dir;
         }
@@ -33,7 +33,7 @@ namespace DatabaseWorkbench
 
         public static string UpdateInstallerTmpPath()
         {
-            return Path.Combine(AppDataTmpDir(), "database-workbench-installer.exe");
+            return Path.Combine(AppDataTmpDir(), "dbhero-installer-tmp.exe");
         }
 
         public static string UsageFilePath()

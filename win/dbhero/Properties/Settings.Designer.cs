@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DatabaseWorkbench.Properties
+namespace DbHero.Properties
 {
 
 

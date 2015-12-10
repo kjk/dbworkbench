@@ -14,7 +14,7 @@ cmd/import_stack_overflow/import_stack_overflow
 mac/dbworkbench.xcodeproj/xcuserdata/
 mac/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
 mac/build/
-win/DatabaseWorkbench/obj/
+win/dbhero/obj/
 .vs/
 cert.pfx
 website/website_linux

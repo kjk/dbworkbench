@@ -39,7 +39,7 @@ DefaultDirName={localappdata}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=bin\Release
-OutputBaseFilename=DatabaseWorkbench-setup-inno
+OutputBaseFilename=DBHero-setup-inno
 SetupIconFile=icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -57,8 +57,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "bin\Release\DatabaseWorkbench.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\DatabaseWorkbench.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\DBHero.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\DBHero.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Yepi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dbherohelper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

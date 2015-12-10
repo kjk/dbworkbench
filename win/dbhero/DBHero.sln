@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseWorkbench", "DatabaseWorkbench.csproj", "{6C7BB82F-6A35-451C-822C-A85B9A1C40B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBHero", "DBHero.csproj", "{6C7BB82F-6A35-451C-822C-A85B9A1C40B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yepi", "ext\yepi\Yepi.csproj", "{BC998F7C-A8D0-900D-51BD-76103DD30C0F}"
 EndProject

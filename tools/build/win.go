@@ -61,7 +61,7 @@ func cleanWin() {
 }
 
 func winDir() string {
-	return filepath.Join("win", "DatabaseWorkbench")
+	return filepath.Join("win", "dbhero")
 }
 
 func cdToWinDir() {
@@ -83,7 +83,7 @@ func buildWin() {
 	cdToWinDir()
 	cleanWin()
 
-	out, err := runMsbuildGetOutput(true, "DatabaseWorkbench.csproj", "/t:Rebuild", "/p:Configuration=Release", "/m")
+	out, err := runMsbuildGetOutput(true, "DBHero.csproj", "/t:Rebuild", "/p:Configuration=Release", "/m")
 	if err != nil {
 		fmt.Printf("failed with:\n%s\n", string(out))
 	}
