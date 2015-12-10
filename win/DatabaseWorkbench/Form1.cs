@@ -34,6 +34,7 @@ namespace DatabaseWorkbench
             _webBrowser = new WebBrowser()
             {
                 AllowNavigation = true,
+                IsWebBrowserContextMenuEnabled = false,
             };
             Controls.Add(_webBrowser);
             ResumeLayout(true);
