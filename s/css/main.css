@@ -451,7 +451,7 @@ h4.modal-title {
   right: 0px;
   margin: 0px;
   padding: 0px;
-  overflow: inherit;
+  overflow: auto;
 }
 
 #output.full {
