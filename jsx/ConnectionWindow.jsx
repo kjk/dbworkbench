@@ -39,12 +39,13 @@ class ConnectionWindow extends React.Component {
     this.selectBookmark = this.selectBookmark.bind(this);
     this.getActiveBookmark = this.getActiveBookmark.bind(this);
 
-    // if there are no bookmarks defined on the server,
-    // add a default bookmark
-    var bookmarks = gBookmarkInfo
-    if (!bookmarks || bookmarks.Length == 0) {
-      bookmarks = [newEmptyBookmark()];
+    // create default bookmark if no bookmarks saved in the backend
+    var bookmarks = [newEmptyBookmark()];
+    if (gBookmarkInfo && gBookmarkInfo.length > 0) {
+      // need to make a copy of the array or else changing bookmark will change gBookmarkInfo
+      bookmarks = _.map(gBookmarkInfo, function (e) { return e; });
     }
+
     this.state = {
       connectionErrorMessage: "",
       isConnecting: false,
@@ -191,12 +192,12 @@ class ConnectionWindow extends React.Component {
       } else {
         b = self.getActiveBookmark()
         console.log("did connect, saving bookmark " + b);
-        api.addBookmark(b);
-
-        var connId = resp.ConnectionID;
-        var connStr = url;
-        var databaseName = resp.CurrentDatabase;
-        self.props.onDidConnect(connStr, connId, databaseName);
+        api.addBookmark(b, function(data) {
+          var connId = resp.ConnectionID;
+          var connStr = url;
+          var databaseName = resp.CurrentDatabase;
+          self.props.onDidConnect(connStr, connId, databaseName);
+        });
       }
     });
   }
