@@ -20,6 +20,7 @@ namespace DbHero
     {
         WebBrowser _webBrowser;
         Process _backendProcess;
+        MenuStrip _mainMenu;
         //string _websiteURL = "http://localhost:5555";
         string _websiteURL = "http://dbheroapp.com";
         bool _cleanFinish = false;
@@ -27,17 +28,72 @@ namespace DbHero
 
         private void InitializeComponent2()
         {
+            SuspendLayout();
+
             Layout += Form1_Layout;
             Load += Form1_Load;
             FormClosing += Form1_FormClosing;
-            SuspendLayout();
+
             _webBrowser = new WebBrowser()
             {
                 AllowNavigation = true,
                 IsWebBrowserContextMenuEnabled = false,
             };
             Controls.Add(_webBrowser);
+
+            CreateMenu();
             ResumeLayout(true);
+            PerformLayout();
+        }
+
+        // could also use MainMenu http://stackoverflow.com/questions/2778109/standard-windows-menu-bars-in-windows-forms
+        private void CreateMenu()
+        {
+            _mainMenu = new MenuStrip();
+
+            var menuFile = new ToolStripMenuItem("&File");
+            var fileExit = new ToolStripMenuItem("&Exit");
+            fileExit.Click += FileExit_Click;
+            menuFile.DropDownItems.Add(fileExit);
+
+            var menuHelp = new ToolStripMenuItem("&Help");
+            var helpWebsite = new ToolStripMenuItem("&Website");
+            helpWebsite.Click += HelpWebsite_Click;
+            var helpSupport = new ToolStripMenuItem("&Support");
+            helpSupport.Click += HelpSupport_Click;
+            var helpFeedback = new ToolStripMenuItem("&Feedback");
+            helpFeedback.Click += HelpFeedback_Click;
+
+            menuHelp.DropDownItems.Add(helpWebsite);
+            menuHelp.DropDownItems.Add(helpSupport);
+            menuHelp.DropDownItems.Add(helpFeedback);
+
+            _mainMenu.Items.Add(menuFile);
+            _mainMenu.Items.Add(menuHelp);
+
+            Controls.Add(_mainMenu);
+            _mainMenu.PerformLayout();
+            MainMenuStrip = _mainMenu;
+        }
+
+        private void HelpFeedback_Click(object sender, EventArgs e)
+        {
+            FileUtil.TryLaunchUrl("https://dbheroapp.com/feedback");
+        }
+
+        private void HelpSupport_Click(object sender, EventArgs e)
+        {
+            FileUtil.TryLaunchUrl("https://dbheroapp.com/support");
+        }
+
+        private void HelpWebsite_Click(object sender, EventArgs e)
+        {
+            FileUtil.TryLaunchUrl("https://dbheroapp.com/for-windows");
+        }
+
+        private void FileExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -271,13 +327,21 @@ namespace DbHero
         private void Form1_Layout(object sender, LayoutEventArgs e)
         {
             var area = ClientSize;
-            _webBrowser.SetBounds(0, 0, area.Width, area.Height);
+            var s = _mainMenu.PreferredSize;
+            var y = s.Height;
+            var dy = area.Height - y;
+            _webBrowser.SetBounds(0, y, area.Width, dy);
         }
 
         public Form1()
         {
             InitializeComponent();
             InitializeComponent2();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
