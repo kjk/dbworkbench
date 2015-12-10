@@ -139,7 +139,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
-        let url = NSURL(string: "http://databaseworkbench.com/api/macupdatecheck?ver=" + myVer)!;
+        let url = NSURL(string: "http://dbheroapp.com/api/macupdatecheck?ver=" + myVer)!;
         //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
         log("url: \(url)")
         let req = NSMutableURLRequest(URL: url)
@@ -226,7 +226,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func goToWebsite() {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/for-mac")!)
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/for-mac")!)
     }
     
     @IBAction func goToWebsite(sender: NSMenuItem) {
@@ -234,11 +234,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func goToSupport(sender: NSMenuItem) {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/support")!)
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/support")!)
     }
     
     @IBAction func goToFeedback(sender: NSMenuItem) {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/feedback")!)
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/feedback")!)
     }
 }
 

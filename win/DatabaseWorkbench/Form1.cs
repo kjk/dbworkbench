@@ -21,7 +21,7 @@ namespace DatabaseWorkbench
         WebBrowser _webBrowser;
         Process _backendProcess;
         //string _websiteURL = "http://localhost:5555";
-        string _websiteURL = "http://databaseworkbench.com";
+        string _websiteURL = "http://dbheroapp.com";
         bool _cleanFinish = false;
         string _updateInstallerPath;
 
