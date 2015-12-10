@@ -20,7 +20,6 @@
     "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.3",
     "react-modal": "^0.6.1",
-    "react-spinkit": "^1.1.4",
     "react-tools": "0.13.3",
     "reactify": "1.1.1",
     "underscore": "1.8.3",

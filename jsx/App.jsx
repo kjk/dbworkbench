@@ -3,7 +3,6 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Spinner = require('react-spinkit');
 
 var _ = require('underscore');
 
@@ -16,6 +15,7 @@ var ConnectionWindow = require('./ConnectionWindow.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var AlertBar = require('./AlertBar.jsx');
 var MainContainer = require('./MainContainer.jsx');
+var SpinnerCircle = require('./Spinners.jsx').Circle;
 
 class App extends React.Component {
   constructor(props, context) {
@@ -353,18 +353,17 @@ class App extends React.Component {
   }
 
   renderSpinner() {
-    if (this.state.spinnerVisible) {
-      var spinnerStyle = {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        zIndex: '5',
-      };
-
-      return <Spinner spinnerName='circle' style={spinnerStyle} />;
-    } else {
-      return null;
+    if (!this.state.spinnerVisible) {
+      return;
     }
+    var spinnerStyle = {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      zIndex: '5',
+    };
+
+    return <SpinnerCircle style={spinnerStyle} />;
   }
 
   render() {
