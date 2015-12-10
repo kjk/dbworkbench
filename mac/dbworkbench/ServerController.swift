@@ -15,7 +15,7 @@ var waitsForMoreServerOutput = true
 // is a C implementation
 // terminate backend if it's running. This can happen e.g. when app crashes
 // and doesn't terminate backend properly
-func killBackendIfRunning(backendPath : String) {
+func killBackendIfRunning2(backendPath : String) {
     let wsk = NSWorkspace.sharedWorkspace()
     let processes = wsk.runningApplications
     for proc in processes {
@@ -37,6 +37,24 @@ func killBackendIfRunning(backendPath : String) {
                     }
                 }
             }
+        }
+    }
+}
+
+// TODO: write me
+func killOtherAppInstances() {
+    
+}
+
+// kill all dbworkbench.exe processes because if they are running, we'll fail
+// to start. They might exist in case the mac app didn't exit cleanly and didn't
+// kill its backend. Or maybe the user launched another instance from a different
+// path (e.g. downloaded an upgrade and is still running the previous version)
+func killBackendIfRunning() {
+    let procs = listProcesses()
+    for p in procs {
+        if p.name.containsString("/dbworkbench.exe") {
+            kill(pid_t(p.pid), SIGKILL) // SIGINT ?
         }
     }
 }
@@ -65,7 +83,8 @@ func startBackend(view : ViewController) {
     let resPath = NSBundle.mainBundle().resourcePath
     let serverGoExePath = resPath! + "/dbworkbench.exe"
     
-    //killBackendIfRunning(serverGoExePath)
+    killOtherAppInstances()
+    killBackendIfRunning()
 
     backendTask.launchPath = serverGoExePath
     backendTask.currentDirectoryPath = resPath!
