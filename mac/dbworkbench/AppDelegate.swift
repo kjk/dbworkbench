@@ -224,6 +224,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
         return true
     }
+    
+    @IBAction func goToWebsite(sender: NSMenuItem) {
+        print("goToWebsite")
+    }
+    
+    @IBAction func goToSupport(sender: NSMenuItem) {
+        print("goToSupport")
+    }
+    
+    @IBAction func goToFeedback(sender: NSMenuItem) {
+        print("goToFeedback")
+    }
 }
 
 func getAppDelegate() -> AppDelegate {
