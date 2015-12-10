@@ -1,7 +1,7 @@
 import Foundation
 
 struct ProcInfo {
-    var name: String
+    var pathAndArgs: String
     var pid: Int
 }
 
@@ -10,17 +10,16 @@ struct ProcInfo {
 func parsePsLine(s : String) -> ProcInfo? {
     var parts = s.characters.split(" ", maxSplit: 3, allowEmptySlices: false).map(String.init)
     if parts.count != 4 {
-        print("failed to parse: '\(s)'")
+        log("parsePsLine: failed to parse: '\(s)'")
         return nil
     }
     
     let pidStr = parts[0]
     guard let pid = Int(pidStr) else {
-        print("failed to convert '\(pidStr)' to int")
+        log("parsePsLine: failed to convert pid '\(pidStr)' to int")
         return nil
     }
-    let name = parts[3]
-    return ProcInfo(name: name, pid: pid)
+    return ProcInfo(pathAndArgs: parts[3], pid: pid)
 }
 
 func listProcesses() -> [ProcInfo] {
@@ -34,11 +33,11 @@ func listProcesses() -> [ProcInfo] {
     
     var res = [ProcInfo]()
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    guard let output = NSString(data: data, encoding: NSUTF8StringEncoding) else {
-        print("failed to parse the output")
+    guard let output = NSString(data: data, encoding: NSUTF8StringEncoding) as? String else {
+        log("listProcesses: failed to parse the output")
         return res
     }
-    var lines = output.componentsSeparatedByString("\n")
+    var lines = output.characters.split("\n", allowEmptySlices: false).map(String.init)
     // first line is the header
     if lines.count > 0 {
         lines.removeAtIndex(0)

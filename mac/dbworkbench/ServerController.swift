@@ -7,43 +7,43 @@ var waitsForMoreServerOutput = true
 // TODO: use NSTak termination handler to get notified the backend process
 // exists and show some error (or try to restart automatically)
 
-// TODO: this doesn't work because NSWorkspace.runningApplications doesn't
-// include backend process
-// I found https://github.com/beltex/SystemKit/blob/master/SystemKit/Process.swift but
-// it requires being root
-// http://stackoverflow.com/questions/2518160/programmatically-check-if-a-process-is-running-on-mac
-// is a C implementation
-// terminate backend if it's running. This can happen e.g. when app crashes
-// and doesn't terminate backend properly
-func killBackendIfRunning2(backendPath : String) {
+// kill other instances of mac app. this is needed for the case when a user
+// downloads an update and runs it without quitting the previous version
+func killOtherAppInstances() {
     let wsk = NSWorkspace.sharedWorkspace()
     let processes = wsk.runningApplications
+    guard let myPath = NSRunningApplication.currentApplication().executableURL?.path else {
+        return
+    }
     for proc in processes {
-        if let appUrl = proc.executableURL {
-            if let path = appUrl.path {
-                log("path: \(path)")
-                if path == backendPath {
-                    let pid = proc.processIdentifier
-                    log("killing process \(pid) '\(path)' because bacckend shouldn't be running")
-                    proc.forceTerminate()
-                    // wait up to 10 secs for process to terminate
-                    var i = 10
-                    while i > 0 {
-                        if proc.terminated {
-                            return
-                        }
-                        sleep(1)
-                        i -= 1
-                    }
-                }
+        guard let appUrl = proc.executableURL else {
+            continue
+        }
+        guard let path = appUrl.path else {
+            continue
+        }
+        guard path.containsString("Database Workbench.app") else {
+            continue
+        }
+        //log("path: \(path)")
+        guard path != myPath else {
+            continue
+        }
+        proc.forceTerminate()
+        let pid = proc.processIdentifier
+        log("killing process \(pid) '\(path)'")
+        proc.forceTerminate()
+        // wait up to 3 secs for process to terminate
+        // TODO: proc.terminated seems to be false even if process is gone
+        var i = 3
+        while i > 0 {
+            if proc.terminated {
+                return
             }
+            sleep(1)
+            i -= 1
         }
     }
-}
-
-// TODO: write me
-func killOtherAppInstances() {
-    
 }
 
 // kill all dbworkbench.exe processes because if they are running, we'll fail
@@ -53,7 +53,8 @@ func killOtherAppInstances() {
 func killBackendIfRunning() {
     let procs = listProcesses()
     for p in procs {
-        if p.name.containsString("/dbworkbench.exe") {
+        if p.pathAndArgs.containsString("/dbworkbench.exe") {
+            log("killing process \(p.pid) '\(p.pathAndArgs)'")
             kill(pid_t(p.pid), SIGKILL) // SIGINT ?
         }
     }
