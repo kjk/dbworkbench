@@ -93,6 +93,10 @@ class Input extends React.Component {
   }
 
   render() {
+    // TODO: add csv support
+    //   <input type="button" onClick={this.exportToCSV} id="csv"
+    // value="Download CSV" className="btn btn-sm btn-default" />
+
     return (
       <div id="input">
         <div className="wrapper">
@@ -102,8 +106,6 @@ class Input extends React.Component {
               value="Run Query" className="btn btn-sm btn-primary" />
             <input type="button" onClick={this.runExplain} id="explain"
               value="Explain Query" className="btn btn-sm btn-default" />
-            <input type="button" onClick={this.exportToCSV} id="csv"
-              value="Download CSV" className="btn btn-sm btn-default" />
             <div id="query_progress">Please wait, query is executing...</div>
           </div>
         </div>
