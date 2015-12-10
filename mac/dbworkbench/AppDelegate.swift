@@ -195,7 +195,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if res == NSAlertFirstButtonReturn {
                 // TODO: a more specific page with just a download button to
                 // download new version and instructions on how to update
-                NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/s/for-mac.html")!)
+                self.goToWebsite()
             }
         })
     }
@@ -224,17 +224,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
         return true
     }
+
+    func goToWebsite() {
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/for-mac")!)
+    }
     
     @IBAction func goToWebsite(sender: NSMenuItem) {
-        print("goToWebsite")
+        goToWebsite()
     }
     
     @IBAction func goToSupport(sender: NSMenuItem) {
-        print("goToSupport")
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/support")!)
     }
     
     @IBAction func goToFeedback(sender: NSMenuItem) {
-        print("goToFeedback")
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://databaseworkbench.com/feedback")!)
     }
 }
 
