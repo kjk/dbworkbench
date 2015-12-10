@@ -82,9 +82,28 @@ class ConnectionWindow extends React.Component {
 
   deleteBookmark(e) {
     e.stopPropagation();
-    var self = this;
 
-    var id = e.target.attributes["data-custom-attribute"].value;
+    var idStr = e.target.attributes["data-custom-attribute"].value;
+    var id = parseInt(idStr, 10);
+    // bookmarks with negative id are not present in the backend
+    if (id < 0) {
+      var selectedIdx = this.state.activeBookmark;
+      var bookmarks = _.reject(this.state.bookmarks, function(b) { return b.id == id; });
+      if (selectedIdx >= bookmarks.length) {
+        selectedIdx = bookmarks.length - 1;
+      }
+      if (bookmarks.length == 0) {
+        bookmarks = [newEmptyBookmark()];
+        selectedIdx = 0;
+      }
+      this.setState({
+        bookmarks: bookmarks,
+        activeBookmark: selectedIdx,
+      });
+      return;
+    }
+
+    var self = this;
     api.removeBookmark(id, function(data) {
       console.log("deleteBookmarks removing: ", id, " data: ", data);
 
