@@ -193,13 +193,14 @@ body {
   display: none;
   position: absolute;
   background-color: #efefef;
+  font-size: 12px;
   top: 30px;
   right: 15px;
   height: 140px;
   bottom: 0px;
   width: 150px;
   color: #0000ff;
-  line-height: 25px;
+  line-height: 18px;
 }
 
 #sidebar div.tables-list .title div.dropdown-menu div.dropdown-window:hover {
