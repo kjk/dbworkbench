@@ -447,7 +447,7 @@ h4.modal-title {
   right: 0px;
   margin: 0px;
   padding: 0px;
-  overflow: auto;
+  overflow: inherit;
 }
 
 #output.full {
@@ -465,13 +465,6 @@ h4.modal-title {
   font-size:12px;
   color:#4A4A4A;
   line-height:21px;
-}
-
-#results td {
-  border: 0px none;
-  font-size: 12px;
-  color: #4A4A4A;
-  line-height: 12px;
 }
 
 #results tr {
@@ -508,24 +501,18 @@ h4.modal-title {
   color: #fff !important;
 }*/
 
-#results td {
+/*#results td {
   color: #5B5C59;
   vertical-align: middle;
   border: 0px none;
 }
-
+*/
 #results td div {
   max-width: 350px;
   max-height: 51px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: pre;
-
-  /*
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  */
 }
 
 #results td div span.null {

@@ -2,29 +2,49 @@
 'use strict';
 
 var React = require('react');
+var _ = require('underscore');
 
 var view = require('./view.js');
 
-/*
-function buildTable(results, sortColumn, sortOrder) {
-  results.columns.forEach(function(col) {
-      if (col === sortColumn) {
-          cols += "<th data='" + col + "'" + "data-sort-order=" + sortOrder + ">" + col + "&nbsp;" + sortArrow(sortOrder) + "</th>";
-      } else {
-          cols += "<th data='" + col + "'>" + col + "</th>";
-      }
-  });
-}
-*/
-
 class Output extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.handleRowClick = this.handleRowClick.bind(this);
+
+    this.state = {
+      clickedRowKey: -1,
+      rowStyle: {},
+    };
+  }
+
+  handleRowClick(key, e) {
+    console.log("Enlarging ", key)
+    var enlargeStyle = {
+      maxWidth: '350px',
+      maxHeight: '100%',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'normal',
+    }
+
+    if (_.isEqual(enlargeStyle, this.state.rowStyle) && key == this.state.clickedRowKey) {
+      console.log("Closing")
+      enlargeStyle = {}
+    }
+
+    this.setState({
+      clickedRowKey: key,
+      rowStyle: enlargeStyle
+    });
+  }
+
   renderHeader(columns, sortColumn, sortOrder) {
     var i = 0;
     if (!columns) {
       columns = [];
     }
     var children = columns.map(function(col) {
-      // TODO: use sortColumn and sortOrder
+      // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
         <th key={i} data={col}>{col}</th>
@@ -37,15 +57,21 @@ class Output extends React.Component {
   }
 
   renderRow(row, key) {
+    var style = {}
+    if (this.state.clickedRowKey == key) {
+      style = this.state.rowStyle
+    }
+
     var i = 0;
     var children = row.map(function(col) {
       i = i + 1;
       return (
-        <td key={i}><div>{col}</div></td>
+        <td key={i}><div style={style}>{col}</div></td>
       );
     });
+
     return (
-      <tr key={key}>{children}</tr>
+      <tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</tr>
     );
   }
 
