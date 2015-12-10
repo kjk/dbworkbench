@@ -78,7 +78,7 @@ func genResourcesGo(goPath, dataPath string) {
 }
 
 func genResources() {
-	zipPath := "dbworkbench.zip"
+	zipPath := "dbherohelper.zip"
 	createResourcesZip(zipPath)
 	goPath := "resources.go"
 	genResourcesGo(goPath, zipPath)

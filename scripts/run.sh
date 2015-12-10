@@ -15,9 +15,9 @@ godep go vet github.com/kjk/dbworkbench
 #rm -rf dbworkbench.test
 
 echo "building"
-godep go build -o dbworkbench
-#gdep go build -race -o dbworkbench
+godep go build -o dbherohelper
+#gdep go build -race -o dbherohelper
 
-echo "starting dbworkbench in dev mode"
-./dbworkbench -dev || true
-rm dbworkbench
+echo "starting dbherohelper in dev mode"
+./dbherohelper -dev || true
+rm dbherohelper

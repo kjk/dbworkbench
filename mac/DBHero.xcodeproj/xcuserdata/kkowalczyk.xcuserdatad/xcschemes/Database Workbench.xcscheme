@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DC1793671C08210B00C46C69"
-               BuildableName = "Database Workbench.app"
-               BlueprintName = "Database Workbench"
+               BuildableName = "DBHero.app"
+               BlueprintName = "DBHero"
                ReferencedContainer = "container:DBHero.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DC1793671C08210B00C46C69"
-            BuildableName = "Database Workbench.app"
-            BlueprintName = "Database Workbench"
+            BuildableName = "DBHero.app"
+            BlueprintName = "DBHero"
             ReferencedContainer = "container:DBHero.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DC1793671C08210B00C46C69"
-            BuildableName = "Database Workbench.app"
-            BlueprintName = "Database Workbench"
+            BuildableName = "DBHero.app"
+            BlueprintName = "DBHero"
             ReferencedContainer = "container:DBHero.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DC1793671C08210B00C46C69"
-            BuildableName = "Database Workbench.app"
-            BlueprintName = "Database Workbench"
+            BuildableName = "DBHero.app"
+            BlueprintName = "DBHero"
             ReferencedContainer = "container:DBHero.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

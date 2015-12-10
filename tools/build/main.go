@@ -214,7 +214,7 @@ var BuiltOnMac = "%s";
 func buildMac() {
 	verifyHasSecretsMust()
 
-	dirToZip := filepath.Join("mac", "build", "Release", "DB Hero.app")
+	dirToZip := filepath.Join("mac", "build", "Release", "DBHero.app")
 	zipPath := filepath.Join("mac", "build", "Release", "DBHero.zip")
 	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)

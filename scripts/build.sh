@@ -14,5 +14,5 @@ rm -rf dbworkbench.test
 godep go test -c ./...
 rm -rf dbworkbench.test
 
-godep go build -o dbworkbench
-#rm -rf dbworkbench
+godep go build -o dbherohelper
+#rm -rf dbherohelper

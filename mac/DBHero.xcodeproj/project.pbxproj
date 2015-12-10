@@ -21,7 +21,7 @@
 		7FCA08351C17B11100BBF9AC /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		7FCA08371C194CBA00BBF9AC /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListProcesses.swift; sourceTree = "<group>"; };
 		7FCA08391C1A312700BBF9AC /* dbherohelper.exe */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dbherohelper.exe; sourceTree = "<group>"; };
-		DC1793681C08210B00C46C69 /* Database Workbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Database Workbench.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC1793681C08210B00C46C69 /* DBHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DBHero.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC17936B1C08210B00C46C69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DC17936D1C08210B00C46C69 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DC17936F1C08210B00C46C69 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -53,7 +53,7 @@
 		DC1793691C08210B00C46C69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DC1793681C08210B00C46C69 /* Database Workbench.app */,
+				DC1793681C08210B00C46C69 /* DBHero.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -77,9 +77,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DC1793671C08210B00C46C69 /* Database Workbench */ = {
+		DC1793671C08210B00C46C69 /* DBHero */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "Database Workbench" */;
+			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "DBHero" */;
 			buildPhases = (
 				DC1793641C08210B00C46C69 /* Sources */,
 				DC1793651C08210B00C46C69 /* Frameworks */,
@@ -89,9 +89,9 @@
 			);
 			dependencies = (
 			);
-			name = "Database Workbench";
+			name = "DBHero";
 			productName = dbworkbench;
-			productReference = DC1793681C08210B00C46C69 /* Database Workbench.app */;
+			productReference = DC1793681C08210B00C46C69 /* DBHero.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -122,7 +122,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DC1793671C08210B00C46C69 /* Database Workbench */,
+				DC1793671C08210B00C46C69 /* DBHero */,
 			);
 		};
 /* End PBXProject section */
@@ -285,7 +285,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "Database Workbench" */ = {
+		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "DBHero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DC1793781C08210B00C46C69 /* Debug */,

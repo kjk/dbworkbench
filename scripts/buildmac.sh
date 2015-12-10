@@ -19,9 +19,9 @@ echo "building dbherohelper.exe..."
 godep go build -tags embeded_resources -o mac/dbherohelper.exe
 
 echo "running xcode..."
-xcodebuild -parallelizeTargets -project mac/dbworkbench.xcodeproj/
+xcodebuild -parallelizeTargets -project mac/DBHero.xcodeproj/
 
-codesign --force --deep --verbose -s "Developer ID Application: Krzysztof Kowalczyk (2LGSCEWRR9)" -f "mac/build/Release/Database Workbench.app"
+codesign --force --deep --verbose -s "Developer ID Application: Krzysztof Kowalczyk (2LGSCEWRR9)" -f "mac/build/Release/DBHero.app"
 
 codesign --verify --verbose "mac/build/Release/DBHero.app"
 

@@ -75,7 +75,7 @@ func MimeTypeByExtensionExt(name string) string {
 	return result
 }
 
-// data dir is ../../data on the server or ~/data/dbworkbench-website locally
+// data dir is ../../data on the server or ~/data/dbhero-website locally
 // the important part is that it's outside of directory with the code
 func getDataDir() string {
 	if dataDir != "" {
@@ -87,11 +87,11 @@ func getDataDir() string {
 	if u.PathExists(dataDir) {
 		return dataDir
 	}
-	dataDir = u.ExpandTildeInPath("~/data/dbworkbench-website")
+	dataDir = u.ExpandTildeInPath("~/data/dbhero-website")
 	if u.PathExists(dataDir) {
 		return dataDir
 	}
-	log.Fatal("data directory (../../data or ~/data/dbworkench-website) doesn't exist")
+	log.Fatal("data directory (../../data or ~/data/dbhero-website) doesn't exist")
 	return ""
 }
 
