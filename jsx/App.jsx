@@ -282,13 +282,12 @@ class App extends React.Component {
   handleDisconnectDatabase() {
     var self = this;
     api.disconnect(this.state.connectionId, function(data) {
-        console.log("disconnect");
+      console.log("disconnect");
 
-        self.setState({
-            connectionId: 0,
-            connected: false
-        });
-
+      self.setState({
+        connectionId: 0,
+        connected: false
+      });
     });
   }
 

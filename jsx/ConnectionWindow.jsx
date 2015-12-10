@@ -389,10 +389,8 @@ class ConnectionWindow extends React.Component {
   renderConnectionPage() {
     return (
       <div className="connection-settings">
-
         {this.renderConnectionWindow()}
         <hr/>
-
       </div>
     );
   }
