@@ -288,7 +288,13 @@ class App extends React.Component {
 
       self.setState({
         connectionId: 0,
-        connected: false
+        connected: false,
+        tables: null,
+        selectedTable: "",
+        selectedTableInfo: null,
+        results: null,
+        errorMessage: "",
+        errorVisible: false,
       });
     });
   }

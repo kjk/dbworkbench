@@ -141,7 +141,6 @@ class ConnectionWindow extends React.Component {
 
     if (change[this.state.activeBookmark]['oldDatabase'] === undefined) {
       change[this.state.activeBookmark]['oldDatabase'] = change[this.state.activeBookmark]['database'];
-      console.log("here", change)
     }
     change[this.state.activeBookmark][name] = e.target.value;
 
@@ -395,7 +394,7 @@ class ConnectionWindow extends React.Component {
   render() {
     return (
       <div id="connection_window">
-          <h1>DB Hero</h1>
+          <h1>dbHero</h1>
           {this.renderConnectionPage()}
       </div>
     );
