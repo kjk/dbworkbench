@@ -207,7 +207,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
 	LogInfof("handleIndex: '%s'\n", uri)
 	if uri == "/" {
-		redirectIndex(w, r)
+		redirectIndex2(w, r)
 		return
 	}
 	// map /foo and /foo.html to /s/foo.html such file exists
