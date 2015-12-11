@@ -1,3 +1,8 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -9,14 +14,6 @@ body {
 
 div {
   box-sizing: border-box;
-}
-
-.brand {
-  width: 50px;
-  height: 55px;
-  float: left;
-  background-size: contain;
-  background-image: url('./belo.png');
 }
 
 .demo {
@@ -191,7 +188,6 @@ nav {
 .footer {
   padding-top: 30px;
   border-top: 1px solid #f8f9fb;
-  margin-top: 20px;
 }
 
 .flex-center {
@@ -245,6 +241,18 @@ nav {
   text-align: center;
 }
 
+div .window-center {
+  position: relative;
+  left:0;
+  top:0px;
+  padding-top: 55px;
+  padding-bottom: 150px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f9fb;
+}
+
 .slick-prev:before, .slick-next:before { font-family: "slick"; font-size: 40px; line-height: 1; color: grey; opacity: 0.75; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 .slick-prev:before { content: "‹"; }
@@ -253,3 +261,4 @@ nav {
 [dir="rtl"] .slick-next { left: -10px; top: 70px; right: auto; }
 .slick-next:before { content: "›"; }
 [dir="rtl"] .slick-next:before { content: "‹"; }
+
