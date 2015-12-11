@@ -394,7 +394,12 @@ class ConnectionWindow extends React.Component {
   render() {
     return (
       <div id="connection_window">
-          <h1>dbHero</h1>
+          <div className='logo-container'>
+            <a href='#'>
+            <img className='resize_fit_center'
+              src='/s/img/dbhero.png' />
+            </a>
+        </div>
           {this.renderConnectionPage()}
       </div>
     );
