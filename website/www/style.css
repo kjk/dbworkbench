@@ -25,9 +25,9 @@ div {
   min-width: 370px;
   margin: 60px 10px;
   margin-bottom: 40px;
-  border: 1px solid #d6d9dc;
-  border-radius: 2px;
-  box-shadow: 0 4px 15px 0px #D6D9DC;
+  /*border: 1px solid #d6d9dc;*/
+  /*border-radius: 2px;*/
+  /*box-shadow: 0 4px 15px 0px #D6D9DC;*/
 }
 
 .demo img {
@@ -245,4 +245,11 @@ nav {
   text-align: center;
 }
 
+.slick-prev:before, .slick-next:before { font-family: "slick"; font-size: 40px; line-height: 1; color: grey; opacity: 0.75; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+.slick-prev:before { content: "‹"; }
+[dir="rtl"] .slick-prev:before { content: "›"; }
+
+[dir="rtl"] .slick-next { left: -10px; top: 70px; right: auto; }
+.slick-next:before { content: "›"; }
+[dir="rtl"] .slick-next:before { content: "‹"; }
