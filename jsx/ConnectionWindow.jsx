@@ -399,7 +399,7 @@ class ConnectionWindow extends React.Component {
             <img className='resize_fit_center'
               src='/s/img/dbhero.png' />
             </a>
-        </div>
+          </div>
           {this.renderConnectionPage()}
       </div>
     );
