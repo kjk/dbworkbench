@@ -1,1 +1,1 @@
-dbworkbench ansible_ssh_host=databaseworkbench.com ansible_ssh_user=dbworkbench ansible_ssh_private_key_file=../dbworkbench_rsa
+dbheroapp ansible_ssh_host=dbheroapp.com ansible_ssh_user=dbheroapp ansible_ssh_private_key_file=../dbheroapp_rsa

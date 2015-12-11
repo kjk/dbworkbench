@@ -1,6 +1,8 @@
 /* jshint -W097,-W117 */
 'use strict';
 
+require("babel-polyfill");
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 
@@ -286,7 +288,13 @@ class App extends React.Component {
 
       self.setState({
         connectionId: 0,
-        connected: false
+        connected: false,
+        tables: null,
+        selectedTable: "",
+        selectedTableInfo: null,
+        results: null,
+        errorMessage: "",
+        errorVisible: false,
       });
     });
   }

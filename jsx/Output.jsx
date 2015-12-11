@@ -28,7 +28,7 @@ class Output extends React.Component {
     }
 
     if (_.isEqual(enlargeStyle, this.state.rowStyle) && key == this.state.clickedRowKey) {
-      console.log("Closing")
+      console.log("Shrinking")
       enlargeStyle = {}
     }
 

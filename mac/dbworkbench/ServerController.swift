@@ -61,7 +61,7 @@ func killBackendIfRunning() {
 }
 
 func getDataDir() -> String {
-    return NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "Database Workbench"])
+    return NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "dbHero"])
 }
 
 var backendUsage = ""

@@ -1,4 +1,4 @@
-# Database Workbench
+# dbHero
 
 Web-based database browser written in Go, originally based on http://github.com/sosedoff/pgweb
 

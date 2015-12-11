@@ -141,7 +141,6 @@ class ConnectionWindow extends React.Component {
 
     if (change[this.state.activeBookmark]['oldDatabase'] === undefined) {
       change[this.state.activeBookmark]['oldDatabase'] = change[this.state.activeBookmark]['database'];
-      console.log("here", change)
     }
     change[this.state.activeBookmark][name] = e.target.value;
 
@@ -253,11 +252,7 @@ class ConnectionWindow extends React.Component {
     var b = this.getActiveBookmark();
     var formData = _.clone(b);
 
-    function stringStartsWith (string, prefix) {
-      return string.slice(0, prefix.length) == prefix;
-    }
-
-    if (stringStartsWith(formData["database"], initName)) {
+    if (formData["database"].startsWith(initName)) {
         formData["database"] = "";
     }
 
@@ -399,7 +394,12 @@ class ConnectionWindow extends React.Component {
   render() {
     return (
       <div id="connection_window">
-          <h1>DB Hero</h1>
+          <div className='logo-container'>
+            <a href='#'>
+            <img className='resize_fit_center'
+              src='/s/img/dbhero.png' />
+            </a>
+          </div>
           {this.renderConnectionPage()}
       </div>
     );
