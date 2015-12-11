@@ -11,7 +11,7 @@ var browserify  = require('browserify');
 var exorcist    = require('exorcist')
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
-var concat      = require('gulp-concat');
+var concat      = require('gulp-concat'); // TODO: this is not being used maybe remove?
 var htmlreplace = require('gulp-html-replace');
 var uglify      = require('gulp-uglify');
 var react       = require('gulp-react');
@@ -20,16 +20,14 @@ var streamify   = require('gulp-streamify');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer')
 var watchify    = require('watchify');
-var reactify    = require('reactify');
+var babelify    = require("babelify");
 
 gulp.task('js', function() {
   browserify({
     entries: ['jsx/App.jsx'],
-    transform: [
-            ["reactify", {"es6": true}]
-        ],
     debug: true
   })
+    .transform('babelify', {presets: ['es2015', 'react']})
     .bundle()
     .pipe(exorcist('s/dist/bundle.js.map'))
     .pipe(source('bundle.js'))
@@ -42,11 +40,9 @@ gulp.task('js', function() {
 gulp.task('jsmin', function() {
   browserify({
     entries: ['jsx/App.jsx'],
-    transform: [
-            ["reactify", {"es6": true}]
-        ],
     debug: true
   })
+    .transform('babelify', {presets: ['es2015', 'react']})
     .bundle()
     //.pipe(exorcist('s/dist/bundle.min.js.map'))
     .pipe(source('bundle.min.js'))
