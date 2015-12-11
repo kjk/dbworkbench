@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Reflection;
 
 using Yepi;
+using System.Threading;
 
 namespace DbHero
 {
@@ -47,33 +48,46 @@ namespace DbHero
         }
 
         // could also use MainMenu http://stackoverflow.com/questions/2778109/standard-windows-menu-bars-in-windows-forms
+        // in which case probably don't need to layout _mainMenu (it'll be part of non-client area)
         private void CreateMenu()
         {
             _mainMenu = new MenuStrip();
 
             var menuFile = new ToolStripMenuItem("&File");
-            var fileExit = new ToolStripMenuItem("&Exit");
-            fileExit.Click += FileExit_Click;
-            menuFile.DropDownItems.Add(fileExit);
+            _mainMenu.Items.Add(menuFile);
+            menuFile.DropDownItems.Add("&Exit", null, FileExit_Click);
 
             var menuHelp = new ToolStripMenuItem("&Help");
-            var helpWebsite = new ToolStripMenuItem("&Website");
-            helpWebsite.Click += HelpWebsite_Click;
-            var helpSupport = new ToolStripMenuItem("&Support");
-            helpSupport.Click += HelpSupport_Click;
-            var helpFeedback = new ToolStripMenuItem("&Feedback");
-            helpFeedback.Click += HelpFeedback_Click;
-
-            menuHelp.DropDownItems.Add(helpWebsite);
-            menuHelp.DropDownItems.Add(helpSupport);
-            menuHelp.DropDownItems.Add(helpFeedback);
-
-            _mainMenu.Items.Add(menuFile);
             _mainMenu.Items.Add(menuHelp);
+            menuHelp.DropDownItems.Add("&Website", null, HelpWebsite_Click);
+            menuHelp.DropDownItems.Add("&Support", null, HelpSupport_Click);
+            menuHelp.DropDownItems.Add("&Feedback", null, HelpFeedback_Click);
+
+#if DEBUG
+            menuHelp.DropDownItems.Add("Crash main thread", null, HelpCrashMainThread_Click);
+            menuHelp.DropDownItems.Add("Crash background thread", null, HelpCrashBackgroundThread_Click);
+#endif
 
             Controls.Add(_mainMenu);
-            _mainMenu.PerformLayout();
             MainMenuStrip = _mainMenu;
+            _mainMenu.PerformLayout();
+        }
+
+        private void HelpCrashMainThread_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HelpCrashBackgroundThread_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                throw new NotImplementedException();
+            });
+            Thread.Sleep(2000);
+            // unobserved exceptions are only reported when finalized, so force
+            // finalization
+            GC.Collect();
         }
 
         private void HelpFeedback_Click(object sender, EventArgs e)
@@ -88,7 +102,7 @@ namespace DbHero
 
         private void HelpWebsite_Click(object sender, EventArgs e)
         {
-            FileUtil.TryLaunchUrl("https://dbheroapp.com/for-windows");
+            FileUtil.TryLaunchUrl("https://dbheroapp.com");
         }
 
         private void FileExit_Click(object sender, EventArgs e)
@@ -184,7 +198,7 @@ namespace DbHero
 
         // must happen before StartBackendServer()
         string _backendUsage = "";
-        public void LoadUsage()
+        public void ReadUsage()
         {
             // can happen because UsageFilePath() might not exist on first run
             // TODO: make it File.TryReadAllText()
@@ -312,7 +326,7 @@ namespace DbHero
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-            LoadUsage();
+            ReadUsage();
             if (!StartBackendServer())
             {
                 // TODO: better way to show error message
@@ -337,11 +351,6 @@ namespace DbHero
         {
             InitializeComponent();
             InitializeComponent2();
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

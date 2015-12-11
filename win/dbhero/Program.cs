@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
+using System.Runtime.ExceptionServices;
+using System.Security.Permissions;
 using System.Windows.Forms;
 
 using Yepi;
+using System.Threading.Tasks;
 
 namespace DbHero
 {
@@ -23,12 +24,74 @@ namespace DbHero
         }
 
         [STAThread]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main()
         {
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            // http://stackoverflow.com/questions/20542212/winforms-app-still-crashes-after-unhandled-exception-handler
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
             Log.TryOpen(LogPath());
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
+
+        // TODO: send crash report to the website
+        static void ShowCrash(Exception e)
+        {
+            var msg = e.Message;
+            if (msg.Length > 0)
+                msg += "\n\n";
+            if (e.StackTrace == null)
+            {
+                if (e is AggregateException)
+                {
+                    var ae = e as AggregateException;
+                    var baseException = ae.GetBaseException();
+                    if (baseException.StackTrace != null)
+                    {
+                        msg += baseException.StackTrace.ToString();
+                    }
+                }
+            } else
+            {
+                msg += e.StackTrace.ToString();
+            }
+            MessageBox.Show("We're sorry, we crashed!\n\n" + msg, "dbHero crashed", MessageBoxButtons.OK);
+        }
+
+        private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            Log.E(e.Exception);
+            Log.Close();
+            ShowCrash(e.Exception);
+            Application.Exit();
+        }
+
+        [HandleProcessCorruptedStateExceptionsAttribute]
+        static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        {
+            Exception e = args.ExceptionObject as Exception;
+            if (e != null)
+            {
+                Log.E(e);
+                ShowCrash(e);
+            }
+            Log.Close();
+            Application.Exit();
+        }
+
+        [HandleProcessCorruptedStateExceptionsAttribute]
+        private static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs t)
+        {
+            Log.E(t.Exception);
+            Log.Close();
+            ShowCrash(t.Exception);
+            Application.Exit();
+        }
+
     }
 }
