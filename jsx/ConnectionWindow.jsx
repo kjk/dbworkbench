@@ -253,11 +253,7 @@ class ConnectionWindow extends React.Component {
     var b = this.getActiveBookmark();
     var formData = _.clone(b);
 
-    function stringStartsWith (string, prefix) {
-      return string.slice(0, prefix.length) == prefix;
-    }
-
-    if (stringStartsWith(formData["database"], initName)) {
+    if (formData["database"].startsWith(initName)) {
         formData["database"] = "";
     }
 
