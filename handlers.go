@@ -304,6 +304,7 @@ func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query 
 	result, err := ctx.ConnInfo.Client.Query(query)
 
 	if err != nil {
+		LogErrorf("query '%s' failed with '%s'\n", query, err)
 		serveJSONError(w, r, err)
 		return
 	}
