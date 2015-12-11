@@ -77,7 +77,6 @@ func readBookmarksDecryptPwd() ([]Bookmark, error) {
 	for i, b := range res {
 		pwd := b.Password
 		b.Password, err = decrypt(pwd)
-		LogInfof("decrypted '%s' => '%s'\n", pwd, b.Password)
 		if err != nil {
 			LogInfof("decrypted '%s' => '%s'\n", pwd, b.Password)
 			LogErrorf("decrypt('%s') failed with '%s'\n", pwd, err)
