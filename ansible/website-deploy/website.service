@@ -8,15 +8,15 @@
 # Restart : systemctl restart website
 # To view logs: journalctl -u website
 [Unit]
-Description=Database Workbench website
+Description=dbHero website
 After=syslog.target network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=simple
-User=dbworkbench
-Group=dbworkbench
-WorkingDirectory=/home/dbworkbench/www/app/current
-ExecStart=/home/dbworkbench/www/app/current/website
+User=dbheroapp
+Group=dbheroapp
+WorkingDirectory=/home/dbheroapp/www/app/current
+ExecStart=/home/dbheroapp/www/app/current/website
 # http://www.freedesktop.org/software/systemd/man/systemd.service.html
 # only on unclean signal
 Restart=on-abort
