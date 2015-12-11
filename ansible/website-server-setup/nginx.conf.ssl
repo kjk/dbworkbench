@@ -7,8 +7,8 @@ server {
     listen          443 ssl;
     server_name     www.dbheroapp.com;
 
-    ssl_certificate_key     /etc/nginx/ssl/www.dbheroapp.com.key;
-    ssl_certificate         /etc/nginx/ssl/www.dbheroapp.com.chained.crt;
+    ssl_certificate_key     /etc/nginx/ssl/dbheroapp.com.key;
+    ssl_certificate         /etc/nginx/ssl/dbheroapp.com.chained.crt;
 
     # Recommended security settings from https://wiki.mozilla.org/Security/Server_Side_TLS
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
@@ -31,8 +31,8 @@ server {
     server_name     dbheroapp.com;
 
     ssl on;
-    ssl_certificate_key     /etc/nginx/ssl/www.dbheroapp.com.key;
-    ssl_certificate         /etc/nginx/ssl/www.dbheroapp.com.chained.crt;
+    ssl_certificate_key     /etc/nginx/ssl/dbheroapp.com.key;
+    ssl_certificate         /etc/nginx/ssl/dbheroapp.com.chained.crt;
 
     # Recommended security settings from https://wiki.mozilla.org/Security/Server_Side_TLS
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
