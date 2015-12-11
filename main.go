@@ -96,7 +96,7 @@ func getDataDirMac() string {
 	if err != nil {
 		log.Fatalf("homedir.Dir() failed with %s", err)
 	}
-	d = filepath.Join(d, "Library", "Application Support", "Database Workbench")
+	d = filepath.Join(d, "Library", "Application Support", "dbHero")
 	return d
 }
 
@@ -105,7 +105,7 @@ func getDataDirWindows() string {
 	if dir == "" {
 		log.Fatalf("LOCALAPPDATA not set")
 	}
-	return filepath.Join(dir, "Database Workbench")
+	return filepath.Join(dir, "dbhero")
 }
 
 func getDataDir() string {

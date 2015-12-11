@@ -71,16 +71,18 @@ func readBookmarksDecryptPwd() ([]Bookmark, error) {
 		// of bookmarks.json changes in incompatible ways. We don't want
 		// this error to propagate all the way to frontend
 		LogErrorf("json.Unmarshall() failed with '%s'\n", err)
-		return res, nil
+		return []Bookmark{}, nil
 	}
 
-	for _, b := range res {
+	for i, b := range res {
 		pwd := b.Password
 		b.Password, err = decrypt(pwd)
 		if err != nil {
 			LogInfof("decrypted '%s' => '%s'\n", pwd, b.Password)
 			LogErrorf("decrypt('%s') failed with '%s'\n", pwd, err)
 			b.Password = ""
+		} else {
+			res[i] = b
 		}
 	}
 
