@@ -190,12 +190,12 @@ func isMacUserAgent(ua string) bool {
 func redirectIndex2(w http.ResponseWriter, r *http.Request) {
 	ua := r.UserAgent()
 	if isMacUserAgent(ua) {
-		http.Redirect(w, r, "/s/for-mac.html", http.StatusFound /* 302 */)
+		http.Redirect(w, r, "for-mac", http.StatusFound /* 302 */)
 		return
 	}
 
 	// for windows and everything else
-	http.Redirect(w, r, "/s/for-windows.html", http.StatusFound /* 302 */)
+	http.Redirect(w, r, "for-windows", http.StatusFound /* 302 */)
 }
 
 func redirectIndex(w http.ResponseWriter, r *http.Request) {
@@ -210,7 +210,20 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		redirectIndex(w, r)
 		return
 	}
-	http.NotFound(w, r)
+	// map /foo and /foo.html to /s/foo.html such file exists
+	name := uri[1:]
+	path := filepath.Join("www", name)
+	d, err := ioutil.ReadFile(path)
+	if err != nil {
+		path += ".html"
+		d, err = ioutil.ReadFile(path)
+	}
+	if err != nil {
+		LogErrorf("ioutil.ReadFile('%s') failed with '%s'\n", path, err)
+		http.NotFound(w, r)
+		return
+	}
+	serveData(w, r, 200, MimeTypeByExtensionExt(path), d)
 }
 
 func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
