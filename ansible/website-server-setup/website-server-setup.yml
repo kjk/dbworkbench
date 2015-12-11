@@ -42,9 +42,9 @@
       file: >
         path=/etc/nginx/ssl/ state=directory mode=0755
     - name: copy nginx certificate
-      copy: src=www.databaseworkbench.com.chained.crt dest=/etc/nginx/ssl/www.databaseworkbench.com.chained.crt
+      copy: src=dbheroapp.com.chained.crt dest=/etc/nginx/ssl/dbheroapp.com.chained.crt
     - name: copy nginx key
-      copy: src=www.databaseworkbench.com.key dest=/etc/nginx/ssl/www.databaseworkbench.com.key
+      copy: src=dbheroapp.com.key dest=/etc/nginx/ssl/dbheroapp.com.key
     - name: copy nginx config file
       copy: src=nginx.conf.ssl dest=/etc/nginx/sites-available/dbheroapp
     - name: enable website
