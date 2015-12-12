@@ -17,19 +17,19 @@ var (
 	httpAddr = ":5555"
 
 	// for auto-update
-	latestMacVersion = "0.1.3"
-	latestWinVersion = "0.1.3"
+	latestMacVersion = "0.1.6"
+	latestWinVersion = "0.1.6"
 
 	dataDir string
 
 	urlToFileMap = map[string]string{
-		"/gui-database-workbench-and-explorer-for-mac-osx": "for-mac.html",
-		"/gui-database-workbench-and-explorer-for-windows": "for-windows.html",
+		"/gui-database-client-for-postgresql-mac-osx": "for-mac.html",
+		"/gui-database-client-for-postgresql-windows": "for-windows.html",
 	}
 
 	redirects = map[string]string{
-		"/for-mac":     "/gui-database-workbench-and-explorer-for-mac-osx",
-		"/for-windows": "/gui-database-workbench-and-explorer-for-windows",
+		"/for-mac":     "/gui-database-client-for-postgresql-mac-osx",
+		"/for-windows": "/gui-database-client-for-postgresql-windows",
 	}
 )
 
@@ -210,12 +210,12 @@ func isMacUserAgent(ua string) bool {
 func redirectIndex(w http.ResponseWriter, r *http.Request) {
 	ua := r.UserAgent()
 	if isMacUserAgent(ua) {
-		http.Redirect(w, r, "gui-database-workbench-and-explorer-for-mac-osx", http.StatusFound /* 302 */)
+		http.Redirect(w, r, "gui-database-client-for-postgresql-mac-osx", http.StatusFound /* 302 */)
 		return
 	}
 
 	// for windows and everything else
-	http.Redirect(w, r, "gui-database-workbench-and-explorer-for-windows", http.StatusFound /* 302 */)
+	http.Redirect(w, r, "gui-database-client-for-postgresql-windows", http.StatusFound /* 302 */)
 }
 
 // url: /
