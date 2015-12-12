@@ -45,11 +45,13 @@ nav {
 }
 
 .color-blue {
-  color: #2180d8;
+  color: #115798;
+  /*color: #2180d8;*/
 }
 
 .color-light-blue {
-  color: #45a5ff;
+  color: #115594;
+  /*color: #45a5ff;*/
 }
 
 .border-blue {
@@ -67,18 +69,21 @@ nav {
 }
 
 .link {
-  color: #45a5ff;
+  color: #115594;
+  /*color: #45a5ff;*/
   text-decoration: none;
   margin-right: 15px;
   display: inline-block;
 }
 
 .link-current {
-  color: #45a5ff;
+  color: #115594;
+  /*color: #45a5ff;*/
   text-decoration: none;
   margin-right: 15px;
   display: inline-block;
-  border-bottom: 2px solid #4aa7ff;
+  /*border-bottom: 2px solid #4aa7ff;*/
+  border-bottom: 2px solid #115594;
 }
 
 .page-container {
@@ -267,7 +272,8 @@ div .window-center {
   text-align: center;
   width: 100%;
   min-height: 80%;
-  background-color: #f8f9fb;
+  background-color: #fafbfa;
+  /*background-color: #f8f9fb;*/
 }
 
 .slick-prev:before, .slick-next:before { font-family: "slick"; font-size: 40px; line-height: 1; color: grey; opacity: 0.75; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
