@@ -73,6 +73,14 @@ nav {
   display: inline-block;
 }
 
+.link-current {
+  color: #45a5ff;
+  text-decoration: none;
+  margin-right: 15px;
+  display: inline-block;
+  border-bottom: 2px solid #4aa7ff;
+}
+
 .page-container {
   position: absolute;
   top: 0;
