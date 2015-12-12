@@ -2,8 +2,6 @@
 bin
 tmp/
 cover.out
-dbworkbench
-dbworkbench_linux
 ansible/*.zip
 s/js/bundle.js
 s/js/bundle.js.map
@@ -11,8 +9,8 @@ s/dist
 node_modules
 cmd/import_stack_overflow/data/
 cmd/import_stack_overflow/import_stack_overflow
-mac/dbworkbench.xcodeproj/xcuserdata/
-mac/dbworkbench.xcodeproj/project.xcworkspace/xcuserdata/
+mac/dbHero.xcodeproj/xcuserdata/
+mac/dbHero.xcodeproj/project.xcworkspace/xcuserdata/
 mac/build/
 win/dbhero/obj/
 .vs/
