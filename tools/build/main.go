@@ -186,11 +186,11 @@ func extractVersionMust() {
 }
 
 func s3SetupPathMac() string {
-	return s3Dir + fmt.Sprintf("rel/DBHero-%s.zip", programVersion)
+	return s3Dir + fmt.Sprintf("rel/dbHero-%s.zip", programVersion)
 }
 
 func macZipPath() string {
-	return pj("mac", "build", "Release", "DBHero.zip")
+	return pj("mac", "build", "Release", "dbHero.zip")
 }
 
 func uploadToS3Mac() {
@@ -215,7 +215,7 @@ func buildMac() {
 	verifyHasSecretsMust()
 
 	dirToZip := filepath.Join("mac", "build", "Release", "DBHero.app")
-	zipPath := filepath.Join("mac", "build", "Release", "DBHero.zip")
+	zipPath := filepath.Join("mac", "build", "Release", "dbHero.zip")
 	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)
 

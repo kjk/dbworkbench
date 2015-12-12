@@ -23,7 +23,7 @@ namespace DbHero
         public static string AppDataDir()
         {
             var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            dir = System.IO.Path.Combine(dir, "DBHero");
+            dir = System.IO.Path.Combine(dir, "dbHero");
             Directory.CreateDirectory(dir);
             return dir;
         }
@@ -53,7 +53,7 @@ namespace DbHero
         }
 
 #if false
--        // TODO: move to yepi-utils
+-       // TODO: move to yepi-utils
         // TODO: this doesn't seem to work without root priviledges
         // based on http://stackoverflow.com/questions/4084402/get-hard-disk-serial-number
         public static string[] GetHardDriveSerials()

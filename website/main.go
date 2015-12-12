@@ -24,11 +24,11 @@ var (
 )
 
 func latestMacDownloadURL() string {
-	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/dbhero/rel/DBHero-%s.zip", latestMacVersion)
+	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/dbhero/rel/dbHero-%s.zip", latestMacVersion)
 }
 
 func latestWinDownloadURL() string {
-	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/dbhero/rel/DBHero-setup-%s.exe", latestWinVersion)
+	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/dbhero/rel/dbHero-setup-%s.exe", latestWinVersion)
 }
 
 // LogInfof logs additional info

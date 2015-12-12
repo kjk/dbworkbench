@@ -13,12 +13,12 @@
 
 #include <idp.iss>
 
-#define MyAppName "DBHero"
+#define MyAppName "dbHero"
 ;MyAppVersion is set from cmd-line
 ;#define MyAppVersion "9.9"
 #define MyAppPublisher "Database Experts"
 #define MyAppURL "http://www.dbhero.com"
-#define MyAppExeName "DBHero.exe"
+#define MyAppExeName "dbHero.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -39,7 +39,7 @@ DefaultDirName={localappdata}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=bin\Release
-OutputBaseFilename=DBHero-setup-inno
+OutputBaseFilename=dbHero-setup-inno
 SetupIconFile=icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -57,8 +57,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "bin\Release\DBHero.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\DBHero.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\dbHero.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\dbHero.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Yepi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dbherohelper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

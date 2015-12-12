@@ -9,20 +9,20 @@ import (
 )
 
 func s3SetupPathWin() string {
-	return s3Dir + fmt.Sprintf("rel/DBHero-setup-%s.exe", programVersion)
+	return s3Dir + fmt.Sprintf("rel/dbHero-setup-%s.exe", programVersion)
 }
 
 func exeSetupPath() string {
-	exeName := fmt.Sprintf("DBHero-setup-%s.exe", programVersion)
+	exeName := fmt.Sprintf("dbHero-setup-%s.exe", programVersion)
 	return pj("bin", "Release", exeName)
 }
 
 func exeSetupTmpPath() string {
-	return pj("bin", "Release", "DBHero-setup-inno.exe")
+	return pj("bin", "Release", "dbHero-setup-inno.exe")
 }
 
 func exePath() string {
-	return pj("bin", "Release", "DBHero.exe")
+	return pj("bin", "Release", "dbHero.exe")
 }
 
 func signMust(path string) {
