@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/kkowalczyk/src/go/src/github.com/kjk/dbworkbench/mac/DBHero.xcodeproj">
+      location = "self:/Users/furkan/Documents/Programming/go/own/src/github.com/kjk/dbworkbench/mac/dbHero.xcodeproj">
    </FileRef>
 </Workspace>

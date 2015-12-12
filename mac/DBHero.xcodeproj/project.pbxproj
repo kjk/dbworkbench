@@ -7,27 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7FCA08361C17B11100BBF9AC /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA08351C17B11100BBF9AC /* Log.swift */; };
-		7FCA08381C194CBA00BBF9AC /* ListProcesses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA08371C194CBA00BBF9AC /* ListProcesses.swift */; };
 		7FCA083A1C1A312700BBF9AC /* dbherohelper.exe in Resources */ = {isa = PBXBuildFile; fileRef = 7FCA08391C1A312700BBF9AC /* dbherohelper.exe */; };
-		DC17936C1C08210B00C46C69 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC17936B1C08210B00C46C69 /* AppDelegate.swift */; };
-		DC17936E1C08210B00C46C69 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC17936D1C08210B00C46C69 /* ViewController.swift */; };
-		DC1793701C08210B00C46C69 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC17936F1C08210B00C46C69 /* Assets.xcassets */; };
-		DC1793731C08210B00C46C69 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC1793711C08210B00C46C69 /* Main.storyboard */; };
-		DC36185A1C0A49F4000AD79F /* ServerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3618591C0A49F4000AD79F /* ServerController.swift */; };
+		DC8DC5E61C1BE0FB00427147 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DC5DE1C1BE0FB00427147 /* AppDelegate.swift */; };
+		DC8DC5E71C1BE0FB00427147 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC8DC5DF1C1BE0FB00427147 /* Assets.xcassets */; };
+		DC8DC5E81C1BE0FB00427147 /* Base.lproj in Resources */ = {isa = PBXBuildFile; fileRef = DC8DC5E01C1BE0FB00427147 /* Base.lproj */; };
+		DC8DC5E91C1BE0FB00427147 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DC8DC5E11C1BE0FB00427147 /* Info.plist */; };
+		DC8DC5EA1C1BE0FB00427147 /* ListProcesses.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DC5E21C1BE0FB00427147 /* ListProcesses.swift */; };
+		DC8DC5EB1C1BE0FB00427147 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DC5E31C1BE0FB00427147 /* Log.swift */; };
+		DC8DC5EC1C1BE0FB00427147 /* ServerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DC5E41C1BE0FB00427147 /* ServerController.swift */; };
+		DC8DC5ED1C1BE0FB00427147 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DC5E51C1BE0FB00427147 /* ViewController.swift */; };
+		DC8DC5F01C1BE12800427147 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC8DC5EE1C1BE12800427147 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7FCA08351C17B11100BBF9AC /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		7FCA08371C194CBA00BBF9AC /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListProcesses.swift; sourceTree = "<group>"; };
 		7FCA08391C1A312700BBF9AC /* dbherohelper.exe */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dbherohelper.exe; sourceTree = "<group>"; };
-		DC1793681C08210B00C46C69 /* DBHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DBHero.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC17936B1C08210B00C46C69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		DC17936D1C08210B00C46C69 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		DC17936F1C08210B00C46C69 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		DC1793721C08210B00C46C69 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		DC1793741C08210B00C46C69 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DC3618591C0A49F4000AD79F /* ServerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerController.swift; sourceTree = "<group>"; };
+		DC1793681C08210B00C46C69 /* dbHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbHero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC8DC5DE1C1BE0FB00427147 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = dbHero/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		DC8DC5DF1C1BE0FB00427147 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = dbHero/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		DC8DC5E01C1BE0FB00427147 /* Base.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Base.lproj; path = dbHero/Base.lproj; sourceTree = SOURCE_ROOT; };
+		DC8DC5E11C1BE0FB00427147 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = dbHero/Info.plist; sourceTree = SOURCE_ROOT; };
+		DC8DC5E21C1BE0FB00427147 /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ListProcesses.swift; path = dbHero/ListProcesses.swift; sourceTree = SOURCE_ROOT; };
+		DC8DC5E31C1BE0FB00427147 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Log.swift; path = dbHero/Log.swift; sourceTree = SOURCE_ROOT; };
+		DC8DC5E41C1BE0FB00427147 /* ServerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServerController.swift; path = dbHero/ServerController.swift; sourceTree = SOURCE_ROOT; };
+		DC8DC5E51C1BE0FB00427147 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = dbHero/ViewController.swift; sourceTree = SOURCE_ROOT; };
+		DC8DC5EF1C1BE12800427147 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = dbHero/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,7 +48,7 @@
 			isa = PBXGroup;
 			children = (
 				7FCA08391C1A312700BBF9AC /* dbherohelper.exe */,
-				DC17936A1C08210B00C46C69 /* DBHero */,
+				DC17936A1C08210B00C46C69 /* dbHero */,
 				DC1793691C08210B00C46C69 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,33 +56,34 @@
 		DC1793691C08210B00C46C69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DC1793681C08210B00C46C69 /* DBHero.app */,
+				DC1793681C08210B00C46C69 /* dbHero.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DC17936A1C08210B00C46C69 /* DBHero */ = {
+		DC17936A1C08210B00C46C69 /* dbHero */ = {
 			isa = PBXGroup;
 			children = (
-				7FCA08371C194CBA00BBF9AC /* ListProcesses.swift */,
-				7FCA08351C17B11100BBF9AC /* Log.swift */,
-				DC17936B1C08210B00C46C69 /* AppDelegate.swift */,
-				DC17936D1C08210B00C46C69 /* ViewController.swift */,
-				DC3618591C0A49F4000AD79F /* ServerController.swift */,
-				DC17936F1C08210B00C46C69 /* Assets.xcassets */,
-				DC1793711C08210B00C46C69 /* Main.storyboard */,
-				DC1793741C08210B00C46C69 /* Info.plist */,
+				DC8DC5DE1C1BE0FB00427147 /* AppDelegate.swift */,
+				DC8DC5DF1C1BE0FB00427147 /* Assets.xcassets */,
+				DC8DC5E01C1BE0FB00427147 /* Base.lproj */,
+				DC8DC5E11C1BE0FB00427147 /* Info.plist */,
+				DC8DC5E21C1BE0FB00427147 /* ListProcesses.swift */,
+				DC8DC5E31C1BE0FB00427147 /* Log.swift */,
+				DC8DC5E41C1BE0FB00427147 /* ServerController.swift */,
+				DC8DC5E51C1BE0FB00427147 /* ViewController.swift */,
+				DC8DC5EE1C1BE12800427147 /* Main.storyboard */,
 			);
-			name = DBHero;
+			name = dbHero;
 			path = dbworkbench;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DC1793671C08210B00C46C69 /* DBHero */ = {
+		DC1793671C08210B00C46C69 /* dbHero */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "DBHero" */;
+			buildConfigurationList = DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "dbHero" */;
 			buildPhases = (
 				DC1793641C08210B00C46C69 /* Sources */,
 				DC1793651C08210B00C46C69 /* Frameworks */,
@@ -89,9 +93,9 @@
 			);
 			dependencies = (
 			);
-			name = "DBHero";
+			name = dbHero;
 			productName = dbworkbench;
-			productReference = DC1793681C08210B00C46C69 /* DBHero.app */;
+			productReference = DC1793681C08210B00C46C69 /* dbHero.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -109,7 +113,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DC1793631C08210B00C46C69 /* Build configuration list for PBXProject "DBHero" */;
+			buildConfigurationList = DC1793631C08210B00C46C69 /* Build configuration list for PBXProject "dbHero" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -122,7 +126,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DC1793671C08210B00C46C69 /* DBHero */,
+				DC1793671C08210B00C46C69 /* dbHero */,
 			);
 		};
 /* End PBXProject section */
@@ -132,9 +136,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC8DC5E91C1BE0FB00427147 /* Info.plist in Resources */,
+				DC8DC5F01C1BE12800427147 /* Main.storyboard in Resources */,
+				DC8DC5E71C1BE0FB00427147 /* Assets.xcassets in Resources */,
+				DC8DC5E81C1BE0FB00427147 /* Base.lproj in Resources */,
 				7FCA083A1C1A312700BBF9AC /* dbherohelper.exe in Resources */,
-				DC1793701C08210B00C46C69 /* Assets.xcassets in Resources */,
-				DC1793731C08210B00C46C69 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,21 +151,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DC17936E1C08210B00C46C69 /* ViewController.swift in Sources */,
-				DC17936C1C08210B00C46C69 /* AppDelegate.swift in Sources */,
-				7FCA08381C194CBA00BBF9AC /* ListProcesses.swift in Sources */,
-				7FCA08361C17B11100BBF9AC /* Log.swift in Sources */,
-				DC36185A1C0A49F4000AD79F /* ServerController.swift in Sources */,
+				DC8DC5ED1C1BE0FB00427147 /* ViewController.swift in Sources */,
+				DC8DC5EC1C1BE0FB00427147 /* ServerController.swift in Sources */,
+				DC8DC5E61C1BE0FB00427147 /* AppDelegate.swift in Sources */,
+				DC8DC5EA1C1BE0FB00427147 /* ListProcesses.swift in Sources */,
+				DC8DC5EB1C1BE0FB00427147 /* Log.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		DC1793711C08210B00C46C69 /* Main.storyboard */ = {
+		DC8DC5EE1C1BE12800427147 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				DC1793721C08210B00C46C69 /* Base */,
+				DC8DC5EF1C1BE12800427147 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -251,12 +257,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = dbworkbench/Info.plist;
+				INFOPLIST_FILE = dbHero/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = dbHero;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -264,19 +272,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = dbworkbench/Info.plist;
+				INFOPLIST_FILE = dbHero/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = dbHero;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DC1793631C08210B00C46C69 /* Build configuration list for PBXProject "DBHero" */ = {
+		DC1793631C08210B00C46C69 /* Build configuration list for PBXProject "dbHero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DC1793751C08210B00C46C69 /* Debug */,
@@ -285,7 +294,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "DBHero" */ = {
+		DC1793771C08210B00C46C69 /* Build configuration list for PBXNativeTarget "dbHero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DC1793781C08210B00C46C69 /* Debug */,

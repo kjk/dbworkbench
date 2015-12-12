@@ -22,7 +22,7 @@ func killOtherAppInstances() {
         guard let path = appUrl.path else {
             continue
         }
-        guard path.containsString("DBHero.app") else {
+        guard path.containsString("dbHero.app") else {
             continue
         }
         //log("path: \(path)")
