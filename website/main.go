@@ -21,6 +21,16 @@ var (
 	latestWinVersion = "0.1.3"
 
 	dataDir string
+
+	urlToFileMap = map[string]string{
+		"/gui-database-workbench-and-explorer-for-mac-osx": "for-mac.html",
+		"/gui-database-workbench-and-explorer-for-windows": "for-windows.html",
+	}
+
+	redirects = map[string]string{
+		"/for-mac":     "/gui-database-workbench-and-explorer-for-mac-osx",
+		"/for-windows": "/gui-database-workbench-and-explorer-for-windows",
+	}
 )
 
 func latestMacDownloadURL() string {
@@ -29,6 +39,12 @@ func latestMacDownloadURL() string {
 
 func latestWinDownloadURL() string {
 	return fmt.Sprintf("https://kjkpub.s3.amazonaws.com/software/dbhero/rel/dbHero-setup-%s.exe", latestWinVersion)
+}
+
+// LogVerbosef logs verbose info
+func LogVerbosef(format string, args ...interface{}) {
+	s := fmt.Sprintf(format, args...)
+	fmt.Print(s)
 }
 
 // LogInfof logs additional info
@@ -191,31 +207,37 @@ func isMacUserAgent(ua string) bool {
 	return strings.Contains(ua, "Macintosh")
 }
 
-func redirectIndex2(w http.ResponseWriter, r *http.Request) {
+func redirectIndex(w http.ResponseWriter, r *http.Request) {
 	ua := r.UserAgent()
 	if isMacUserAgent(ua) {
-		http.Redirect(w, r, "for-mac", http.StatusFound /* 302 */)
+		http.Redirect(w, r, "gui-database-workbench-and-explorer-for-mac-osx", http.StatusFound /* 302 */)
 		return
 	}
 
 	// for windows and everything else
-	http.Redirect(w, r, "for-windows", http.StatusFound /* 302 */)
-}
-
-func redirectIndex(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/s/index.html", http.StatusFound /* 302 */)
+	http.Redirect(w, r, "gui-database-workbench-and-explorer-for-windows", http.StatusFound /* 302 */)
 }
 
 // url: /
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
-	//LogInfof("handleIndex: '%s'\n", uri)
+	LogVerbosef("handleIndex: '%s'\n", uri)
 	if uri == "/" {
-		redirectIndex2(w, r)
+		redirectIndex(w, r)
 		return
 	}
-	// map /foo and /foo.html to /s/foo.html such file exists
-	name := uri[1:]
+
+	if redirect := redirects[uri]; redirect != "" {
+		http.Redirect(w, r, redirect, http.StatusFound /* 302 */)
+		return
+	}
+
+	var name string
+	if name = urlToFileMap[uri]; name == "" {
+		// map /foo and /foo.html to /s/foo.html such file exists
+		name = uri[1:]
+	}
+
 	path := filepath.Join("www", name)
 	d, err := ioutil.ReadFile(path)
 	if err != nil {
