@@ -39,7 +39,7 @@ WHERE table_name = $1`
 	pgTablesStmt = `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_schema,table_name`
 
 	pgActivityStmt = `SELECT
-  dbname,
+  datname,
   query,
   state,
   waiting,
