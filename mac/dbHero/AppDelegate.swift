@@ -1,21 +1,21 @@
 import Cocoa
 
 extension NSBundle {
-    
+
     var shortVersion: String {
         if let ver = self.infoDictionary?["CFBundleShortVersionString"] as? String {
             return ver
         }
         return "unknown"
     }
-    
+
     var version: String {
         if let ver = self.infoDictionary?["CFBundleVersion"] as? String {
             return ver
         }
         return "unknown"
     }
-    
+
 }
 
 func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
@@ -220,23 +220,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(aNotification: NSNotification) {
         closeLogFile()
     }
-    
+
     func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
         return true
     }
 
     func goToWebsite() {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/for-mac")!)
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com")!)
     }
-    
+
     @IBAction func goToWebsite(sender: NSMenuItem) {
         goToWebsite()
     }
-    
+
     @IBAction func goToSupport(sender: NSMenuItem) {
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/support")!)
     }
-    
+
     @IBAction func goToFeedback(sender: NSMenuItem) {
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/feedback")!)
     }
