@@ -20,7 +20,7 @@ div {
   display: inline-block;
   max-width: 940px;
   min-width: 370px;
-  margin: 60px 10px;
+  margin: 0px 10px;
   margin-bottom: 40px;
   /*border: 1px solid #d6d9dc;*/
   /*border-radius: 2px;*/
@@ -82,10 +82,16 @@ nav {
 }
 
 .btn {
+  position: relative;
   padding: 10px 20px;
   font-weight: 900;
   border: 4px solid;
   text-decoration: none;
+}
+
+#requirements {
+  font-size: 12px;
+  /*position*/
 }
 
 .hero,
@@ -95,6 +101,7 @@ nav {
 
 .hero {
   overflow: hidden;
+  margin-top: -20px;
 }
 
 .hero .github {
