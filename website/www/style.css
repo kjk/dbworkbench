@@ -72,18 +72,29 @@ nav {
   color: #115594;
   /*color: #45a5ff;*/
   text-decoration: none;
-  margin-right: 15px;
   display: inline-block;
+  padding: 4px 12px;
+}
+
+.link-current:hover {
+  color: #4aa7ff;
+  padding: 4px 12px;
 }
 
 .link-current {
   color: #115594;
   /*color: #45a5ff;*/
   text-decoration: none;
-  margin-right: 15px;
   display: inline-block;
   /*border-bottom: 2px solid #4aa7ff;*/
-  border-bottom: 2px solid #115594;
+  padding: 4px 12px;
+  background-color: #BAD8F5;
+  /* border-bottom: 2px solid #115594; */
+}
+
+.link:hover {
+  color: #4aa7ff;
+  padding: 4px 12px;
 }
 
 .page-container {
@@ -102,6 +113,12 @@ nav {
   border-radius: 12px;
   text-decoration: none;
 }
+
+.btn:hover {
+  color: #4aa7ff;
+  text-decoration: none;
+}
+
 
 #requirements {
   font-size: 12px;
