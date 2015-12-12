@@ -107,6 +107,7 @@ class Input extends React.Component {
             <input type="button" onClick={this.runExplain} id="explain"
               value="Explain Query" className="btn btn-sm btn-default" />
             <div id="query_progress">Please wait, query is executing...</div>
+            <div id="input-row-number">{this.props.tooLong}</div>
           </div>
         </div>
       </div>

@@ -444,6 +444,14 @@ h4.modal-title {
   opacity: 0.8;
 }
 
+#input-row-number {
+  border: 0px none;
+  font-size:12px;
+  color:#5B5C59;
+  line-height:21px;
+  margin-top: 5px;
+}
+
 #output {
   position: relative;
   left: 0px;
