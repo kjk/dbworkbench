@@ -392,10 +392,21 @@ class ConnectionWindow extends React.Component {
   }
 
   render() {
+    var versionStyle = {
+      position: 'absolute',
+      bottom: '0px',
+      right: '0',
+      padding: '5px',
+      fontSize: '12px',
+      color: '#A9A9A9',
+    }
+    var version = <div style={versionStyle}>Version: {gVersionNumber}</div>;
+
     return (
       <div id="connection_window">
           <div className='logo-container'><img className='resize_fit_center' src='/s/img/dbhero-sm.png' /></div>
           {this.renderConnectionPage()}
+          {version}
       </div>
     );
   }
