@@ -124,6 +124,7 @@ func serveData(w http.ResponseWriter, r *http.Request, code int, contentType str
 // returns nil if not a POST request or error reading data
 func readRawPostData(r *http.Request) []byte {
 	if r.Method != "POST" {
+		LogErrorf("readRawPostData: r.Method is %s, not POST\n", r.Method)
 		return nil
 	}
 	d, err := ioutil.ReadAll(r.Body)
@@ -131,6 +132,7 @@ func readRawPostData(r *http.Request) []byte {
 		LogErrorf("ioutil.ReadAll() failed with '%s'\n", err)
 		return nil
 	}
+	//LogInfof("readRawPostData: len(d) = %d\n'%s'\n", len(d), string(d))
 	if len(d) == 0 {
 		return nil
 	}
@@ -142,7 +144,8 @@ func prependVerIPTime(d []byte, ip, ver string) []byte {
 	t := now.Unix()
 	day := now.Format("2006-01-02")
 	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\n", t, day, ip, ver)
-	return append([]byte(s), d...)
+	d1 := []byte(s)
+	return append(d1, d...)
 }
 
 // url: /api/winupdatecheck?ver=${ver}
@@ -158,6 +161,7 @@ url: %s`, latestWinVersion, latestWinDownloadURL())
 	servePlainText(w, r, 200, s)
 
 	d = prependVerIPTime(d, ip, ver)
+	//LogInfof("handleWinUpdateCheck: '%s'\n", string(d))
 	recordUsage(d)
 }
 

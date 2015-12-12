@@ -52,6 +52,7 @@ func recordUsage(d []byte) {
 	if len(d) == 0 {
 		return
 	}
+	//LogInfof("recordUsage: len(d) = %d\n", len(d))
 	usageFileMutex.Lock()
 	defer usageFileMutex.Unlock()
 	_, err := usageFile.Write(d)
