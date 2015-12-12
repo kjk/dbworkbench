@@ -43,6 +43,7 @@ namespace DbHero
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main()
         {
+            // http://sanity-free.org/143/csharp_dotnet_single_instance_application.html
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
                 RunApp();
