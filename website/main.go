@@ -260,8 +260,7 @@ func initHandlers() {
 
 func main() {
 	initHandlers()
-	// TODO: open log files
-	// openUsageFileMust()
+	openUsageFileMust()
 	LogInfof("starting website on %s\n", httpAddr)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		LogErrorf("http.ListendAndServe() failed with '%s'\n", err)
