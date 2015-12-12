@@ -12,6 +12,8 @@ namespace DbHero
 {
     static class Program
     {
+        static Mutex mutex = new Mutex(true, "dbheroapp.com/dbhero");
+
         static string LogPath()
         {
             var logDir = Util.AppDataLogDir();
@@ -23,9 +25,7 @@ namespace DbHero
             return logFilePath;
         }
 
-        [STAThread]
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
-        static void Main()
+        static void RunApp()
         {
             Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -37,6 +37,27 @@ namespace DbHero
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
+
+        [STAThread]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        static void Main()
+        {
+            if (mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                RunApp();
+                mutex.ReleaseMutex();
+            }
+            else
+            {
+                // send our Win32 message to make the currently running instance
+                // jump on top of all the other windows
+                NativeMethods.PostMessage(
+                    (IntPtr)NativeMethods.HWND_BROADCAST,
+                    NativeMethods.WM_SHOWME,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
+            }
         }
 
         // TODO: send crash report to the website

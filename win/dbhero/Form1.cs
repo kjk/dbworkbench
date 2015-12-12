@@ -47,6 +47,29 @@ namespace DbHero
             PerformLayout();
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == NativeMethods.WM_SHOWME)
+            {
+                BringMeToFront();
+            }
+            base.WndProc(ref m);
+        }
+
+        private void BringMeToFront()
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+            // get our current "TopMost" value (ours will always be false though)
+            bool top = TopMost;
+            // make our form jump to the top of everything
+            TopMost = true;
+            // set it back to whatever it was
+            TopMost = top;
+        }
+
         // could also use MainMenu http://stackoverflow.com/questions/2778109/standard-windows-menu-bars-in-windows-forms
         // in which case probably don't need to layout _mainMenu (it'll be part of non-client area)
         private void CreateMenu()

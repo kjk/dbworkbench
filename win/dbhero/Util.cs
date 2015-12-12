@@ -1,12 +1,23 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Management;
+using System.Runtime.InteropServices;
 
 namespace DbHero
 {
+    // this class just wraps some Win32 stuffthat we're going to use
+    internal class NativeMethods
+    {
+        public const int HWND_BROADCAST = 0xffff;
+        public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOW_DBHERO");
+        [DllImport("user32")]
+        public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
+        [DllImport("user32")]
+        public static extern int RegisterWindowMessage(string message);
+    }
+
     class Util
     {
         public static string AppDataDir()
