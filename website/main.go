@@ -17,8 +17,8 @@ var (
 	httpAddr = ":5555"
 
 	// for auto-update
-	latestMacVersion = "0.1.6"
-	latestWinVersion = "0.1.6"
+	latestMacVersion = "0.1.7"
+	latestWinVersion = "0.1.7"
 
 	dataDir string
 
