@@ -276,7 +276,7 @@ namespace DbHero
             if (File.Exists(tmpInstallerPath))
             {
                 _updateInstallerPath = tmpInstallerPath;
-                NotifyUpdateAvailable();
+                NotifyUpdateAvailable("");
                 return;
             }
 
@@ -292,18 +292,17 @@ namespace DbHero
                 return;
             }
 
-            //Console.WriteLine($"result: {result}");
             string ver, dlUrl;
             var ok = Utils.ParseUpdateResponse(result, out ver, out dlUrl);
             if (!ok)
             {
-                Log.Line($"AutoUpdateCheck: failed to parse ver '{ver}'");
+                Log.Line($"AutoUpdateCheck: failed to parse ver '{ver}' in '{result}'");
                 return;
             }
 
             if (!Utils.ProgramVersionGreater(ver, myVer))
             {
-                Log.Line($"AutoUpdateCheck: not updating because my version{myVer}  is >= than lateset available {ver}");
+                Log.Line($"AutoUpdateCheck: not updating because my version{myVer}  is >= than latest available {ver}");
                 return;
             }
             var d = await Http.UrlDownloadAsync(dlUrl);
@@ -323,18 +322,22 @@ namespace DbHero
                 _updateInstallerPath = null;
                 return;
             }
-            NotifyUpdateAvailable();
+            NotifyUpdateAvailable(ver);
         }
 
-        public void NotifyUpdateAvailable()
+        public void NotifyUpdateAvailable(string ver)
         {
             // TODO: show a nicer dialog
-            var res = MessageBox.Show("Update available. Update?", "Update available", MessageBoxButtons.YesNo);
+            if (ver != "")
+            {
+                ver = " " + ver;
+            }
+            var res = MessageBox.Show($"A new version{ver} is available. Update to new version?", "Update available", MessageBoxButtons.YesNo);
             if (res != DialogResult.Yes)
             {
                 return;
             }
-            Console.WriteLine($"should run an updater {_updateInstallerPath}");
+            Log.Line($"About to run an updater: {_updateInstallerPath}");
             // move the installer to another, temporary path, so that when the installation is finished
             // and we restart the app, we won't think an update is available
             var tmpInstallerPath = Path.GetTempFileName();
