@@ -162,7 +162,7 @@ func plistGetStrVal(lines []string, keyName string) string {
 }
 
 func extractVersionMacMust() {
-	path := filepath.Join("mac", "dbworkbench", "Info.plist")
+	path := filepath.Join("mac", "dbHero", "Info.plist")
 	lines, err := u.ReadLinesFromFile(path)
 	fataliferr(err)
 	// extract from:
