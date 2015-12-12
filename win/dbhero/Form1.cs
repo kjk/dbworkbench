@@ -23,7 +23,7 @@ namespace DbHero
         Process _backendProcess;
         MenuStrip _mainMenu;
         //string _websiteURL = "http://localhost:5555";
-        string _websiteURL = "http://dbheroapp.com";
+        string _websiteURL = "https://dbheroapp.com";
         bool _cleanFinish = false;
         string _updateInstallerPath;
 
