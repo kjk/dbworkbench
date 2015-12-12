@@ -139,18 +139,18 @@ func readRawPostData(r *http.Request) []byte {
 	return d
 }
 
-func prependVerIPTime(d []byte, ip, ver string) []byte {
+func prependInfoFromRequest(d []byte, ip, ver, os string) []byte {
 	now := time.Now()
 	t := now.Unix()
 	day := now.Format("2006-01-02")
-	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\n", t, day, ip, ver)
+	s := fmt.Sprintf("time: %d\nday: %s\nip: %s\nver_in_url: %s\nos_in_url: %s\n", t, day, ip, ver, os)
 	d1 := []byte(s)
 	return append(d1, d...)
 }
 
 // url: /api/winupdatecheck?ver=${ver}
 func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	LogInfof("handleWinUpdateCheck\n")
+	//LogInfof("handleWinUpdateCheck\n")
 
 	d := readRawPostData(r)
 	ver := r.FormValue("ver")
@@ -160,14 +160,14 @@ func handleWinUpdateCheck(w http.ResponseWriter, r *http.Request) {
 url: %s`, latestWinVersion, latestWinDownloadURL())
 	servePlainText(w, r, 200, s)
 
-	d = prependVerIPTime(d, ip, ver)
+	d = prependInfoFromRequest(d, ip, ver, "windows")
 	//LogInfof("handleWinUpdateCheck: '%s'\n", string(d))
 	recordUsage(d)
 }
 
 // url: /api/macupdatecheck?ver=${ver}
 func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
-	LogInfof("handleMacUpdateCheck\n")
+	//LogInfof("handleMacUpdateCheck\n")
 
 	d := readRawPostData(r)
 	ver := r.FormValue("ver")
@@ -177,7 +177,7 @@ func handleMacUpdateCheck(w http.ResponseWriter, r *http.Request) {
 url: %s`, latestMacVersion, latestMacDownloadURL())
 	servePlainText(w, r, 200, s)
 
-	d = prependVerIPTime(d, ip, ver)
+	d = prependInfoFromRequest(d, ip, ver, "windows")
 	recordUsage(d)
 }
 
@@ -209,7 +209,7 @@ func redirectIndex(w http.ResponseWriter, r *http.Request) {
 // url: /
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
-	LogInfof("handleIndex: '%s'\n", uri)
+	//LogInfof("handleIndex: '%s'\n", uri)
 	if uri == "/" {
 		redirectIndex2(w, r)
 		return
