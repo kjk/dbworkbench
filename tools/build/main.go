@@ -177,9 +177,23 @@ func extractVersionMacMust() {
 	fmt.Printf("programVersionMac: %s\n", programVersionMac)
 }
 
+func extractVersionFrontendMust() {
+	path := filepath.Join("s", "index.html")
+	d, err := ioutil.ReadFile(path)
+	fataliferr(err)
+	r := regexp.MustCompile(`var gVersionNumber = "(.*)"`)
+	s := string(d)
+	res := r.FindStringSubmatch(s)
+
+	programVersionFrontend := cleanVer(res[1])
+	verifyCorrectVersionMust(programVersionFrontend)
+	fmt.Printf("programVersionFrontend: %s\n", programVersionFrontend)
+}
+
 func extractVersionMust() {
 	extractVersionWinMust()
 	extractVersionMacMust()
+	extractVersionFrontendMust()
 	fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
 	programVersion = programVersionMac
 	fmt.Printf("programVersion: %s\n", programVersion)
