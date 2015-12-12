@@ -8,7 +8,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Lato', sans-serif;
+  font-family: sans-serif;
   color: #a4a9b6;
 }
 
@@ -37,7 +37,7 @@ nav {
 }
 
 .links {
-  padding-top: 20px;
+  padding-top: 12px;
 }
 
 .color-dark-gray {
@@ -93,7 +93,8 @@ nav {
   position: relative;
   padding: 10px 20px;
   font-weight: 900;
-  border: 4px solid;
+  border: 2px solid;
+  border-radius: 12px;
   text-decoration: none;
 }
 
@@ -109,7 +110,7 @@ nav {
 
 .hero {
   overflow: hidden;
-  margin-top: -20px;
+  margin-top: -40px;
 }
 
 .hero .github {
@@ -119,7 +120,7 @@ nav {
 .hero  h1 {
   width: 99.5%;
   margin-top: 0;
-  font-size: 70px;
+  font-size: 50px;
   margin-bottom: 23px;
 }
 
