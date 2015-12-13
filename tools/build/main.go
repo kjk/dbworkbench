@@ -88,7 +88,7 @@ func verifyHasCertWinMust() {
 	certPath = pj("scripts", "cert.pfx")
 	if !fileExists(certPath) {
 		certPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "cert.pfx")
-		fatalif(!fileExists(certPath), "didn't find cert.pfx in scripts/ or ../../../sumatrapdf/scripts/")
+		fatalif(!fileExists(certPath), "didn't find cert.pfx in scripts/ or ../../../sumatrapdf/scripts/\n")
 	}
 	absPath, err := filepath.Abs(certPath)
 	fataliferr(err)
@@ -101,7 +101,7 @@ func verifyHasSecretsMust() {
 	secretsPath := pj("scripts", "secrets.json")
 	if !fileExists(secretsPath) {
 		secretsPath = pj("..", "..", "..", "..", "..", "sumatrapdf", "scripts", "secrets.json")
-		fatalif(!fileExists(secretsPath), "didn't find secrets.json in scripts/ or ../../../sumatrapdf/scripts/")
+		fatalif(!fileExists(secretsPath), "didn't find secrets.json in scripts/ or ../../../sumatrapdf/scripts/\n")
 	}
 	secrets := readSecretsMust(secretsPath)
 	if flgUpload || flgUploadAutoUpdate {
@@ -146,7 +146,7 @@ func plistGetStrVal(lines []string, keyName string) string {
 			break
 		}
 	}
-	fatalif(idx == -1, "didn't find <key>%s</key>", keyName)
+	fatalif(idx == -1, "didn't find <key>%s</key>\n", keyName)
 	s := strings.TrimSpace(lines[idx+1])
 	if strings.HasPrefix(s, "<string>") {
 		s = s[len("<string>"):]
@@ -194,7 +194,8 @@ func extractVersionMust() {
 	extractVersionWinMust()
 	extractVersionMacMust()
 	extractVersionFrontendMust()
-	fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')", programVersionMac, programVersionWin)
+	fatalif(programVersionMac != programVersionWin, "programVersionMac != programVersionWin ('%s' != '%s')\n", programVersionMac, programVersionWin)
+	fatalif(programVersionMac != programVersionFrontend, "programVersionMac != programVersionFrontend ('%s' != '%s')\n", programVersionMac, programVersionFrontend)
 	programVersion = programVersionMac
 	fmt.Printf("programVersion: %s\n", programVersion)
 }
