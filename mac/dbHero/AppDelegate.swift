@@ -78,9 +78,7 @@ func programVersionGreater(ver1 : String, ver2 : String) -> Bool {
 func getMacSerialNumber() -> String {
     let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
     if platformExpert == 0 {
-        log("getMacSerialNubmer: couldn't retrieve serial namber")
-        // TODO: use mac address https://developer.apple.com/library/mac/technotes/tn1103/_index.html
-        return "unknown"
+        return ""
     }
     let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey, kCFAllocatorDefault, 0);
     IOObjectRelease(platformExpert);
@@ -88,6 +86,90 @@ func getMacSerialNumber() -> String {
     // (so we're not responsible for releasing it)
     // and pass it back as a String or, if it fails, an empty string
     return (serialNumberAsCFString.takeUnretainedValue() as? String) ?? ""
+}
+
+// http://stackoverflow.com/questions/31835418/how-to-get-mac-address-from-osx-with-swift
+// Returns an iterator containing the primary (built-in) Ethernet interface. The caller is responsible for
+// releasing the iterator after the caller is done with it.
+func findEthernetInterfaces() -> io_iterator_t? {
+    
+    guard let matchingDictUM = IOServiceMatching("IOEthernetInterface") else {
+        return nil
+    }
+    // Note that another option here would be:
+    // matchingDict = IOBSDMatching("en0");
+    // but en0: isn't necessarily the primary interface, especially on systems with multiple Ethernet ports.
+    let matchingDict = matchingDictUM as NSMutableDictionary
+    matchingDict["IOPropertyMatch"] = [ "IOPrimaryInterface" : true]
+    
+    var matchingServices : io_iterator_t = 0
+    if IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &matchingServices) != KERN_SUCCESS {
+        return nil
+    }
+    
+    return matchingServices
+}
+
+// Given an iterator across a set of Ethernet interfaces, return the MAC address of the last one.
+// If no interfaces are found the MAC address is set to an empty string.
+// Here the iterator should contain just the primary interface.
+func getMACAddress(intfIterator : io_iterator_t) -> [UInt8]? {
+    
+    var macAddress : [UInt8]?
+    
+    var intfService = IOIteratorNext(intfIterator)
+    while intfService != 0 {
+        
+        var controllerService : io_object_t = 0
+        if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
+            
+            let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress", kCFAllocatorDefault, 0)
+            if dataUM != nil {
+                let data = dataUM.takeRetainedValue() as! NSData
+                macAddress = [0, 0, 0, 0, 0, 0]
+                data.getBytes(&macAddress!, length: macAddress!.count)
+            }
+            IOObjectRelease(controllerService)
+        }
+        
+        IOObjectRelease(intfService)
+        intfService = IOIteratorNext(intfIterator)
+    }
+    
+    return macAddress
+}
+
+// on my Mac Pro it returns mac of en0 interface even though I'm actually using en2
+// wifi adapter. I'm hoping this order is fixed on a given computer
+// (and doesn't, for example, changes if a user switches wifi on/off).
+// Maybe I should just ask for a fixed "en0" and do this if that fails?
+func getMACAddressString() -> String {
+    guard let intfIterator = findEthernetInterfaces() else {
+        return ""
+    }
+    var res = ""
+    if let macAddress = getMACAddress(intfIterator) {
+        let converted = macAddress.map( { String(format:"%02x", $0) } )
+        res = converted.joinWithSeparator(":")
+    }
+    
+    IOObjectRelease(intfIterator)
+    return res;
+}
+
+// we give precedence to MAC address because we got a report of getMacSerialNumber()
+// crashing (might have fixed that, though)
+func getUniqueMachineId() -> String {
+    var res = getMACAddressString()
+    if res == "" {
+        log("getUniqueMachineId: getMACAddressString() failed")
+        res = getMacSerialNumber()
+    }
+    if res == "" {
+        log("getUniqueMachineId: getMacSerialNumber() failed")
+        res = "unknown"
+    }
+    return res
 }
 
 /*
@@ -156,7 +238,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let osVer = getOsVersion()
         let hostName = getHostName()
         let userName = NSUserName()
-        let computerId = getMacSerialNumber()
+        let computerId = getUniqueMachineId()
         s += "osversion: \(osVer)\n"
         s += "user: \(userName)\n"
         s += "machine: \(hostName)\n";
