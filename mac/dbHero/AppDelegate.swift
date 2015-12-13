@@ -77,6 +77,11 @@ func programVersionGreater(ver1 : String, ver2 : String) -> Bool {
 // http://stackoverflow.com/questions/5868567/unique-identifier-of-a-mac
 func getMacSerialNumber() -> String {
     let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
+    if platformExpert == 0 {
+        log("getMacSerialNubmer: couldn't retrieve serial namber")
+        // TODO: use mac address https://developer.apple.com/library/mac/technotes/tn1103/_index.html
+        return "unknown"
+    }
     let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey, kCFAllocatorDefault, 0);
     IOObjectRelease(platformExpert);
     // Take the unretained value of the unmanaged-any-object
