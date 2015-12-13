@@ -215,6 +215,8 @@ func uploadToS3Mac() {
 		return
 	}
 
+	verifyHasSecretsMust()
+
 	s3VerifyNotExistsMust(s3SetupPathMac())
 
 	s3UploadFile(s3SetupPathMac(), macZipPath(), true)
@@ -228,8 +230,6 @@ var BuiltOnMac = "%s";
 }
 
 func buildMac() {
-	verifyHasSecretsMust()
-
 	dirToZip := filepath.Join("mac", "build", "Release", "dbHero.app")
 	zipPath := filepath.Join("mac", "build", "Release", "dbHero.zip")
 	err := ZipDirectory(dirToZip, zipPath)

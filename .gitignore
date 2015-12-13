@@ -24,3 +24,4 @@ mac/dbherohelper.exe
 dbherohelper.zip
 .vscode/
 dbherohelper
+scripts/secrets.json
