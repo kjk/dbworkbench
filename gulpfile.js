@@ -8,7 +8,7 @@
 // - concat js files see http://www.hongkiat.com/blog/getting-started-with-gulp-js/
 
 var browserify  = require('browserify');
-var exorcist    = require('exorcist')
+var exorcist    = require('exorcist');
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
 var concat      = require('gulp-concat'); // TODO: this is not being used maybe remove?
@@ -18,7 +18,7 @@ var react       = require('gulp-react');
 var rename      = require('gulp-rename');
 var streamify   = require('gulp-streamify');
 var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer')
+var buffer      = require('vinyl-buffer');
 var watchify    = require('watchify');
 var babelify    = require("babelify");
 
