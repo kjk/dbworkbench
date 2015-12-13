@@ -37,7 +37,7 @@ class ConnectionWindow extends React.Component {
     this.handleConnect = this.handleConnect.bind(this);
     this.handleFormChanged = this.handleFormChanged.bind(this);
     this.selectBookmark = this.selectBookmark.bind(this);
-    this.getActiveBookmark = this.getActiveBookmark.bind(this);
+    this.getSelectedBookmark = this.getSelectedBookmark.bind(this);
 
     // create default bookmark if no bookmarks saved in the backend
     var bookmarks = [newEmptyBookmark()];
@@ -51,7 +51,7 @@ class ConnectionWindow extends React.Component {
       isConnecting: false,
 
       bookmarks: bookmarks,
-      activeBookmark: 0,
+      selectedBookmarkIdx: 0,
     };
   }
 
@@ -66,7 +66,7 @@ class ConnectionWindow extends React.Component {
     bookmarks.push(newEmptyBookmark())
     this.setState({
       bookmarks: bookmarks,
-      activeBookmark: bookmarks.length-1,
+      selectedBookmarkIdx: bookmarks.length-1,
     });
   }
 
@@ -88,7 +88,7 @@ class ConnectionWindow extends React.Component {
     var id = parseInt(idStr, 10);
     // bookmarks with negative id are not present in the backend
     if (id < 0) {
-      var selectedIdx = this.state.activeBookmark;
+      var selectedIdx = this.state.selectedBookmarkIdx;
       var bookmarks = _.reject(this.state.bookmarks, function(b) { return b.id == id; });
       if (selectedIdx >= bookmarks.length) {
         selectedIdx = bookmarks.length - 1;
@@ -99,7 +99,7 @@ class ConnectionWindow extends React.Component {
       }
       this.setState({
         bookmarks: bookmarks,
-        activeBookmark: selectedIdx,
+        selectedBookmarkIdx: selectedIdx,
       });
       return;
     }
@@ -109,14 +109,14 @@ class ConnectionWindow extends React.Component {
       console.log("deleteBookmarks removing: ", id, " data: ", data);
 
       var bookmarks = [newEmptyBookmark()];
-      var activeBookmark = 0;
+      var selectedBookmarkIdx = 0;
       if (data !== undefined && data.length > 0) {
         bookmarks = data;
       }
 
       self.setState({
         bookmarks: bookmarks,
-        activeBookmark: activeBookmark,
+        selectedBookmarkIdx: selectedBookmarkIdx,
       });
     });
   }
@@ -129,7 +129,7 @@ class ConnectionWindow extends React.Component {
     console.log("selectBookmark", idx);
 
     this.setState({
-      activeBookmark: idx,
+      selectedBookmarkIdx: idx,
       connectionErrorMessage: ""
     });
   }
@@ -138,11 +138,12 @@ class ConnectionWindow extends React.Component {
     // console.log("handleFormChanged: ", e.target.value);
 
     var change = this.state.bookmarks;
-
-    if (change[this.state.activeBookmark]['oldDatabase'] === undefined) {
-      change[this.state.activeBookmark]['oldDatabase'] = change[this.state.activeBookmark]['database'];
+    
+    var selectedBookmarkIdx = this.state.selectedBookmarkIdx
+    if (change[selectedBookmarkIdx]['oldDatabase'] === undefined) {
+      change[selectedBookmarkIdx]['oldDatabase'] = change[selectedBookmarkIdx]['database'];
     }
-    change[this.state.activeBookmark][name] = e.target.value;
+    change[selectedBookmarkIdx][name] = e.target.value;
 
     this.setState({
       bookmarks: change,
@@ -150,15 +151,15 @@ class ConnectionWindow extends React.Component {
     });
   }
 
-  getActiveBookmark() {
-    return this.state.bookmarks[this.state.activeBookmark];
+  getSelectedBookmark() {
+    return this.state.bookmarks[this.state.selectedBookmarkIdx];
   }
 
   handleConnect(e) {
     e.preventDefault();
     console.log("handleConnect");
 
-    var b = this.getActiveBookmark();
+    var b = this.getSelectedBookmark();
 
     var id = b["id"];
     var type = b["type"];
@@ -189,7 +190,7 @@ class ConnectionWindow extends React.Component {
           isConnecting: false,
         });
       } else {
-        b = self.getActiveBookmark()
+        b = self.getSelectedBookmark()
         console.log("did connect, saving bookmark " + b);
         api.addBookmark(b, function(data) {
           var connId = resp.ConnectionID;
@@ -222,7 +223,7 @@ class ConnectionWindow extends React.Component {
       var removeButton = <i data-custom-attribute={id} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>;
 
       var className = "list-group-item"
-      if (i == this.state.activeBookmark) {
+      if (i == this.state.selectedBookmarkIdx) {
         className = "list-group-item active"
       }
 
@@ -249,7 +250,7 @@ class ConnectionWindow extends React.Component {
   }
 
   renderFormElements() {
-    var b = this.getActiveBookmark();
+    var b = this.getSelectedBookmark();
     var formData = _.clone(b);
 
     if (formData["database"].startsWith(initName)) {
@@ -337,7 +338,7 @@ class ConnectionWindow extends React.Component {
   }
 
   renderForm() {
-    if (this.state.activeBookmark > -1) {
+    if (this.state.selectedBookmarkIdx > -1) {
       var formElements = this.renderFormElements()
     } else {
       var imageStyle = {
