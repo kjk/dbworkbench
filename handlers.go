@@ -213,6 +213,7 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /api/connect
+// args: url - database connection url
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
@@ -375,6 +376,17 @@ func getFormInt(r *http.Request, name string) (int, error) {
 		return 0, fmt.Errorf("missing form value '%s'", name)
 	}
 	return strconv.Atoi(s)
+}
+
+func getFormBool(r *http.Request, name string) (bool, error) {
+	s := strings.ToLower(strings.TrimSpace(r.FormValue(name)))
+	switch s {
+	case "1", "true":
+		return true, nil
+	case "0", "false":
+		return false, nil
+	}
+	return false, fmt.Errorf("invalid bool value '%s' for form key '%s'", r.FormValue(name), name)
 }
 
 // POST /api/addbookmark

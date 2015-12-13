@@ -159,7 +159,7 @@ class ConnectionWindow extends React.Component {
     this.setState({
       remember: newRemeber,
     });
-    console.log("remember changed to: " + newRemeber);
+    //console.log("remember changed to: " + newRemeber);
   }
 
 
@@ -181,6 +181,7 @@ class ConnectionWindow extends React.Component {
     var pass = b["password"];
     var db = b["database"];
     var ssl = "disable";
+    var rememberConnection = this.state.remember;
 
     if (port.length == 0) {
       port = "5432";
@@ -201,16 +202,21 @@ class ConnectionWindow extends React.Component {
           connectionErrorMessage: resp.error,
           isConnecting: false,
         });
-      } else {
-        b = self.getSelectedBookmark()
-        console.log("did connect, saving bookmark " + b);
-        api.addBookmark(b, function(data) {
-          var connId = resp.ConnectionID;
-          var connStr = url;
-          var databaseName = resp.CurrentDatabase;
-          self.props.onDidConnect(connStr, connId, databaseName);
-        });
+        return;
       }
+
+      b = self.getSelectedBookmark()
+      if (!rememberConnection) {
+        console.log("did connect, not saving a bookmark");
+        return;        
+      }
+      console.log("did connect, saving a bookmark " + b);
+      api.addBookmark(b, function(data) {
+        var connId = resp.ConnectionID;
+        var connStr = url;
+        var databaseName = resp.CurrentDatabase;
+        self.props.onDidConnect(connStr, connId, databaseName);
+      });
     });
   }
 
