@@ -209,7 +209,7 @@ class ConnectionWindow extends React.Component {
 
   renderError(errorText) {
     return (
-      <div className="alert alert-danger">{errorText}</div>
+      <div className="col-md-12 connection-error">Error: {errorText}</div>
     );
   }
 
@@ -330,7 +330,7 @@ class ConnectionWindow extends React.Component {
         <div className="col-md-12">
           <div className="form-group">
             <button disabled={this.state.isConnecting} onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
-            <button onClick={this.handleCancel} type="reset" id="close_connection_window" className="btn btn-block btn-default small">Cancel</button>
+            <button onClick={this.handleCancel} type="reset" id="close-connection-window" className="btn btn-block btn-default small">Cancel</button>
           </div>
         </div>
       </div>
@@ -404,7 +404,7 @@ class ConnectionWindow extends React.Component {
     var version = <div style={versionStyle}>Version: {gVersionNumber}</div>;
 
     return (
-      <div id="connection_window">
+      <div id="connection-window">
           <div className='logo-container'><img className='resize_fit_center' src='/s/img/dbhero-sm.png' /></div>
           {this.renderConnectionPage()}
           {version}

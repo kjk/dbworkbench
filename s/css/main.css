@@ -547,7 +547,7 @@ h4.modal-title {
   max-width: none;
 }
 
-#custom_query {
+#custom-query {
   height: 205px;
 }
 
@@ -609,7 +609,7 @@ h4.modal-title {
 /*******************************************************/
 /* Connection Window */
 
-#connection_window {
+connection-window {
   z-index: 3;
   position: absolute;
   background: #ebeef0;
@@ -620,7 +620,7 @@ h4.modal-title {
   background-image:"linear-gradient(-135deg, #F5F5F5 0%, #F5F5F5 100%)";
 }
 
-#connection_window h1 {
+connection-window h1 {
   text-align: center;
   margin-top: 20px;
   font-size:50px;
@@ -628,7 +628,7 @@ h4.modal-title {
   line-height:60px;
 }
 
-#connection_window h3 {
+connection-window h3 {
   text-align: center;
   margin-top: 25px;
   font-size:30px;
@@ -636,28 +636,31 @@ h4.modal-title {
   line-height:36px;
 }
 
-#connection_window div.connection-window-footer {
+connection-window div.connection-window-footer {
   text-align: center;
   font-size: 13px;
   color: #587CA7;
 }
 
-#connection_window i.fa.fa-lock {
+connection-window i.fa.fa-lock {
   color:#517FA4;
   margin-right: 5px;
 }
-
 
 .connection-settings {
   margin: 0px auto;
   margin-top: 20px;
 }
 
-#close_connection_window {
+#close-connection-window {
   display: none;
 }
 
-#connection_error {
+.connection-error {
+  color: red;
+  font-weight: bold;
+  padding-bottom: 12px;
+  text-align: right;
 }
 
 .bookmarks {

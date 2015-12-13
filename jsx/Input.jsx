@@ -100,7 +100,7 @@ class Input extends React.Component {
     return (
       <div id="input">
         <div className="wrapper">
-          <div id="custom_query" ref="editor"></div>
+          <div id="custom-query" ref="editor"></div>
           <div className="actions">
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
