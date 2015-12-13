@@ -36,6 +36,7 @@ class ConnectionWindow extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConnect = this.handleConnect.bind(this);
     this.handleFormChanged = this.handleFormChanged.bind(this);
+    this.handleRememberChange = this.handleRememberChange.bind(this);
     this.selectBookmark = this.selectBookmark.bind(this);
     this.getSelectedBookmark = this.getSelectedBookmark.bind(this);
 
@@ -47,6 +48,8 @@ class ConnectionWindow extends React.Component {
     }
 
     this.state = {
+      remember: true,
+
       connectionErrorMessage: "",
       isConnecting: false,
 
@@ -151,6 +154,15 @@ class ConnectionWindow extends React.Component {
     });
   }
 
+  handleRememberChange(e) {
+    var newRemeber = !this.state.remember; 
+    this.setState({
+      remember: newRemeber,
+    });
+    console.log("remember changed to: " + newRemeber);
+  }
+
+
   getSelectedBookmark() {
     return this.state.bookmarks[this.state.selectedBookmarkIdx];
   }
@@ -212,7 +224,7 @@ class ConnectionWindow extends React.Component {
       <div className="col-md-12 connection-error">Error: {errorText}</div>
     );
   }
-
+  
   renderBookMarks() {
     var bookmarks = [];
     for (var i = 0; i < this.state.bookmarks.length; i++) {
@@ -323,6 +335,24 @@ class ConnectionWindow extends React.Component {
               value = {formData["password"]}
               onChange={this.handleFormChanged.bind(this, 'password')} />
           </div>
+        </div> 
+
+        <div className="col-md-12 right">
+          <label className="control-label" htmlFor="pwd-remember">
+            <input type="checkbox"
+              id="pwd-remember"
+              checked={this.state.remember}
+              onChange={this.handleRememberChange}
+            /> Remember
+         </label>
+        </div>
+
+        <div className="col-md-12 right light-text smaller-text">
+          database crendentials are stored securely on your computer
+        </div>
+
+        <div className="col-md-12">
+          &nbsp;&nbsp;
         </div>
 
         {error}
@@ -348,8 +378,9 @@ class ConnectionWindow extends React.Component {
 
       var formElements = (
         <div className="col-md-12 text-center">
-            <img class="img-responsive center-block small" src="/s/img/icon.png" alt="" style={imageStyle}/>​
-
+            <img class="img-responsive center-block small" 
+              src="/s/img/icon.png" 
+              alt="" style={imageStyle}/>​
             <h5>Please add a connection</h5>
         </div>
       );
@@ -377,8 +408,6 @@ class ConnectionWindow extends React.Component {
           </div>
 
         </div>
-        <hr/>
-        <div className="connection-window-footer"><i className="fa fa-lock fa1"></i>Database crendentials are securely stored locally on your computer</div>
       </div>
     );
   }

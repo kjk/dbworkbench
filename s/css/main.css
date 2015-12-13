@@ -606,6 +606,10 @@ h4.modal-title {
   color: LightGray;
 }
 
+.right {
+  text-align: right;
+}
+
 /*******************************************************/
 /* Connection Window */
 
@@ -723,6 +727,14 @@ connection-window i.fa.fa-lock {
   font-size:14px;
   color:#9a9a9a;
   line-height:22px;
+}
+
+.light-text {
+  color:#9a9a9a;  
+}
+
+.smaller-text {
+  font-size: 85%;
 }
 
 .list-group-item.active {
