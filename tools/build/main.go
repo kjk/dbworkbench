@@ -25,12 +25,13 @@ var (
 	flgUploadAutoUpdate bool
 	flgGenResources     bool
 
-	programVersionWin string
-	programVersionMac string
-	programVersion    string
-	certPath          string
-	cachedSecrets     *Secrets
-	innoSetupPath     string
+	programVersionWin      string
+	programVersionMac      string
+	programVersionFrontend string
+	programVersion         string
+	certPath               string
+	cachedSecrets          *Secrets
+	innoSetupPath          string
 )
 
 // Secrets defines secrets
@@ -185,7 +186,7 @@ func extractVersionFrontendMust() {
 	s := string(d)
 	res := r.FindStringSubmatch(s)
 
-	programVersionFrontend := cleanVer(res[1])
+	programVersionFrontend = cleanVer(res[1])
 	verifyCorrectVersionMust(programVersionFrontend)
 	fmt.Printf("programVersionFrontend: %s\n", programVersionFrontend)
 }
