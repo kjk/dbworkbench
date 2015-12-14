@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
 
 using Yepi;
-using System.Threading;
 
 namespace DbHero
 {
@@ -26,6 +25,7 @@ namespace DbHero
         string _websiteURL = "https://dbheroapp.com";
         bool _cleanFinish = false;
         string _updateInstallerPath;
+        Settings _settings;
 
         protected override void WndProc(ref Message m)
         {
@@ -351,6 +351,42 @@ namespace DbHero
             Close();
         }
 
+        void SaveSettings()
+        {
+            var s = new Settings();
+            s.WindowPosition = Location;
+            s.WindowSize = ClientSize;
+            var mem = new MemoryStream();
+            var ser = new DataContractJsonSerializer(typeof(Settings));
+            ser.WriteObject(mem, s);
+            var d = mem.ToArray();
+            FileUtil.TryWriteAllBytes(Util.SettingsFilePath(), d);
+        }
+
+        Settings LoadSettings()
+        {
+            var path = Util.SettingsFilePath();
+            var d = FileUtil.TryReadAllBytes(path);
+            if (d == null)
+                return null;
+            var ser = new DataContractJsonSerializer(typeof(Settings));
+            try
+            {
+                using (var mem = new MemoryStream(d))
+                {
+                    return (Settings)ser.ReadObject(mem);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.E(e);
+                // I assume it failed because the structure changed
+                // so delete the file to not get this again
+                FileUtil.TryFileDelete(path);
+                return null;
+            }
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
@@ -367,11 +403,19 @@ namespace DbHero
                 _backendProcess.Kill();
             }
             Log.Line($"Loc: {Location}, Size: {Size}");
+            SaveSettings();
             Log.Close();
         }
 
         private async void Form1_Load(object sender, EventArgs e)
         {
+            var settings = LoadSettings();
+            if (settings != null)
+            {
+                Location = settings.WindowPosition;
+                ClientSize = settings.WindowSize;
+            }
+
             ReadUsage();
             if (!StartBackendServer())
             {
@@ -396,9 +440,6 @@ namespace DbHero
         private void InitializeComponent2()
         {
             SuspendLayout();
-
-            //Location = new Point(10, 10);
-            //ClientSize = new Size(1033, 771);
 
             Layout += Form1_Layout;
             Load += Form1_Load;

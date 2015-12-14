@@ -52,6 +52,11 @@ namespace DbHero
             return Path.Combine(AppDataDir(), "usage.json");
         }
 
+        public static string SettingsFilePath()
+        {
+            return Path.Combine(AppDataDir(), "settings.json");
+        }
+
 #if false
 -       // TODO: move to yepi-utils
         // TODO: this doesn't seem to work without root priviledges
