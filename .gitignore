@@ -1,4 +1,6 @@
 .DS_Store
+.vs/
+.vscode/
 bin
 tmp/
 cover.out
@@ -14,14 +16,13 @@ mac/dbHero.xcodeproj/project.xcworkspace/xcuserdata/
 mac/build/
 mac/dbherohelper.exe
 win/dbhero/obj/
-.vs/
 cert.pfx
 website/website_linux
 website/website
 website/website.exe
 resources.go
 dbherohelper.zip
-.vscode/
 dbherohelper
+dbhero.exe
 scripts/secrets.json
 win/dbhero/dbherohelper.exe

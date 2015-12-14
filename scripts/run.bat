@@ -1,6 +1,12 @@
-@rem TODO: use godep
+@echo on
 
 godep go vet github.com/kjk/dbworkbench
 
-godep go build -o dbherohelper.exe
-dbherohelper.exe -dev
+set GOARCH=386
+
+godep go build -o dbhero.exe
+@IF ERRORLEVEL 1 goto Error
+
+dbhero.exe -dev
+
+:Error
