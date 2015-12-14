@@ -93,7 +93,7 @@ namespace DbHero
             menuHelp.DropDownItems.Add("&Feedback", null, HelpFeedback_Click);
 
 #if DEBUG
-            menuHelp.DropDownItems.Add("WhatIsMyBrowser.com", null, HelpWhatIsMyBrowserPage_Click);
+            menuHelp.DropDownItems.Add(new ToolStripSeparator());
             menuHelp.DropDownItems.Add("Diagnostic page", null, HelpDiagnosticPage_Click);
             menuHelp.DropDownItems.Add("Main page", null, HelpMainPage_Click);
             menuHelp.DropDownItems.Add("Crash main thread", null, HelpCrashMainThread_Click);
@@ -123,11 +123,6 @@ namespace DbHero
         {
             _webBrowser.Focus();
             SendKeys.Send("^0"); // [CTRL]+[0]
-        }
-
-        private void HelpWhatIsMyBrowserPage_Click(object sender, EventArgs e)
-        {
-            _webBrowser.Navigate("http://www.whatismybrowser.com/");
         }
 
         private void HelpDiagnosticPage_Click(object sender, EventArgs e)

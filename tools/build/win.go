@@ -69,17 +69,10 @@ func cdToWinDir() {
 	fataliferr(err)
 }
 
-func copyDbHeroHelper() {
-	dst := filepath.Join(winDir(), "dbherohelper.exe")
-	src := "dbherohelper.exe"
-	fileCopyMust(dst, src)
-}
-
 func buildWin() {
 	if flgUpload {
 		s3VerifyNotExistsMust(s3SetupPathWin())
 	}
-	copyDbHeroHelper()
 	cdToWinDir()
 	cleanWin()
 
