@@ -26,10 +26,12 @@ class MainContainer extends React.Component {
     }
 
     var results = this.props.results
-    if (results && this.props.results.rows.length > 100) {
-      // It's only showed when +100. We could make this default.
-      var tooLong = "Showing 100 out of " + results.rows.length + " rows."
-      results.rows = results.rows.slice(0, 100);
+    if (results != null && results.rows != null) {
+      if (results.rows.length > 100) {
+        // It's only showed when +100. We could make this default.
+        var tooLong = "Showing 100 out of " + results.rows.length + " rows."
+        results.rows = results.rows.slice(0, 100);
+      }
     }
 
     return (
