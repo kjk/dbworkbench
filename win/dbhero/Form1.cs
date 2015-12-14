@@ -27,26 +27,6 @@ namespace DbHero
         bool _cleanFinish = false;
         string _updateInstallerPath;
 
-        private void InitializeComponent2()
-        {
-            SuspendLayout();
-
-            Layout += Form1_Layout;
-            Load += Form1_Load;
-            FormClosing += Form1_FormClosing;
-
-            _webBrowser = new WebBrowser()
-            {
-                AllowNavigation = true,
-                IsWebBrowserContextMenuEnabled = false,
-            };
-            Controls.Add(_webBrowser);
-
-            CreateMenu();
-            ResumeLayout(true);
-            PerformLayout();
-        }
-
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == NativeMethods.WM_SHOWME)
@@ -170,24 +150,6 @@ namespace DbHero
         private void FileExit_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
-            // but before Log.Line().
-            _cleanFinish = true;
-            if (_backendProcess != null)
-            {
-                Log.Line($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
-            }
-            // TODO: if we have multiple forms, only when last form is being closed
-            if (_backendProcess != null && !_backendProcess.HasExited)
-            {
-                Log.Line($"Form1_FormClosing: killing backend");
-                _backendProcess.Kill();
-            }
-            Log.Close();
         }
 
         // Find directory where dbherohelper.exe is
@@ -389,6 +351,25 @@ namespace DbHero
             Close();
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
+            // but before Log.Line().
+            _cleanFinish = true;
+            if (_backendProcess != null)
+            {
+                Log.Line($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+            }
+            // TODO: if we have multiple forms, only when last form is being closed
+            if (_backendProcess != null && !_backendProcess.HasExited)
+            {
+                Log.Line($"Form1_FormClosing: killing backend");
+                _backendProcess.Kill();
+            }
+            Log.Line($"Loc: {Location}, Size: {Size}");
+            Log.Close();
+        }
+
         private async void Form1_Load(object sender, EventArgs e)
         {
             ReadUsage();
@@ -410,6 +391,28 @@ namespace DbHero
             var y = s.Height;
             var dy = area.Height - y;
             _webBrowser.SetBounds(0, y, area.Width, dy);
+        }
+
+        private void InitializeComponent2()
+        {
+            SuspendLayout();
+
+            //Location = new Point(10, 10);
+            //ClientSize = new Size(1033, 771);
+
+            Layout += Form1_Layout;
+            Load += Form1_Load;
+            FormClosing += Form1_FormClosing;
+
+            _webBrowser = new WebBrowser()
+            {
+                AllowNavigation = true,
+                IsWebBrowserContextMenuEnabled = false,
+            };
+            Controls.Add(_webBrowser);
+
+            CreateMenu();
+            ResumeLayout(true);
         }
 
         public Form1()
