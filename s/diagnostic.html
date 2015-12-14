@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>diagnostic page</title>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Language" content="en">
+</head>
+
+<body>
+	<p>This is a diagnostic page, no X-UA-Compatible set. Go to <a href="/">main page</a>
+	or <a href="/diagnostic2.html">diagnostic 2 page</a>.</p>
+	<script type="text/javascript">
+		// this is IE only, doesn't seem available on IE Edge.
+		var docMode = document.documentMode;
+		document.write("<p>document.documentMode: ", docMode);
+		document.write("<p>User-Agent: " + navigator.userAgent + "</p>");
+	</script>
+</body>
+</html>

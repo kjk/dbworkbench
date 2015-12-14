@@ -93,6 +93,9 @@ namespace DbHero
             menuHelp.DropDownItems.Add("&Feedback", null, HelpFeedback_Click);
 
 #if DEBUG
+            menuHelp.DropDownItems.Add("WhatIsMyBrowser.com", null, HelpWhatIsMyBrowserPage_Click);
+            menuHelp.DropDownItems.Add("Diagnostic page", null, HelpDiagnosticPage_Click);
+            menuHelp.DropDownItems.Add("Main page", null, HelpMainPage_Click);
             menuHelp.DropDownItems.Add("Crash main thread", null, HelpCrashMainThread_Click);
             menuHelp.DropDownItems.Add("Crash background thread", null, HelpCrashBackgroundThread_Click);
 #endif
@@ -111,7 +114,7 @@ namespace DbHero
         }
 
         private void ViewZoomOut_Click(object sender, EventArgs e)
-        {
+        { 
             _webBrowser.Focus();
             SendKeys.Send("^{-}"); // [CTRL]+[-]
         }
@@ -120,6 +123,21 @@ namespace DbHero
         {
             _webBrowser.Focus();
             SendKeys.Send("^0"); // [CTRL]+[0]
+        }
+
+        private void HelpWhatIsMyBrowserPage_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Navigate("http://www.whatismybrowser.com/");
+        }
+
+        private void HelpDiagnosticPage_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Navigate("http://127.0.0.1:5444/diagnostic.html");
+        }
+
+        private void HelpMainPage_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Navigate("http://127.0.0.1:5444");
         }
 
         private void HelpCrashMainThread_Click(object sender, EventArgs e)
