@@ -80,6 +80,12 @@ namespace DbHero
             _mainMenu.Items.Add(menuFile);
             menuFile.DropDownItems.Add("&Exit", null, FileExit_Click);
 
+            var menuView = new ToolStripMenuItem("&View");
+            _mainMenu.Items.Add(menuView);
+            menuView.DropDownItems.Add("Zoom In", null, ViewZoomIn_Click);
+            menuView.DropDownItems.Add("Zoom Out", null, ViewZoomOut_Click);
+            menuView.DropDownItems.Add("Zoom 100%", null, ViewZoom100_Click);
+
             var menuHelp = new ToolStripMenuItem("&Help");
             _mainMenu.Items.Add(menuHelp);
             menuHelp.DropDownItems.Add("&Website", null, HelpWebsite_Click);
@@ -94,6 +100,26 @@ namespace DbHero
             Controls.Add(_mainMenu);
             MainMenuStrip = _mainMenu;
             _mainMenu.PerformLayout();
+        }
+
+        // Those work for me but wonder if they are reliable. There are other ways:
+        // http://stackoverflow.com/questions/738232/zoom-in-on-a-web-page-using-webbrowser-net-control
+        private void ViewZoomIn_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Focus();
+            SendKeys.Send("^{+}"); // [CTRL]+[+]
+        }
+
+        private void ViewZoomOut_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Focus();
+            SendKeys.Send("^{-}"); // [CTRL]+[-]
+        }
+
+        private void ViewZoom100_Click(object sender, EventArgs e)
+        {
+            _webBrowser.Focus();
+            SendKeys.Send("^0"); // [CTRL]+[0]
         }
 
         private void HelpCrashMainThread_Click(object sender, EventArgs e)
