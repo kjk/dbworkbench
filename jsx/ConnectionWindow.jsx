@@ -180,14 +180,14 @@ class ConnectionWindow extends React.Component {
     var user = b["user"];
     var pass = b["password"];
     var db = b["database"];
-    var ssl = "disable";
     var rememberConnection = this.state.remember;
 
     if (port.length == 0) {
       port = "5432";
     }
 
-    var url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db + "?sslmode=" + ssl;
+    //  + "?sslmode=" + ssl
+    var url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db;
 
     console.log("URL:" + url);
     var self = this;

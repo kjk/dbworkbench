@@ -212,6 +212,31 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveStatic(w, r, resourcePath)
 }
 
+func connectPg(uri string) (Client, error) {
+	sslModes := []string{"require", "disable", "verify-full"}
+	var firstError error
+	for _, sslMode := range sslModes {
+		fullURI := uri + "?sslmode=" + sslMode
+		client, err := NewClientPgFromURL(fullURI)
+		if err != nil {
+			if firstError == nil {
+				firstError = err
+			}
+			LogVerbosef("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
+			continue
+		}
+		err = client.Test()
+		if err == nil {
+			return client, nil
+		}
+		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
+		if firstError == nil {
+			firstError = nil
+		}
+	}
+	return nil, firstError
+}
+
 // POST /api/connect
 // args: url - database connection url
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
@@ -221,21 +246,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	opts := Options{URL: url}
-	url, err := formatConnectionURL(opts)
-
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
-	}
-
-	client, err := NewClientPgFromURL(url)
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
-	}
-
-	err = client.Test()
+	client, err := connectPg(url)
 	if err != nil {
 		serveJSONError(w, r, err)
 		return
