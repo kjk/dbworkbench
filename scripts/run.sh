@@ -19,5 +19,5 @@ godep go build -o dbherohelper
 #gdep go build -race -o dbherohelper
 
 echo "starting dbherohelper in dev mode"
-./dbherohelper -dev || true
+./dbherohelper -dev "$@" || true
 rm dbherohelper

@@ -12,18 +12,37 @@ import (
 // select version()
 
 const (
-	// TODO: write me
-	mysqlDatabasesStmt = `SELECT version()`
+	// http://dev.mysql.com/doc/refman/5.0/en/show-databases.html
+	mysqlDatabasesStmt = `SHOW DATABASES`
 
+	// Note: probably not used
 	mysqlSchemasStmt = `select schema_name from information_schema.schemata`
+
+	// note: doesb't have as many fields as in postgres
+	mysqlInfoStmt = `SELECT user() AS session_user,
+current_user,
+database() as current_database,
+version() AS version`
 
 	// returns version of mysql database e.g. 5.5.46
 	mysqlVersionStmt = `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME = 'VERSION';`
 
-	// TODO: write me
-	mysqlInfoStmt        = `SELECT version()`
-	mysqlTablesStmt      = `SELECT version()`
-	mysqlTableSchemaStmt = `SELECT version()`
+	// http://dev.mysql.com/doc/refman/5.0/en/show-tables.html
+	// TODO: possibliy rewrite as a query since it differs depending on mysql version
+	// https://dev.mysql.com/doc/refman/5.0/en/tables-table.html
+	mysqlTablesStmt = `SHOW TABLES`
+	// TODO: add equivalent of table_schema = 'public'
+	mysqlTablesStmt2 = `SELECT
+table_name FROM information_schema.tables
+WHERE table_type = 'BASE TABLE'
+ORDER BY table_schema, table_name`
+
+	// https://dev.mysql.com/doc/refman/5.0/en/columns-table.html
+	// TODO: don't know if CHARACTER_SET_NAME is the same as character_set_catalog
+	mysqlTableSchemaStmt = `SELECT 
+column_name, data_type, is_nullable, character_maximum_length, character_set_name, column_default
+FROM information_schema.columns
+WHERE table_name = ?`
 )
 
 // ClientMysql describes MySQL (and derivatives) client
@@ -80,7 +99,7 @@ func (c *ClientMysql) Table(table string) (*Result, error) {
 
 // TableRows returns all rows from a query
 func (c *ClientMysql) TableRows(table string, opts RowsOptions) (*Result, error) {
-	sql := fmt.Sprintf(`SELECT * FROM "%s"`, table)
+	sql := fmt.Sprintf(`SELECT * FROM %s`, table)
 
 	if opts.SortColumn != "" {
 		if opts.SortOrder == "" {
@@ -93,7 +112,7 @@ func (c *ClientMysql) TableRows(table string, opts RowsOptions) (*Result, error)
 	if opts.Limit > 0 {
 		sql += fmt.Sprintf(" LIMIT %d", opts.Limit)
 	}
-
+	LogInfof("sql: '%s'\n", sql)
 	return dbQuery(c.db, sql)
 }
 

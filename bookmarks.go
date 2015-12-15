@@ -7,21 +7,28 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 )
 
 var bookmarkMutex = sync.Mutex{}
 
+const (
+	// must match ConnectionWindow.jsx
+	dbTypePostgres = "postgres"
+	dbTypeMysql    = "mysql"
+)
+
 // Bookmark defines info about a database connection
 type Bookmark struct {
 	ID       int    `json:"id"`
+	Nick     string `json:"nick"`
 	Type     string `json:"type"` // postgres, mysql etc.
 	Database string `json:"database"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
-	Ssl      string `json:"ssl"`
 }
 
 func bookmarksFilePath() string {
@@ -75,15 +82,23 @@ func readBookmarksDecryptPwd() ([]Bookmark, error) {
 	}
 
 	for i, b := range res {
+		// TODO: temporary (as of 2015-12-16)
+		// we didn't have 'nick' field so set it to database
+		// we didn't have 'type' field so set it to postgres
+		if b.Nick == "" {
+			b.Nick = b.Database
+		}
+		if b.Type == "" {
+			b.Type = dbTypePostgres
+		}
 		pwd := b.Password
 		b.Password, err = decrypt(pwd)
 		if err != nil {
 			LogInfof("decrypted '%s' => '%s'\n", pwd, b.Password)
 			LogErrorf("decrypt('%s') failed with '%s'\n", pwd, err)
 			b.Password = ""
-		} else {
-			res[i] = b
 		}
+		res[i] = b
 	}
 
 	return res, nil
@@ -93,12 +108,15 @@ func readBookmarksDecryptPwd() ([]Bookmark, error) {
 // encrypts passwords and writes bookmarks as json to bookmarks.json
 // returns original bookmarks + error for convenience of the caller
 func writeBookmarksEncryptPwd(bookmarks []Bookmark) ([]Bookmark, error) {
-	// encrypt passwords in a copy
+	// encrypt passwords and sanitize fields before saving
 	n := len(bookmarks)
 	a := make([]Bookmark, n, n)
 	for i := 0; i < n; i++ {
-		a[i] = bookmarks[i]
+		b := bookmarks[i]
+		a[i] = b
 		a[i].Password = encrypt(a[i].Password)
+		a[i].Nick = strings.TrimSpace(b.Nick)
+		a[i].Database = strings.TrimSpace(b.Database)
 	}
 
 	d, err := json.MarshalIndent(a, "", "  ")
@@ -195,14 +213,16 @@ func removeBookmark(id int) ([]Bookmark, error) {
 	return writeBookmarksEncryptPwd(bookmarks)
 }
 
-// ByDatabaseName is for sorting by database name
-type ByDatabaseName []Bookmark
+// ByNickName is for sorting by database nickname
+type ByNickName []Bookmark
 
-func (s ByDatabaseName) Len() int           { return len(s) }
-func (s ByDatabaseName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s ByDatabaseName) Less(i, j int) bool { return s[i].Database < s[j].Database }
+func (s ByNickName) Len() int      { return len(s) }
+func (s ByNickName) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s ByNickName) Less(i, j int) bool {
+	return strings.ToLower(s[i].Nick) < strings.ToLower(s[j].Nick)
+}
 
 func sortBookmarks(bookmarks []Bookmark) []Bookmark {
-	sort.Sort(ByDatabaseName(bookmarks))
+	sort.Sort(ByNickName(bookmarks))
 	return bookmarks
 }
