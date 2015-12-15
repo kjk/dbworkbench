@@ -231,7 +231,7 @@ func connectPg(uri string) (Client, error) {
 		}
 		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
 		if firstError == nil {
-			firstError = nil
+			firstError = err
 		}
 	}
 	return nil, firstError
