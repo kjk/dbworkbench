@@ -471,6 +471,8 @@ h4.modal-title {
   font-size: 11px;
   margin: 0px;
   padding: 0px;
+  min-height: 100%;
+  min-width: 100%;
 }
 
 #results.empty td {
@@ -521,6 +523,7 @@ h4.modal-title {
 }
 */
 #results td div {
+  padding: 0px 10px;
   max-width: 350px;
   max-height: 51px;
   overflow: hidden;
@@ -730,7 +733,7 @@ connection-window i.fa.fa-lock {
 }
 
 .light-text {
-  color:#9a9a9a;  
+  color:#9a9a9a;
 }
 
 .smaller-text {

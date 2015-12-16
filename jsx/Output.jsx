@@ -4,6 +4,12 @@
 var React = require('react');
 var _ = require('underscore');
 
+var Table = require('Reactable').Table;
+var Thead = require('Reactable').Thead;
+var Th = require('Reactable').Th;
+var Tr = require('Reactable').Tr;
+var Td = require('Reactable').Td;
+
 var view = require('./view.js');
 
 class Output extends React.Component {
@@ -15,6 +21,17 @@ class Output extends React.Component {
       clickedRowKey: -1,
       rowStyle: {},
     };
+  }
+
+  resultsToDictionary(results) {
+    var griddleStyle = _.map(results.rows, function(row){
+      var some = {};
+      _.each(results.columns,function(key,i){some[key] = row[i];});
+      return some;
+    });
+
+    // console.log(griddleStyle)
+    return griddleStyle;
   }
 
   handleRowClick(key, e) {
@@ -47,12 +64,12 @@ class Output extends React.Component {
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
-        <th key={i} data={col}>{col}</th>
+        <Th key={i} data={col} column={col}>{col}</Th>
       );
     });
 
     return (
-      <thead><tr>{children}</tr></thead>
+      <Thead>{children}</Thead>
     );
   }
 
@@ -63,63 +80,56 @@ class Output extends React.Component {
     }
 
     var i = 0;
-    var children = row.map(function(col) {
+    var children = _.map(row, function(row, col) {
       i = i + 1;
+
+      // console.log("row", row, "col", col)
       return (
-        <td key={i}><div style={style}>{col}</div></td>
+        <Td key={i} column={col}><div style={style}>{row}</div></Td>
       );
     });
 
     return (
-      <tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</tr>
-    );
-  }
-
-  renderRows(rows) {
-    if (!rows) {
-      return;
-    }
-
-    var self = this;
-    var i = 0;
-    var children = rows.map(function(row) {
-      i = i + 1;
-      return self.renderRow(row, i);
-    });
-
-    return (
-      <tbody>{children}</tbody>
+      <Tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</Tr>
     );
   }
 
   renderResults(results) {
+    var data = this.resultsToDictionary(results)
     var header = this.renderHeader(results.columns);
-    var rows = this.renderRows(results.rows);
+
+
+    var self = this;
+    var rows = _.map(data, function(row, i) {
+      return self.renderRow(row, i);
+    });
+
     return (
-      <table id="results" className="table" data-mode="browse">
+      <Table id="results" className="results">
         {header}
         {rows}
-      </table>
+      </Table>
+
     );
   }
 
   renderNoResults() {
     return (
-      <table id="results" className="table empty no-crop">
+      <Table id="results" className="table empty no-crop">
         <tbody>
-          <tr><td>No records found</td></tr>
+          <Tr><Td>No records found</Td></Tr>
         </tbody>
-      </table>
+      </Table>
     );
   }
 
   renderError(errorMsg) {
     return (
-      <table id="results" className="table empty">
+      <Table id="results" className="table empty">
         <tbody>
-          <tr><td>ERROR: {errorMsg}</td></tr>
+          <Tr><Td>ERROR: {errorMsg}</Td></Tr>
         </tbody>
-      </table>
+      </Table>
     );
   }
 
