@@ -299,9 +299,8 @@ class ConnectionWindow extends React.Component {
 
   renderFormElements() {
     let b = this.getSelectedBookmark();
-    let formData = _.clone(b);
     
-    let dbType = formData["type"];
+    let dbType = b["type"];
     let defaultPort = "0";
     if (dbType == dbTypePostgres) {
       defaultPort = defaultPortPostgres;
@@ -310,8 +309,6 @@ class ConnectionWindow extends React.Component {
     } else {
       console.log("Unknown type: " + dbType);
     }
-
-    let error = this.renderErrorOptional(this.state.connectionErrorMessage);
 
     return (
       <div>
@@ -322,7 +319,7 @@ class ConnectionWindow extends React.Component {
               type="text"
               id="db_nickname"
               className="form-control input-sm"
-              value = {formData["nick"]}
+              value = {b["nick"]}
               onChange={this.handleFormChanged.bind(this, 'nick')}/>
           </div>
         </div>
@@ -334,7 +331,7 @@ class ConnectionWindow extends React.Component {
               id="db_type" 
               className="form-control input-sm"
               onChange={this.handleFormChanged.bind(this, 'type')}
-              defaultValue={dbType}>
+              value={dbType}>
                 <option value={dbTypePostgres}>PostgreSQL</option>
                 <option value={dbTypeMysql}>MySQL</option>
             </select>
@@ -348,7 +345,7 @@ class ConnectionWindow extends React.Component {
               type="text"
               id="db_hostname"
               className="form-control input-sm"
-              value = {formData["host"]}
+              value = {b["host"]}
               onChange={this.handleFormChanged.bind(this, 'host')}/>
           </div>
         </div>
@@ -360,7 +357,7 @@ class ConnectionWindow extends React.Component {
               type="text"
               id="db_port"
               className="form-control input-sm"
-              value = {formData["port"]}
+              value = {b["port"]}
               onChange={this.handleFormChanged.bind(this, 'port')} placeholder={defaultPort}/>
           </div>
         </div>
@@ -372,7 +369,7 @@ class ConnectionWindow extends React.Component {
               type="text"
               id="db_database"
               className="form-control input-sm"
-              value = {formData["database"]}
+              value = {b["database"]}
               onChange={this.handleFormChanged.bind(this, 'database')} />
           </div>
         </div>
@@ -384,7 +381,7 @@ class ConnectionWindow extends React.Component {
               type="text"
               id="db_user"
               className="form-control input-sm"
-              value = {formData["user"]}
+              value = {b["user"]}
               onChange={this.handleFormChanged.bind(this, 'user')} />
           </div>
         </div>
@@ -396,7 +393,7 @@ class ConnectionWindow extends React.Component {
               type="password"
               id="db_pass"
               className="form-control input-sm"
-              value = {formData["password"]}
+              value = {b["password"]}
               onChange={this.handleFormChanged.bind(this, 'password')} />
           </div>
         </div> 
@@ -419,7 +416,7 @@ class ConnectionWindow extends React.Component {
           &nbsp;&nbsp;
         </div>
 
-        {error}
+        {this.renderErrorOptional(this.state.connectionErrorMessage)}
 
         <div className="col-md-12">
           <div className="form-group">
