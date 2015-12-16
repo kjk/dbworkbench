@@ -468,7 +468,7 @@ h4.modal-title {
 }
 
 #results {
-  font-size: 11px;
+  font-size: 12px;
   margin: 0px;
   padding: 0px;
   min-height: 100%;
@@ -495,8 +495,6 @@ h4.modal-title {
 }
 
 #results th {
-  font-size:12px;
-  font-weight:700;
   background:#4592EA;
   border-top: none;
   padding: 3px 9px;
@@ -541,13 +539,46 @@ h4.modal-title {
   font-size: 12px;
 }
 
-#results th:first-child,
-#results td:first-child {
-  padding-left: 15px;
-}
-
 #results.no-crop td div {
   max-width: none;
+}
+
+#results tr.foot {
+  background:#4592EA;
+}
+
+#results td.foot {
+  padding:0px;
+  background:transparent;
+  border:0px;
+  color:#fff;
+}
+
+#results tr.reactable-filterer {
+  background-color: blue;
+  height: 38px;
+  text-align:left;
+}
+
+#results th.reactable-header-sort-desc:after {
+  content: '\25B2';
+  font-size: 12px;
+  float: right;
+}
+
+#results th.reactable-header-sort-asc:after {
+  content: '\25BC';
+  font-size: 10px;
+  float: right;
+}
+
+#results input.reactable-filter-input {
+  font-size: 11px;
+  background-color: #fff;
+  padding: 4px 6px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  margin-left: 10px
 }
 
 #custom-query {

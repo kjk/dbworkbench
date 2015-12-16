@@ -6,6 +6,7 @@ var _ = require('underscore');
 
 var Table = require('Reactable').Table;
 var Thead = require('Reactable').Thead;
+var Tfoot = require('Reactable').Tfoot;
 var Th = require('Reactable').Th;
 var Tr = require('Reactable').Tr;
 var Td = require('Reactable').Td;
@@ -85,7 +86,7 @@ class Output extends React.Component {
 
       // console.log("row", row, "col", col)
       return (
-        <Td key={i} column={col}><div style={style}>{row}</div></Td>
+        <Td key={i} column={col} value={row}><div style={style}>{row}</div></Td>
       );
     });
 
@@ -94,19 +95,34 @@ class Output extends React.Component {
     );
   }
 
+  renderFooter() {
+    return (
+      <Tfoot>
+        <tr className="foot">
+          <td className="foot" colspan="99999">Temp Footer</td>
+        </tr>
+      </Tfoot>
+    );
+  }
+
   renderResults(results) {
     var data = this.resultsToDictionary(results)
     var header = this.renderHeader(results.columns);
-
 
     var self = this;
     var rows = _.map(data, function(row, i) {
       return self.renderRow(row, i);
     });
 
+    var footer = this.renderFooter();
+
+    console.log("col", results.columns);
+
+
     return (
-      <Table id="results" className="results">
+      <Table id="results" className="results" sortable={true} filterable={results.columns} filterPlaceholder={"Filter Results"}>
         {header}
+        {footer}
         {rows}
       </Table>
 
