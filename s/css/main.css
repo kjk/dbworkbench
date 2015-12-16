@@ -540,7 +540,8 @@ h4.modal-title {
   font-size: 12px;
 }
 
-#results.no-crop td div {
+div#results.table.empty.no-crop {
+  margin: 10px;
   max-width: none;
 }
 
