@@ -240,6 +240,13 @@ class Sidebar extends React.Component {
         width: this.props.dragBarPosition + 'px',
     }
 
+    if (this.props.selectedTableInfo != null) {
+      console.log("ccc", this.props.selectedTableInfo)
+      var sortList = {
+        height: 'calc(100% - 135px)',
+      }
+    }
+
     return (
       <div id="sidebar" style={divStyle}>
         <div className="tables-list">
@@ -256,7 +263,7 @@ class Sidebar extends React.Component {
                   handleRefresh={this.handleRefreshDatabase.bind(this)} />
               </div>
             </div>
-            <ul>
+            <ul style={sortList}>
               {tables}
             </ul>
           </div>

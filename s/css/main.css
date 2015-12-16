@@ -135,7 +135,7 @@ body {
   top: 0px;
   left: 0px;
   bottom: 130px;
-  height: calc(100% - 135px);
+  height: 100%;
   overflow: auto;
   /* background: #31373d; */
 }
