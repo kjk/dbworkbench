@@ -556,21 +556,25 @@ h4.modal-title {
 }
 
 #results tr.reactable-filterer {
-  background-color: blue;
   height: 38px;
-  text-align:left;
+}
+
+#results th:focus {
+  outline:0;
 }
 
 #results th.reactable-header-sort-desc:after {
   content: '\25B2';
   font-size: 12px;
-  float: right;
+  margin-left: 5px;
+  /*float: right;*/
 }
 
 #results th.reactable-header-sort-asc:after {
   content: '\25BC';
   font-size: 10px;
-  float: right;
+  margin-left: 5px;
+  /*float: right;*/
 }
 
 #results input.reactable-filter-input {
@@ -581,6 +585,50 @@ h4.modal-title {
   border-radius: 4px;
   margin-left: 10px
 }
+
+/*
+#results a.reactable-previous-page,
+#results a.griddle-page,
+#results a.griddle-next{
+  float:left;
+  width:33%;
+  min-height:1px;
+  margin-top:5px;
+  margin-bottom: 5px;
+}
+
+.griddle a.reactable-next-page{
+  text-align:right;
+  margin-right: 5px;
+}
+
+.reactable-page-button {
+  text-align:center;
+  margin-top:6px;
+  margin-left: 5px;
+  margin-right: 2px;
+  margin-bottom: 6px;
+  padding: 3px;
+  width: 30px;
+  float: left;
+  cursor: pointer;
+  color: #000;
+  border: 1px solid #AAA;
+  background-color: #EEE;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.reactable-page-button:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.reactable-current-page {
+  background-color: #DDD;
+  cursor: default;
+}
+*/
 
 #custom-query {
   height: 205px;

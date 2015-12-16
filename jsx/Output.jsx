@@ -116,14 +116,19 @@ class Output extends React.Component {
 
     var footer = this.renderFooter();
 
-    console.log("col", results.columns);
 
+        //     itemsPerPage={4}
+        // pageButtonLimit={5}
 
     return (
-      <Table id="results" className="results" sortable={true} filterable={results.columns} filterPlaceholder={"Filter Results"}>
-        {header}
-        {footer}
-        {rows}
+      <Table
+        id="results"
+        className="results"
+        sortable={true}
+        filterable={results.columns}
+        filterPlaceholder={"Filter Results"} >
+          {header}
+          {rows}
       </Table>
 
     );
@@ -131,21 +136,17 @@ class Output extends React.Component {
 
   renderNoResults() {
     return (
-      <Table id="results" className="table empty no-crop">
-        <tbody>
-          <Tr><Td>No records found</Td></Tr>
-        </tbody>
-      </Table>
+      <div id="results" className="table empty no-crop">
+          No records found
+      </div>
     );
   }
 
   renderError(errorMsg) {
     return (
-      <Table id="results" className="table empty">
-        <tbody>
-          <Tr><Td>ERROR: {errorMsg}</Td></Tr>
-        </tbody>
-      </Table>
+      <div id="results" className="table empty no-crop">
+          Err: {errorMsg}
+      </div>
     );
   }
 
