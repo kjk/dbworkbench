@@ -116,7 +116,10 @@ class Output extends React.Component {
 
     var footer = this.renderFooter();
 
-
+    if (_.contains(view.MainTabViews, this.props.selectedView)) {
+      var filterable = results.columns;
+      var filterPlaceholder = "Filter Results";
+    }
         //     itemsPerPage={4}
         // pageButtonLimit={5}
 
@@ -125,8 +128,8 @@ class Output extends React.Component {
         id="results"
         className="results"
         sortable={true}
-        filterable={results.columns}
-        filterPlaceholder={"Filter Results"} >
+        filterable={filterable}
+        filterPlaceholder={filterPlaceholder} >
           {header}
           {rows}
       </Table>
