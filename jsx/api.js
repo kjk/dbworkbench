@@ -29,8 +29,11 @@ function apiCall(method, path, params, cb) {
   });
 }
 
-function connect(url, cb) {
-  var opts = { url: url }
+function connect(type, url, cb) {
+  var opts = {
+    type: type,
+    url: url
+  }
   apiCall("post", "/connect", opts, cb);
 }
 
@@ -82,13 +85,13 @@ function getBookmarks(cb) {
 function addBookmark(bookmark, cb) {
   var opts = {
     id: bookmark["id"],
+    nick: bookmark["nick"],
     type: bookmark["type"],
     database: bookmark["database"],
     host: bookmark["host"],
     port: bookmark["port"],
     user: bookmark["user"],
     password: bookmark["password"],
-    ssl: bookmark["ssl"]
   };
   apiCall("post", "/addbookmark", opts, cb);
 }

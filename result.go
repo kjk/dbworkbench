@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"strings"
 )
 
 // Row describes a database row
@@ -20,6 +21,26 @@ type RowsOptions struct {
 	Limit      int    // Number of rows to fetch
 	SortColumn string // Column to sort by
 	SortOrder  string // Sort direction (ASC, DESC)
+}
+
+// Dump shows column names of the result
+func (res *Result) Dump() {
+	fmt.Printf("colums: %s\n", strings.Join(res.Columns, ","))
+}
+
+// DumpFull shows column names and value of all rows of the result
+func (res *Result) DumpFull() {
+	fmt.Printf("colums: %s\n", strings.Join(res.Columns, ","))
+	rows := res.Rows
+	fmt.Printf("%d rows\n", len(rows))
+	for _, row := range rows {
+		n := len(row)
+		vals := make([]string, n, n)
+		for i := 0; i < n; i++ {
+			vals[i] = fmt.Sprintf("'%v'", row[i])
+		}
+		fmt.Printf("%s\n", strings.Join(vals, ","))
+	}
 }
 
 // Format converts rows to a list of maps whose key is column

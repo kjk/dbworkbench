@@ -10,6 +10,7 @@ import (
 const (
 	pgDatabasesStmt = `SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY datname ASC`
 
+	// Note: probably not used
 	pgSchemasStmt = `SELECT schema_name FROM information_schema.schemata ORDER BY schema_name ASC`
 
 	pgInfoStmt = `SELECT
