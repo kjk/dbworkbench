@@ -26,3 +26,4 @@ dbherohelper
 dbhero.exe
 scripts/secrets.json
 win/dbhero/dbherohelper.exe
+data/*.sql
