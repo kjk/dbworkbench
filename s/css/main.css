@@ -135,6 +135,7 @@ body {
   top: 0px;
   left: 0px;
   bottom: 130px;
+  height: calc(100% - 135px);
   overflow: auto;
   /* background: #31373d; */
 }
@@ -286,7 +287,7 @@ body {
 }
 
 #sidebar ul {
-  overflow-x: hidden;
+  overflow: hidden;
   overflow-y: auto;
   margin: 0px;
   padding: 0px;
