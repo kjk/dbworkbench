@@ -1,7 +1,10 @@
 var action = require('./action.js');
 
-function apiCall(method, path, params, cb) {
-  action.spinner(true);
+function apiCall2(showSpinner, method, path, params, cb) {
+  if (showSpinner) {
+    action.spinner(true);    
+  }
+
   $.ajax({
     url: "/api" + path,
     method: method,
@@ -9,13 +12,17 @@ function apiCall(method, path, params, cb) {
     data: params,
     async: true,
     success: function(data) {
-      action.spinner(false);
+      if (showSpinner) {
+        action.spinner(false);      
+      }
       if (cb) {
         cb(data);
       }
     },
     error: function(xhr, status, data) {
-      action.spinner(false);
+      if (showSpinner) {
+        action.spinner(false);      
+      }
       if (xhr.status == "0") {
         // Backend is down
         action.alertBar("Something is wrong. Please restart")
@@ -29,12 +36,20 @@ function apiCall(method, path, params, cb) {
   });
 }
 
+function apiCall(method, path, params, cb) {
+  apiCall2(true, method, path, params, cb);
+}
+
+function apiCallNoSpinner(method, path, params, cb) {
+  apiCall2(false, method, path, params, cb);
+}
+
 function connect(type, url, cb) {
   var opts = {
     type: type,
     url: url
   }
-  apiCall("post", "/connect", opts, cb);
+  apiCallNoSpinner("post", "/connect", opts, cb);
 }
 
 function disconnect(connId, cb) {

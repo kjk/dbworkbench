@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 func testMysqlInfo() {
@@ -61,7 +63,12 @@ func testMysqlInfo() {
 		fmt.Printf("Table: '%s'\n", t)
 		schema.DumpFull()
 	}
-	res, err := dbQuery(db, mysqlActivityStmt)
+	//dumpQuery(db, mysqlActivityStmt)
+	dumpQuery(db, `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES`)
+}
+
+func dumpQuery(db *sqlx.DB, query string) {
+	res, err := dbQuery(db, query)
 	if err != nil {
 		fmt.Printf("dbQuery() failed with '%s'\n", err)
 		return

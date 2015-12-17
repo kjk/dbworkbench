@@ -2,6 +2,7 @@
 'use strict';
 
 var React = require('react');
+var SpinnerCircle = require('./Spinners.jsx').Circle;
 
 var api = require('./api.js');
 var action = require('./action.js');
@@ -441,20 +442,38 @@ class ConnectionWindow extends React.Component {
 
         {this.renderErrorOptional(this.state.connectionErrorMessage)}
 
-        <div className="col-md-12">
-          <div className="form-group">
-            {this.renderConnectOrCancel()}
-          </div>
-        </div>
+        {this.renderConnectOrCancel()}
       </div>
     );
   }
 
   renderConnectOrCancel() {
+    let styleDiv = {
+      position: 'relative'
+    };
+
+    let styleSpinner = {
+      zIndex: '5',
+      position: 'absolute',
+      right: '-32px',
+      top: '8'
+    };
+
+
     if (this.state.isConnecting) {
-      return <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>;
+      return (
+        <div className="col-md-12" style={styleDiv}>
+          <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>        
+          <SpinnerCircle style={styleSpinner}/>
+        </div>
+      );
     }
-    return <button  onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>;
+
+    return (
+      <div className="col-md-12">
+        <button  onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
+      </div>
+    );
   }
   
   renderForm() {
