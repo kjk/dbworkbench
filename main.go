@@ -153,66 +153,12 @@ func runGulpAsync() {
 		}
 	}()
 }
-func testMysqlInfo() {
-	// ${user}:${pwd}@tcp(${ip}:${port})/{dbName}?parseTime=true
-	uri := os.Getenv("MYSQL_URL")
-	if uri == "" {
-		log.Fatal("MYSQL_URL env variable is not defined. in bash, do:\nMYSQL_URL=${uri} ./scripts.run.sh\n")
-	}
-	c, err := NewClientMysqlFromURL(uri)
-	if err != nil {
-		fmt.Printf("NewClientMysqlFromURL('%s') failed with '%s'\n", uri, err)
-		return
-	}
-	defer c.Close()
-	if err = c.Test(); err != nil {
-		fmt.Printf("c.Test() failed with '%s', uri: '%s'\n", err, uri)
-		return
-	}
-
-	i, err := c.Info()
-	if err != nil {
-		fmt.Printf("c.Info() failed with '%s'\n", err)
-		return
-	}
-	i.Dump()
-
-	dbs, err := c.Databases()
-	if err != nil {
-		fmt.Printf("c.Databases() failed with '%s'\n", err)
-		return
-	}
-	fmt.Printf("%d datbases:\n", len(dbs))
-	for _, db := range dbs {
-		fmt.Printf("  '%s'\n", db)
-	}
-
-	tables, err := c.Tables()
-	if err != nil {
-		fmt.Printf("c.Tables() failed with '%s'\n", err)
-		return
-	}
-	fmt.Printf("%d tables:\n", len(tables))
-	for _, s := range tables {
-		fmt.Printf("  '%s'\n", s)
-	}
-
-	for _, t := range tables {
-		schema, err := c.Table(t)
-		if err != nil {
-			fmt.Printf("c.TableRows('%s') failed with '%s'\n", t, err)
-			return
-		}
-		fmt.Printf("Table: '%s'\n", t)
-		schema.DumpFull()
-	}
-}
 
 func main() {
 	parseCmdLine()
 
 	if options.Test {
-		testMysqlInfo()
+		testMysqlTimeout()
 		os.Exit(0)
 	}
 

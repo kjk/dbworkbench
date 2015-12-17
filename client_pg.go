@@ -82,9 +82,9 @@ func NewClientPgFromURL(uri string) (Client, error) {
 	return &client, nil
 }
 
-// Test checks if a db connection is valid
-func (c *ClientPg) Test() error {
-	return c.db.Ping()
+// Connection returns underlying db connection
+func (c *ClientPg) Connection() *sqlx.DB {
+	return c.db
 }
 
 // Info returns information about a postgres db connection
@@ -169,7 +169,28 @@ func (c *ClientPg) History() []HistoryRecord {
 	return c.history
 }
 
-// Close closes a database connection
-func (c *ClientPg) Close() error {
-	return c.db.Close()
+func connectPostgres(uri string) (Client, error) {
+	sslModes := []string{"require", "disable", "verify-full"}
+	var firstError error
+	for _, sslMode := range sslModes {
+		fullURI := uri + "?sslmode=" + sslMode
+		client, err := NewClientPgFromURL(fullURI)
+		if err != nil {
+			if firstError == nil {
+				firstError = err
+			}
+			LogVerbosef("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
+			continue
+		}
+		db := client.Connection()
+		err = db.Ping()
+		if err == nil {
+			return client, nil
+		}
+		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
+		if firstError == nil {
+			firstError = err
+		}
+	}
+	return nil, firstError
 }

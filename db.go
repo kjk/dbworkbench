@@ -61,7 +61,7 @@ func connectionDisconnect(connID int) error {
 		return fmt.Errorf("disconnect: unknown connection id '%d'", connID)
 	}
 	delete(connections, connID)
-	return connInfo.Client.Close()
+	return connInfo.Client.Connection().Close()
 }
 
 func getConnectionInfoByID(connID int) *ConnectionInfo {

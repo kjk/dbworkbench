@@ -212,45 +212,6 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveStatic(w, r, resourcePath)
 }
 
-func connectPostgres(uri string) (Client, error) {
-	sslModes := []string{"require", "disable", "verify-full"}
-	var firstError error
-	for _, sslMode := range sslModes {
-		fullURI := uri + "?sslmode=" + sslMode
-		client, err := NewClientPgFromURL(fullURI)
-		if err != nil {
-			if firstError == nil {
-				firstError = err
-			}
-			LogVerbosef("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
-			continue
-		}
-		err = client.Test()
-		if err == nil {
-			return client, nil
-		}
-		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
-		if firstError == nil {
-			firstError = err
-		}
-	}
-	return nil, firstError
-}
-
-func connectMysql(uri string) (Client, error) {
-	client, err := NewClientMysqlFromURL(uri)
-	if err != nil {
-		LogVerbosef("NewClientMysqlFromURL('%s') failed with '%s'\n", uri, err)
-		return nil, err
-	}
-	err = client.Test()
-	if err != nil {
-		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, uri)
-		return nil, err
-	}
-	return client, nil
-}
-
 // POST /api/connect
 // args:
 //	url : database connection url formatted for Go driver

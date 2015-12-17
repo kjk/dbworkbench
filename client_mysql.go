@@ -67,9 +67,9 @@ func NewClientMysqlFromURL(uri string) (Client, error) {
 	return &client, nil
 }
 
-// Test checks if a db connection is valid
-func (c *ClientMysql) Test() error {
-	return c.db.Ping()
+// Connection returns underlying db connection
+func (c *ClientMysql) Connection() *sqlx.DB {
+	return c.db
 }
 
 // Info returns information about a postgres db connection
@@ -154,7 +154,17 @@ func (c *ClientMysql) History() []HistoryRecord {
 	return c.history
 }
 
-// Close closes a database connection
-func (c *ClientMysql) Close() error {
-	return c.db.Close()
+func connectMysql(uri string) (Client, error) {
+	client, err := NewClientMysqlFromURL(uri)
+	if err != nil {
+		LogVerbosef("NewClientMysqlFromURL('%s') failed with '%s'\n", uri, err)
+		return nil, err
+	}
+	db := client.Connection()
+	err = db.Ping()
+	if err != nil {
+		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, uri)
+		return nil, err
+	}
+	return client, nil
 }

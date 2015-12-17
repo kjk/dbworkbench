@@ -218,7 +218,8 @@ class ConnectionWindow extends React.Component {
       if (port.length == 0) {
         port = defaultPortMysql;
       }
-      // TODO: not sure if I need parseTime=true
+      // pareTime: conver time from []byte to time.Time
+      // https://github.com/go-sql-driver/mysql#parsetime
       url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
     } else {
       console.log("invalid type: " + dbType)
