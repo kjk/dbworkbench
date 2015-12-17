@@ -429,28 +429,28 @@ class ConnectionWindow extends React.Component {
   }
 
   renderForm() {
-    if (this.state.selectedBookmarkIdx > -1) {
-      var formElements = this.renderFormElements()
-    } else {
-      var imageStyle = {
-        width: "30%",
-        height: "30%"
-      };
-
-      var formElements = (
-        <div className="col-md-12 text-center">
-            <img class="img-responsive center-block small" 
-              src="/s/img/icon.png" 
-              alt="" style={imageStyle}/>​
-            <h5>Please add a connection</h5>
-        </div>
+    if (this.state.selectedBookmarkIdx >= 0) {
+      return (
+        <form role="form">
+          {this.renderFormElements()}
+        </form>
       );
     }
 
+    // TODO: I don't think it ever happens
+    var imageStyle = {
+      width: "30%",
+      height: "30%"
+    };
 
     return (
       <form role="form">
-        {formElements}
+        <div className="col-md-12 text-center">
+            <img class="img-responsive center-block small" 
+              src="/s/img/icon.png" 
+              alt="" style={imageStyle}/>
+            <h5>Please add a connection</h5>
+        </div>
       </form>
     );
   }
