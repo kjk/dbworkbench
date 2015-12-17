@@ -43,6 +43,8 @@ ORDER BY table_schema, table_name`
 column_name, data_type, is_nullable, character_maximum_length, character_set_name, column_default
 FROM information_schema.columns
 WHERE table_name = ?`
+
+	mysqlActivityStmt = `SHOW FULL PROCESSLIST;`
 )
 
 // ClientMysql describes MySQL (and derivatives) client
@@ -134,7 +136,7 @@ func (c *ClientMysql) TableIndexes(table string) (*Result, error) {
 
 // Activity returns all active queriers on the server
 func (c *ClientMysql) Activity() (*Result, error) {
-	return dbQuery(c.db, pgActivityStmt)
+	return dbQuery(c.db, mysqlActivityStmt)
 }
 
 // Query executes a given query and returns the results

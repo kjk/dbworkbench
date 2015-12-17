@@ -61,6 +61,12 @@ func testMysqlInfo() {
 		fmt.Printf("Table: '%s'\n", t)
 		schema.DumpFull()
 	}
+	res, err := dbQuery(db, mysqlActivityStmt)
+	if err != nil {
+		fmt.Printf("dbQuery() failed with '%s'\n", err)
+		return
+	}
+	res.DumpFull()
 }
 
 func testMysqlTimeoutWithURI(uri string) {
