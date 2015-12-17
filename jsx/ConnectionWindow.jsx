@@ -69,6 +69,10 @@ class ConnectionWindow extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.getBookmarks();
+  }
+
   newConnectionInfo(e) {
     var bookmarks = this.state.bookmarks;
     if (bookmarks.length >= maxBookmarks) {
@@ -87,7 +91,7 @@ class ConnectionWindow extends React.Component {
     return this.state.bookmarks[this.state.selectedBookmarkIdx];
   }
 
-  getBookmark(e) {
+  getBookmarks() {
     var self = this;
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
