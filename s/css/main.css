@@ -780,7 +780,7 @@ connection-window i.fa.fa-lock {
 /*******************************************************/
 /* AlertBar */
 
-#note {
+#alert-bar {
     position: absolute;
     z-index: 101;
     top: 0;
@@ -805,7 +805,7 @@ connection-window i.fa.fa-lock {
     10%, 90% { -moz-transform: translateY(0px); }
 }
 
-.cssanimations.csstransforms #note {
+.cssanimations.csstransforms #alert-bar {
     -webkit-transform: translateY(-40px);
     -webkit-animation: slideDown 2.5s 1.0s 1 ease forwards;
     -moz-transform:    translateY(-40px);
