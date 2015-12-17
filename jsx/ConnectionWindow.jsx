@@ -413,7 +413,8 @@ class ConnectionWindow extends React.Component {
         </div>
 
         <div className="col-md-12 right light-text smaller-text">
-          database crendentials are stored securely on your computer
+          <i className="fa fa-lock fa1"></i>&nbsp;Database crendentials are stored
+          securely on your computer
         </div>
 
         <div className="col-md-12">
