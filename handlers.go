@@ -219,6 +219,7 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := strings.TrimSpace(r.FormValue("url"))
 	dbType := strings.TrimSpace(r.FormValue("type"))
+	LogInfof("dbtype: '%s' url: '%s'\n", dbType, url)
 	if url == "" || dbType == "" {
 		serveJSONError(w, r, fmt.Errorf("url ('%s') or type ('%s') argument is missing", url, dbType))
 		return
@@ -235,6 +236,7 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
+		LogInfof("calling serveJSONError\n")
 		serveJSONError(w, r, err)
 		return
 	}

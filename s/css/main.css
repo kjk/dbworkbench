@@ -656,10 +656,6 @@ connection-window i.fa.fa-lock {
   margin-top: 20px;
 }
 
-#close-connection-window {
-  display: none;
-}
-
 .connection-error {
   color: red;
   font-weight: bold;

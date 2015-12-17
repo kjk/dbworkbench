@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -169,7 +170,16 @@ func (c *ClientPg) History() []HistoryRecord {
 	return c.history
 }
 
+// a heuristic that detects if a given error is a tcp connection timeout
+// The error messages look like:
+// 'dial tcp 173.194.251.111:5432: getsockopt: operation timed out'
+func isTimeoutError(err error) bool {
+	return strings.Contains(err.Error(), "operation timed out")
+}
+
 func connectPostgres(uri string) (Client, error) {
+	// TODO: doing 'verify-full' probably doesn't make sense as it's a superset
+	// of 'require'
 	sslModes := []string{"require", "disable", "verify-full"}
 	var firstError error
 	for _, sslMode := range sslModes {
@@ -179,7 +189,12 @@ func connectPostgres(uri string) (Client, error) {
 			if firstError == nil {
 				firstError = err
 			}
-			LogVerbosef("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
+			LogErrorf("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
+			// don't retry connections if the issue was a timeout. That would triple
+			// how long does it take to timeout
+			if isTimeoutError(err) {
+				return nil, err
+			}
 			continue
 		}
 		db := client.Connection()
@@ -187,7 +202,7 @@ func connectPostgres(uri string) (Client, error) {
 		if err == nil {
 			return client, nil
 		}
-		LogVerbosef("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
+		LogErrorf("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
 		if firstError == nil {
 			firstError = err
 		}

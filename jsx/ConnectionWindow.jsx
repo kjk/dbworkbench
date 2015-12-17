@@ -260,6 +260,13 @@ class ConnectionWindow extends React.Component {
   handleCancel(e) {
     e.preventDefault();
     console.log("handleCancel");
+    // TODO: api.connect() is still in progress so must prevent
+    // completing the call from wreaking havoc. Could track all
+    // connection attempts by issuing unique connection id and
+    // ignoring callbacks if local id != global current connection id
+    this.setState({
+      isConnecting: false
+    })
   }
 
   renderErrorOptional(errorText) {
@@ -315,6 +322,8 @@ class ConnectionWindow extends React.Component {
       console.log("Unknown type: " + dbType);
     }
 
+    let disable = this.state.isConnecting;
+
     return (
       <div>
         <div className="col-md-8">
@@ -325,6 +334,7 @@ class ConnectionWindow extends React.Component {
               id="db_nickname"
               className="form-control input-sm"
               value = {b["nick"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'nick')}/>
           </div>
         </div>
@@ -335,8 +345,9 @@ class ConnectionWindow extends React.Component {
             <select 
               id="db_type" 
               className="form-control input-sm"
-              onChange={this.handleFormChanged.bind(this, 'type')}
-              value={dbType}>
+              value={dbType}
+              disabled={disable}
+              onChange={this.handleFormChanged.bind(this, 'type')}>
                 <option value={dbTypePostgres}>PostgreSQL</option>
                 <option value={dbTypeMysql}>MySQL</option>
             </select>
@@ -351,6 +362,7 @@ class ConnectionWindow extends React.Component {
               id="db_hostname"
               className="form-control input-sm"
               value = {b["host"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'host')}/>
           </div>
         </div>
@@ -363,6 +375,7 @@ class ConnectionWindow extends React.Component {
               id="db_port"
               className="form-control input-sm"
               value = {b["port"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'port')} placeholder={defaultPort}/>
           </div>
         </div>
@@ -375,6 +388,7 @@ class ConnectionWindow extends React.Component {
               id="db_database"
               className="form-control input-sm"
               value = {b["database"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'database')} />
           </div>
         </div>
@@ -387,6 +401,7 @@ class ConnectionWindow extends React.Component {
               id="db_user"
               className="form-control input-sm"
               value = {b["user"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'user')} />
           </div>
         </div>
@@ -399,6 +414,7 @@ class ConnectionWindow extends React.Component {
               id="db_pass"
               className="form-control input-sm"
               value = {b["password"]}
+              disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'password')} />
           </div>
         </div> 
@@ -408,6 +424,7 @@ class ConnectionWindow extends React.Component {
             <input type="checkbox"
               id="pwd-remember"
               checked={this.state.remember}
+              disabled={disable}
               onChange={this.handleRememberChange}
             /> Remember
          </label>
@@ -426,14 +443,20 @@ class ConnectionWindow extends React.Component {
 
         <div className="col-md-12">
           <div className="form-group">
-            <button disabled={this.state.isConnecting} onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
-            <button onClick={this.handleCancel} type="reset" id="close-connection-window" className="btn btn-block btn-default small">Cancel</button>
+            {this.renderConnectOrCancel()}
           </div>
         </div>
       </div>
     );
   }
 
+  renderConnectOrCancel() {
+    if (this.state.isConnecting) {
+      return <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>;
+    }
+    return <button  onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>;
+  }
+  
   renderForm() {
     if (this.state.selectedBookmarkIdx >= 0) {
       return (
