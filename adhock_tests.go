@@ -63,7 +63,7 @@ func testMysqlInfo() {
 	}
 }
 
-func testTimeout(uri string) {
+func testMysqlTimeoutWithURI(uri string) {
 	timeStart := time.Now()
 	fmt.Printf("Starting NewClientMysqlFromURL()...")
 	c, err := NewClientMysqlFromURL(uri)
@@ -81,7 +81,31 @@ func testTimeout(uri string) {
 	fmt.Printf("\ntook %s\n", time.Since(timeStartPing))
 }
 
+func testPgTimeoutWithURI(uri string) {
+	timeStart := time.Now()
+	fmt.Printf("Starting NewClientPgFromURL()...")
+	c, err := NewClientPgFromURL(uri)
+	if err != nil {
+		fmt.Printf("\nNewClientMysqlFromURL('%s') failed with '%s' after %s\n", uri, err, time.Since(timeStart))
+		return
+	}
+
+	db := c.Connection()
+	defer db.Close()
+	timeStartPing := time.Now()
+	fmt.Printf("\nstarting ping...")
+	if err = db.Ping(); err != nil {
+		fmt.Printf("c.Test() failed with '%s', uri: '%s' after %s\n", err, uri, time.Since(timeStartPing))
+	}
+	fmt.Printf("\ntook %s\n", time.Since(timeStartPing))
+}
+
 func testMysqlTimeout() {
 	// test for timeout by trying to connect to a wrong port
-	testTimeout("root:foo@tcp(173.194.251.111:5432)/hello")
+	testMysqlTimeoutWithURI("root:foo@tcp(173.194.251.111:5432)/hello")
+}
+
+func testPostgresTimeout() {
+	// test for timeout by trying to connect to a wrong port
+	testPgTimeoutWithURI("postgres://root:foo@173.194.251.111:5432/hello")
 }

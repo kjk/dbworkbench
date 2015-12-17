@@ -158,7 +158,7 @@ func main() {
 	parseCmdLine()
 
 	if options.Test {
-		testMysqlTimeout()
+		testPostgresTimeout()
 		os.Exit(0)
 	}
 
