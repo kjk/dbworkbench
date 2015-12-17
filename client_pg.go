@@ -190,11 +190,6 @@ func connectPostgres(uri string) (Client, error) {
 				firstError = err
 			}
 			LogErrorf("NewClientPgFromURL('%s') failed with '%s'\n", fullURI, err)
-			// don't retry connections if the issue was a timeout. That would triple
-			// how long does it take to timeout
-			if isTimeoutError(err) {
-				return nil, err
-			}
 			continue
 		}
 		db := client.Connection()
@@ -202,9 +197,14 @@ func connectPostgres(uri string) (Client, error) {
 		if err == nil {
 			return client, nil
 		}
-		LogErrorf("client.Test() failed with '%s', uri: '%s'\n", err, fullURI)
+		LogErrorf("db.Ping() failed with '%s', uri: '%s'\n", err, fullURI)
 		if firstError == nil {
 			firstError = err
+		}
+		// don't retry connections if the issue was a timeout. That would triple
+		// how long does it take to timeout
+		if isTimeoutError(err) {
+			return nil, err
 		}
 	}
 	return nil, firstError
