@@ -1,12 +1,12 @@
 /* jshint -W097,-W117 */
 'use strict';
 
-var React = require('react');
-var SpinnerCircle = require('./Spinners.jsx').Circle;
+const React = require('react');
+const SpinnerCircle = require('./Spinners.jsx').Circle;
 
-var api = require('./api.js');
-var action = require('./action.js');
-var _ = require('underscore');
+const api = require('./api.js');
+const action = require('./action.js');
+const _ = require('underscore');
 
 const initialConnectionName = "New connection";
 
@@ -21,7 +21,14 @@ const maxBookmarks = 10;
 
 // we need unique ids for unsaved bookmarks. We use negative numbers
 // to make sure they don't clash with saved bookmarks (those have positive numbers)
-var emptyBookmarkId = -1;
+let emptyBookmarkId = -1;
+
+// connecting is async process which might be cancelled
+// we use this to uniquely identify connection attempt so that
+// whe api.connect() finishes, we can tell if it has been cancelled   
+// Note: could be state on CoonectionWindow, but we only have one
+// of those at any given time so global is just as good 
+let currConnectionId = 1;
 
 function newEmptyBookmark() {
   emptyBookmarkId -= 1;
@@ -232,7 +239,13 @@ class ConnectionWindow extends React.Component {
     this.setState({
       isConnecting: true,
     });
+    const myConnectionId = currConnectionId;
     api.connect(dbType, url, function(resp) {
+      if (myConnectionId != currConnectionId) {
+        console.log("ignoring completion of a cancelled connection");
+        return;
+      }
+      ++currConnectionId;
       if (resp.error) {
         console.log("handleConnect: resp.error: ", resp.error);
 
@@ -261,10 +274,9 @@ class ConnectionWindow extends React.Component {
   handleCancel(e) {
     e.preventDefault();
     console.log("handleCancel");
-    // TODO: api.connect() is still in progress so must prevent
-    // completing the call from wreaking havoc. Could track all
-    // connection attempts by issuing unique connection id and
-    // ignoring callbacks if local id != global current connection id
+    // to tell api.connec() callback that we've been cancelled
+    ++currConnectionId;
+
     this.setState({
       isConnecting: false
     })
