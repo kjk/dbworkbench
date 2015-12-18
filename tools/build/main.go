@@ -139,6 +139,11 @@ func extractVersionWinMust() {
 	fmt.Printf("programVersionWin: %s\n", programVersionWin)
 }
 
+/* given a text in .plist:
+<key>foo<key>
+<string>bar</key>
+returns "bar" if keyName is "foo"
+*/
 func plistGetStrVal(lines []string, keyName string) string {
 	idx := -1
 	key := fmt.Sprintf("<key>%s</key>", strings.ToLower(keyName))
@@ -161,7 +166,7 @@ func plistGetStrVal(lines []string, keyName string) string {
 	} else {
 		fatalf("invalid s: '%s'\n", s)
 	}
-	return s
+	return cleanVer(s)
 }
 
 func extractVersionMacMust() {
