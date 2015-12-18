@@ -15,7 +15,7 @@ class DbNav extends React.Component {
         action.viewSelected(viewName);
       };
 
-      var selected = (currentView == viewName)
+      var selected = (currentView == viewName);
       if (selected) {
         return <li key={viewName} onClick={handler} className="selected"><u>{viewName}</u></li>;
       } else {

@@ -25,7 +25,7 @@ function apiCall2(showSpinner, method, path, params, cb) {
       }
       if (xhr.status == "0") {
         // Backend is down
-        action.alertBar("Something is wrong. Please restart")
+        action.alertBar("Something is wrong. Please restart");
       } else {
         // API call failed
       }
@@ -48,12 +48,12 @@ function connect(type, url, cb) {
   var opts = {
     type: type,
     url: url
-  }
+  };
   apiCallNoSpinner("post", "/connect", opts, cb);
 }
 
 function disconnect(connId, cb) {
-  var opts = { conn_id : connId }
+  var opts = { conn_id : connId };
   apiCall("post", "/disconnect", opts, cb);
 }
 

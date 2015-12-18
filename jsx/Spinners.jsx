@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react')
+const React = require('react');
 
 class SpinnerCircle extends React.Component {
 	render() {
@@ -19,7 +19,7 @@ class SpinnerCircle extends React.Component {
         <div className="circle11 circle"></div>
         <div className="circle12 circle"></div>
       </div>
-    )
+    );
 	}
 }
 

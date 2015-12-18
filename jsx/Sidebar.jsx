@@ -131,7 +131,7 @@ class Dropdown extends React.Component {
 
           </Modal>
         </div>
-    )
+    );
   }
 }
 
@@ -238,7 +238,7 @@ class Sidebar extends React.Component {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
         width: this.props.dragBarPosition + 'px',
-    }
+    };
 
     return (
       <div id="sidebar" style={divStyle}>

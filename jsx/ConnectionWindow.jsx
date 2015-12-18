@@ -88,7 +88,7 @@ class ConnectionWindow extends React.Component {
       return;
     }
 
-    bookmarks.push(newEmptyBookmark())
+    bookmarks.push(newEmptyBookmark());
     this.setState({
       bookmarks: bookmarks,
       selectedBookmarkIdx: bookmarks.length-1,
@@ -230,7 +230,7 @@ class ConnectionWindow extends React.Component {
       // https://github.com/go-sql-driver/mysql#parsetime
       url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
     } else {
-      console.log("invalid type: " + dbType)
+      console.log("invalid type: " + dbType);
       // TODO: how to error out?
     }    
 
@@ -256,7 +256,7 @@ class ConnectionWindow extends React.Component {
         return;
       }
 
-      b = self.getSelectedBookmark()
+      b = self.getSelectedBookmark();
       if (!rememberConnection) {
         console.log("did connect, not saving a bookmark");
         return;        
@@ -279,7 +279,7 @@ class ConnectionWindow extends React.Component {
 
     this.setState({
       isConnecting: false
-    })
+    });
   }
 
   renderErrorOptional(errorText) {
@@ -296,12 +296,12 @@ class ConnectionWindow extends React.Component {
     let bookmarks = [];
     for (var i = 0; i < this.state.bookmarks.length; i++) {
       let b = this.state.bookmarks[i];
-      let id = b["id"]
+      let id = b["id"];
       let nick = b["nick"];
 
-      let className = "list-group-item"
+      let className = "list-group-item";
       if (i == this.state.selectedBookmarkIdx) {
-        className = "list-group-item active"
+        className = "list-group-item active";
       }
 
       bookmarks.push(
@@ -545,7 +545,7 @@ class ConnectionWindow extends React.Component {
       padding: '5px',
       fontSize: '12px',
       color: '#A9A9A9',
-    }
+    };
 
     return (
       <div id="connection-window">

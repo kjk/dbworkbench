@@ -18,18 +18,18 @@ class Output extends React.Component {
   }
 
   handleRowClick(key, e) {
-    console.log("Enlarging ", key)
+    console.log("Enlarging ", key);
     var enlargeStyle = {
       maxWidth: '350px',
       maxHeight: '100%',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'normal',
-    }
+    };
 
     if (_.isEqual(enlargeStyle, this.state.rowStyle) && key == this.state.clickedRowKey) {
-      console.log("Shrinking")
-      enlargeStyle = {}
+      console.log("Shrinking");
+      enlargeStyle = {};
     }
 
     this.setState({
@@ -57,9 +57,9 @@ class Output extends React.Component {
   }
 
   renderRow(row, key) {
-    var style = {}
+    var style = {};
     if (this.state.clickedRowKey == key) {
-      style = this.state.rowStyle
+      style = this.state.rowStyle;
     }
 
     var i = 0;
