@@ -45,6 +45,10 @@ FROM information_schema.columns
 WHERE table_name = ?`
 
 	mysqlActivityStmt = `SHOW FULL PROCESSLIST;`
+
+	//mysqlTableIndexesStmt = `SELECT indexname, indexdef FROM pg_indexes WHERE tablename = $1`
+	// http://stackoverflow.com/questions/5213339/how-to-see-indexes-for-a-database-or-table
+	mysqlTableIndexesStmt = `SHOW INDEX FROM %s`
 )
 
 // ClientMysql describes MySQL (and derivatives) client
@@ -125,7 +129,8 @@ func (c *ClientMysql) TableInfo(table string) (*Result, error) {
 
 // TableIndexes returns info about indexes for a given table
 func (c *ClientMysql) TableIndexes(table string) (*Result, error) {
-	res, err := dbQuery(c.db, pgTableIndexesStmt, table)
+	q := fmt.Sprintf(mysqlTableIndexesStmt, table)
+	res, err := dbQuery(c.db, q)
 
 	if err != nil {
 		return nil, err
