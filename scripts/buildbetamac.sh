@@ -25,6 +25,6 @@ codesign --force --deep --verbose -s "Developer ID Application: Krzysztof Kowalc
 
 codesign --verify --verbose "mac/build/Release/dbHero.app"
 
-go run tools/build/*.go $@
+go run tools/build/*.go -beta $@
 
 rm resources.go

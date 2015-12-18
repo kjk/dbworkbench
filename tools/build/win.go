@@ -12,6 +12,10 @@ func s3SetupPathWin() string {
 	return s3Dir + fmt.Sprintf("rel/dbHero-setup-%s.exe", programVersion)
 }
 
+func s3SetupPathWinBeta() string {
+	return s3Dir + fmt.Sprintf("beta/dbHero-setup-%s.exe", programVersion)
+}
+
 func exeSetupPath() string {
 	exeName := fmt.Sprintf("dbHero-setup-%s.exe", programVersion)
 	return pj("bin", "Release", exeName)
@@ -101,10 +105,11 @@ func uploadToS3Win() {
 		return
 	}
 
-	s3VerifyNotExistsMust(s3SetupPathWin())
+	s3Path := s3SetupPathWin()
+	s3VerifyNotExistsMust(s3Path)
 
-	s3UploadFile(s3SetupPathWin(), exeSetupPath(), true)
-	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathWin()
+	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
 var LatestUrlWin = "%s";
@@ -113,10 +118,33 @@ var BuiltOnWin = "%s";
 	s3UploadString(s3Dir+"latestverwin.js", jsTxt, true)
 }
 
+func uploadToS3WinBeta() {
+	if !flgUpload {
+		fmt.Printf("skipping s3 upload because -upload not given\n")
+		return
+	}
+
+	s3Path := s3SetupPathWinBeta()
+	s3VerifyNotExistsMust(s3Path)
+
+	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
+	buildOn := time.Now().Format("2006-01-02")
+	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
+var LatestUrlWin = "%s";
+var BuiltOnWin = "%s";
+`, programVersion, s3Url, buildOn)
+	s3UploadString(s3Dir+"latestverwinbeta.js", jsTxt, true)
+}
+
 func buildWinAll() {
 	verifyHasSecretsMust()
 	detectInnoSetupMust()
 	buildWin()
 	buildSetupWin()
-	uploadToS3Win()
+	if flgBeta {
+		uploadToS3WinBeta()
+	} else {
+		uploadToS3Win()
+	}
 }
