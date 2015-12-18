@@ -15,4 +15,4 @@ godep go test -c ./...
 rm -rf dbworkbench.test
 
 godep go build -o dbherohelper
-#rm -rf dbherohelper
+rm -rf dbherohelper
