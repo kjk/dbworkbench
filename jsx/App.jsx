@@ -19,6 +19,9 @@ var AlertBar = require('./AlertBar.jsx');
 var MainContainer = require('./MainContainer.jsx');
 var SpinnerCircle = require('./Spinners.jsx').Circle;
 
+const minSidebarDx = 128;
+const maxSidebarDx = 128*3;
+
 class App extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -106,6 +109,9 @@ class App extends React.Component {
 
   onMouseMove(e) {
     if (!this.state.dragging) return;
+    if ((e.pageX < minSidebarDx) || (e.pageX > maxSidebarDx)) {
+      return;
+    }
     this.setState({
       dragBarPosition: e.pageX,
     });
