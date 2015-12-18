@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# add -upload flag to also upload to s3
+# flags:
+#   -upload : upload to s3
+#   -beta   : build beta version (different location in s3)
 
 set -o nounset
 set -o errexit

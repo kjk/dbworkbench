@@ -1,5 +1,9 @@
 @echo on
 
+@rem flags:
+@rem   -upload : upload to s3
+@rem   -beta   : build beta version
+
 @call scripts\buildwinhelper.bat
 @IF ERRORLEVEL 1 goto Error
 
