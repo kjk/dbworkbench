@@ -239,6 +239,7 @@ var LatestUrlMac = "%s";
 var BuiltOnMac = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestvermac.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
 }
 
 func uploadToS3MacBeta() {
@@ -260,6 +261,7 @@ var LatestUrlMac = "%s";
 var BuiltOnMac = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestvermacbeta.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
 }
 
 func buildMac() {
