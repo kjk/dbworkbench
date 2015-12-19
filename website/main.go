@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"mime"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -14,6 +16,8 @@ import (
 )
 
 var (
+	flgUsageTest bool
+
 	httpAddr = ":5555"
 
 	// for auto-update
@@ -284,7 +288,17 @@ func initHandlers() {
 	http.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
 }
 
+func parseCmdLine() {
+	flag.BoolVar(&flgUsageTest, "usage-test", false, "test parsing of usage.txt")
+	flag.Parse()
+}
+
 func main() {
+	parseCmdLine()
+	if flgUsageTest {
+		testUsageParse()
+		os.Exit(0)
+	}
 	initHandlers()
 	openUsageFileMust()
 	LogInfof("starting website on %s\n", httpAddr)
