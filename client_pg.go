@@ -8,8 +8,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const ()
-
 // ClientPg describes Postgres db client
 type ClientPg struct {
 	db               *sqlx.DB
