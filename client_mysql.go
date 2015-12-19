@@ -10,46 +10,7 @@ import (
 // http://dev.mysql.com/doc/refman/5.0/en/information-schema.html
 // Useful statements:
 // select version()
-
-const (
-	// http://dev.mysql.com/doc/refman/5.0/en/show-databases.html
-	mysqlDatabasesStmt = `SHOW DATABASES`
-
-	// Note: probably not used
-	mysqlSchemasStmt = `select schema_name from information_schema.schemata`
-
-	// note: doesb't have as many fields as in postgres
-	mysqlInfoStmt = `SELECT user() AS session_user,
-current_user,
-database() as current_database,
-version() AS version`
-
-	// returns version of mysql database e.g. 5.5.46
-	mysqlVersionStmt = `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME = 'VERSION';`
-
-	// http://dev.mysql.com/doc/refman/5.0/en/show-tables.html
-	// TODO: possibliy rewrite as a query since it differs depending on mysql version
-	// https://dev.mysql.com/doc/refman/5.0/en/tables-table.html
-	mysqlTablesStmt = `SHOW TABLES`
-	// TODO: add equivalent of table_schema = 'public'
-	mysqlTablesStmt2 = `SELECT
-table_name FROM information_schema.tables
-WHERE table_type = 'BASE TABLE'
-ORDER BY table_schema, table_name`
-
-	// https://dev.mysql.com/doc/refman/5.0/en/columns-table.html
-	// TODO: don't know if CHARACTER_SET_NAME is the same as character_set_catalog
-	mysqlTableSchemaStmt = `SELECT 
-column_name, data_type, is_nullable, character_maximum_length, character_set_name, column_default
-FROM information_schema.columns
-WHERE table_name = ?`
-
-	mysqlActivityStmt = `SHOW FULL PROCESSLIST;`
-
-	//mysqlTableIndexesStmt = `SELECT indexname, indexdef FROM pg_indexes WHERE tablename = $1`
-	// http://stackoverflow.com/questions/5213339/how-to-see-indexes-for-a-database-or-table
-	mysqlTableIndexesStmt = `SHOW INDEX FROM %s`
-)
+// `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME = 'VERSION';`
 
 // ClientMysql describes MySQL (and derivatives) client
 type ClientMysql struct {
@@ -80,27 +41,53 @@ func (c *ClientMysql) Connection() *sqlx.DB {
 
 // Info returns information about a postgres db connection
 func (c *ClientMysql) Info() (*Result, error) {
-	return dbQuery(c.db, mysqlInfoStmt)
+	// note: doesb't have as many fields as in postgres
+	q := `SELECT user() AS session_user,
+current_user,
+database() as current_database,
+version() AS version`
+	return dbQuery(c.db, q)
 }
 
 // Databases returns list of databases in a given postgres connection
 func (c *ClientMysql) Databases() ([]string, error) {
-	return dbFetchRows(c.db, mysqlDatabasesStmt)
+	// http://dev.mysql.com/doc/refman/5.0/en/show-databases.html
+	q := `SHOW DATABASES`
+	return dbFetchRows(c.db, q)
 }
 
 // Schemas returns list of schemas
 func (c *ClientMysql) Schemas() ([]string, error) {
-	return dbFetchRows(c.db, mysqlSchemasStmt)
+	// Note: probably not used
+	q := `select schema_name from information_schema.schemata`
+	return dbFetchRows(c.db, q)
 }
 
 // Tables returns list of tables
 func (c *ClientMysql) Tables() ([]string, error) {
-	return dbFetchRows(c.db, mysqlTablesStmt)
+	// http://dev.mysql.com/doc/refman/5.0/en/show-tables.html
+	// TODO: possibliy rewrite as a query since it differs depending on mysql version
+	// https://dev.mysql.com/doc/refman/5.0/en/tables-table.html
+	q := `SHOW TABLES`
+	// TODO: add equivalent of table_schema = 'public'
+	/*
+			q := `SELECT
+		table_name FROM information_schema.tables
+		WHERE table_type = 'BASE TABLE'
+		ORDER BY table_schema, table_name`
+	*/
+	return dbFetchRows(c.db, q)
 }
 
 // Table returns schema for a given table
 func (c *ClientMysql) Table(table string) (*Result, error) {
-	return dbQuery(c.db, mysqlTableSchemaStmt, table)
+	// https://dev.mysql.com/doc/refman/5.0/en/columns-table.html
+	// TODO: don't know if CHARACTER_SET_NAME is the same as character_set_catalog
+	q := `SELECT 
+column_name, data_type, is_nullable, character_maximum_length, character_set_name, column_default
+FROM information_schema.columns
+WHERE table_name = ?`
+	return dbQuery(c.db, q, table)
 }
 
 // TableRows returns all rows from a query
@@ -122,14 +109,35 @@ func (c *ClientMysql) TableRows(table string, opts RowsOptions) (*Result, error)
 	return dbQuery(c.db, sql)
 }
 
+//http://stackoverflow.com/questions/14569940/mysql-list-tables-and-sizes-order-by-size
+//http://stackoverflow.com/questions/5060366/mysql-fastest-way-to-count-number-of-rows
+//http://stackoverflow.com/questions/9620198/how-to-get-the-sizes-of-the-tables-of-a-mysql-database
 // TableInfo returns information about a given table
 func (c *ClientMysql) TableInfo(table string) (*Result, error) {
-	return dbQuery(c.db, pgTableInfoStmt, table)
+	// TODO: filter by TABLE_SCHEMA i.e. database name
+	q := `SELECT
+  DATA_LENGTH AS data_size
+, INDEX_LENGTH AS index_size
+, TABLE_ROWS AS rows_count
+FROM information_schema.tables
+WHERE table_name = ?
+`
+	return dbQuery(c.db, q, table)
 }
+
+/*
+TABLE_CATALOG,
+TABLE_SCHEMA,TABLE_NAME,TABLE_TYPE,ENGINE,VERSION,ROW_FORMAT,TABLE_ROWS,AVG_ROW_LENGTH,
+DATA_LENGTH,
+MAX_DATA_LENGTH,
+NDEX_LENGTH,
+DATA_FREE,AUTO_INCREMENT,CREATE_TIME,UPDATE_TIME,CHECK_TIME,TABLE_COLLATION,CHECKSUM,CREATE_OPTIONS,TABLE_COMMENT
+*/
 
 // TableIndexes returns info about indexes for a given table
 func (c *ClientMysql) TableIndexes(table string) (*Result, error) {
-	q := fmt.Sprintf(mysqlTableIndexesStmt, table)
+	// http://stackoverflow.com/questions/5213339/how-to-see-indexes-for-a-database-or-table
+	q := fmt.Sprintf(`SHOW INDEX FROM %s`, table)
 	res, err := dbQuery(c.db, q)
 
 	if err != nil {
@@ -141,7 +149,8 @@ func (c *ClientMysql) TableIndexes(table string) (*Result, error) {
 
 // Activity returns all active queriers on the server
 func (c *ClientMysql) Activity() (*Result, error) {
-	return dbQuery(c.db, mysqlActivityStmt)
+	q := `SHOW FULL PROCESSLIST;`
+	return dbQuery(c.db, q)
 }
 
 // Query executes a given query and returns the results
