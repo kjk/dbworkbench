@@ -8,6 +8,7 @@ var Modal = require('react-modal');
 var action = require('./action.js');
 var api = require('./api.js');
 var Output = require('./Output.jsx');
+var filesize = require('filesize');
 
 class Dropdown extends React.Component {
   constructor(props, context) {
@@ -137,37 +138,47 @@ class Dropdown extends React.Component {
 
 class TableInformation extends React.Component {
   renderTableInfo(info) {
-    if (info && !$.isEmptyObject(info)) {
-      return (
-        <ul>
-          <li><span className="table-info-light">Size: </span><span>{info.total_size}</span></li>
-          <li><span className="table-info-light">Data size: </span><span>{info.data_size}</span></li>
-          <li><span className="table-info-light">Index size: </span><span>{info.index_size}</span></li>
-          <li><span className="table-info-light">Estimated rows: </span><span>{info.rows_count}</span></li>
-        </ul>
-      );
-    }
+    const dataSize = parseInt(info.data_size);
+    const dataSizePretty = filesize(dataSize);
+    const indexSize = parseInt(info.index_size);
+    const indexSizePretty = filesize(indexSize);
+    const totalSize = dataSize + indexSize;
+    const totalSizePretty = filesize(totalSize);
+    const rowCount = parseInt(info.rows_count);    
+
+    // TODO: better done as a class,maybe on parent element    
+    const style = {
+      backgroundColor: "white",
+    };
+
+    return (
+      <ul style={style}>
+        <li><span className="table-info-light">Size: </span><span>{totalSizePretty}</span></li>
+        <li><span className="table-info-light">Data size: </span><span>{dataSizePretty}</span></li>
+        <li><span className="table-info-light">Index size: </span><span>{indexSizePretty}</span></li>
+        <li><span className="table-info-light">Estimated rows: </span><span>{rowCount}</span></li>
+      </ul>
+    );
   }
 
   renderTableInfoContainer() {
-    var info = this.renderTableInfo(this.props.tableInfo);
-    if (info) {
-      return (
-        <div className="wrap">
-          <div className="title">
-            <i className="fa fa-info"></i>
-            <span className="current-table-information">Table Information</span></div>
-            {info}
-        </div>
-      );
-    } else {
-      return (<div></div>);
+    const info = this.props.tableInfo;
+    if (!info || $.isEmptyObject(info)) {
+      return;
     }
 
+    const tableInfo = this.renderTableInfo(info);
+    return (
+      <div className="wrap">
+          <div className="title">
+          <i className="fa fa-info"></i>
+          <span className="current-table-information">Table Information</span></div>
+          {tableInfo}
+      </div>
+    );
   }
 
   render() {
-    var info = this.renderTableInfo(this.props.tableInfo);
     return (
       <div className="table-information">
         {this.renderTableInfoContainer()}

@@ -106,9 +106,8 @@ func (c *ClientPg) TableRows(table string, opts RowsOptions) (*Result, error) {
 // TableInfo returns information about a given table
 func (c *ClientPg) TableInfo(table string) (*Result, error) {
 	q := `SELECT
-  pg_size_pretty(pg_table_size($1)) AS data_size
-, pg_size_pretty(pg_indexes_size($1)) AS index_size
-, pg_size_pretty(pg_total_relation_size($1)) AS total_size
+  pg_table_size($1) AS data_size
+, pg_indexes_size($1) AS index_size
 , (SELECT reltuples FROM pg_class WHERE oid = $1::regclass) AS rows_count`
 	return dbQuery(c.db, q, table)
 }
