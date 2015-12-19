@@ -109,17 +109,30 @@ func (c *ClientMysql) TableRows(table string, opts RowsOptions) (*Result, error)
 	return dbQuery(c.db, sql)
 }
 
+//http://stackoverflow.com/questions/14569940/mysql-list-tables-and-sizes-order-by-size
+//http://stackoverflow.com/questions/5060366/mysql-fastest-way-to-count-number-of-rows
+//http://stackoverflow.com/questions/9620198/how-to-get-the-sizes-of-the-tables-of-a-mysql-database
 // TableInfo returns information about a given table
 func (c *ClientMysql) TableInfo(table string) (*Result, error) {
-	// TODO: clearly wrong
+	// TODO: filter by TABLE_SCHEMA i.e. database name
 	q := `SELECT
-  pg_size_pretty(pg_table_size($1)) AS data_size
-, pg_size_pretty(pg_indexes_size($1)) AS index_size
-, pg_size_pretty(pg_total_relation_size($1)) AS total_size
-, (SELECT reltuples FROM pg_class WHERE oid = $1::regclass) AS rows_count`
-
+  DATA_LENGTH AS data_size
+, INDEX_LENGTH AS index_size
+, TABLE_ROWS AS rows_count
+FROM information_schema.tables
+WHERE table_name = ?
+`
 	return dbQuery(c.db, q, table)
 }
+
+/*
+TABLE_CATALOG,
+TABLE_SCHEMA,TABLE_NAME,TABLE_TYPE,ENGINE,VERSION,ROW_FORMAT,TABLE_ROWS,AVG_ROW_LENGTH,
+DATA_LENGTH,
+MAX_DATA_LENGTH,
+NDEX_LENGTH,
+DATA_FREE,AUTO_INCREMENT,CREATE_TIME,UPDATE_TIME,CHECK_TIME,TABLE_COLLATION,CHECKSUM,CREATE_OPTIONS,TABLE_COMMENT
+*/
 
 // TableIndexes returns info about indexes for a given table
 func (c *ClientMysql) TableIndexes(table string) (*Result, error) {

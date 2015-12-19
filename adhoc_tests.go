@@ -54,17 +54,20 @@ func testMysqlInfo() {
 		fmt.Printf("  '%s'\n", s)
 	}
 
-	for _, t := range tables {
-		schema, err := c.Table(t)
-		if err != nil {
-			fmt.Printf("c.TableRows('%s') failed with '%s'\n", t, err)
-			return
+	/*
+		for _, t := range tables {
+			schema, err := c.Table(t)
+			if err != nil {
+				fmt.Printf("c.TableRows('%s') failed with '%s'\n", t, err)
+				return
+			}
+			fmt.Printf("Table: '%s'\n", t)
+			schema.DumpFull()
 		}
-		fmt.Printf("Table: '%s'\n", t)
-		schema.DumpFull()
-	}
+	*/
 	//dumpQuery(db, mysqlActivityStmt)
-	dumpQuery(db, `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES`)
+	//dumpQuery(db, `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES`)
+	dumpQuery(db, `SELECT * from information_schema.tables;`)
 }
 
 func dumpQuery(db *sqlx.DB, query string) {

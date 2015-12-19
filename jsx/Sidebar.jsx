@@ -32,7 +32,7 @@ class Dropdown extends React.Component {
   handleModalCloseRequest() {
     // opportunity to validate something and keep the modal open even if it
     // requested to be closed
-    this.setState({modalIsOpen: false});
+    this.closeModal();
   }
 
   handleConnection() {
