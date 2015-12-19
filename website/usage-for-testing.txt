@@ -1,0 +1,1302 @@
+time: 1449894997
+day: 2015-12-11
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449895237
+day: 2015-12-11
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+ver: 0.1.4
+ostype: windows
+user: kkowalczyk
+os: 6.1.7601.65536
+networkCardId: {D22D2719-CFF1-470E-855D-534F3659B6B6}
+machine: WIN-OVU6E2LQ1S1
+net: 2.0.50727.5420;3.0.30729.5420;3.5.30729.5420;4.6.01055 (394271) Client;4.6.01055 (394271) Full;4.0.0.0 Client
+---------------
+
+time: 1449895578
+day: 2015-12-11
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449896364
+day: 2015-12-11
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449896730
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449896785
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449896995
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449897059
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.4
+
+time: 1449897638
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+ver: 0.1.6
+ostype: mac
+osversion: 10.11.2
+user: kkowalczyk
+machine: kjkmacbookpro.local
+serial: C02J5012DKQ4
+---------------
+
+time: 1449945034
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449945260
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449945946
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449946037
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449946117
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449946206
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449946236
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: kjkmacpro.local
+serial: F5KN116CF9VN
+---------------
+{"t":1449862915,"e":"do"}
+{"t":1449863003,"e":"qe"}
+{"t":1449863016,"e":"qe"}
+{"t":1449863038,"e":"qe"}
+{"t":1449863047,"e":"qe"}
+{"t":1449863058,"e":"qe"}
+{"t":1449863128,"e":"qe"}
+{"t":1449863256,"e":"qe"}
+
+time: 1449949034
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449949060
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449949110
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1449949132
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: kjkmacpro.local
+serial: F5KN116CF9VN
+---------------
+{"t":1449946238,"e":"do"}
+{"t":1449946635,"e":"do"}
+{"t":1449946639,"e":"do"}
+{"t":1449946791,"e":"do"}
+
+time: 1449949512
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: windows
+user: kkowalczyk
+os: 6.1.7601.65536
+networkCardId: {D22D2719-CFF1-470E-855D-534F3659B6B6}
+machine: WIN-OVU6E2LQ1S1
+net: 2.0.50727.5420;3.0.30729.5420;3.5.30729.5420;4.6.01055 (394271) Client;4.6.01055 (394271) Full;4.0.0.0 Client
+---------------
+
+time: 1449949532
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: windows
+user: kkowalczyk
+os: 6.1.7601.65536
+networkCardId: {D22D2719-CFF1-470E-855D-534F3659B6B6}
+machine: WIN-OVU6E2LQ1S1
+net: 2.0.50727.5420;3.0.30729.5420;3.5.30729.5420;4.6.01055 (394271) Client;4.6.01055 (394271) Full;4.0.0.0 Client
+---------------
+
+time: 1449960026
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.6
+os_in_url: windows
+ver: 0.1.6
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449960187
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449960352
+day: 2015-12-12
+ip: 173.11.70.186
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.2
+user: kkowalczyk
+machine: kjkmacbookpro.local
+serial: C02J5012DKQ4
+---------------
+{"t":1449897648,"e":"do"}
+
+time: 1449962772
+day: 2015-12-12
+ip: 50.203.29.246
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.0
+user: cjbrownfield
+machine: christophers-macbook-pro.local
+serial: C1MHQWPLDTY3
+---------------
+
+time: 1449968218
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1449960227,"e":"do"}
+
+time: 1449968297
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449969609
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449969643
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449969909
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kkowalczyk
+machine: kjkmacbookpro.local
+serial: C02J5012DKQ4
+---------------
+
+time: 1449971637
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.1
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+
+time: 1449972312
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449972391
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.1
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+
+time: 1449976261
+day: 2015-12-12
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1449976967
+day: 2015-12-12
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+
+time: 1449982824
+day: 2015-12-13
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1450034753
+day: 2015-12-13
+ip: 194.44.30.26
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: Taras
+os: 6.1.7601.65536
+networkCardId: {4C4C4916-FB0A-47E0-BC66-415A87C3B110}
+machine: WIN-C400C9Q9NSU
+net: 2.0.50727.5420;3.0.30729.5420;3.5.30729.5420;4.6.00081 (393297) Client;4.6.00081 (393297) Full;4.0.0.0 Client
+---------------
+
+time: 1450035720
+day: 2015-12-13
+ip: 50.203.29.246
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.0
+user: cjbrownfield
+machine: christophers-macbook-pro.local
+serial: C1MHQWPLDTY3
+---------------
+
+time: 1450035824
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: kjkmacpro.local
+serial: 00:3e:e1:c0:b9:5e
+---------------
+
+time: 1450036027
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: kjkmacpro.local
+serial: 00:3e:e1:c0:b9:5e
+---------------
+
+time: 1450036315
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: kjkmacpro.local
+serial: 00:3e:e1:c0:b9:5e
+---------------
+
+time: 1450041454
+day: 2015-12-13
+ip: 67.188.208.60
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: 60:f8:1d:d2:39:9a
+---------------
+{"t":1449982842,"e":"do"}
+{"t":1449983008,"e":"do"}
+{"t":1449983055,"e":"qe"}
+
+time: 1450041737
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {0FE016ED-11E2-4382-A0D3-F5EA51921183}
+machine: KRZYSZTOFKO5FA0
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450049888
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450051544
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450051616
+day: 2015-12-13
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450092584
+day: 2015-12-14
+ip: 188.208.108.1
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.10.5
+user: lucian
+machine: mbp.local
+serial: W80384H5ATP
+---------------
+
+time: 1450092891
+day: 2015-12-14
+ip: 188.208.108.1
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.10.5
+user: lucian
+machine: mbp.local
+serial: W80384H5ATP
+---------------
+{"t":1450092621,"e":"do"}
+
+time: 1450121193
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450122252
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450122351
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450122997
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450123076
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450123364
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450126933
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1450127805
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450128093
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450130125
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450131652
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450131826
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450131871
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450132148
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450132162
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450132178
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450132185
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450133351
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450126937,"e":"do"}
+{"t":1450133027,"e":"do"}
+{"t":1450133078,"e":"qe"}
+{"t":1450133098,"e":"do"}
+{"t":1450133164,"e":"qe"}
+{"t":1450133173,"e":"qe"}
+{"t":1450133320,"e":"qe"}
+{"t":1450133325,"e":"qe"}
+{"t":1450133341,"e":"qe"}
+{"t":1450133342,"e":"qe"}
+
+time: 1450133846
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450134684
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450134699
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450134727
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450135237
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450133728,"e":"do"}
+{"t":1450133855,"e":"qe"}
+{"t":1450133892,"e":"qe"}
+{"t":1450133892,"e":"qe"}
+{"t":1450133893,"e":"qe"}
+{"t":1450133895,"e":"qe"}
+{"t":1450133908,"e":"qe"}
+{"t":1450133988,"e":"qe"}
+{"t":1450134013,"e":"qe"}
+{"t":1450134013,"e":"qe"}
+{"t":1450134121,"e":"qe"}
+{"t":1450134121,"e":"qe"}
+{"t":1450134127,"e":"qe"}
+{"t":1450134134,"e":"qe"}
+{"t":1450134241,"e":"qe"}
+{"t":1450134399,"e":"qe"}
+{"t":1450134445,"e":"qe"}
+{"t":1450134490,"e":"qe"}
+{"t":1450134500,"e":"qe"}
+{"t":1450134508,"e":"qe"}
+{"t":1450134533,"e":"qe"}
+
+time: 1450136822
+day: 2015-12-14
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: windows
+user: kjk
+os: 6.2.9200.0
+networkCardId: {65E56947-DDD2-44D9-9D61-6B0F49C5EF45}
+machine: DESKTOP-V2UTOIV
+net: 4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
+time: 1450313861
+day: 2015-12-16
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450255866,"e":"do"}
+{"t":1450256027,"e":"qe"}
+
+time: 1450313874
+day: 2015-12-16
+ip: 67.188.208.60
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: 60:f8:1d:d2:39:9a
+---------------
+
+time: 1450377770
+day: 2015-12-17
+ip: 98.211.66.164
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.1
+user: eweaver
+machine: autumn.local
+serial: C2QNT068G974
+---------------
+
+time: 1450392233
+day: 2015-12-17
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+
+time: 1450393319
+day: 2015-12-17
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450392236,"e":"do"}
+
+time: 1450417853
+day: 2015-12-18
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+{"t":1450408969,"e":"do"}
+
+time: 1450417858
+day: 2015-12-18
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+
+time: 1450417913
+day: 2015-12-18
+ip: 24.5.174.236
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: C02QT2Q8G8WL
+---------------
+
+time: 1450456164
+day: 2015-12-18
+ip: 82.226.117.79
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: Pascal
+os: 6.1.7601.65536
+networkCardId: {A6B08C54-F25B-42DA-862B-62A3CCF1087E}
+machine: PASCAL-PC
+net: ;2.0.50727.5420;3.0.30729.5420;3.5.30729.5420;4.6.00081 (393297) Client;4.6.00081 (393297) Full;4.0.0.0 Client
+---------------
+
+time: 1450489839
+day: 2015-12-18
+ip: 58.185.121.38
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: lazyden
+machine: bolster.local
+serial: C07LC1SRDWYM
+---------------
+
+time: 1450489972
+day: 2015-12-18
+ip: 58.185.121.38
+ver_in_url: 0.1.9
+os_in_url: windows
+ver: 0.1.9
+ostype: mac
+osversion: 10.11.2
+user: lazyden
+machine: bolster.local
+serial: C07LC1SRDWYM
+---------------
+{"t":1450489875,"e":"do"}
+{"t":1450489939,"e":"qe"}
+{"t":1450489941,"e":"qe"}
+{"t":1450489950,"e":"qe"}
+
+time: 1450508258
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450508373
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511325
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511339
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511350
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511551
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511572
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511583
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511627
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450511635
+day: 2015-12-19
+ip: 24.5.174.236
+ver_in_url: 0.2.0
+os_in_url: windows
+ver: 0.2.0
+ostype: mac
+osversion: 10.11.2
+user: kjk
+machine: krzysztofs-macbook-pro.local
+serial: ac:bc:32:d3:15:9d
+---------------
+
+time: 1450514080
+day: 2015-12-19
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450490172,"e":"do"}
+
+time: 1450514704
+day: 2015-12-19
+ip: 67.188.208.60
+ver_in_url: 0.1.8
+os_in_url: windows
+ver: 0.1.8
+ostype: mac
+osversion: 10.11.1
+user: furkan
+machine: macfurk.local
+serial: C02P34LQG3QC
+---------------
+{"t":1450514090,"e":"do"}
+
+time: 1450528219
+day: 2015-12-19
+ip: 50.126.159.158
+ver_in_url: 0.1.7
+os_in_url: windows
+ver: 0.1.7
+ostype: windows
+user: ratzp0li
+os: 6.2.9200.0
+networkCardId: {D7CB5FBE-1972-4CBD-B4ED-8079405A5A52}
+machine: JACKY
+net: 2.0.50727.4927;3.0.30729.4926;3.5.30729.4926;4.6.01038 (394254) Client;4.6.01038 (394254) Full;4.0.0.0 Client
+---------------
+
