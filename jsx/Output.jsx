@@ -118,12 +118,11 @@ class Output extends React.Component {
 
     var footer = this.renderFooter();
 
-    if (_.contains(view.MainTabViews, this.props.selectedView)) {
+    if (this.props.selectedView == view.SQLQuery || this.props.selectedView == view.Content) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
+      var itemsPerPage = 100
     }
-        //     itemsPerPage={4}
-        // pageButtonLimit={5}
 
     return (
       <Table
@@ -132,7 +131,7 @@ class Output extends React.Component {
         sortable={true}
         filterable={filterable}
         filterPlaceholder={filterPlaceholder}
-        itemsPerPage={100} >
+        itemsPerPage={itemsPerPage} >
           {header}
           {rows}
       </Table>
