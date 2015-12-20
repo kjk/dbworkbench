@@ -80,7 +80,7 @@ func loadUsageData() {
     }
 }
 
-func startBackend(appDelegate : AppDelegate) {
+func startBackend(view : ViewController) {
     let resPath = NSBundle.mainBundle().resourcePath
     let serverGoExePath = resPath! + "/dbherohelper.exe"
 
@@ -116,13 +116,13 @@ func startBackend(appDelegate : AppDelegate) {
                 // this could be "http.ListendAndServer() failed with listen tcp 127.0.0.1:5444: bind: address already in use"
                 log("startBackend: failed because output is: \(s)")
                 waitsForMoreServerOutput = false
-                appDelegate.showBackendFailedError()
+                getAppDelegate().showBackendFailedError()
                 return
             }
             if (s.containsString("Started running on")) {
                 log("startBackend: backend started, loading url")
                 waitsForMoreServerOutput = false
-                appDelegate.loadURL()
+                view.loadURL()
                 return
             }
         }
