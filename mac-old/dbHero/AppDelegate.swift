@@ -1,22 +1,21 @@
 import Cocoa
-import WebKit
 
 extension NSBundle {
-    
+
     var shortVersion: String {
         if let ver = self.infoDictionary?["CFBundleShortVersionString"] as? String {
             return ver
         }
         return "unknown"
     }
-    
+
     var version: String {
         if let ver = self.infoDictionary?["CFBundleVersion"] as? String {
             return ver
         }
         return "unknown"
     }
-    
+
 }
 
 func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
@@ -43,7 +42,7 @@ func versionArrayElToInt(a : [String], pos : Int) -> Int {
     if pos >= a.count {
         return 0
     }
-    
+
     let s = a[pos]
     if let n = Int(s) {
         return n
@@ -177,37 +176,37 @@ func getUniqueMachineId() -> String {
 // if we decide to support 10.9, we'll need this version
 // return os version in the "10.11.1" form
 func getOsVersion2() -> String {
-if #available(OSX 10.10, *) {
-let os = NSProcessInfo().operatingSystemVersion
-return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
-} else {
-let ver = rint(NSAppKitVersionNumber)
-if ver >= Double(NSAppKitVersionNumber10_10_Max) {
-return "10.10.5+"
-}
-if ver >= Double(NSAppKitVersionNumber10_10_5) {
-return "10.10.5"
-}
-if ver >= Double(NSAppKitVersionNumber10_10_4) {
-return "10.10.4"
-}
-if ver >= Double(NSAppKitVersionNumber10_10_3) {
-return "10.10.3"
-}
-if ver >= Double(NSAppKitVersionNumber10_10_2) {
-return "10.10.2"
-}
-if ver >= Double(NSAppKitVersionNumber10_10) {
-return "10.10"
-}
-if ver >= Double(NSAppKitVersionNumber10_9) {
-return "10.9"
-}
-if ver >= Double(NSAppKitVersionNumber10_8) {
-return "10.8"
-}
-return "unknown: \(ver)"
-}
+    if #available(OSX 10.10, *) {
+        let os = NSProcessInfo().operatingSystemVersion
+        return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
+    } else {
+        let ver = rint(NSAppKitVersionNumber)
+        if ver >= Double(NSAppKitVersionNumber10_10_Max) {
+            return "10.10.5+"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_5) {
+            return "10.10.5"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_4) {
+            return "10.10.4"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_3) {
+            return "10.10.3"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10_2) {
+            return "10.10.2"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_10) {
+            return "10.10"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_9) {
+            return "10.9"
+        }
+        if ver >= Double(NSAppKitVersionNumber10_8) {
+            return "10.8"
+        }
+        return "unknown: \(ver)"
+    }
 }
 */
 
@@ -223,9 +222,7 @@ func getHostName() -> String {
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    @IBOutlet weak var window: NSWindow!
-    @IBOutlet weak var webView: WebView!
-    let urlpath = "http://localhost:5444"
+    weak var window : NSWindow?
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
@@ -250,7 +247,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if backendUsage != "" {
             s += backendUsage
         }
-        
+
         req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
@@ -274,7 +271,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
         task.resume()
     }
-    
+
     func notifyAboutUpdate(ver : String) {
         let alert = NSAlert()
         alert.messageText = "Update available"
@@ -289,7 +286,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         })
     }
-    
+
     func showBackendFailedError() {
         let alert = NSAlert()
         alert.messageText = "Backend failed"
@@ -302,49 +299,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
 
-    func urlReq(url: String) -> NSURLRequest {
-        let u = NSURL(string: url)
-        return NSURLRequest(URL: u!)
-    }
-
-    
-    func loadURL() {
-        log("loadURL")
-        webView.mainFrame.loadRequest(urlReq(urlpath))
-    }
-
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
-        //webView.mainFrame.loadRequest(urlReq("https://blog.kowalczyk.info"))
-
-        loadUsageData()
-        startBackend(self)
         autoUpdateCheck()
+    }
+
+    func applicationWillTerminate(aNotification: NSNotification) {
+        closeLogFile()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
         return true
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
-        stopBackend()
-        closeLogFile()
-    }
-
     func goToWebsite() {
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com")!)
     }
-    
+
     @IBAction func goToWebsite(sender: NSMenuItem) {
         goToWebsite()
     }
-    
+
     @IBAction func goToSupport(sender: NSMenuItem) {
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/support")!)
     }
-    
+
     @IBAction func goToFeedback(sender: NSMenuItem) {
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/feedback")!)
     }
 }
 
+func getAppDelegate() -> AppDelegate {
+    return NSApp.delegate as! AppDelegate
+}
