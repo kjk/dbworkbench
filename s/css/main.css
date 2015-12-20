@@ -503,7 +503,6 @@ h4.modal-title {
 
 #results th {
   background:#4592EA;
-  border-top: none;
   padding: 3px 9px;
   line-height: 24px;
   color: #fefefe;
@@ -615,6 +614,7 @@ a.reactable-next-page {
   background-color: transparent;
   color: white;
   margin: 5px;
+  text-decoration: underline;
 }
 
 span.reactable-page {
