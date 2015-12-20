@@ -137,7 +137,7 @@ class App extends React.Component {
   getTableContent() {
     var sortColumn = null;
     var sortOrder = null;
-    var params = { limit: 100, sort_column: sortColumn, sort_order: sortOrder };
+    var params = { limit: 100000, sort_column: sortColumn, sort_order: sortOrder };
 
     var self = this;
     var connId = this.state.connectionId;

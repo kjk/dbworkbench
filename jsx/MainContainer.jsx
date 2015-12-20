@@ -25,22 +25,22 @@ class MainContainer extends React.Component {
       left: this.props.dragBarPosition + 'px',
     }
 
-    var results = this.props.results
-    if (results != null && results.rows != null) {
-      if (results.rows.length > 100) {
-        // It's only showed when +100. We could make this default.
-        var tooLong = "Showing 100 out of " + results.rows.length + " rows."
-        results.rows = results.rows.slice(0, 100);
-      }
-    }
+    // var results = this.props.results
+    // if (results != null && results.rows != null) {
+    //   if (results.rows.length > 100) {
+    //     // It's only showed when +100. We could make this default.
+    //     var tooLong = "Showing 100 out of " + results.rows.length + " rows."
+    //     results.rows = results.rows.slice(0, 100);
+    //   }
+    // }
 
     return (
       <div id="body" style={divStyle}>
           <DbNav view={this.props.selectedView}/>
-          {this.renderInput(tooLong)}
+          {this.renderInput("")}
           <Output
             selectedView={this.props.selectedView}
-            results={results}
+            results={this.props.results}
             notFull={notFull}/>
       </div>
     );
