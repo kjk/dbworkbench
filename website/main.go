@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -289,9 +290,40 @@ func handleStatic(w http.ResponseWriter, r *http.Request) {
 	serveStatic(w, r, resourcePath)
 }
 
+// url: /admin/usage?s=acergytvw
+// s is the simplest for of authentication - via unguessable url
+func handleUsage(w http.ResponseWriter, r *http.Request) {
+	LogInfof("handleUsage: '%s'\n", r.URL.Path)
+	secret := r.FormValue("s")
+	if secret != "acergytvw" {
+		servePlainText(w, r, 500, "can't see me")
+		return
+	}
+	//path := "usage-for-testing.txt"
+	path := usageFilePath()
+	res, err := parseUsage(path)
+	if err != nil {
+		LogErrorf("parseUsage() failed with '%s'\n", err)
+		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
+		return
+	}
+	LogInfof("%d users\n", len(res))
+	resJSON, err := json.Marshal(res)
+	if err != nil {
+		LogErrorf("json.Marshal() failed with '%s'\n", err)
+		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
+		return
+	}
+	servePlainText(w, r, 200, string(resJSON))
+
+	// path := filepath.Join("www", "usage_stats.html")
+	//serveStatic(w, r, resJSON)
+}
+
 func initHandlers() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/s/", handleStatic)
+	http.HandleFunc("/admin/usage", handleUsage)
 	http.HandleFunc("/api/winupdatecheck", handleWinUpdateCheck)
 	http.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
 }

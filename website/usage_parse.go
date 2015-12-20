@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -33,6 +34,18 @@ type UsageUser struct {
 	Os                int // 1 : mac, 2 : windows
 	OsVersion         string
 	Version           string
+
+	// values only used during stats calculations
+	days []time.Time // list of unique days
+}
+
+func (u *UsageUser) addDayIfUnique(t time.Time) {
+	for _, t2 := range u.days {
+		if sameDay(t, t2) {
+			return
+		}
+	}
+	u.days = append(u.days, t)
 }
 
 // records are separated by single empty line
@@ -64,6 +77,12 @@ type UsageRecord struct {
 	OsVersion         string
 	DatabaseOpenCount int
 	QueryCount        int
+}
+
+// return true if t1 and t2 represent the same day
+func sameDay(t1, t2 time.Time) bool {
+	// TODO: write me
+	return false
 }
 
 func parseUsageRecord(lines []string) (*UsageRecord, error) {
@@ -149,6 +168,14 @@ func parseUsageRecord(lines []string) (*UsageRecord, error) {
 	return &res, nil
 }
 
+func finalizeUsageRecords(arr []*UsageUser) []*UsageUser {
+	for _, v := range arr {
+		v.UniqueDaysCount = len(v.days)
+		v.days = nil
+	}
+	return arr
+}
+
 func parseUsage(path string) ([]*UsageUser, error) {
 	var res []*UsageUser
 	file, err := os.Open(path)
@@ -164,14 +191,18 @@ func parseUsage(path string) ([]*UsageUser, error) {
 	for {
 		lines, err := readUsageRecord(r)
 		if err != nil && err != io.EOF {
-			return res, err
+			return finalizeUsageRecords(res), err
 		}
 		if len(lines) == 0 {
-			return res, nil
+			return finalizeUsageRecords(res), nil
 		}
 		rec, err := parseUsageRecord(lines)
 		if err != nil {
 			LogErrorf("parseUsageRecord() of '%v' failed with '%s'\n", lines, err)
+			continue
+		}
+		if rec.ID == "" {
+			// early records didn't have an id
 			continue
 		}
 		user := idToUser[rec.ID]
@@ -188,6 +219,7 @@ func parseUsage(path string) ([]*UsageUser, error) {
 		user.LastSeen = rec.When
 		user.DatabaseOpenCount += rec.DatabaseOpenCount
 		user.QueryCount += rec.QueryCount
+		user.addDayIfUnique(rec.When)
 		// remember the latest versions
 		user.OsVersion = rec.OsVersion
 		user.Version = rec.Version
@@ -203,4 +235,10 @@ func testUsageParse() {
 		return
 	}
 	LogInfof("%d users, time to parse: %s\n", len(recs), time.Since(timeStart))
+	s, err := json.MarshalIndent(recs, "", "  ")
+	if err != nil {
+		LogErrorf("json.MarshalIndent() failed with '%s'\n", err)
+	} else {
+		fmt.Printf("%s\n", string(s))
+	}
 }

@@ -13,9 +13,13 @@ var (
 	usageFileWriteFailedBefore bool
 )
 
+func usageFilePath() string {
+	return filepath.Join(getDataDir(), "usage.txt")
+}
+
 func openUsageFileMust() {
 	var err error
-	path := filepath.Join(getDataDir(), "usage.txt")
+	path := usageFilePath()
 	usageFile, err = os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		LogFatalf("os.OpenFile('%s') failed with '%s'\n", path, err)
