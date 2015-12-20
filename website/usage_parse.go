@@ -81,8 +81,7 @@ type UsageRecord struct {
 
 // return true if t1 and t2 represent the same day
 func sameDay(t1, t2 time.Time) bool {
-	// TODO: write me
-	return false
+	return t1.YearDay() == t2.YearDay() && t1.Year() == t2.Year()
 }
 
 func parseUsageRecord(lines []string) (*UsageRecord, error) {
