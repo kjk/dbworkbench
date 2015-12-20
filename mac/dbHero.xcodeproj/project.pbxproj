@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		034240681C276A3300C27906 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A941C268F7600D75C7C /* Info.plist */; };
 		034240691C276A3A00C27906 /* dbherohelper.exe in Resources */ = {isa = PBXBuildFile; fileRef = 034240661C27695300C27906 /* dbherohelper.exe */; };
 		036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9A8D1C268F7600D75C7C /* AppDelegate.swift */; };
 		036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A8F1C268F7600D75C7C /* Assets.xcassets */; };
@@ -189,7 +188,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				034240691C276A3A00C27906 /* dbherohelper.exe in Resources */,
-				034240681C276A3300C27906 /* Info.plist in Resources */,
 				036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */,
 				036C9A931C268F7600D75C7C /* MainMenu.xib in Resources */,
 			);
