@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		034240681C276A3300C27906 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A941C268F7600D75C7C /* Info.plist */; };
+		034240691C276A3A00C27906 /* dbherohelper.exe in Resources */ = {isa = PBXBuildFile; fileRef = 034240661C27695300C27906 /* dbherohelper.exe */; };
 		036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9A8D1C268F7600D75C7C /* AppDelegate.swift */; };
 		036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A8F1C268F7600D75C7C /* Assets.xcassets */; };
 		036C9A931C268F7600D75C7C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A911C268F7600D75C7C /* MainMenu.xib */; };
@@ -14,7 +16,7 @@
 		036C9AA91C268F8500D75C7C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C9AA81C268F8500D75C7C /* WebKit.framework */; };
 		036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAA1C26952400D75C7C /* ListProcesses.swift */; };
 		036C9AAE1C26952400D75C7C /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAB1C26952400D75C7C /* Log.swift */; };
-		036C9AAF1C26952400D75C7C /* ServerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAC1C26952400D75C7C /* ServerController.swift */; };
+		036C9AAF1C26952400D75C7C /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAC1C26952400D75C7C /* Backend.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		034240661C27695300C27906 /* dbherohelper.exe */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = dbherohelper.exe; sourceTree = "<group>"; };
 		036C9A8A1C268F7600D75C7C /* dbHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbHero.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		036C9A8D1C268F7600D75C7C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		036C9A8F1C268F7600D75C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -39,7 +42,7 @@
 		036C9AA81C268F8500D75C7C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		036C9AAA1C26952400D75C7C /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListProcesses.swift; sourceTree = "<group>"; };
 		036C9AAB1C26952400D75C7C /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		036C9AAC1C26952400D75C7C /* ServerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerController.swift; sourceTree = "<group>"; };
+		036C9AAC1C26952400D75C7C /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +67,7 @@
 		036C9A811C268F7600D75C7C = {
 			isa = PBXGroup;
 			children = (
+				034240661C27695300C27906 /* dbherohelper.exe */,
 				036C9AA81C268F8500D75C7C /* WebKit.framework */,
 				036C9A8C1C268F7600D75C7C /* dbHero */,
 				036C9A9C1C268F7600D75C7C /* dbHeroTests */,
@@ -85,7 +89,7 @@
 			children = (
 				036C9AAA1C26952400D75C7C /* ListProcesses.swift */,
 				036C9AAB1C26952400D75C7C /* Log.swift */,
-				036C9AAC1C26952400D75C7C /* ServerController.swift */,
+				036C9AAC1C26952400D75C7C /* Backend.swift */,
 				036C9A8D1C268F7600D75C7C /* AppDelegate.swift */,
 				036C9A8F1C268F7600D75C7C /* Assets.xcassets */,
 				036C9A911C268F7600D75C7C /* MainMenu.xib */,
@@ -160,7 +164,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "dbHero" */;
+			buildConfigurationList = 036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "DBHero" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -184,6 +188,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				034240691C276A3A00C27906 /* dbherohelper.exe in Resources */,
+				034240681C276A3300C27906 /* Info.plist in Resources */,
 				036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */,
 				036C9A931C268F7600D75C7C /* MainMenu.xib in Resources */,
 			);
@@ -203,7 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				036C9AAF1C26952400D75C7C /* ServerController.swift in Sources */,
+				036C9AAF1C26952400D75C7C /* Backend.swift in Sources */,
 				036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */,
 				036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */,
 				036C9AAE1C26952400D75C7C /* Log.swift in Sources */,
@@ -330,6 +336,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
@@ -343,6 +350,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHero;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
@@ -375,7 +383,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "dbHero" */ = {
+		036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "DBHero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				036C9AA01C268F7600D75C7C /* Debug */,
@@ -391,6 +399,7 @@
 				036C9AA41C268F7600D75C7C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		036C9AA51C268F7600D75C7C /* Build configuration list for PBXNativeTarget "dbHeroTests" */ = {
 			isa = XCConfigurationList;
@@ -399,6 +408,7 @@
 				036C9AA71C268F7600D75C7C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

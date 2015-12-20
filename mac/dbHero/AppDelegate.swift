@@ -302,16 +302,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
 
+    func urlReq(url: String) -> NSURLRequest {
+        let u = NSURL(string: url)
+        return NSURLRequest(URL: u!)
+    }
+
+    
     func loadURL() {
         log("loadURL")
-        let requesturl = NSURL(string: urlpath)
-        let request = NSURLRequest(URL: requesturl!)
-        
-        webView.mainFrame.loadRequest(request)
+        webView.mainFrame.loadRequest(urlReq(urlpath))
     }
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
+        //webView.mainFrame.loadRequest(urlReq("https://blog.kowalczyk.info"))
+
         loadUsageData()
         startBackend(self)
         autoUpdateCheck()
