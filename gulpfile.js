@@ -2,7 +2,7 @@
 // npm install
 
 var browserify  = require('browserify');
-var exorcist    = require('exorcist')
+var exorcist    = require('exorcist');
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
 var uglify      = require('gulp-uglify');
@@ -44,7 +44,7 @@ gulp.task('css', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(['jsx/*', 's/*.css'], ['css', 'js']);
+  gulp.watch(['jsx/**', 's/*.css'], ['css', 'js']);
 });
 
 gulp.task('build_and_watch', ['css', 'js', 'watch']);

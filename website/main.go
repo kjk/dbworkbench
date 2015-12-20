@@ -1,35 +1,49 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"mime"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/kjk/u"
 )
 
-var (
-	httpAddr = ":5555"
-
+const (
 	// for auto-update
 	latestMacVersion = "0.1.7"
 	latestWinVersion = "0.1.7"
 
+	indexMac = "/gui-database-client-for-mysql-postgresql-mac-osx"
+	indexWin = "/gui-database-client-for-mysql-postgresql-windows"
+)
+
+var (
+	flgUsageTest bool
+
+	httpAddr = ":5555"
+
 	dataDir string
 
 	urlToFileMap = map[string]string{
-		"/gui-database-client-for-postgresql-mac-osx": "for-mac.html",
-		"/gui-database-client-for-postgresql-windows": "for-windows.html",
+		indexMac: "for-mac.html",
+		indexWin: "for-windows.html",
 	}
 
 	redirects = map[string]string{
-		"/for-mac":     "/gui-database-client-for-postgresql-mac-osx",
-		"/for-windows": "/gui-database-client-for-postgresql-windows",
+		"/for-mac":     indexMac,
+		"/for-windows": indexWin,
+		// those were main urls before mysql support
+		"/gui-database-client-for-postgresql-mac-osx": indexMac,
+		"/gui-database-client-for-postgresql-windows": indexWin,
 	}
 )
 
@@ -269,6 +283,20 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 	serveData(w, r, 200, MimeTypeByExtensionExt(path), data)
 }
 
+func serveTemplate(w http.ResponseWriter, r *http.Request, path string, v interface{}) {
+	tmpl, err := template.ParseFiles(path)
+	if err != nil {
+		LogErrorf("tempalte.ParseFiles('%s') failed with '%s'\n", path, err)
+		servePlainText(w, r, 500, fmt.Sprintf("tempalte.ParseFiles('%s') failed with '%s'\n", path, err))
+		return
+	}
+	name := filepath.Base(path)
+	err = tmpl.ExecuteTemplate(w, name, v)
+	if err != nil {
+		LogErrorf("tmpl.ExecuteTemplate('%s') failed with '%s'\n", name, err)
+	}
+}
+
 // url: /s/:path
 func handleStatic(w http.ResponseWriter, r *http.Request) {
 	LogInfof("handleStatic: '%s'\n", r.URL.Path)
@@ -277,14 +305,57 @@ func handleStatic(w http.ResponseWriter, r *http.Request) {
 	serveStatic(w, r, resourcePath)
 }
 
+// url: /admin/usage?s=acergytvw
+// s is the simplest for of authentication - via unguessable url
+func handleUsage(w http.ResponseWriter, r *http.Request) {
+	LogInfof("handleUsage: '%s'\n", r.URL.Path)
+	secret := r.FormValue("s")
+	if secret != "acergytvw" {
+		servePlainText(w, r, 500, "can't see me")
+		return
+	}
+	//path := "usage-for-testing.txt"
+	path := usageFilePath()
+	res, err := parseUsage(path)
+	if err != nil {
+		LogErrorf("parseUsage() failed with '%s'\n", err)
+		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
+		return
+	}
+	resJSON, err := json.Marshal(res)
+	if err != nil {
+		LogErrorf("json.Marshal() failed with '%s'\n", err)
+		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
+		return
+	}
+	path = filepath.Join("www", "usage_stats.html")
+	v := struct {
+		UsersJSON string
+	}{
+		UsersJSON: string(resJSON),
+	}
+	serveTemplate(w, r, path, v)
+}
+
 func initHandlers() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/s/", handleStatic)
+	http.HandleFunc("/admin/usage", handleUsage)
 	http.HandleFunc("/api/winupdatecheck", handleWinUpdateCheck)
 	http.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
 }
 
+func parseCmdLine() {
+	flag.BoolVar(&flgUsageTest, "usage-test", false, "test parsing of usage.txt")
+	flag.Parse()
+}
+
 func main() {
+	parseCmdLine()
+	if flgUsageTest {
+		testUsageParse()
+		os.Exit(0)
+	}
 	initHandlers()
 	openUsageFileMust()
 	LogInfof("starting website on %s\n", httpAddr)

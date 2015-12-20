@@ -135,6 +135,7 @@ body {
   top: 0px;
   left: 0px;
   bottom: 130px;
+  height: 100%;
   overflow: auto;
   /* background: #31373d; */
 }
@@ -286,7 +287,7 @@ body {
 }
 
 #sidebar ul {
-  overflow-x: hidden;
+  overflow: hidden;
   overflow-y: auto;
   margin: 0px;
   padding: 0px;
@@ -468,9 +469,12 @@ h4.modal-title {
 }
 
 #results {
-  font-size: 11px;
+  font-size: 12px;
   margin: 0px;
   padding: 0px;
+  min-height: 100%;
+  overflow: auto;
+  min-width: 100%;
 }
 
 #results.empty td {
@@ -478,6 +482,11 @@ h4.modal-title {
   font-size:12px;
   color:#4A4A4A;
   line-height:21px;
+}
+
+#results thead {
+  /*position: fixed;*/
+  width: 100%;
 }
 
 #results tr {
@@ -493,10 +502,7 @@ h4.modal-title {
 }
 
 #results th {
-  font-size:12px;
-  font-weight:700;
   background:#4592EA;
-  border-top: none;
   padding: 3px 9px;
   line-height: 24px;
   color: #fefefe;
@@ -521,6 +527,7 @@ h4.modal-title {
 }
 */
 #results td div {
+  padding: 0px 10px;
   max-width: 350px;
   max-height: 51px;
   overflow: hidden;
@@ -538,14 +545,133 @@ h4.modal-title {
   font-size: 12px;
 }
 
-#results th:first-child,
-#results td:first-child {
-  padding-left: 15px;
-}
-
-#results.no-crop td div {
+div#results.table.empty.no-crop {
+  margin: 10px;
   max-width: none;
 }
+
+#results tr.foot {
+  background:#4592EA;
+}
+
+#results td.foot {
+  padding:0px;
+  background:transparent;
+  border:0px;
+  color:#fff;
+}
+
+#results tr.reactable-filterer {
+  height: 38px;
+}
+
+#results th:focus {
+  outline:0;
+}
+
+#results th.reactable-header-sort-desc:after {
+  content: '\25B2';
+  font-size: 12px;
+  margin-left: 5px;
+  /*float: right;*/
+}
+
+#results th.reactable-header-sort-asc:after {
+  content: '\25BC';
+  font-size: 10px;
+  margin-left: 5px;
+  /*float: right;*/
+}
+
+#results input.reactable-filter-input {
+  font-size: 11px;
+  background-color: #fff;
+  padding: 4px 6px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  margin-left: 10px
+}
+
+#results tbody.reactable-data {
+  margin-bottom: 0;
+}
+
+div.reactable-pagination-button-container {
+  position: fixed;
+  background-color: #4592EA;
+  width: 100%;
+  font-size: 12px;
+  bottom: 0;
+  padding: 2px;
+}
+
+div.reactable-pagination-button-container:hover {
+  opacity: 1;
+}
+
+a.reactable-previous-page,
+a.reactable-next-page {
+  background-color: transparent;
+  color: white;
+  margin: 5px;
+  text-decoration: underline;
+}
+
+span.reactable-page {
+  background-color: transparent;
+  color: white;
+  margin: 0;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+}
+
+/*
+#results a.reactable-previous-page,
+#results a.griddle-page,
+#results a.griddle-next{
+  float:left;
+  width:33%;
+  min-height:1px;
+  margin-top:5px;
+  margin-bottom: 5px;
+}
+
+.griddle a.reactable-next-page{
+  text-align:right;
+  margin-right: 5px;
+}
+
+.reactable-page-button {
+  text-align:center;
+  margin-top:6px;
+  margin-left: 5px;
+  margin-right: 2px;
+  margin-bottom: 6px;
+  padding: 3px;
+  width: 30px;
+  float: left;
+  cursor: pointer;
+  color: #000;
+  border: 1px solid #AAA;
+  background-color: #EEE;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.reactable-page-button:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.reactable-current-page {
+  background-color: #DDD;
+  cursor: default;
+}
+*/
 
 #custom-query {
   height: 205px;
@@ -726,7 +852,7 @@ connection-window i.fa.fa-lock {
 }
 
 .light-text {
-  color:#9a9a9a;  
+  color:#9a9a9a;
 }
 
 .smaller-text {

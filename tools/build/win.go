@@ -116,6 +116,7 @@ var LatestUrlWin = "%s";
 var BuiltOnWin = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestverwin.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
 }
 
 func uploadToS3WinBeta() {
@@ -135,6 +136,7 @@ var LatestUrlWin = "%s";
 var BuiltOnWin = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestverwinbeta.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
 }
 
 func buildWinAll() {

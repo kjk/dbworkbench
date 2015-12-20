@@ -10,6 +10,5 @@ go vet ./...
 go test .
 
 go build
-./website || true
+./website "$@"|| true
 rm website
-

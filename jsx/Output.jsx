@@ -4,6 +4,15 @@
 var React = require('react');
 var _ = require('underscore');
 
+var Table = require('./lib/reactable/table.jsx').Table;
+var Thead = require('./lib/reactable/thead.jsx').Thead;
+var Tfoot = require('./lib/reactable/tfoot.jsx').Tfoot;
+var Th = require('./lib/reactable/th.jsx').Th;
+var Tr = require('./lib/reactable/tr.jsx').Tr;
+var Td = require('./lib/reactable/td.jsx').Td;
+
+var ConnectionWindow = require('./ConnectionWindow.jsx');
+
 var view = require('./view.js');
 
 class Output extends React.Component {
@@ -15,6 +24,17 @@ class Output extends React.Component {
       clickedRowKey: -1,
       rowStyle: {},
     };
+  }
+
+  resultsToDictionary(results) {
+    var griddleStyle = _.map(results.rows, function(row){
+      var some = {};
+      _.each(results.columns,function(key,i){some[key] = row[i];});
+      return some;
+    });
+
+    // console.log(griddleStyle)
+    return griddleStyle;
   }
 
   handleRowClick(key, e) {
@@ -47,12 +67,12 @@ class Output extends React.Component {
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
-        <th key={i} data={col}>{col}</th>
+        <Th key={i} data={col} column={col}>{col}</Th>
       );
     });
 
     return (
-      <thead><tr>{children}</tr></thead>
+      <Thead>{children}</Thead>
     );
   }
 
@@ -63,63 +83,75 @@ class Output extends React.Component {
     }
 
     var i = 0;
-    var children = row.map(function(col) {
+    var children = _.map(row, function(row, col) {
       i = i + 1;
+
+      // console.log("row", row, "col", col)
       return (
-        <td key={i}><div style={style}>{col}</div></td>
+        <Td key={i} column={col} value={row}><div style={style}>{row}</div></Td>
       );
     });
 
     return (
-      <tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</tr>
+      <Tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</Tr>
     );
   }
 
-  renderRows(rows) {
-    if (!rows) {
-      return;
-    }
-
-    var self = this;
-    var i = 0;
-    var children = rows.map(function(row) {
-      i = i + 1;
-      return self.renderRow(row, i);
-    });
-
+  renderFooter() {
     return (
-      <tbody>{children}</tbody>
+      <Tfoot>
+        <tr className="foot">
+          <td className="foot" colspan="99999">Temp Footer</td>
+        </tr>
+      </Tfoot>
     );
   }
 
   renderResults(results) {
+    var data = this.resultsToDictionary(results);
     var header = this.renderHeader(results.columns);
-    var rows = this.renderRows(results.rows);
+
+    var self = this;
+    var rows = _.map(data, function(row, i) {
+      return self.renderRow(row, i);
+    });
+
+    var footer = this.renderFooter();
+
+    if (this.props.selectedView == view.SQLQuery || this.props.selectedView == view.Content) {
+      var filterable = results.columns;
+      var filterPlaceholder = "Filter Results";
+      var itemsPerPage = 100;
+    }
+
     return (
-      <table id="results" className="table" data-mode="browse">
-        {header}
-        {rows}
-      </table>
+      <Table
+        id="results"
+        className="results"
+        sortable={true}
+        filterable={filterable}
+        filterPlaceholder={filterPlaceholder}
+        itemsPerPage={itemsPerPage} >
+          {header}
+          {rows}
+      </Table>
+
     );
   }
 
   renderNoResults() {
     return (
-      <table id="results" className="table empty no-crop">
-        <tbody>
-          <tr><td>No records found</td></tr>
-        </tbody>
-      </table>
+      <div id="results" className="table empty no-crop">
+          No records found
+      </div>
     );
   }
 
   renderError(errorMsg) {
     return (
-      <table id="results" className="table empty">
-        <tbody>
-          <tr><td>ERROR: {errorMsg}</td></tr>
-        </tbody>
-      </table>
+      <div id="results" className="table empty no-crop">
+          Err: {errorMsg}
+      </div>
     );
   }
 

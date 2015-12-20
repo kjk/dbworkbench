@@ -214,14 +214,16 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // POST /api/connect
 // args:
-//	url : database connection url formatted for Go driver
-//  type : database type ('postgres' or 'mysql')
+//	url     : database connection url formatted for Go driver
+//  urlSafe : like url but with password replaced with ***
+//  type    : database type ('postgres' or 'mysql')
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := strings.TrimSpace(r.FormValue("url"))
+	urlSafe := strings.TrimSpace(r.FormValue("urlSafe"))
 	dbType := strings.TrimSpace(r.FormValue("type"))
-	LogInfof("dbtype: '%s' url: '%s'\n", dbType, url)
-	if url == "" || dbType == "" {
-		serveJSONError(w, r, fmt.Errorf("url ('%s') or type ('%s') argument is missing", url, dbType))
+	LogInfof("dbtype: '%s' urlSafe: '%s'\n", dbType, urlSafe)
+	if url == "" || urlSafe == "" || dbType == "" {
+		serveJSONError(w, r, fmt.Errorf("url or urlSafe ('%s') or type ('%s') argument is missing", urlSafe, dbType))
 		return
 	}
 	var client Client
@@ -236,8 +238,9 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		LogInfof("calling serveJSONError\n")
-		serveJSONError(w, r, err)
+		msg := strings.Replace(err.Error(), url, urlSafe, -1)
+		LogErrorf("failed to connect with '%s'\n", msg)
+		serveJSONError(w, r, msg)
 		return
 	}
 
