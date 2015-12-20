@@ -15,25 +15,33 @@ import (
 	"github.com/kjk/u"
 )
 
+const (
+	// for auto-update
+	latestMacVersion = "0.1.7"
+	latestWinVersion = "0.1.7"
+
+	indexMac = "/gui-database-client-for-mysql-postgresql-mac-osx"
+	indexWin = "/gui-database-client-for-mysql-postgresql-windows"
+)
+
 var (
 	flgUsageTest bool
 
 	httpAddr = ":5555"
 
-	// for auto-update
-	latestMacVersion = "0.1.7"
-	latestWinVersion = "0.1.7"
-
 	dataDir string
 
 	urlToFileMap = map[string]string{
-		"/gui-database-client-for-postgresql-mac-osx": "for-mac.html",
-		"/gui-database-client-for-postgresql-windows": "for-windows.html",
+		indexMac: "for-mac.html",
+		indexWin: "for-windows.html",
 	}
 
 	redirects = map[string]string{
-		"/for-mac":     "/gui-database-client-for-postgresql-mac-osx",
-		"/for-windows": "/gui-database-client-for-postgresql-windows",
+		"/for-mac":     indexMac,
+		"/for-windows": indexWin,
+		// those were main urls before mysql support
+		"/gui-database-client-for-postgresql-mac-osx": indexMac,
+		"/gui-database-client-for-postgresql-windows": indexWin,
 	}
 )
 
