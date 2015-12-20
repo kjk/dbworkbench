@@ -4,12 +4,14 @@
 var React = require('react');
 var _ = require('underscore');
 
-var Table = require('Reactable').Table;
-var Thead = require('Reactable').Thead;
-var Tfoot = require('Reactable').Tfoot;
-var Th = require('Reactable').Th;
-var Tr = require('Reactable').Tr;
-var Td = require('Reactable').Td;
+var Table = require('./lib/reactable/table.jsx').Table;
+var Thead = require('./lib/reactable/thead.jsx').Thead;
+var Tfoot = require('./lib/reactable/tfoot.jsx').Tfoot;
+var Th = require('./lib/reactable/th.jsx').Th;
+var Tr = require('./lib/reactable/tr.jsx').Tr;
+var Td = require('./lib/reactable/td.jsx').Td;
+
+var ConnectionWindow = require('./ConnectionWindow.jsx');
 
 var view = require('./view.js');
 
@@ -129,7 +131,8 @@ class Output extends React.Component {
         className="results"
         sortable={true}
         filterable={filterable}
-        filterPlaceholder={filterPlaceholder} >
+        filterPlaceholder={filterPlaceholder}
+        itemsPerPage={100} >
           {header}
           {rows}
       </Table>

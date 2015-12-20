@@ -473,7 +473,9 @@ h4.modal-title {
   margin: 0px;
   padding: 0px;
   min-height: 100%;
+  overflow: auto;
   min-width: 100%;
+  margin-bottom: 21px;
 }
 
 #results.empty td {
@@ -482,6 +484,10 @@ h4.modal-title {
   color:#4A4A4A;
   line-height:21px;
 }
+
+/*#results thead {
+  position: fixed;
+}*/
 
 #results tr {
   border: none;
@@ -585,6 +591,39 @@ div#results.table.empty.no-crop {
   border: 1px solid #D1D1D1;
   border-radius: 4px;
   margin-left: 10px
+}
+
+div.reactable-pagination-button-container {
+  position: fixed;
+  background-color: #4592EA;
+  width: 100%;
+  font-size: 12px;
+  bottom: 0;
+  padding: 2px;
+  margin-top: 30px;
+}
+
+div.reactable-pagination-button-container:hover {
+  opacity: 1;
+}
+
+a.reactable-previous-page,
+a.reactable-next-page {
+  background-color: transparent;
+  color: white;
+  margin: 5px;
+}
+
+span.reactable-page {
+  background-color: transparent;
+  color: white;
+  margin: 0;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
 }
 
 /*

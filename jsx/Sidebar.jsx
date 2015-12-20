@@ -241,7 +241,6 @@ class Sidebar extends React.Component {
     }
 
     if (this.props.selectedTableInfo != null) {
-      console.log("ccc", this.props.selectedTableInfo)
       var sortList = {
         height: 'calc(100% - 135px)',
       }
