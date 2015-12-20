@@ -212,11 +212,16 @@ class ConnectionWindow extends React.Component {
     let rememberConnection = this.state.remember;
 
     let url = "";
+    let urlSafe = "";
     if (dbType == dbTypePostgres) {
       if (port.length == 0) {
         port = defaultPortPostgres;
       }
       url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db;
+      urlSafe = url;
+      if (pass != "") {
+        url = "postgres://" + user + ":" + "***" + "@" + host + ":" + port + "/" + db;
+      }
     }
     else if (dbType == dbTypeMysql)
     {
@@ -229,6 +234,10 @@ class ConnectionWindow extends React.Component {
       // pareTime: conver time from []byte to time.Time
       // https://github.com/go-sql-driver/mysql#parsetime
       url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
+      urlSafe = url;
+      if (pass != "") {
+        urlSafe = user + ":" + "***" + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";        
+      }
     } else {
       console.log("invalid type: " + dbType);
       // TODO: how to error out?
@@ -240,7 +249,7 @@ class ConnectionWindow extends React.Component {
       isConnecting: true,
     });
     const myConnectionId = currConnectionId;
-    api.connect(dbType, url, function(resp) {
+    api.connect(dbType, url, urlSafe, function(resp) {
       if (myConnectionId != currConnectionId) {
         console.log("ignoring completion of a cancelled connection");
         return;

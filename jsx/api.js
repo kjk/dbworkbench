@@ -44,10 +44,11 @@ function apiCallNoSpinner(method, path, params, cb) {
   apiCall2(false, method, path, params, cb);
 }
 
-function connect(type, url, cb) {
+function connect(type, url, urlSafe, cb) {
   var opts = {
     type: type,
-    url: url
+    url: url,
+    urlSafe: urlSafe
   };
   apiCallNoSpinner("post", "/connect", opts, cb);
 }
