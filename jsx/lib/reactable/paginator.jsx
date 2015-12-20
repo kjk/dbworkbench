@@ -5,6 +5,31 @@ function pageHref(num) {
 }
 
 export class Paginator extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.state = {
+            paginationFixed: true
+        };
+    }
+    refixPosition() {
+        if ($("#output").height() < $(window).height() && this.state.paginationFixed) {
+            console.log("Relative position:", $("#output").height(), " > ", $(window).height());
+            this.setState({paginationFixed: false});
+        } else if ($("#output").height() >= $(window).height() && !this.state.paginationFixed) {
+            console.log("paginationFixed: true")
+            this.setState({paginationFixed: true});
+        }
+    }
+
+    componentDidMount() {
+        this.refixPosition();
+    }
+
+    componentDidUpdate() {
+        this.refixPosition();
+    }
+
     handlePrevious(e) {
         e.preventDefault()
         this.props.onPageChange(this.props.currentPage - 1)
@@ -114,9 +139,15 @@ export class Paginator extends React.Component {
          //        </tr>
          //    </tbody>
 
+        if (this.state.paginationFixed) {
+            var style = { position: 'fixed' }
+        } else {
+            var style = { position: 'relative' }
+        }
+
         return (
             <div className="reactable-pagination">
-                <div className="reactable-pagination-button-container">
+                <div className="reactable-pagination-button-container" style={style}>
                     {this.renderPrevious()}
                     {this.renderPageButton()}
                     {this.renderNext()}

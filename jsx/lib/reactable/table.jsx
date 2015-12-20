@@ -441,15 +441,14 @@ export class Table extends React.Component {
                 </tbody>
             </table>
             {pagination === true ?
-             <Paginator colSpan={columns.length}
-
-                 numPages={numPages}
-                 currentPage={currentPage}
-                 onPageChange={page => {
-                     this.setState({ currentPage: page });
-                 }}
-                 key="paginator"/>
-             : null}
+                <Paginator colSpan={columns.length}
+                    numPages={numPages}
+                    currentPage={currentPage}
+                    onPageChange={page => {
+                        this.setState({ currentPage: page });
+                    }}
+                     key="paginator"/>
+                : null}
             {this.tfoot}
         </div>);
     }

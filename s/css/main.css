@@ -475,7 +475,6 @@ h4.modal-title {
   min-height: 100%;
   overflow: auto;
   min-width: 100%;
-  margin-bottom: 21px;
 }
 
 #results.empty td {
@@ -594,6 +593,10 @@ div#results.table.empty.no-crop {
   margin-left: 10px
 }
 
+#results tbody.reactable-data {
+  margin-bottom: 0;
+}
+
 div.reactable-pagination-button-container {
   position: fixed;
   background-color: #4592EA;
@@ -601,7 +604,6 @@ div.reactable-pagination-button-container {
   font-size: 12px;
   bottom: 0;
   padding: 2px;
-  margin-top: 30px;
 }
 
 div.reactable-pagination-button-container:hover {
