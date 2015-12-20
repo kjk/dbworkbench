@@ -141,8 +141,10 @@ export class Paginator extends React.Component {
 
         if (this.state.paginationFixed) {
             var style = { position: 'fixed' }
+            $("#results").attr('margin-bottom', '21px');
         } else {
             var style = { position: 'relative' }
+            $("#results").attr('margin-bottom', '0');
         }
 
         return (
