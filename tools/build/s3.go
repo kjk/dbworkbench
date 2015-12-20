@@ -163,3 +163,17 @@ func s3VerifyNotExistsMust(s3Path string) {
 	fataliferr(err)
 	fatalif(exists, "'%s' already exist in s3\n", s3Path)
 }
+
+// check up to 10 times (with 1 sec delay) to see if
+// a given file exists in s3
+func s3VerifyExistsWaitMust(s3Path string) {
+	for i := 0; i < 10; i++ {
+		exists, err := s3Exists(s3Path)
+		fataliferr(err)
+		if exists {
+			return
+		}
+		time.Sleep(time.Second)
+	}
+	fatalf("'%s' doesn't exist in s3\n", s3Path)
+}

@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/kjk/u"
 	"github.com/mitchellh/go-homedir"
@@ -29,6 +30,7 @@ type Options struct {
 	HTTPHost string
 	HTTPPort int
 	IsDev    bool
+	Test     bool
 
 	// computed options
 	ResourcesFromZip bool
@@ -54,6 +56,7 @@ func parseCmdLine() {
 	}
 	flag.IntVar(&options.HTTPPort, "listen", 5444, "HTTP server listen port")
 	flag.BoolVar(&options.IsDev, "dev", false, "true for running in dev mode")
+	flag.BoolVar(&options.Test, "test", false, "if true, runs a test (whatever it might be)")
 	flag.Parse()
 }
 
@@ -124,7 +127,7 @@ func getLogDir() string {
 	return filepath.Join(getDataDir(), "log")
 }
 
-func startGulp() {
+func runGulpAndWaitExit() {
 	gulpPath := filepath.Join("node_modules", ".bin", "gulp")
 	cmd := exec.Command(gulpPath, "build_and_watch")
 	cmdStr := strings.Join(cmd.Args, " ")
@@ -135,10 +138,29 @@ func startGulp() {
 	if err != nil {
 		log.Fatalf("cmd.Start('%s') failed with '%s'\n", cmdStr, err)
 	}
+	cmd.Wait()
+	LogInfof("gulp exited\n")
+}
+
+func runGulpAsync() {
+	go func() {
+		// on error gulp exists which means after first error in JavaScript
+		// we stop re-generating it. We need to restart it automatically with
+		// few seconds delay to allow for fixing the bug
+		for {
+			runGulpAndWaitExit()
+			time.Sleep(time.Second * 5)
+		}
+	}()
 }
 
 func main() {
 	parseCmdLine()
+
+	if options.Test {
+		testMysqlInfo()
+		os.Exit(0)
+	}
 
 	if options.IsDev {
 		logToStdout = true
@@ -156,7 +178,7 @@ func main() {
 	openUsageFileMust()
 
 	if options.IsDev {
-		startGulp()
+		runGulpAsync()
 	}
 
 	if options.ResourcesFromZip {

@@ -4,6 +4,10 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+echo "running eslint"
+./node_modules/.bin/eslint jsx/*.jsx jsx/*.js
+
+echo "running go vet"
 godep go vet github.com/kjk/dbworkbench
 
 #TODO: use go tool vet so that I can pass printfuncs, but needs
@@ -19,5 +23,5 @@ godep go build -o dbherohelper
 #gdep go build -race -o dbherohelper
 
 echo "starting dbherohelper in dev mode"
-./dbherohelper -dev || true
+./dbherohelper -dev "$@" || true
 rm dbherohelper

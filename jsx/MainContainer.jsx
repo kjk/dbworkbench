@@ -23,7 +23,7 @@ class MainContainer extends React.Component {
 
     var divStyle = {
       left: this.props.dragBarPosition + 'px',
-    }
+    };
 
     // var results = this.props.results
     // if (results != null && results.rows != null) {

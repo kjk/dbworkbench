@@ -8,7 +8,7 @@ import (
 
 // Client describes a database connection
 type Client interface {
-	Test() error
+	Connection() *sqlx.DB
 	Info() (*Result, error)
 	Databases() ([]string, error)
 	Schemas() ([]string, error)
@@ -20,7 +20,6 @@ type Client interface {
 	Activity() (*Result, error)
 	Query(query string) (*Result, error)
 	History() []HistoryRecord
-	Close() error
 }
 
 // utility functions

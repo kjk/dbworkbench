@@ -213,30 +213,30 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /api/connect
-// args: url - database connection url
+// args:
+//	url : database connection url formatted for Go driver
+//  type : database type ('postgres' or 'mysql')
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	url := r.FormValue("url")
-	if url == "" {
-		serveJSONError(w, r, "Url parameter is required")
+	url := strings.TrimSpace(r.FormValue("url"))
+	dbType := strings.TrimSpace(r.FormValue("type"))
+	LogInfof("dbtype: '%s' url: '%s'\n", dbType, url)
+	if url == "" || dbType == "" {
+		serveJSONError(w, r, fmt.Errorf("url ('%s') or type ('%s') argument is missing", url, dbType))
 		return
 	}
-
-	opts := Options{URL: url}
-	url, err := formatConnectionURL(opts)
-
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
+	var client Client
+	var err error
+	switch dbType {
+	case dbTypePostgres:
+		client, err = connectPostgres(url)
+	case dbTypeMysql:
+		client, err = connectMysql(url)
+	default:
+		err = fmt.Errorf("invalid 'type' argument ('%s')", dbType)
 	}
 
-	client, err := NewClientPgFromURL(url)
 	if err != nil {
-		serveJSONError(w, r, err)
-		return
-	}
-
-	err = client.Test()
-	if err != nil {
+		LogInfof("calling serveJSONError\n")
 		serveJSONError(w, r, err)
 		return
 	}
@@ -394,15 +394,16 @@ func handleAddBookmark(ctx *ReqContext, w http.ResponseWriter, r *http.Request) 
 	id, err := getFormInt(r, "id")
 	newBookmark := Bookmark{
 		ID:       id,
+		Nick:     r.FormValue("nick"),
 		Type:     r.FormValue("type"),
 		Host:     r.FormValue("host"),
 		Port:     r.FormValue("port"),
 		User:     r.FormValue("user"),
 		Password: r.FormValue("password"),
 		Database: r.FormValue("database"),
-		Ssl:      r.FormValue("ssl"),
 	}
 
+	// TODO: validate fields make sense (type is pg or mysql, nick is not empty)
 	bookmarks, err := addBookmark(newBookmark)
 	if err != nil {
 		serveJSONError(w, r, err)
@@ -456,6 +457,7 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/schemas
+// Note: not used by frontend
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
 	names, err := ctx.ConnInfo.Client.Schemas()
@@ -534,7 +536,6 @@ func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, ta
 		serveJSONError(w, r, err)
 		return
 	}
-
 	serveJSON(w, r, res.Format()[0])
 }
 
@@ -546,7 +547,6 @@ func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request,
 		serveJSONError(w, r, err)
 		return
 	}
-
 	serveJSON(w, r, res)
 }
 
@@ -592,7 +592,7 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	if -1 != connID {
 		v.ConnectionID = connID
 	}
-	LogInfof("v: %#v\n", v)
+	LogVerbosef("v: %#v\n", v)
 	serveJSONP(w, r, v, jsonp)
 }
 

@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# flags:
-#   -upload : upload to s3
-#   -beta   : build beta version (different location in s3)
+# add -upload flag to also upload to s3
 
 set -o nounset
 set -o errexit
@@ -27,6 +25,6 @@ codesign --force --deep --verbose -s "Developer ID Application: Krzysztof Kowalc
 
 codesign --verify --verbose "mac/build/Release/dbHero.app"
 
-go run tools/build/*.go $@
+go run tools/build/*.go -beta $@
 
 rm resources.go

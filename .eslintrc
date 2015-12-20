@@ -1,0 +1,18 @@
+{
+    "ecmaFeatures": {
+        "blockBindings": true,
+        "forOf": true,
+        "jsx": true
+    },
+    "rules": {
+        "semi": 2
+    },
+    "plugins": [
+        "eslint-plugin-react"
+    ],
+    "env": {
+        "browser": true,
+        "jquery": true,
+        "es6": true
+    }
+}

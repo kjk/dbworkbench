@@ -1,25 +1,14 @@
 // Pre-requisites: need to install all the npm modules with:
 // npm install
 
-// TODO:
-// - use gulp-uglify for prod to minifiy javascript:
-//   var uglify= require('gulp-uglify');
-//   .pipe(uglify())
-// - concat js files see http://www.hongkiat.com/blog/getting-started-with-gulp-js/
-
 var browserify  = require('browserify');
 var exorcist    = require('exorcist');
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
-var concat      = require('gulp-concat'); // TODO: this is not being used maybe remove?
-var htmlreplace = require('gulp-html-replace');
 var uglify      = require('gulp-uglify');
 var react       = require('gulp-react');
-var rename      = require('gulp-rename');
-var streamify   = require('gulp-streamify');
 var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer');
-var watchify    = require('watchify');
+var buffer      = require('vinyl-buffer')
 var babelify    = require("babelify");
 
 gulp.task('js', function() {

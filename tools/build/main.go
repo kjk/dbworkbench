@@ -24,6 +24,7 @@ var (
 	flgUpload           bool
 	flgUploadAutoUpdate bool
 	flgGenResources     bool
+	flgBeta             bool
 
 	programVersionWin      string
 	programVersionMac      string
@@ -52,6 +53,7 @@ func parseCmdLine() {
 	flag.BoolVar(&flgNoCleanCheck, "no-clean-check", false, "allow running if repo has changes (for testing build script)")
 	flag.BoolVar(&flgUpload, "upload", false, "if true, upload the files")
 	flag.BoolVar(&flgGenResources, "gen-resources", false, "if true, genereates resources.go file")
+	flag.BoolVar(&flgBeta, "beta", false, "if ture, build a beta version")
 	flag.Parse()
 }
 
@@ -137,6 +139,11 @@ func extractVersionWinMust() {
 	fmt.Printf("programVersionWin: %s\n", programVersionWin)
 }
 
+/* given a text in .plist:
+<key>foo<key>
+<string>bar</key>
+returns "bar" if keyName is "foo"
+*/
 func plistGetStrVal(lines []string, keyName string) string {
 	idx := -1
 	key := fmt.Sprintf("<key>%s</key>", strings.ToLower(keyName))
@@ -159,7 +166,7 @@ func plistGetStrVal(lines []string, keyName string) string {
 	} else {
 		fatalf("invalid s: '%s'\n", s)
 	}
-	return s
+	return cleanVer(s)
 }
 
 func extractVersionMacMust() {
@@ -205,6 +212,10 @@ func s3SetupPathMac() string {
 	return s3Dir + fmt.Sprintf("rel/dbHero-%s.zip", programVersion)
 }
 
+func s3SetupPathMacBeta() string {
+	return s3Dir + fmt.Sprintf("beta/dbHero-%s.zip", programVersion)
+}
+
 func macZipPath() string {
 	return pj("mac", "build", "Release", "dbHero.zip")
 }
@@ -217,16 +228,40 @@ func uploadToS3Mac() {
 
 	verifyHasSecretsMust()
 
-	s3VerifyNotExistsMust(s3SetupPathMac())
+	s3Path := s3SetupPathMac()
+	s3VerifyNotExistsMust(s3Path)
 
-	s3UploadFile(s3SetupPathMac(), macZipPath(), true)
-	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3SetupPathMac()
+	s3UploadFile(s3Path, macZipPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerMac = "%s";
 var LatestUrlMac = "%s";
 var BuiltOnMac = "%s";
 `, programVersion, s3Url, buildOn)
 	s3UploadString(s3Dir+"latestvermac.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
+}
+
+func uploadToS3MacBeta() {
+	if !flgUpload {
+		fmt.Printf("skipping s3 upload because -upload not given\n")
+		return
+	}
+
+	verifyHasSecretsMust()
+
+	s3Path := s3SetupPathMacBeta()
+	s3VerifyNotExistsMust(s3Path)
+
+	s3UploadFile(s3Path, macZipPath(), true)
+	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
+	buildOn := time.Now().Format("2006-01-02")
+	jsTxt := fmt.Sprintf(`var LatestVerMac = "%s";
+var LatestUrlMac = "%s";
+var BuiltOnMac = "%s";
+`, programVersion, s3Url, buildOn)
+	s3UploadString(s3Dir+"latestvermacbeta.js", jsTxt, true)
+	s3VerifyExistsWaitMust(s3Path)
 }
 
 func buildMac() {
@@ -235,7 +270,12 @@ func buildMac() {
 	err := ZipDirectory(dirToZip, zipPath)
 	fataliferr(err)
 
-	uploadToS3Mac()
+	if flgBeta {
+		uploadToS3MacBeta()
+
+	} else {
+		uploadToS3Mac()
+	}
 }
 
 func main() {

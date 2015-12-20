@@ -19,6 +19,9 @@ var AlertBar = require('./AlertBar.jsx');
 var MainContainer = require('./MainContainer.jsx');
 var SpinnerCircle = require('./Spinners.jsx').Circle;
 
+const minSidebarDx = 128;
+const maxSidebarDx = 128*3;
+
 class App extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -78,11 +81,11 @@ class App extends React.Component {
 
   componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove)
-      document.addEventListener('mouseup', this.onMouseUp)
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('mouseup', this.onMouseUp);
     } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove)
-      document.removeEventListener('mouseup', this.onMouseUp)
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
     }
   }
 
@@ -91,26 +94,29 @@ class App extends React.Component {
     if (e.button !== 0) return;
     this.setState({
       dragging: true,
-    })
-    e.stopPropagation()
-    e.preventDefault()
+    });
+    e.stopPropagation();
+    e.preventDefault();
   }
 
   onMouseUp(e) {
     this.setState({
       dragging: false,
-    })
-    e.stopPropagation()
-    e.preventDefault()
+    });
+    e.stopPropagation();
+    e.preventDefault();
   }
 
   onMouseMove(e) {
     if (!this.state.dragging) return;
+    if ((e.pageX < minSidebarDx) || (e.pageX > maxSidebarDx)) {
+      return;
+    }
     this.setState({
       dragBarPosition: e.pageX,
     });
-    e.stopPropagation()
-    e.preventDefault()
+    e.stopPropagation();
+    e.preventDefault();
   }
 
   handleTableSelected(table) {
@@ -387,7 +393,7 @@ class App extends React.Component {
       );
     }
 
-    var divStyle = { left: this.state.dragBarPosition + 'px' }
+    var divStyle = { left: this.state.dragBarPosition + 'px' };
 
     return (
       <div>
