@@ -144,9 +144,9 @@ class TableInformation extends React.Component {
     const indexSizePretty = filesize(indexSize);
     const totalSize = dataSize + indexSize;
     const totalSizePretty = filesize(totalSize);
-    const rowCount = parseInt(info.rows_count);    
+    const rowCount = parseInt(info.rows_count);
 
-    // TODO: better done as a class,maybe on parent element    
+    // TODO: better done as a class,maybe on parent element
     const style = {
       backgroundColor: "white",
     };
@@ -254,7 +254,7 @@ class Sidebar extends React.Component {
     if (this.props.selectedTableInfo != null) {
       var sortList = {
         height: 'calc(100% - 135px)',
-      }
+      };
     }
 
     return (

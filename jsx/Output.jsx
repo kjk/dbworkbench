@@ -108,7 +108,7 @@ class Output extends React.Component {
   }
 
   renderResults(results) {
-    var data = this.resultsToDictionary(results)
+    var data = this.resultsToDictionary(results);
     var header = this.renderHeader(results.columns);
 
     var self = this;
@@ -121,7 +121,7 @@ class Output extends React.Component {
     if (this.props.selectedView == view.SQLQuery || this.props.selectedView == view.Content) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
-      var itemsPerPage = 100
+      var itemsPerPage = 100;
     }
 
     return (
