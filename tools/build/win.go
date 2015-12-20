@@ -29,6 +29,16 @@ func exePath() string {
 	return pj("bin", "Release", "dbHero.exe")
 }
 
+// http://zabkat.com/blog/code-signing-sha1-armageddon.htm
+// signtool sign /n "subject name" /t http://timestamp.comodoca.com/authenticode myInstaller.exe
+// signtool sign /n "subject name" /fd sha256 /tr http://timestamp.comodoca.com/rfc3161 /td sha256 /as myInstaller.exe
+// signtool args (https://msdn.microsoft.com/en-us/library/windows/desktop/aa387764(v=vs.85).aspx):
+//   /as          : append signature
+//   /fd ${alg}   : specify digest algo, default is sha1
+//   /t ${url}    : timestamp server
+//   /tr ${url}   : timestamp rfc 3161 server
+//   /td ${alg}   : for /tr, must be after /tr
+//   /du ${url}   : URL for expanded description of the signed content.
 func signMust(path string) {
 	// signtool is finicky so we copy cert.pfx to the directory where the file is
 	fileDir := filepath.Dir(path)
@@ -39,6 +49,13 @@ func signMust(path string) {
 	cmd := getCmdInEnv(getEnvForVS(), "signtool.exe", "sign", "/t", "http://timestamp.verisign.com/scripts/timstamp.dll",
 		"/du", "http://dbheroapp.com", "/f", "cert.pfx",
 		"/p", certPwd, fileName)
+	cmd.Dir = fileDir
+	runCmdMust(cmd, true)
+
+	// double-sign with sha2 for win7+ ater Jan 2016
+	cmd = getCmdInEnv(getEnvForVS(), "signtool.exe", "sign", "/fd", "sha256", "/tr", "http://timestamp.comodoca.com/rfc3161",
+		"/td", "sha256", "/du", "http://dbheroapp.com", "/f", "cert.pfx",
+		"/p", certPwd, "/as", fileName)
 	cmd.Dir = fileDir
 	runCmdMust(cmd, true)
 }
