@@ -16,6 +16,7 @@
 		036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAA1C26952400D75C7C /* ListProcesses.swift */; };
 		036C9AAE1C26952400D75C7C /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAB1C26952400D75C7C /* Log.swift */; };
 		036C9AAF1C26952400D75C7C /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAC1C26952400D75C7C /* Backend.swift */; };
+		03ABCB851C2775180002816C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ABCB841C2775180002816C /* Util.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		036C9AAA1C26952400D75C7C /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListProcesses.swift; sourceTree = "<group>"; };
 		036C9AAB1C26952400D75C7C /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		036C9AAC1C26952400D75C7C /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
+		03ABCB841C2775180002816C /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 		036C9A8C1C268F7600D75C7C /* dbHero */ = {
 			isa = PBXGroup;
 			children = (
+				03ABCB841C2775180002816C /* Util.swift */,
 				036C9AAA1C26952400D75C7C /* ListProcesses.swift */,
 				036C9AAB1C26952400D75C7C /* Log.swift */,
 				036C9AAC1C26952400D75C7C /* Backend.swift */,
@@ -209,6 +212,7 @@
 			files = (
 				036C9AAF1C26952400D75C7C /* Backend.swift in Sources */,
 				036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */,
+				03ABCB851C2775180002816C /* Util.swift in Sources */,
 				036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */,
 				036C9AAE1C26952400D75C7C /* Log.swift in Sources */,
 			);
