@@ -17,7 +17,7 @@
 ;MyAppVersion is set from cmd-line
 ;#define MyAppVersion "9.9"
 #define MyAppPublisher "Database Experts"
-#define MyAppURL "http://www.dbhero.com"
+#define MyAppURL "http://www.dbheroapp.com"
 #define MyAppExeName "dbHero.exe"
 
 [Setup]
