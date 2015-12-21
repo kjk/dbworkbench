@@ -96,7 +96,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
         webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 400, height: 400))
-        window.contentView?.subviews.append(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+
+        let cv = window.contentView!
+        cv.subviews.append(webView)
+
+        let v = window.contentView!
+
+        let cWidth = NSLayoutConstraint(item: webView,
+            attribute: NSLayoutAttribute.Width,
+            relatedBy: .Equal,
+            toItem: v,
+            attribute: .Width,
+            multiplier: 1,
+            constant: 0)
+
+        let cHeight = NSLayoutConstraint(item: webView,
+            attribute: NSLayoutAttribute.Height,
+            relatedBy: .Equal,
+            toItem: v,
+            attribute: .Height,
+            multiplier: 1,
+            constant: 0)
+
+        let constraints = [
+            cWidth,
+            cHeight,
+        ]
+
+        // Sepculation: contentView has constraints that bind its size to size
+        // of the window. We need to lower priority of our constraints below
+        // that of contentView. Otherwise ultimately we bind the size of the
+        // window to current size of webView, making it un-resizeable
+        for c in constraints {
+            c.priority = NSLayoutPriorityDragThatCannotResizeWindow
+        }
+
+        v.addConstraints(constraints)
+
         //webView.mainFrame.loadRequest(urlReq("https://blog.kowalczyk.info"))
 
         loadUsageData()
