@@ -7,6 +7,7 @@ import { Th } from './th.jsx';
 import { Tr } from './tr.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';
+import { Filterer } from './filterer.jsx';
 
 export class Table extends React.Component {
     constructor(props) {
@@ -422,15 +423,19 @@ export class Table extends React.Component {
 
         return (
         <div>
+            <div>
+                {filtering === true ?
+                    <Filterer
+                        onFilter={filter => {
+                            this.setState({ filter: filter });
+                        }}
+                        placeholder={this.props.filterPlaceholder}
+                        value={this.state.filter} />
+                : null}
+            </div>
             <table {...props}>
                 {columns && columns.length > 0 ?
                  <Thead columns={columns}
-                     filtering={filtering}
-                     onFilter={filter => {
-                         this.setState({ filter: filter });
-                     }}
-                     filterPlaceholder={this.props.filterPlaceholder}
-                     currentFilter={this.state.filter}
                      sort={this.state.currentSort}
                      sortableColumns={this._sortable}
                      onSort={this.onSort.bind(this)}

@@ -470,9 +470,27 @@ h4.modal-title {
   top: 0px;
 }
 
-/*#output div.wrapper {
-  overflow: hidden;
-}*/
+#output div.reactable-filterer {
+  position: absolute;
+  height: 38px;
+  right: 10px;
+  top: 0;
+}
+
+#output input.reactable-filter-input {
+  font-size: 11px;
+  background-color: #fff;
+  padding: 4px 6px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  margin-left: 10px;
+  margin-top: 7px;
+}
+
+#output div.wrapper {
+  overflow: auto;
+  width: 100%;
+}
 
 #results {
   font-size: 12px;
@@ -481,6 +499,7 @@ h4.modal-title {
   min-height: 100%;
   overflow: auto;
   min-width: 100%;
+  margin-top: 38px;
 }
 
 #results.empty td {
@@ -567,10 +586,6 @@ div#results.table.empty.no-crop {
   color:#fff;
 }
 
-#results tr.reactable-filterer {
-  height: 38px;
-}
-
 #results th:focus {
   outline:0;
 }
@@ -587,15 +602,6 @@ div#results.table.empty.no-crop {
   font-size: 10px;
   margin-left: 5px;
   /*float: right;*/
-}
-
-#results input.reactable-filter-input {
-  font-size: 11px;
-  background-color: #fff;
-  padding: 4px 6px;
-  border: 1px solid #D1D1D1;
-  border-radius: 4px;
-  margin-left: 10px
 }
 
 #results tbody.reactable-data {

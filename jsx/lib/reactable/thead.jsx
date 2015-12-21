@@ -1,6 +1,5 @@
 import React from 'react';
 import { Th } from './th.jsx';
-import { Filterer } from './filterer.jsx';
 import { filterPropsFrom } from './lib/filter_props_from.jsx';
 
 export class Thead extends React.Component {

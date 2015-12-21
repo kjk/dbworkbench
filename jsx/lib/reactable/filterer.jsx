@@ -20,18 +20,12 @@ export class FiltererInput extends React.Component {
 
 export class Filterer extends React.Component {
     render() {
-        if (typeof this.props.colSpan === 'undefined') {
-            throw new TypeError('Must pass a colSpan argument to Filterer');
-        }
-
         return (
-            <tr className="reactable-filterer">
-                <td colSpan={this.props.colSpan}>
-                    <FiltererInput onFilter={this.props.onFilter}
-                        value={this.props.value}
-                        placeholder={this.props.placeholder}/>
-                </td>
-            </tr>
+            <div className="reactable-filterer">
+                <FiltererInput onFilter={this.props.onFilter}
+                    value={this.props.value}
+                    placeholder={this.props.placeholder}/>
+            </div>
         );
     }
 };
