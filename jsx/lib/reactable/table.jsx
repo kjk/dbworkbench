@@ -8,10 +8,14 @@ import { Tr } from './tr.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';
 import { Filterer } from './filterer.jsx';
+var action = require('../../action.js');
 
 export class Table extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleExecuteQuery = this.handleExecuteQuery.bind(this);
+        this.handleTableSelected = this.handleTableSelected.bind(this);
 
         this.state = {
             currentPage: 0,
@@ -202,10 +206,34 @@ export class Table extends React.Component {
         }
     }
 
+    resetPageNumber() {
+        this.setState({ currentPage: 0 });
+    }
+
+    handleExecuteQuery(query) {
+        console.log("Table handleExecuteQuery: reset page number");
+        this.resetPageNumber()
+    }
+
+    handleTableSelected(table) {
+        console.log("Table handleTableSelected: reset page number");
+        this.resetPageNumber()
+    }
+
     componentWillMount() {
+        this.cidTableSelected = action.onTableSelected(this.handleTableSelected);
+        this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
+
         this.initialize(this.props);
         this.sortByCurrentSort();
         this.filterBy(this.props.filterBy);
+    }
+
+    componentWillUnmount() {
+        action.offTableSelected(this.cidTableSelected);
+        action.offExecuteQuery(this.cidExecuteQuery);
+
+        // this.resetPageNumber()
     }
 
     componentWillReceiveProps(nextProps) {
