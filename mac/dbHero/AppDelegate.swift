@@ -1,6 +1,8 @@
 import Cocoa
 import WebKit
 
+// Maybe: rememver zoom level
+
 // same as in Chrome
 let zoomLevels : [Double] = [
     0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5
@@ -18,7 +20,7 @@ func findClosestZoomLevelIdx(z : Double) -> Int {
         return n-1
     }
     var prevDiff = fabs(min - z)
-    for var i = 1; i < n; i++ {
+    for i in 1...n {
         let diff = fabs(zoomLevels[i] - z)
         if diff > prevDiff {
             return i - 1
