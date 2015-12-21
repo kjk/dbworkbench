@@ -7,6 +7,8 @@ var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
 var uglify      = require('gulp-uglify');
 var react       = require('gulp-react');
+var sass        = require('gulp-sass');
+var sourcemaps  = require('gulp-sourcemaps');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer')
 var babelify    = require("babelify");
@@ -38,13 +40,17 @@ gulp.task('jsmin', function() {
 });
 
 gulp.task('css', function() {
-  return gulp.src('s/*.css')
+  return gulp.src('./sass/main.scss')
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
   .pipe(prefix('last 2 versions'))
-  .pipe(gulp.dest('s/css/'));
+  .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
+  .pipe(gulp.dest('./s/dist/'));
 });
 
 gulp.task('watch', function() {
-  gulp.watch(['jsx/**', 's/*.css'], ['css', 'js']);
+  gulp.watch('jsx/*', ['js']);
+  gulp.watch(['sass/**/*'], ['css']);
 });
 
 gulp.task('build_and_watch', ['css', 'js', 'watch']);
