@@ -56,14 +56,17 @@ class App extends React.Component {
       dragBarPosition: 250,
 
       spinnerVisible: false,
+      
+      capabilities: {},
     };
   }
 
-  handleDidConnect(connectionStr, connectionId, databaseName) {
+  handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
     this.setState({
       connected: true,
       connectionId: connectionId,
-      databaseName: databaseName
+      databaseName: databaseName,
+      capabilities: capabilities
     });
     var self = this;
     var connId = this.state.connectionId;
@@ -76,7 +79,6 @@ class App extends React.Component {
 
   onDragStart(e) {
     console.log("onDragStart");
-
   }
 
   componentDidUpdate(props, state) {
@@ -421,6 +423,7 @@ class App extends React.Component {
 
           <MainContainer
             results={this.state.results}
+            supportsExplain={this.state.capabilities.HasAnalyze}
             dragBarPosition={this.state.dragBarPosition}
             selectedView={this.state.selectedView} />
         </div>

@@ -8,6 +8,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var (
+	pgCapabilities = ClientCapabilities{
+		HasAnalyze: true,
+	}
+)
+
 // ClientPg describes Postgres db client
 type ClientPg struct {
 	db               *sqlx.DB
@@ -27,13 +33,16 @@ func NewClientPgFromURL(uri string) (Client, error) {
 		return nil, err
 	}
 
-	client := ClientPg{
+	return &ClientPg{
 		db:               db,
 		connectionString: uri,
 		history:          NewHistory(),
-	}
+	}, nil
+}
 
-	return &client, nil
+// GetCapabilities returns mysql capabilities
+func (c *ClientPg) GetCapabilities() ClientCapabilities {
+	return pgCapabilities
 }
 
 // Connection returns underlying db connection

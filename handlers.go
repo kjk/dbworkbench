@@ -217,6 +217,7 @@ func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 //	url     : database connection url formatted for Go driver
 //  urlSafe : like url but with password replaced with ***
 //  type    : database type ('postgres' or 'mysql')
+//
 func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	url := strings.TrimSpace(r.FormValue("url"))
 	urlSafe := strings.TrimSpace(r.FormValue("urlSafe"))
@@ -268,9 +269,11 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	v := struct {
 		ConnectionID    int
 		CurrentDatabase string
+		Capabilities    ClientCapabilities
 	}{
 		ConnectionID:    connInfo.ConnectionID,
 		CurrentDatabase: currDbStr,
+		Capabilities:    client.GetCapabilities(),
 	}
 	serveJSON(w, r, v)
 }

@@ -11,9 +11,9 @@ var Output = require('./Output.jsx');
 var view = require('./view.js');
 
 class MainContainer extends React.Component {
-  renderInput(tooLong) {
+  renderInput(tooLong, supportsExplain) {
     if (this.props.selectedView === view.SQLQuery) {
-      return <Input tooLong={tooLong} />;
+      return <Input tooLong={tooLong} supportsExplain={supportsExplain}/>;
     }
   }
 
@@ -37,7 +37,7 @@ class MainContainer extends React.Component {
     return (
       <div id="body" style={divStyle}>
           <DbNav view={this.props.selectedView}/>
-          {this.renderInput("")}
+          {this.renderInput("", this.props.supportsExplain)}
           <Output
             selectedView={this.props.selectedView}
             results={this.props.results}

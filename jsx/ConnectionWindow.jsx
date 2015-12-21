@@ -275,7 +275,8 @@ class ConnectionWindow extends React.Component {
         const connId = resp.ConnectionID;
         const connStr = url;
         const databaseName = resp.CurrentDatabase;
-        self.props.onDidConnect(connStr, connId, databaseName);
+        const capabilities = resp.Capabilities;
+        self.props.onDidConnect(connStr, connId, databaseName, capabilities);
       });
     });
   }

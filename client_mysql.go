@@ -12,6 +12,12 @@ import (
 // select version()
 // `SELECT VARIABLE_NAME, VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME = 'VERSION';`
 
+var (
+	mysqlCapabilities = ClientCapabilities{
+		HasAnalyze: false,
+	}
+)
+
 // ClientMysql describes MySQL (and derivatives) client
 type ClientMysql struct {
 	db               *sqlx.DB
@@ -25,13 +31,16 @@ func NewClientMysqlFromURL(uri string) (Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := ClientMysql{
+	return &ClientMysql{
 		db:               db,
 		connectionString: uri,
 		history:          NewHistory(),
-	}
+	}, nil
+}
 
-	return &client, nil
+// GetCapabilities returns mysql capabilities
+func (c *ClientMysql) GetCapabilities() ClientCapabilities {
+	return mysqlCapabilities
 }
 
 // Connection returns underlying db connection
