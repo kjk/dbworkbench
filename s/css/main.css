@@ -468,6 +468,10 @@ h4.modal-title {
   top: 0px;
 }
 
+/*#output div.wrapper {
+  overflow: hidden;
+}*/
+
 #results {
   font-size: 12px;
   margin: 0px;
@@ -614,7 +618,6 @@ a.reactable-next-page {
   background-color: transparent;
   color: white;
   margin: 5px;
-  text-decoration: underline;
 }
 
 span.reactable-page {
@@ -627,6 +630,7 @@ a.disabled {
   pointer-events: none;
   cursor: default;
   text-decoration: none;
+  opacity: 0.4;
 }
 
 /*

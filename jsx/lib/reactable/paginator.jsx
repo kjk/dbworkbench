@@ -55,28 +55,28 @@ export class Paginator extends React.Component {
 
     renderPrevious() {
         if(this.props.currentPage <= 0) {
-            return (<a className='reactable-previous-page disabled'>Previous</a>);
+            return (<a className='reactable-previous-page disabled'><i className="fa fa-chevron-left"></i></a>);
         }
 
         return (
             <a  className='reactable-previous-page'
                 onClick={this.handlePrevious.bind(this)}
                 href={pageHref(this.props.currentPage - 1)}>
-                Previous
+                <i className="fa fa-chevron-left"></i>
            </a>
         );
     }
 
     renderNext() {
         if(this.props.currentPage >= this.props.numPages - 1) {
-            return (<a className='reactable-next-page disabled'>Next</a>);
+            return (<a className='reactable-next-page disabled'><i className="fa fa-chevron-right"></i></a>);
         }
 
         return (
             <a  className='reactable-next-page'
                 onClick={this.handleNext.bind(this)}
                 href={pageHref(this.props.currentPage + 1)}>
-                Next
+                <i className="fa fa-chevron-right"></i>
            </a>
         );
     }
@@ -141,10 +141,10 @@ export class Paginator extends React.Component {
 
         if (this.state.paginationFixed) {
             var style = { position: 'fixed' }
-            $("#results").attr('margin-bottom', '21px');
+            // $("#results").attr('margin-bottom', '21px');
         } else {
             var style = { position: 'relative' }
-            $("#results").attr('margin-bottom', '0');
+            // $("#results").attr('margin-bottom', '0');
         }
 
         return (
