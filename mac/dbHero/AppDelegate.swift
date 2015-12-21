@@ -5,8 +5,8 @@ import WebKit
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
-    @IBOutlet weak var webView: WebView!
-    let urlpath = "http://localhost:5444"
+    var webView: WKWebView!
+    let backendURL = "http://localhost:5444"
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
@@ -31,7 +31,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if backendUsage != "" {
             s += backendUsage
         }
-        
         req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
@@ -91,11 +90,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func loadURL() {
         log("loadURL")
-        webView.mainFrame.loadRequest(urlReq(urlpath))
+        webView.loadRequest(urlReq(backendURL))
     }
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
+        webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 400, height: 400))
+        window.contentView?.subviews.append(webView)
         //webView.mainFrame.loadRequest(urlReq("https://blog.kowalczyk.info"))
 
         loadUsageData()

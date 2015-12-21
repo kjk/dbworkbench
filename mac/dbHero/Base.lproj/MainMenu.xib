@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -14,7 +13,6 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="dbHero" customModuleProvider="target">
             <connections>
-                <outlet property="webView" destination="ir3-3k-g0j" id="o0d-uz-TEF"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -337,24 +335,10 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="555" height="463"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="4096" height="2137"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="555" height="463"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <webView horizontalHuggingPriority="245" translatesAutoresizingMaskIntoConstraints="NO" id="ir3-3k-g0j">
-                        <rect key="frame" x="0.0" y="0.0" width="555" height="463"/>
-                        <webPreferences key="preferences" defaultFontSize="16" defaultFixedFontSize="13" minimumFontSize="0">
-                            <nil key="identifier"/>
-                        </webPreferences>
-                    </webView>
-                </subviews>
-                <constraints>
-                    <constraint firstItem="ir3-3k-g0j" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="6Cp-Ng-38w"/>
-                    <constraint firstItem="ir3-3k-g0j" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="eaf-cB-yVC"/>
-                    <constraint firstAttribute="bottom" secondItem="ir3-3k-g0j" secondAttribute="bottom" id="wWy-mf-sjG"/>
-                    <constraint firstAttribute="trailing" secondItem="ir3-3k-g0j" secondAttribute="trailing" id="xYW-p6-VUi"/>
-                </constraints>
             </view>
             <point key="canvasLocation" x="450.5" y="491.5"/>
         </window>
