@@ -8,17 +8,9 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+. scripts/buildmachelper.sh
+
 rm -rf mac/build
-
-godep go vet github.com/kjk/dbworkbench
-
-./node_modules/.bin/gulp default
-
-echo "generating resources .zip file..."
-go run tools/build/*.go -gen-resources
-
-echo "building dbherohelper.exe..."
-godep go build -tags embeded_resources -o mac/dbherohelper.exe
 
 echo "running xcode..."
 xcodebuild -parallelizeTargets -project mac/dbHero.xcodeproj/
