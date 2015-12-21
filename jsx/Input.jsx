@@ -13,6 +13,7 @@ class Input extends React.Component {
     this.exportToCSV = this.exportToCSV.bind(this);
     this.runExplain = this.runExplain.bind(this);
     this.runQuery = this.runQuery.bind(this);
+    this.renderExplain = this.renderExplain.bind(this);
   }
 
   runQuery(e) {
@@ -92,6 +93,14 @@ class Input extends React.Component {
     this.initEditor();
   }
 
+  renderExplain() {
+      if (this.props.supportsExplain) {
+        return (
+            <input type="button" onClick={this.runExplain} id="explain"
+              value="Explain Query" className="btn btn-sm btn-default" />
+        );
+      }
+  }
   render() {
     // TODO: add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
@@ -104,8 +113,7 @@ class Input extends React.Component {
           <div className="actions">
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
-            <input type="button" onClick={this.runExplain} id="explain"
-              value="Explain Query" className="btn btn-sm btn-default" />
+            {this.renderExplain()}
             <div id="query_progress">Please wait, query is executing...</div>
             <div id="input-row-number">{this.props.tooLong}</div>
           </div>

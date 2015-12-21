@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/kjk/u"
@@ -282,6 +283,20 @@ func serveStatic(w http.ResponseWriter, r *http.Request, path string) {
 	serveData(w, r, 200, MimeTypeByExtensionExt(path), data)
 }
 
+func serveTemplate(w http.ResponseWriter, r *http.Request, path string, v interface{}) {
+	tmpl, err := template.ParseFiles(path)
+	if err != nil {
+		LogErrorf("tempalte.ParseFiles('%s') failed with '%s'\n", path, err)
+		servePlainText(w, r, 500, fmt.Sprintf("tempalte.ParseFiles('%s') failed with '%s'\n", path, err))
+		return
+	}
+	name := filepath.Base(path)
+	err = tmpl.ExecuteTemplate(w, name, v)
+	if err != nil {
+		LogErrorf("tmpl.ExecuteTemplate('%s') failed with '%s'\n", name, err)
+	}
+}
+
 // url: /s/:path
 func handleStatic(w http.ResponseWriter, r *http.Request) {
 	LogInfof("handleStatic: '%s'\n", r.URL.Path)
@@ -307,17 +322,19 @@ func handleUsage(w http.ResponseWriter, r *http.Request) {
 		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
 		return
 	}
-	LogInfof("%d users\n", len(res))
 	resJSON, err := json.Marshal(res)
 	if err != nil {
 		LogErrorf("json.Marshal() failed with '%s'\n", err)
 		servePlainText(w, r, 500, fmt.Sprintf("error: '%s'", err))
 		return
 	}
-	servePlainText(w, r, 200, string(resJSON))
-
-	// path := filepath.Join("www", "usage_stats.html")
-	//serveStatic(w, r, resJSON)
+	path = filepath.Join("www", "usage_stats.html")
+	v := struct {
+		UsersJSON string
+	}{
+		UsersJSON: string(resJSON),
+	}
+	serveTemplate(w, r, path, v)
 }
 
 func initHandlers() {

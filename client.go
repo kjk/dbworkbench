@@ -20,6 +20,14 @@ type Client interface {
 	Activity() (*Result, error)
 	Query(query string) (*Result, error)
 	History() []HistoryRecord
+	GetCapabilities() ClientCapabilities
+}
+
+// ClientCapabilities describes capabilities of the client.
+// Front-end might customize the view depending on capabilities
+type ClientCapabilities struct {
+	// does it support query analyze
+	HasAnalyze bool
 }
 
 // utility functions

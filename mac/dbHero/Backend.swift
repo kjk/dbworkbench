@@ -4,9 +4,6 @@ import AppKit
 var backendTask = NSTask()
 var waitsForMoreServerOutput = true
 
-// TODO: use NSTak termination handler to get notified the backend process
-// exists and show some error (or try to restart automatically)
-
 // kill other instances of mac app. this is needed for the case when a user
 // downloads an update and runs it without quitting the previous version
 func killOtherAppInstances() {
@@ -80,14 +77,37 @@ func loadUsageData() {
     }
 }
 
-func startBackend(view : ViewController) {
+// Maybe: instead of passing appDelegate, use notifcations or getDelegate()
+func startBackend(appDelegate : AppDelegate) {
     let resPath = NSBundle.mainBundle().resourcePath
-    let serverGoExePath = resPath! + "/dbherohelper.exe"
+    let backendGoExePath = resPath! + "/dbherohelper.exe"
 
     killOtherAppInstances()
     killBackendIfRunning()
 
-    backendTask.launchPath = serverGoExePath
+    // NSTask.launch() will throw objc exception if file doesn't exist
+    // it'll be ultimately caught by Cocoa if we're running on ui thread
+    // but it'll not execute any of our code after that. Ideally we would
+    // handle the exception but that's not possible in swift and I'm too lazy
+    // to write this part in Objective-C
+    // So we guard against the most common reason for this error with up-front check
+    // I also tried running on background thread, but that would crash the whole app
+    // due to uncought exception
+    let exists = NSFileManager.defaultManager().fileExistsAtPath(backendGoExePath)
+    if !exists {
+        appDelegate.showBackendFailedError()
+        return
+    }
+    
+    backendTask.terminationHandler = { task -> Void in
+        log("backendTask terminated");
+        // this runs on non-main thread so marshal on main thread
+        dispatch_async(dispatch_get_main_queue(),{
+            appDelegate.showBackendFailedError()
+        })
+    }
+
+    backendTask.launchPath = backendGoExePath
     backendTask.currentDirectoryPath = resPath!
     //        serverTask.arguments = ["-dev"]
 
@@ -109,20 +129,17 @@ func startBackend(view : ViewController) {
         // wait until backend prints "Started running on..."
         if outStr?.length > 0 {
             let s = outStr! as String
-            // TODO: this is not entirely fool-proof as we might get "Started running"
-            // line before we get "failed with" line
             if (s.containsString("failed with")) {
                 // TODO: notify about the error in the UI
                 // this could be "http.ListendAndServer() failed with listen tcp 127.0.0.1:5444: bind: address already in use"
                 log("startBackend: failed because output is: \(s)")
                 waitsForMoreServerOutput = false
-                getAppDelegate().showBackendFailedError()
                 return
             }
             if (s.containsString("Started running on")) {
                 log("startBackend: backend started, loading url")
                 waitsForMoreServerOutput = false
-                view.loadURL()
+                appDelegate.loadURL()
                 return
             }
         }
@@ -130,12 +147,13 @@ func startBackend(view : ViewController) {
     })
 
     backendTask.launch()
-    let pid = backendTask.processIdentifier
-    log("backend started, pid: \(pid)")
 }
 
 func stopBackend() {
     log("stopping backend")
-    backendTask.terminate()
+    if backendTask.running {
+        backendTask.terminationHandler = nil
+        backendTask.terminate()
+    }
 }
 

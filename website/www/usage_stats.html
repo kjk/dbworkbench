@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang=en>
+  <head>
+  <meta charset=utf-8>
+  <title>Usage stats</title>
+
+  <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+  <script type="text/javascript" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+
+  <script type="text/javascript" src="/jquery.timeago.js"></script>
+ 
+  <link rel="stylesheet" type="text/css" href="/usage.css">
+
+  <style>
+  body {
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: white;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+  }
+
+  #hdr {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    font-size: 120%;
+    font-weight: bold;
+  }
+  </style>
+</head>
+
+<body>
+
+<script>
+var data = {{ .UsersJSON }};
+
+function rowCb(row, data, index) {
+  var v = $.timeago(data["FirstSeen"]);
+  $("td:eq(4)", row).html(v);
+  v = $.timeago(data["LastSeen"]);
+  $("td:eq(5)", row).html(v);
+}
+
+function init() {
+
+  var opts = {
+    data: data,
+    pageLength: 100,
+    order: [4, 'desc'], // show new users first
+    rowCallback: rowCb,
+    columns: [
+      { data: 'Name' },
+      { data: 'UniqueDaysCount' },
+      { data: "DatabaseOpenCount" },
+      { data: "QueryCount" },
+      { data: 'FirstSeen' },
+      { data: "LastSeen" }
+    ]    
+  };
+
+  $('#my_table').DataTable(opts);
+}
+
+$(document).ready( function () {
+  init();
+});
+</script>
+
+  <div id="hdr">Usage stats:</div>
+
+  <table id="my_table" class="display">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Days</th>
+        <th>Db opens</th>
+        <th>Queries</th>
+        <th>First seen</th>
+        <th>Last seen</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+</body>
+
+</html>

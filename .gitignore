@@ -13,7 +13,7 @@ node_modules
 cmd/import_stack_overflow/data/
 cmd/import_stack_overflow/import_stack_overflow
 mac/dbHero.xcodeproj/xcuserdata/
-mac/dbHero.xcodeproj/project.xcworkspace/xcuserdata/
+xcuserdata
 mac/build/
 mac/dbherohelper.exe
 win/dbhero/obj/

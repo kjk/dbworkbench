@@ -1,0 +1,418 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		034240691C276A3A00C27906 /* dbherohelper.exe in Resources */ = {isa = PBXBuildFile; fileRef = 034240661C27695300C27906 /* dbherohelper.exe */; };
+		036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9A8D1C268F7600D75C7C /* AppDelegate.swift */; };
+		036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A8F1C268F7600D75C7C /* Assets.xcassets */; };
+		036C9A931C268F7600D75C7C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 036C9A911C268F7600D75C7C /* MainMenu.xib */; };
+		036C9A9E1C268F7600D75C7C /* dbHeroTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9A9D1C268F7600D75C7C /* dbHeroTests.swift */; };
+		036C9AA91C268F8500D75C7C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C9AA81C268F8500D75C7C /* WebKit.framework */; };
+		036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAA1C26952400D75C7C /* ListProcesses.swift */; };
+		036C9AAE1C26952400D75C7C /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAB1C26952400D75C7C /* Log.swift */; };
+		036C9AAF1C26952400D75C7C /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C9AAC1C26952400D75C7C /* Backend.swift */; };
+		03ABCB851C2775180002816C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ABCB841C2775180002816C /* Util.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		036C9A9A1C268F7600D75C7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 036C9A821C268F7600D75C7C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 036C9A891C268F7600D75C7C;
+			remoteInfo = dbHero;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		034240661C27695300C27906 /* dbherohelper.exe */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = dbherohelper.exe; sourceTree = "<group>"; };
+		036C9A8A1C268F7600D75C7C /* dbHero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbHero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		036C9A8D1C268F7600D75C7C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		036C9A8F1C268F7600D75C7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		036C9A921C268F7600D75C7C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		036C9A941C268F7600D75C7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		036C9A991C268F7600D75C7C /* dbHeroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dbHeroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		036C9A9D1C268F7600D75C7C /* dbHeroTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dbHeroTests.swift; sourceTree = "<group>"; };
+		036C9A9F1C268F7600D75C7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		036C9AA81C268F8500D75C7C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		036C9AAA1C26952400D75C7C /* ListProcesses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListProcesses.swift; sourceTree = "<group>"; };
+		036C9AAB1C26952400D75C7C /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		036C9AAC1C26952400D75C7C /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
+		03ABCB841C2775180002816C /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		036C9A871C268F7600D75C7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C9AA91C268F8500D75C7C /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C9A961C268F7600D75C7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		036C9A811C268F7600D75C7C = {
+			isa = PBXGroup;
+			children = (
+				034240661C27695300C27906 /* dbherohelper.exe */,
+				036C9AA81C268F8500D75C7C /* WebKit.framework */,
+				036C9A8C1C268F7600D75C7C /* dbHero */,
+				036C9A9C1C268F7600D75C7C /* dbHeroTests */,
+				036C9A8B1C268F7600D75C7C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		036C9A8B1C268F7600D75C7C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				036C9A8A1C268F7600D75C7C /* dbHero.app */,
+				036C9A991C268F7600D75C7C /* dbHeroTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		036C9A8C1C268F7600D75C7C /* dbHero */ = {
+			isa = PBXGroup;
+			children = (
+				03ABCB841C2775180002816C /* Util.swift */,
+				036C9AAA1C26952400D75C7C /* ListProcesses.swift */,
+				036C9AAB1C26952400D75C7C /* Log.swift */,
+				036C9AAC1C26952400D75C7C /* Backend.swift */,
+				036C9A8D1C268F7600D75C7C /* AppDelegate.swift */,
+				036C9A8F1C268F7600D75C7C /* Assets.xcassets */,
+				036C9A911C268F7600D75C7C /* MainMenu.xib */,
+				036C9A941C268F7600D75C7C /* Info.plist */,
+			);
+			path = dbHero;
+			sourceTree = "<group>";
+		};
+		036C9A9C1C268F7600D75C7C /* dbHeroTests */ = {
+			isa = PBXGroup;
+			children = (
+				036C9A9D1C268F7600D75C7C /* dbHeroTests.swift */,
+				036C9A9F1C268F7600D75C7C /* Info.plist */,
+			);
+			path = dbHeroTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		036C9A891C268F7600D75C7C /* dbHero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 036C9AA21C268F7600D75C7C /* Build configuration list for PBXNativeTarget "dbHero" */;
+			buildPhases = (
+				036C9A861C268F7600D75C7C /* Sources */,
+				036C9A871C268F7600D75C7C /* Frameworks */,
+				036C9A881C268F7600D75C7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = dbHero;
+			productName = dbHero;
+			productReference = 036C9A8A1C268F7600D75C7C /* dbHero.app */;
+			productType = "com.apple.product-type.application";
+		};
+		036C9A981C268F7600D75C7C /* dbHeroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 036C9AA51C268F7600D75C7C /* Build configuration list for PBXNativeTarget "dbHeroTests" */;
+			buildPhases = (
+				036C9A951C268F7600D75C7C /* Sources */,
+				036C9A961C268F7600D75C7C /* Frameworks */,
+				036C9A971C268F7600D75C7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				036C9A9B1C268F7600D75C7C /* PBXTargetDependency */,
+			);
+			name = dbHeroTests;
+			productName = dbHeroTests;
+			productReference = 036C9A991C268F7600D75C7C /* dbHeroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		036C9A821C268F7600D75C7C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "Krzysztof Kowalczyk";
+				TargetAttributes = {
+					036C9A891C268F7600D75C7C = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					036C9A981C268F7600D75C7C = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 036C9A891C268F7600D75C7C;
+					};
+				};
+			};
+			buildConfigurationList = 036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "DBHero" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 036C9A811C268F7600D75C7C;
+			productRefGroup = 036C9A8B1C268F7600D75C7C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				036C9A891C268F7600D75C7C /* dbHero */,
+				036C9A981C268F7600D75C7C /* dbHeroTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		036C9A881C268F7600D75C7C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				034240691C276A3A00C27906 /* dbherohelper.exe in Resources */,
+				036C9A901C268F7600D75C7C /* Assets.xcassets in Resources */,
+				036C9A931C268F7600D75C7C /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C9A971C268F7600D75C7C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		036C9A861C268F7600D75C7C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C9AAF1C26952400D75C7C /* Backend.swift in Sources */,
+				036C9A8E1C268F7600D75C7C /* AppDelegate.swift in Sources */,
+				03ABCB851C2775180002816C /* Util.swift in Sources */,
+				036C9AAD1C26952400D75C7C /* ListProcesses.swift in Sources */,
+				036C9AAE1C26952400D75C7C /* Log.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C9A951C268F7600D75C7C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C9A9E1C268F7600D75C7C /* dbHeroTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		036C9A9B1C268F7600D75C7C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 036C9A891C268F7600D75C7C /* dbHero */;
+			targetProxy = 036C9A9A1C268F7600D75C7C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		036C9A911C268F7600D75C7C /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				036C9A921C268F7600D75C7C /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		036C9AA01C268F7600D75C7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		036C9AA11C268F7600D75C7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		036C9AA31C268F7600D75C7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = dbHero/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHero;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		036C9AA41C268F7600D75C7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = dbHero/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHero;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
+		036C9AA61C268F7600D75C7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = dbHeroTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHeroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dbHero.app/Contents/MacOS/dbHero";
+			};
+			name = Debug;
+		};
+		036C9AA71C268F7600D75C7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = dbHeroTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dbheroapp.dbHeroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dbHero.app/Contents/MacOS/dbHero";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		036C9A851C268F7600D75C7C /* Build configuration list for PBXProject "DBHero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C9AA01C268F7600D75C7C /* Debug */,
+				036C9AA11C268F7600D75C7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		036C9AA21C268F7600D75C7C /* Build configuration list for PBXNativeTarget "dbHero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C9AA31C268F7600D75C7C /* Debug */,
+				036C9AA41C268F7600D75C7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		036C9AA51C268F7600D75C7C /* Build configuration list for PBXNativeTarget "dbHeroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C9AA61C268F7600D75C7C /* Debug */,
+				036C9AA71C268F7600D75C7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 036C9A821C268F7600D75C7C /* Project object */;
+}
