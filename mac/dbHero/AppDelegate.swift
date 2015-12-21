@@ -1,12 +1,57 @@
 import Cocoa
 import WebKit
 
+// Maybe: rememver zoom level
+
+// same as in Chrome
+let zoomLevels : [Double] = [
+    0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5
+]
+
+// returns an index at which zoomLevel[i] has the smallest difference from z
+func findClosestZoomLevelIdx(z : Double) -> Int {
+    let min = zoomLevels[0]
+    if z <= min {
+        return 0
+    }
+    let n = zoomLevels.count
+    let max = zoomLevels[n-1]
+    if z >= max {
+        return n-1
+    }
+    var prevDiff = fabs(min - z)
+    for i in 1...n {
+        let diff = fabs(zoomLevels[i] - z)
+        if diff > prevDiff {
+            return i - 1
+        }
+        prevDiff = diff
+    }
+    return n-1
+}
+
+func findNextZoomLevel(z : Double) -> Double {
+    var idx = findClosestZoomLevelIdx(z) + 1
+    if idx >= zoomLevels.count {
+        idx = zoomLevels.count - 1
+    }
+    return zoomLevels[idx]
+}
+
+func findPrevZoomLevel(z : Double) -> Double {
+    var idx = findClosestZoomLevelIdx(z) - 1
+    if idx < 0 {
+        idx = 0
+    }
+    return zoomLevels[idx]
+}
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
-    @IBOutlet weak var webView: WebView!
-    let urlpath = "http://localhost:5444"
+    var webView: WKWebView!
+    let backendURL = "http://localhost:5444"
 
     func autoUpdateCheck() {
         let myVer = NSBundle.mainBundle().shortVersion
@@ -31,7 +76,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if backendUsage != "" {
             s += backendUsage
         }
-        
         req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
         let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
@@ -89,13 +133,75 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     
+    func viewMidPoint(view : NSView) -> CGPoint {
+        let b = view.bounds
+        return CGPoint(x: b.width / 2, y: b.height / 2)
+    }
+
+    @IBAction func zoomIn(sender: AnyObject) {
+        let currZoom = Double(webView.magnification)
+        let newZoom = findNextZoomLevel(currZoom)
+        webView.setMagnification(CGFloat(newZoom), centeredAtPoint: viewMidPoint(webView))
+        //log("zoomIn: from \(currZoom) to \(newZoom)")
+    }
+
+    @IBAction func zoomOut(sender: AnyObject) {
+        let currZoom = Double(webView.magnification)
+        let newZoom = findPrevZoomLevel(currZoom)
+        webView.setMagnification(CGFloat(newZoom), centeredAtPoint: viewMidPoint(webView))
+        //log("zoomIn: from \(currZoom) to \(newZoom)")
+    }
+
+    @IBAction func actualSize(sender: AnyObject) {
+        webView.setMagnification(1.0, centeredAtPoint: viewMidPoint(webView))
+    }
+
     func loadURL() {
         log("loadURL")
-        webView.mainFrame.loadRequest(urlReq(urlpath))
+        webView.loadRequest(urlReq(backendURL))
     }
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         log("applicationDidFinishLaunching")
+        webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 400, height: 400))
+        webView.allowsMagnification = true
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        let cv = window.contentView!
+        cv.subviews.append(webView)
+
+        let v = window.contentView!
+
+        let cWidth = NSLayoutConstraint(item: webView,
+            attribute: NSLayoutAttribute.Width,
+            relatedBy: .Equal,
+            toItem: v,
+            attribute: .Width,
+            multiplier: 1,
+            constant: 0)
+
+        let cHeight = NSLayoutConstraint(item: webView,
+            attribute: NSLayoutAttribute.Height,
+            relatedBy: .Equal,
+            toItem: v,
+            attribute: .Height,
+            multiplier: 1,
+            constant: 0)
+
+        let constraints = [
+            cWidth,
+            cHeight,
+        ]
+
+        // Sepculation: contentView has constraints that bind its size to size
+        // of the window. We need to lower priority of our constraints below
+        // that of contentView. Otherwise ultimately we bind the size of the
+        // window to current size of webView, making it un-resizeable
+        for c in constraints {
+            c.priority = NSLayoutPriorityDragThatCannotResizeWindow
+        }
+
+        v.addConstraints(constraints)
+
         //webView.mainFrame.loadRequest(urlReq("https://blog.kowalczyk.info"))
 
         loadUsageData()
