@@ -21,11 +21,9 @@ export class FiltererInput extends React.Component {
 export class Filterer extends React.Component {
     render() {
         return (
-            <div className="reactable-filterer">
-                <FiltererInput onFilter={this.props.onFilter}
-                    value={this.props.value}
-                    placeholder={this.props.placeholder}/>
-            </div>
+            <FiltererInput onFilter={this.props.onFilter}
+                value={this.props.value}
+                placeholder={this.props.placeholder}/>
         );
     }
 };

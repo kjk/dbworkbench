@@ -423,7 +423,7 @@ export class Table extends React.Component {
 
         return (
         <div>
-            <div>
+            <div className="reactable-filterer">
                 {filtering === true ?
                     <Filterer
                         onFilter={filter => {

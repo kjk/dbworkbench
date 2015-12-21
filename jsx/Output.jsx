@@ -135,7 +135,6 @@ class Output extends React.Component {
           {header}
           {rows}
       </Table>
-
     );
   }
 
