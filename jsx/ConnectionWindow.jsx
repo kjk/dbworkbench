@@ -25,9 +25,9 @@ let emptyBookmarkId = -1;
 
 // connecting is async process which might be cancelled
 // we use this to uniquely identify connection attempt so that
-// whe api.connect() finishes, we can tell if it has been cancelled   
+// whe api.connect() finishes, we can tell if it has been cancelled
 // Note: could be state on CoonectionWindow, but we only have one
-// of those at any given time so global is just as good 
+// of those at any given time so global is just as good
 let currConnectionId = 1;
 
 function newEmptyBookmark() {
@@ -177,7 +177,7 @@ class ConnectionWindow extends React.Component {
       if (dbName != "") {
         b["nick"] = dbName;
       }
-    }  
+    }
 
     const bookmarks = this.state.bookmarks;
     bookmarks[this.selectedBookmarkIdx] = b;
@@ -188,7 +188,7 @@ class ConnectionWindow extends React.Component {
   }
 
   handleRememberChange(e) {
-    var newRemeber = !this.state.remember; 
+    var newRemeber = !this.state.remember;
     this.setState({
       remember: newRemeber,
     });
@@ -220,7 +220,7 @@ class ConnectionWindow extends React.Component {
       url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db;
       urlSafe = url;
       if (pass != "") {
-        url = "postgres://" + user + ":" + "***" + "@" + host + ":" + port + "/" + db;
+        urlSafe = "postgres://" + user + ":" + "***" + "@" + host + ":" + port + "/" + db;
       }
     }
     else if (dbType == dbTypeMysql)
@@ -236,12 +236,12 @@ class ConnectionWindow extends React.Component {
       url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
       urlSafe = url;
       if (pass != "") {
-        urlSafe = user + ":" + "***" + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";        
+        urlSafe = user + ":" + "***" + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
       }
     } else {
       console.log("invalid type: " + dbType);
       // TODO: how to error out?
-    }    
+    }
 
     console.log("URL:" + url);
     const self = this;
@@ -268,7 +268,7 @@ class ConnectionWindow extends React.Component {
       b = self.getSelectedBookmark();
       if (!rememberConnection) {
         console.log("did connect, not saving a bookmark");
-        return;        
+        return;
       }
       console.log("did connect, saving a bookmark " + b);
       api.addBookmark(b, function(data) {
@@ -297,7 +297,7 @@ class ConnectionWindow extends React.Component {
       return <div className="col-md-12 connection-error">Error: {errorText}</div>;
     }
   }
-  
+
   renderBookMarks() {
     if (this.state.isConnecting) {
       return;
@@ -338,7 +338,7 @@ class ConnectionWindow extends React.Component {
 
   renderFormElements() {
     let b = this.getSelectedBookmark();
-    
+
     let dbType = b["type"];
     let defaultPort = "0";
     if (dbType == dbTypePostgres) {
@@ -369,8 +369,8 @@ class ConnectionWindow extends React.Component {
         <div className="col-md-4">
           <div className="form-group">
             <label className="control-label" htmlFor="db_type">Type</label>
-            <select 
-              id="db_type" 
+            <select
+              id="db_type"
               className="form-control input-sm"
               value={dbType}
               disabled={disable}
@@ -444,7 +444,7 @@ class ConnectionWindow extends React.Component {
               disabled={disable}
               onChange={this.handleFormChanged.bind(this, 'password')} />
           </div>
-        </div> 
+        </div>
 
         <div className="col-md-12 right">
           <label className="control-label" htmlFor="pwd-remember">
@@ -489,7 +489,7 @@ class ConnectionWindow extends React.Component {
     if (this.state.isConnecting) {
       return (
         <div className="col-md-12" style={styleDiv}>
-          <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>        
+          <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>
           <SpinnerCircle style={styleSpinner}/>
         </div>
       );
@@ -501,7 +501,7 @@ class ConnectionWindow extends React.Component {
       </div>
     );
   }
-  
+
   renderForm() {
     if (this.state.selectedBookmarkIdx >= 0) {
       return (
@@ -520,8 +520,8 @@ class ConnectionWindow extends React.Component {
     return (
       <form role="form">
         <div className="col-md-12 text-center">
-            <img class="img-responsive center-block small" 
-              src="/s/img/icon.png" 
+            <img class="img-responsive center-block small"
+              src="/s/img/icon.png"
               alt="" style={imageStyle}/>
             <h5>Please add a connection</h5>
         </div>
