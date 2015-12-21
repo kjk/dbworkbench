@@ -49,7 +49,7 @@ gulp.task('css', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('jsx/*', ['js']);
+  gulp.watch('jsx/**', ['js']);
   gulp.watch(['sass/**/*'], ['css']);
 });
 
