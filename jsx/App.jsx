@@ -133,7 +133,7 @@ class App extends React.Component {
     // in handleViewSelected
     var self = this;
     setTimeout(function() {
-      self.handleViewSelected(view.Content);
+      self.handleViewSelected(view.SQLQuery);
     }, 200);
 
     var connId = this.state.connectionId;
@@ -221,11 +221,6 @@ class App extends React.Component {
 
     // those don't require table being selected
     switch (viewName) {
-      case view.SQLQuery:
-        this.setState({
-          results: null,
-        });
-        return;
       case view.History:
         this.getHistory();
         break;
@@ -237,9 +232,15 @@ class App extends React.Component {
     }
 
     switch (viewName) {
-      case view.Content:
-        this.getTableContent();
-        break;
+      case view.SQLQuery:
+        if (this.state.selectedTable == "") {
+          this.setState({
+            results: null,
+          });
+        } else {
+          this.getTableContent();
+        }
+        return;
       case view.Structure:
         this.getTableStructure();
         break;

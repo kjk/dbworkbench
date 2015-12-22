@@ -73,11 +73,13 @@ class MainContainer extends React.Component {
 
   render() {
     // when showing sql query, results are below editor window
-    var notFull = (this.props.selectedView === view.SQLQuery);
+    var withInput = (this.props.selectedView === view.SQLQuery);
 
     var divStyle = {
       left: this.props.dragBarPosition + 'px',
     };
+
+
 
     // var results = this.props.results
     // if (results != null && results.rows != null) {
@@ -92,18 +94,22 @@ class MainContainer extends React.Component {
       <div id="body" style={divStyle}>
           <DbNav view={this.props.selectedView}/>
 
-          <Input
-            dragBarPosition={this.state.dragBarPosition}
-            supportsExplain={this.propssupportsExplain}
-            onMouseDown={this.onMouseDown}
-            onMouseMove={this.onMouseMove}
-            onMouseUp={this.onMouseUp} />
+          { withInput ?
+            <Input
+              dragBarPosition={this.state.dragBarPosition}
+              supportsExplain={this.propssupportsExplain}
+              onMouseDown={this.onMouseDown}
+              onMouseMove={this.onMouseMove}
+              onMouseUp={this.onMouseUp} />
+            : null
+          }
+
 
           <Output
             dragBarPosition={this.state.dragBarPosition}
             selectedView={this.props.selectedView}
             results={this.props.results}
-            notFull={notFull}
+            withInput={withInput}
             resetPagination={this.props.resetPagination} />
       </div>
     );

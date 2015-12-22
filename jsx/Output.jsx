@@ -13,8 +13,6 @@ var Td = require('./lib/reactable/td.jsx').Td;
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 
-var view = require('./view.js');
-
 class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -118,17 +116,20 @@ class Output extends React.Component {
 
     var footer = this.renderFooter();
 
-    if (this.props.selectedView == view.SQLQuery || this.props.selectedView == view.Content) {
+    if (this.props.withInput) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
       var itemsPerPage = 100;
       var filterStyle = { top: this.props.dragBarPosition + 6 + 'px' };
+    } else {
+      var tableStyle = { height: '0' };
     }
 
     return (
       <Table
         id="results"
         className="results"
+        style={tableStyle}
         sortable={true}
         filterable={filterable}
         filterPlaceholder={filterPlaceholder}
@@ -176,7 +177,14 @@ class Output extends React.Component {
 
     // TODO: need case for sidebar
 
-    var outputStyle = { top: (this.props.dragBarPosition + 60) + 'px' };
+    var outputStyle = { top: this.props.dragBarPosition + 60 + 'px'}
+    if (clsOutput != "empty") {
+      outputStyle['marginTop'] = '-10px';
+    }
+
+    if (!this.props.withInput) {
+      outputStyle['top'] = '60px';
+    }
 
     return (
       <div id="output" className={clsOutput} style={outputStyle}>
