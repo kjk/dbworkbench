@@ -12,6 +12,7 @@ body {
 }
 
 #main {
+
 }
 
 #nav {
@@ -471,10 +472,10 @@ h4.modal-title {
 }
 
 #output div.reactable-filterer {
-  position: absolute;
+  position: fixed;
   height: 38px;
   right: 10px;
-  top: 0;
+  top: 50px;
 }
 
 #output input.reactable-filter-input {
@@ -488,19 +489,24 @@ h4.modal-title {
 }
 
 #output div.wrapper {
+  position: fixed;
   overflow: auto;
-  width: 100%;
+  top: 50px;
+  left: 250px;
+  bottom: 0;
+  right: 0;
 }
 
 #results {
+  position: absolute;
+  top: 37px;
   font-size: 12px;
   margin: 0px;
   padding: 0px;
-  min-height: 100%;
   overflow: auto;
-  min-width: 100%;
-  margin-top: 38px;
-  margin-bottom: 21px;
+  margin-bottom: 29px;
+  width: 100%;
+  height: 100%;
 }
 
 #results.empty td {
@@ -614,7 +620,7 @@ div.reactable-pagination-button-container {
   background-color: #4592EA;
   width: 100%;
   font-size: 12px;
-  bottom: 0;
+  bottom: 8px;
   padding: 2px;
 }
 

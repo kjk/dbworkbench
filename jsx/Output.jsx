@@ -141,7 +141,7 @@ class Output extends React.Component {
 
   renderNoResults() {
     return (
-      <div id="results" className="table empty no-crop">
+      <div>
           No records found
       </div>
     );
@@ -149,7 +149,7 @@ class Output extends React.Component {
 
   renderError(errorMsg) {
     return (
-      <div id="results" className="table empty no-crop">
+      <div>
           Err: {errorMsg}
       </div>
     );
@@ -179,11 +179,15 @@ class Output extends React.Component {
       clsOutput = "full";
     }
 
+    if (view.Content == this.props.selectedView) {
+      return (
+        <div id="output" className={clsOutput}><div className="wrapper">{children}</div></div>
+      );
+    }
+
     return (
       <div id="output" className={clsOutput}>
-        <div className="wrapper">
-            {children}
-        </div>
+        {children}
       </div>
     );
   }
