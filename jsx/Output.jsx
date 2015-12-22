@@ -21,6 +21,9 @@ class Output extends React.Component {
     this.state = {
       clickedRowKey: -1,
       rowStyle: {},
+
+      filterString: '',
+
     };
   }
 
@@ -145,6 +148,10 @@ class Output extends React.Component {
         filterable={filterable}
         filterPlaceholder={filterPlaceholder}
         filterStyle={filterStyle}
+        onFilter={filter => {
+            this.setState({ filterString: filter });
+        }}
+        filterString={this.state.filterString}
         itemsPerPage={itemsPerPage}
         resetPagination={this.props.resetPagination} >
           {header}

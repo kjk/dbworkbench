@@ -20,7 +20,6 @@ export class Table extends React.Component {
                 column: null,
                 direction: 1
             },
-            filter: ''
         };
 
         // Set the state of the current sort to the default sort
@@ -392,8 +391,8 @@ export class Table extends React.Component {
 
         // Apply filters
         let filteredChildren = children;
-        if (this.state.filter !== '') {
-            filteredChildren = this.applyFilter(this.state.filter, filteredChildren);
+        if (this.props.filterString !== '') {
+            filteredChildren = this.applyFilter(this.props.filterString, filteredChildren);
         }
 
         // Determine pagination properties and which columns to display
@@ -431,11 +430,9 @@ export class Table extends React.Component {
             <div className="reactable-filterer" style={this.props.filterStyle}>
                 {filtering === true ?
                     <Filterer
-                        onFilter={filter => {
-                            this.setState({ filter: filter });
-                        }}
+                        onFilter={this.props.onFilter}
                         placeholder={this.props.filterPlaceholder}
-                        value={this.state.filter} />
+                        value={this.props.filterString} />
                 : null}
             </div>
             <table {...props}>
