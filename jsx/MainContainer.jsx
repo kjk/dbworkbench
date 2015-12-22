@@ -18,7 +18,7 @@ class MainContainer extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
 
     this.state = {
-      dragBarPosition: 250,
+      dragBarPosition: 200,
       dragging: false,
     };
   }
