@@ -174,11 +174,7 @@ class Output extends React.Component {
       }
     }
 
-    // if (view.Content == this.props.selectedView) {
-    //   return (
-    //     <div id="output" className={clsOutput}><div className="wrapper">{children}</div></div>
-    //   );
-    // }
+    // TODO: need case for sidebar
 
     var outputStyle = { top: (this.props.dragBarPosition + 60) + 'px' };
 
