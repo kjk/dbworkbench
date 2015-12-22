@@ -25,14 +25,13 @@ class Output extends React.Component {
   }
 
   resultsToDictionary(results) {
-    var griddleStyle = _.map(results.rows, function(row){
+    var reformatData = _.map(results.rows, function(row){
       var some = {};
       _.each(results.columns,function(key,i){some[key] = row[i];});
       return some;
     });
 
-    // console.log(griddleStyle)
-    return griddleStyle;
+    return reformatData;
   }
 
   handleRowClick(key, e) {
@@ -125,6 +124,18 @@ class Output extends React.Component {
       var tableStyle = { height: '0' };
     }
 
+    if (this.props.isSidebar) {
+      return (
+        <Table
+          id="sidebar-modal-results"
+          className="sidebar-modal-results"
+          sortable={true} >
+            {header}
+            {rows}
+        </Table>
+      );
+    }
+
     return (
       <Table
         id="results"
@@ -175,7 +186,13 @@ class Output extends React.Component {
       }
     }
 
-    // TODO: need case for sidebar
+    if (this.props.isSidebar) {
+      return (
+        <div id="sidebar-result-wrapper">
+          {children}
+        </div>
+      );
+    }
 
     var outputStyle = { top: this.props.dragBarPosition + 60 + 'px'}
     if (clsOutput != "empty") {

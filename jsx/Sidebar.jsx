@@ -85,7 +85,7 @@ class Dropdown extends React.Component {
     };
 
     var outputStyles = {
-      display     :'table-row',
+      // display     :'table-row',
       position    :'absolute',
       padding     :'0',
       margin      :'0',
@@ -96,13 +96,13 @@ class Dropdown extends React.Component {
     var appElement = document.getElementById('main');
     Modal.setAppElement(appElement);
 
-            // <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection Info</a>
-            // <a href="#" className="list-group-item" onClick={this.handleActivity}>Activity</a>
 
     return (
         <div id="deneme" className='dropdown-window'>
           <div className="list-group">
             <a href="#" className="list-group-item" onClick={this.props.handleRefresh}>Refresh Tables</a>
+            <a href="#" className="list-group-item" onClick={this.handleConnection}>Connection Info</a>
+            <a href="#" className="list-group-item" onClick={this.handleActivity}>Activity</a>
             <a href="#" className="list-group-item" onClick={this.handleDisconnect}>Disconnect</a>
           </div>
 
@@ -121,8 +121,12 @@ class Dropdown extends React.Component {
                 </button>
                 <h4 className="modal-title">{this.state.selectedView}</h4>
               </div>
-              <div className="modal-body" style={{height: '500px', width: '500px'}}>
-                {this.state.results}
+              <div className="modal-body">
+
+              <Output
+                style={outputStyles}
+                results={this.state.results}
+                isSidebar={true}/>
               </div>
             </div>
 
