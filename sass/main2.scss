@@ -49,9 +49,19 @@ html, body {
   background-color: $col-blue-900;
 }
 
-#root {
+@mixin flex-x {
+  display: flex;
+  flex-direction: row;
+}
+
+@mixin flex-y {
   display: flex;
   flex-direction: column;
+}
+
+#root {
+  @include flex-y;
+
   height: 100%;
   background-color: $col-blue-100;
 }
@@ -62,8 +72,8 @@ html, body {
   padding-top: 8px;
   padding-bottom: 8px;
 
-  display: flex;
-  flex-direction: row;
+  @include flex-x;
+
   justify-content: center;
   align-items: center;
 }
@@ -71,15 +81,16 @@ html, body {
 #tabs {
   background-color: $col-blue-300;
   min-height: 32px;
-  display: flex;
-  flex-direction: row;
+
+  @include flex-x;
+
   justify-content: flex-start;
   align-items: center;
 }
 
 #dbview {
-  display: flex;
-  flex-direction: row;
+  @include flex-x;
+
   background-color: $col-blue-400;
   height: 100%;
 }
@@ -92,10 +103,9 @@ html, body {
 #content {
   background-color: $col-blue-600;
 
+  @include flex-y;
+  
   flex-grow: 2;
-
-  display: flex;
-  flex-direction: column;
 }
 
 .in-tabs {
@@ -136,8 +146,8 @@ html, body {
   background-color: $col-blue-800;
   min-height: 48px;
   
-  display:flex;
-  flex-direction: row;
+  @include flex-x;
+
   align-items: center;
 }
 
