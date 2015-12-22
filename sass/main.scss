@@ -110,7 +110,6 @@ body {
   left: 0px;
   top: 0px;
   bottom: 0px;
-  border-right: 1px solid #e1e2e3;
   background-color: #fff;
 }
 
@@ -342,7 +341,7 @@ body {
 
 #side-dragbar {
   position: absolute;
-  /*background-color: red;*/
+  background-color: #95b8f1;
   min-height: 100%;
   /*float: right;*/
   width: 3px;
@@ -352,7 +351,7 @@ body {
 
 .query-content-dragbar {
   position: absolute;
-  background-color: red;
+  background-color: #95b8f1;
   min-width: 100%;
   /*float: right;*/
   height: 3px;
