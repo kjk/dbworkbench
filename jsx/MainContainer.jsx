@@ -41,7 +41,8 @@ class MainContainer extends React.Component {
           <Output
             selectedView={this.props.selectedView}
             results={this.props.results}
-            notFull={notFull}/>
+            notFull={notFull}
+            resetPagination={this.props.resetPagination} />
       </div>
     );
   }

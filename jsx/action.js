@@ -77,6 +77,7 @@ var explainQueryIdx = 3;
 var disconnectDatabaseIdx = 4;
 var alertBarIdx = 5;
 var spinnerIdx = 6;
+var resetPaginationIdx = 7;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -87,6 +88,7 @@ var actionNames = [
   "disconnectDatabase",
   "alertBar",
   "spinner",
+  "resetPagination",
 ];
 
 function tableSelected(name) {
@@ -173,6 +175,18 @@ function offSpinner(cbId) {
   off(spinnerIdx, cbId);
 }
 
+function resetPagination(toggle) {
+  broadcast(resetPaginationIdx, toggle);
+}
+
+function onResetPagination(cb) {
+  return on(resetPaginationIdx, cb);
+}
+
+function offResetPagination(cbId) {
+  off(resetPaginationIdx, cbId);
+}
+
 
 module.exports = {
   tableSelected: tableSelected,
@@ -202,4 +216,8 @@ module.exports = {
   spinner: spinner,
   onSpinner: onSpinner,
   offSpinner: offSpinner,
+
+  resetPagination: resetPagination,
+  onResetPagination: onResetPagination,
+  offResetPagination: offResetPagination,
 };

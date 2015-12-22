@@ -131,7 +131,8 @@ class Output extends React.Component {
         sortable={true}
         filterable={filterable}
         filterPlaceholder={filterPlaceholder}
-        itemsPerPage={itemsPerPage} >
+        itemsPerPage={itemsPerPage}
+        resetPagination={this.props.resetPagination} >
           {header}
           {rows}
       </Table>

@@ -34,6 +34,7 @@ class App extends React.Component {
     this.handleTableSelected = this.handleTableSelected.bind(this);
     this.handleViewSelected = this.handleViewSelected.bind(this);
     this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
+    this.handleResetPagination = this.handleResetPagination .bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -48,6 +49,7 @@ class App extends React.Component {
       selectedTable: "",
       selectedTableInfo: null,
       results: null,
+      resetPagination: false,
 
       errorMessage: "",
       errorVisible: false,
@@ -56,7 +58,7 @@ class App extends React.Component {
       dragBarPosition: 250,
 
       spinnerVisible: false,
-      
+
       capabilities: {},
     };
   }
@@ -153,7 +155,8 @@ class App extends React.Component {
     api.getTableRows(connId, selectedTable, params, function(data) {
       console.log("getTableContent: ", data);
       self.setState({
-        results: data
+        results: data,
+        resetPagination: true,
       });
     });
   }
@@ -254,7 +257,8 @@ class App extends React.Component {
     var connId = this.state.connectionId;
     api.executeQuery(connId, query, function(data) {
       self.setState({
-        results: data
+        results: data,
+        resetPagination: true,
       });
 
       // refresh tables list if table was added or removed
@@ -330,6 +334,10 @@ class App extends React.Component {
     this.setState({spinnerVisible: toggle});
   }
 
+  handleResetPagination(toggle) {
+    this.setState({resetPagination: toggle});
+  }
+
   componentWillMount() {
     //this.adHocTest();
 
@@ -340,6 +348,7 @@ class App extends React.Component {
     this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
     this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
     this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
+    this.cidResetPagination = action.onResetPagination(this.handleResetPagination);
 
     var connId = this.state.connectionId;
     var self = this;
@@ -366,6 +375,7 @@ class App extends React.Component {
     action.offDisconnectDatabase(this.cidDisconnectDatabase);
     action.offAlertBar(this.cidAlertBar);
     action.offSpinner(this.cidSpinner);
+    action.offResetPagination(this.cidResetPagination);
   }
 
   renderSpinner() {
@@ -425,7 +435,8 @@ class App extends React.Component {
             results={this.state.results}
             supportsExplain={this.state.capabilities.HasAnalyze}
             dragBarPosition={this.state.dragBarPosition}
-            selectedView={this.state.selectedView} />
+            selectedView={this.state.selectedView}
+            resetPagination={this.state.resetPagination} />
         </div>
 
       </div>
