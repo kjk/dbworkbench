@@ -23,7 +23,6 @@ class Output extends React.Component {
       rowStyle: {},
 
       filterString: '',
-
     };
   }
 
