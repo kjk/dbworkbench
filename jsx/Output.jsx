@@ -194,7 +194,7 @@ class Output extends React.Component {
       );
     }
 
-    var outputStyle = { top: this.props.dragBarPosition + 60 + 'px'}
+    var outputStyle = { top: this.props.dragBarPosition + 60 + 'px'};
     if (clsOutput != "empty") {
       outputStyle['marginTop'] = '-10px';
     }
