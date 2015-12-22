@@ -13,13 +13,40 @@
 </head>
 
 <body class="bg-col-50">
-  <div id="root" class="bg-col-100">   
-    <div id="sidebar" class="bg-col-200">
-    Hello!
+  <div id="root">   
+
+    <div id="conn-info">
+      <div id="server-name" class="hi-1">server</div>
+      <div>&nbsp;/&nbsp;</div>
+      <div id="database-name" class="hi-2">database</div>
     </div>
-    <div id="right" class="bg-col-300">
-      Hello2
+
+    <div id="tabs">
+      <div class="in-tabs">tab 1</div>
+      <div class="in-tabs">tab 2</div>
     </div>
+
+    <div id="dbview">
+      <div id="sidebar">
+        Sidebar
+       </div>
+       <div id="content">
+         <div id="query">
+           <textarea id="query-text">query</textarea>
+         </div>
+         <div id="actions">
+           <div class="hi-1">Run query</div>&nbsp;&nbsp;
+           <div class="hi-2">Save</div>
+         </div>
+         <div id="results">
+           results
+         </div>
+          <div id="results-nav">
+            results nav
+          </div>
+       </div>
+    </div>
+
   </div>
 </body>
 </html>

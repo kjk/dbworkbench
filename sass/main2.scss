@@ -51,13 +51,109 @@ html, body {
 
 #root {
   display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: $col-blue-100;
+}
+
+#conn-info {
+  background-color: $col-blue-200;
+  /* min-height: 48px;*/
+  padding-top: 8px;
+  padding-bottom: 8px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#tabs {
+  background-color: $col-blue-300;
+  min-height: 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#dbview {
+  display: flex;
+  flex-direction: row;
+  background-color: $col-blue-400;
   height: 100%;
 }
 
 #sidebar {
   min-width: 200px;
+  background-color: $col-blue-500;
 }
 
-#right {
+#content {
+  background-color: $col-blue-600;
+
+  flex-grow: 2;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.in-tabs {
+  background-color: white;
+  color: blue;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: 8px;
+}
+
+.hi-1 {
+  background-color: white;
+  color: blue;
+
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.hi-2 {
+  background-color: lightcyan;
+  color: darkcyan;
+
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#query {
+  background-color: $col-blue-700;
+  min-height: 100px;
+  display: flex;
+}
+
+#actions {
+  background-color: $col-blue-800;
+  min-height: 48px;
+  
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#results {
+  background-color: $col-blue-100;
+  flex-grow: 8;
+}
+
+#results-nav {
+  background-color: $col-blue-a100;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#query-text {
   flex-grow: 2;
 }
