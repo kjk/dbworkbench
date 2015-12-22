@@ -48,11 +48,20 @@ gulp.task('css', function() {
   .pipe(gulp.dest('./s/dist/'));
 });
 
-gulp.task('watch', function() {
-  gulp.watch('jsx/**', ['js']);
-  gulp.watch(['sass/**/*'], ['css']);
+gulp.task('css2', function() {
+  return gulp.src('./sass/main2.scss')
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(prefix('last 2 versions'))
+  .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
+  .pipe(gulp.dest('./s/dist/'));
 });
 
-gulp.task('build_and_watch', ['css', 'js', 'watch']);
+gulp.task('watch', function() {
+  gulp.watch('jsx/**', ['js']);
+  gulp.watch(['sass/**/*'], ['css', 'css2']);
+});
 
-gulp.task('default', ['css', 'js']);
+gulp.task('build_and_watch', ['css', 'css2', 'js', 'watch']);
+
+gulp.task('default', ['css', 'css2', 'js']);
