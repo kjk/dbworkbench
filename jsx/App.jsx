@@ -34,7 +34,7 @@ class App extends React.Component {
     this.handleTableSelected = this.handleTableSelected.bind(this);
     this.handleViewSelected = this.handleViewSelected.bind(this);
     this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
-    this.handleResetPagination = this.handleResetPagination .bind(this);
+    this.handleResetPagination = this.handleResetPagination.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -405,7 +405,7 @@ class App extends React.Component {
       );
     }
 
-    var divStyle = { left: this.state.dragBarPosition + 'px' };
+    var dragBarStyle = { left: this.state.dragBarPosition + 'px' };
 
     return (
       <div>
@@ -425,7 +425,7 @@ class App extends React.Component {
             dragBarPosition={this.state.dragBarPosition} />
 
           <div id="side-dragbar"
-            style={divStyle}
+            style={dragBarStyle}
             onMouseDown={this.onMouseDown}
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}>

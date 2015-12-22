@@ -347,7 +347,17 @@ body {
   /*float: right;*/
   width: 3px;
   cursor: col-resize;
-  z-index: 1000;
+  z-index: 999;
+}
+
+.query-content-dragbar {
+  position: absolute;
+  background-color: red;
+  min-width: 100%;
+  /*float: right;*/
+  height: 3px;
+  cursor: row-resize;
+  z-index: 999;
 }
 
 .fa-info
@@ -392,7 +402,8 @@ h4.modal-title {
 }
 
 #input {
-  height: 255px;
+  height: 250px;
+  max-height: 100%;
   overflow: hidden;
 }
 
@@ -457,18 +468,14 @@ h4.modal-title {
 }
 
 #output {
-  position: relative;
+  position: absolute;
   left: 0px;
-  top: 0px;
+  top: 310px;
   bottom: 0px;
   right: 0px;
   margin: 0px;
   padding: 0px;
   overflow: auto;
-}
-
-#output.full {
-  top: 0px;
 }
 
 #output div.reactable-filterer {
@@ -488,18 +495,13 @@ h4.modal-title {
   margin-top: 7px;
 }
 
-#output div.wrapper {
-  position: fixed;
-  overflow: auto;
-  top: 50px;
-  left: 250px;
-  bottom: 0;
-  right: 0;
+div#output.empty {
+  font-size: 12px;
+  padding-left: 10px;
 }
 
 #results {
   position: absolute;
-  top: 37px;
   font-size: 12px;
   margin: 0px;
   padding: 0px;
@@ -509,15 +511,7 @@ h4.modal-title {
   height: 100%;
 }
 
-#results.empty td {
-  border: 0px none;
-  font-size:12px;
-  color:#4A4A4A;
-  line-height:21px;
-}
-
 #results thead {
-  /*position: fixed;*/
   width: 100%;
 }
 
@@ -693,7 +687,7 @@ a.disabled {
 */
 
 #custom-query {
-  height: 205px;
+  height: 200px;
 }
 
 .overlay {

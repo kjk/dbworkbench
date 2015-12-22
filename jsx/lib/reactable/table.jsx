@@ -428,7 +428,7 @@ export class Table extends React.Component {
 
         return (
         <div>
-            <div className="reactable-filterer">
+            <div className="reactable-filterer" style={this.props.filterStyle}>
                 {filtering === true ?
                     <Filterer
                         onFilter={filter => {

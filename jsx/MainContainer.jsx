@@ -11,11 +11,65 @@ var Output = require('./Output.jsx');
 var view = require('./view.js');
 
 class MainContainer extends React.Component {
-  renderInput(tooLong, supportsExplain) {
-    if (this.props.selectedView === view.SQLQuery) {
-      return <Input tooLong={tooLong} supportsExplain={supportsExplain}/>;
+  constructor(props, context) {
+    super(props, context);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+
+    this.state = {
+      dragBarPosition: 250,
+      dragging: false,
+    };
+  }
+  componentDidUpdate(props, state) {
+    if (this.state.dragging && !state.dragging) {
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('mouseup', this.onMouseUp);
+    } else if (!this.state.dragging && state.dragging) {
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
     }
   }
+
+  onMouseDown(e) {
+    // only left mouse button
+    if (e.button !== 0) return;
+    this.setState({
+      dragging: true,
+    });
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  onMouseUp(e) {
+    this.setState({
+      dragging: false,
+    });
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  onMouseMove(e) {
+    const minDragbarDx = 60;
+    const maxDragbarDx = 400;
+
+    if (!this.state.dragging) return;
+    if ((e.pageY < minDragbarDx) || (e.pageY > maxDragbarDx)) {
+      return;
+    }
+    this.setState({
+      dragBarPosition: e.pageY,
+    });
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  // renderInput(tooLong, supportsExplain, inputStyle) {
+  //   if (this.props.selectedView === view.SQLQuery) {
+  //     return <Input style={inputStyle} tooLong={tooLong} supportsExplain={supportsExplain}/>;
+  //   }
+  // }
 
   render() {
     // when showing sql query, results are below editor window
@@ -37,8 +91,16 @@ class MainContainer extends React.Component {
     return (
       <div id="body" style={divStyle}>
           <DbNav view={this.props.selectedView}/>
-          {this.renderInput("", this.props.supportsExplain)}
+
+          <Input
+            dragBarPosition={this.state.dragBarPosition}
+            supportsExplain={this.propssupportsExplain}
+            onMouseDown={this.onMouseDown}
+            onMouseMove={this.onMouseMove}
+            onMouseUp={this.onMouseUp} />
+
           <Output
+            dragBarPosition={this.state.dragBarPosition}
             selectedView={this.props.selectedView}
             results={this.props.results}
             notFull={notFull}

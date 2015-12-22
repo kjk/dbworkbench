@@ -101,21 +101,35 @@ class Input extends React.Component {
         );
       }
   }
+
   render() {
     // TODO: add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
     // value="Download CSV" className="btn btn-sm btn-default" />
 
+    if (this.props.dragBarPosition != 0) {
+      var inputStyle = { height: this.props.dragBarPosition + 'px' };
+      var customQueryStyle = { height: this.props.dragBarPosition - 50 + 'px' };
+      var dragBarStyle = { top: this.props.dragBarPosition - 50 + 'px' };
+    }
+
     return (
-      <div id="input">
+      <div id="input" style={inputStyle}>
         <div className="wrapper">
-          <div id="custom-query" ref="editor"></div>
+          <div id="custom-query" ref="editor" style={customQueryStyle}></div>
+
+          <div className="query-content-dragbar"
+            style={dragBarStyle}
+            onMouseDown={this.props.onMouseDown}
+            onMouseMove={this.props.onMouseMove}
+            onMouseUp={this.props.onMouseUp}>
+          </div>
+
           <div className="actions">
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
             {this.renderExplain()}
             <div id="query_progress">Please wait, query is executing...</div>
-            <div id="input-row-number">{this.props.tooLong}</div>
           </div>
         </div>
       </div>

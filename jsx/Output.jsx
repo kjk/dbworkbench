@@ -122,6 +122,7 @@ class Output extends React.Component {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
       var itemsPerPage = 100;
+      var filterStyle = { top: this.props.dragBarPosition + 6 + 'px' };
     }
 
     return (
@@ -131,6 +132,7 @@ class Output extends React.Component {
         sortable={true}
         filterable={filterable}
         filterPlaceholder={filterPlaceholder}
+        filterStyle={filterStyle}
         itemsPerPage={itemsPerPage}
         resetPagination={this.props.resetPagination} >
           {header}
@@ -160,34 +162,31 @@ class Output extends React.Component {
     var results = this.props.results;
     if (!results) {
       children = this.renderNoResults();
+      clsOutput = "empty";
     } else {
       if (results.error) {
         children = this.renderError(results.error);
       } else if (!results.rows || results.rows.length === 0) {
         children = this.renderNoResults();
-        clsOutput = "full";
+        clsOutput = "empty";
       } else {
-        clsOutput = "full";
         children = this.renderResults(results);
       }
     }
-    if (this.props.notFull) {
-      clsOutput = "";
-    }
 
-    if (view.SQLQuery != this.props.selectedView) {
-      clsOutput = "full";
-    }
+    // if (view.Content == this.props.selectedView) {
+    //   return (
+    //     <div id="output" className={clsOutput}><div className="wrapper">{children}</div></div>
+    //   );
+    // }
 
-    if (view.Content == this.props.selectedView) {
-      return (
-        <div id="output" className={clsOutput}><div className="wrapper">{children}</div></div>
-      );
-    }
+    var outputStyle = { top: (this.props.dragBarPosition + 60) + 'px' };
 
     return (
-      <div id="output" className={clsOutput}>
-        {children}
+      <div id="output" className={clsOutput} style={outputStyle}>
+        <div id="wrapper">
+          {children}
+        </div>
       </div>
     );
   }

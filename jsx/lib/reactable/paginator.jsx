@@ -120,7 +120,7 @@ export class Paginator extends React.Component {
 
         return (
             <div className="reactable-pagination">
-                <div className="reactable-pagination-button-container" style={style}>
+                <div className="reactable-pagination-button-container">
                     {this.renderPrevious()}
                     {this.renderPageButton()}
                     {this.renderNext()}
