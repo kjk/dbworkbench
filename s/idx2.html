@@ -4,11 +4,15 @@
   <title>DB Hero</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Language" content="en">
 
   <link type="text/css" rel="stylesheet" href="/s/dist/main2.css"/>
 
+  <script src="/s/fake_data_1.js"></script>
+  <script src="/s/tmp.js"></script>
   <script type="text/javascript">
+  
   </script>
 </head>
 
@@ -27,23 +31,32 @@
     </div>
 
     <div id="dbview">
+
       <div id="sidebar">
         Sidebar
        </div>
+
        <div id="content">
+
          <div id="query">
            <textarea id="query-text">query</textarea>
          </div>
+
          <div id="actions">
            <div class="hi-1">Run query</div>&nbsp;&nbsp;
            <div class="hi-2">Save</div>
          </div>
+
          <div id="results">
-           results
+           <script>
+             var html = gen_table_html2(g_results1);
+             document.write(html);
+           </script>
          </div>
-          <div id="results-nav">
+
+         <div id="results-nav">
             results nav
-          </div>
+         </div>
        </div>
     </div>
 
