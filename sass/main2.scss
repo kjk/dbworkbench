@@ -1,0 +1,63 @@
+@import 'normalize';
+
+$col-blue-50: #E3F2FD;
+$col-blue-100: #BBDEFB;
+$col-blue-200: #90CAF9;
+$col-blue-300: #64B5F6;
+$col-blue-400: #42A5F5;
+$col-blue-500: #2196F3;
+$col-blue-600: #1E88E5;
+$col-blue-700: #1976D2;
+$col-blue-800: #1565C0;
+$col-blue-900: #0D47A1;
+$col-blue-a100: #82B1FF;
+$col-blue-a200: #448AFF;
+$col-blue-a400: #2979FF;
+$col-blue-a700: #2962FF;
+
+html, body {
+  height: 100%;
+}
+.bg-col-50 {
+  background-color: $col-blue-50;
+}
+.bg-col-100 {
+  background-color: $col-blue-100;
+}
+.bg-col-200 {
+  background-color: $col-blue-200;
+}
+.bg-col-300 {
+  background-color: $col-blue-300;
+}
+.bg-col-400 {
+  background-color: $col-blue-400;
+}
+.bg-col-500 {
+  background-color: $col-blue-500;
+}
+.bg-col-600 {
+  background-color: $col-blue-600;
+}
+.bg-col-700 {
+  background-color: $col-blue-700;
+}
+.bg-col-800 {
+  background-color: $col-blue-800;
+}
+.bg-col-900 {
+  background-color: $col-blue-900;
+}
+
+#root {
+  display: flex;
+  height: 100%;
+}
+
+#sidebar {
+  min-width: 200px;
+}
+
+#right {
+  flex-grow: 2;
+}
