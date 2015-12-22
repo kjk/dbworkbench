@@ -451,9 +451,10 @@ export class Table extends React.Component {
                 </tbody>
             </table>
             {pagination === true ?
-                <Paginator colSpan={columns.length}
+                <Paginator
                     numPages={numPages}
                     currentPage={currentPage}
+                    totalRowCount={filteredChildren.length}
                     onPageChange={page => {
                         if (this.props.resetPagination) { action.resetPagination(false); }
                         this.setState({ currentPage: page });

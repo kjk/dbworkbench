@@ -61,14 +61,10 @@ export class Paginator extends React.Component {
     }
 
     renderPageButton() {
-        return (<span className='reactable-page'> {this.props.currentPage + 1} out of {this.props.numPages}</span>);
+        return (<span className='reactable-page'> Page {this.props.currentPage + 1} out of {this.props.numPages} / {this.props.totalRowCount}</span>);
     }
 
     render() {
-        if (typeof this.props.colSpan === 'undefined') {
-            throw new TypeError('Must pass a colSpan argument to Paginator');
-        }
-
         if (typeof this.props.numPages === 'undefined') {
             throw new TypeError('Must pass a non-zero numPages argument to Paginator');
         }
