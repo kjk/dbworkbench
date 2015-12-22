@@ -113,7 +113,7 @@ class Dropdown extends React.Component {
             onRequestClose={this.closeModal}
             style={customStyles} >
 
-            <div >
+            <div>
               <div className="modal-header">
                 <button type="button" className="close" onClick={this.handleModalCloseRequest}>
                   <span aria-hidden="true">&times;</span>

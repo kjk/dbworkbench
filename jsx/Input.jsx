@@ -94,12 +94,12 @@ class Input extends React.Component {
   }
 
   renderExplain() {
-      if (this.props.supportsExplain) {
-        return (
-            <input type="button" onClick={this.runExplain} id="explain"
-              value="Explain Query" className="btn btn-sm btn-default" />
-        );
-      }
+    if (this.props.supportsExplain) {
+      return (
+        <input type="button" onClick={this.runExplain} id="explain"
+          value="Explain Query" className="btn btn-sm btn-default" />
+      );
+    }
   }
 
   render() {

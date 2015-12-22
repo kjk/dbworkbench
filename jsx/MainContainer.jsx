@@ -97,7 +97,7 @@ class MainContainer extends React.Component {
           { withInput ?
             <Input
               dragBarPosition={this.state.dragBarPosition}
-              supportsExplain={this.propssupportsExplain}
+              supportsExplain={this.props.supportsExplain}
               onMouseDown={this.onMouseDown}
               onMouseMove={this.onMouseMove}
               onMouseUp={this.onMouseUp} />
