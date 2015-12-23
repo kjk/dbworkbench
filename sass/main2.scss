@@ -157,11 +157,12 @@ html, body {
 #results {
   background-color: $col-blue-100;
   flex-grow: 2;
+  flex-shrink: 12;
+  overflow: scroll;
 }
 
 #results-inner {
   @include flex-x;
-  flex-wrap: nowrap;
   background-color: $col-blue-200;
   overflow: scroll;
 }
@@ -174,6 +175,7 @@ html, body {
 
 #results-nav {
   background-color: $col-blue-a100;
+  @include flex-x;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 8px;
@@ -185,5 +187,4 @@ html, body {
 }
 
 #results-table {
-  overflow: scroll;
 }
