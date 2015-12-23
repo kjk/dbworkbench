@@ -32,6 +32,10 @@ div {
   height: auto;
 }
 
+.with-shadow {
+  /* Currently not possible with slick corusel*/
+}
+
 nav {
   text-align: right;
 }
