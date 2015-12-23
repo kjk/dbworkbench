@@ -306,7 +306,7 @@ func handleGetDatabases(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 	serveJSON(w, r, names)
 }
 
-func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
+func runQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query string) {
 	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
 	result, err := ctx.ConnInfo.Client.Query(query)
 
@@ -329,8 +329,20 @@ func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request, query 
 	serveJSON(w, r, result)
 }
 
-// GET | POST /api/query
-func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+/*
+GET | POST /api/query
+args:
+    query : string, query to execute
+returns; json in the format
+{
+    "columns" : ["id", "name", ...], // names of database columns
+    "rows" : [
+        [ , , ... ], // data for row one
+        [ , , ... ] // data for row two etc.
+    ]
+}
+*/
+func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	//LogInfof("query: '%s'\n", query)
 
@@ -340,11 +352,66 @@ func handleRunQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	recordQueryExecuted()
-	handleQuery(ctx, w, r, query)
+	runQuery(ctx, w, r, query)
+}
+
+/*
+GET | POST /api/queryasync
+args:
+   query : string, query to execute
+returns: json in the format
+{
+  "query_id": 15
+}
+*/
+func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	serveJSONError(w, r, "NYI")
+}
+
+/*
+GET | POST /api/queryasyncstatus
+args:
+  query_id : string, id of the query
+  max_rows : int, optional, max number of rows to get from the server
+  max_data_size : int, optional, max size of data to get from the server, in bytes
+
+Both max_rows and max_data_size can be given, both are respected.
+
+If max_rows and max_data_size are not given, we default to max_data_size of 100 MB.
+
+returns: json in the format
+{
+  "rows_count": 123,
+  "data_size": 8234, // in bytes, approximate, we calc by adding size of all values
+  "finished": false,
+  "time_to_first_result_ms": 34, // time it took to get the first result from the server
+  "total_query_time_ms": 1234, // time it took to get all results
+  "columns": [ "id", "name" ]
+}
+*/
+func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	serveJSONError(w, r, "NYI")
+}
+
+/*
+GET | POST /api/queryasync
+args:
+  start : int, first row to return
+  count : int, number of rows, start + count should be < total rows count
+result: json in the format
+{
+    "rows": [
+         [ ... ],
+         [ ... ],
+     ]
+}
+*/
+func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	serveJSONError(w, r, "NYI")
 }
 
 // GET | POST /api/explain
-func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+func handleExplain(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	//LogInfof("query: '%s'\n", query)
 
@@ -353,7 +420,7 @@ func handleExplainQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	handleQuery(ctx, w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
+	runQuery(ctx, w, r, fmt.Sprintf("EXPLAIN ANALYZE %s", query))
 }
 
 // GET /api/history
@@ -614,12 +681,16 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/connection", withCtx(handleConnectionInfo, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/databases", withCtx(handleGetDatabases, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/disconnect", withCtx(handleDisconnect, OnlyPost|MustHaveConnection|IsJSON))
-	http.HandleFunc("/api/explain", withCtx(handleExplainQuery, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/explain", withCtx(handleExplain, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/history", withCtx(handleHistory, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/schemas", withCtx(handleGetSchemas, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/tables", withCtx(handleGetTables, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/tables/", withCtx(handleTablesDispatch, MustHaveConnection|IsJSON))
-	http.HandleFunc("/api/query", withCtx(handleRunQuery, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/query", withCtx(handleQuery, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/queryasync", withCtx(handleQueryAsync, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/queryasyncstatus", withCtx(handleQueryAsyncStatus, MustHaveConnection|IsJSON))
+	http.HandleFunc("/api/queryasyncdata", withCtx(handleQueryAsyncData, MustHaveConnection|IsJSON))
+
 	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, IsJSON))
 
 	http.HandleFunc("/showmyhost", handleShowMyHost)
