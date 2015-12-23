@@ -5,5 +5,8 @@ set -o errexit
 set -o pipefail
 
 rm -f resources.go || true
-wc -l s/*.html jsx/*.js* s/css/main.css
+echo && wc -l mac/dbHero/*.swift
+echo && wc -l win/dbhero/*.cs
+echo && wc -l s/*.html sass/main.scss
+echo && wc -l jsx/*.js*
 echo && wc -l *.go website/*.go
