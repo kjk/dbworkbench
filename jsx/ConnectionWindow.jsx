@@ -103,7 +103,9 @@ class ConnectionWindow extends React.Component {
     var self = this;
     api.getBookmarks(function(data) {
       console.log("getBookmarks: ", data);
-
+      if (!data) {
+          data = [newEmptyBookmark()];
+      }
       self.setState({
         bookmarks: data,
       });
