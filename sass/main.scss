@@ -764,8 +764,6 @@ select#db_type.form-control.input-sm {
     margin: 0;
     outline:none;
     display: inline-block;
-    -webkit-appearance:none;
-    -moz-appearance:none;
     appearance:none;
     cursor:pointer;
     line-height: 20px;
@@ -809,8 +807,6 @@ select#db_type.form-control.input-sm {
   background: #fff;
   padding: 10px;
   border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
 }
 
 .connection-settings form p.help-block {
@@ -912,9 +908,7 @@ select#db_type.form-control.input-sm {
     text-align: center;
     line-height: 2.5;
     overflow: hidden;
-    -webkit-box-shadow: 0 0 5px black;
-    -moz-box-shadow:    0 0 5px black;
-    box-shadow:         0 0 5px black;
+    box-shadow: 0 0 5px black;
 }
 
 @-webkit-keyframes slideDown {
