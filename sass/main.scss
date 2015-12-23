@@ -757,6 +757,20 @@ connection-window i.fa.fa-lock {
   margin-right: 5px;
 }
 
+select#db_type.form-control.input-sm {
+    padding: 0;
+    padding-left: 10px;
+    margin: 0;
+    outline:none;
+    display: inline-block;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    cursor:pointer;
+    line-height: 20px;
+  }
+
+
 .connection-settings {
   margin: 0px auto;
   margin-top: 20px;
