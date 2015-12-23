@@ -474,6 +474,7 @@ h4.modal-title {
   margin: 0px;
   padding: 0px;
   overflow: auto;
+  margin-bottom: 29px;
 }
 
 #output div.reactable-filterer {
@@ -504,7 +505,7 @@ div#output.empty {
   margin: 0px;
   padding: 0px;
   overflow: auto;
-  margin-bottom: 29px;
+  /*margin-bottom: 29px;*/
   width: 100%;
   /*height: 100%;*/
 }
