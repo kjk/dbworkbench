@@ -61,7 +61,7 @@ export class Paginator extends React.Component {
     }
 
     renderPageButton() {
-        return (<span className='reactable-page'> Page {this.props.currentPage + 1} out of {this.props.numPages} / {this.props.totalRowCount}</span>);
+        return (<span className='reactable-page'> Page {this.props.currentPage + 1} / {this.props.numPages} </span>);
     }
 
     render() {
@@ -72,7 +72,10 @@ export class Paginator extends React.Component {
         if (typeof this.props.currentPage === 'undefined') {
             throw new TypeError('Must pass a currentPage argument to Paginator');
         }
-
+        var st = {
+          color: 'white'
+        };
+        
         // let pageButtons = [];
         // let pageButtonLimit = this.props.pageButtonLimit;
         // let currentPage = this.props.currentPage;
@@ -120,6 +123,7 @@ export class Paginator extends React.Component {
                     {this.renderPrevious()}
                     {this.renderPageButton()}
                     {this.renderNext()}
+                    <span style={st}>{this.props.totalRowCount} rows</span>
                 </div>
             </div>
         );
