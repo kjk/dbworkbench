@@ -42,7 +42,19 @@ function rowCb(row, data, index) {
   $("td:eq(5)", row).html(v);
 }
 
+var g_win_users = 0;
+var g_mac_users = 0;
+
+function calc_os_stats(data) {
+    var nMac = 0;
+    var nWin = 0;
+
+    g_win_users = nWin;
+    g_mac_users = nMac;
+}
+
 function init() {
+  calc_os_stats(data);
 
   var opts = {
     data: data,
@@ -55,7 +67,9 @@ function init() {
       { data: "DatabaseOpenCount" },
       { data: "QueryCount" },
       { data: 'FirstSeen' },
-      { data: "LastSeen" }
+      { data: "LastSeen" },
+      { data: "OsVersio" },
+      { data: "Version" }
     ]    
   };
 
