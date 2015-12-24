@@ -298,6 +298,11 @@ div .window-center {
   /*background-color: #f8f9fb;*/
 }
 
+button.slick-prev.slick-arrow,
+button.slick-next.slick-arrow {
+  height: auto;
+}
+
 .slick-prev:before, .slick-next:before { font-family: "slick"; font-size: 40px; line-height: 1; color: grey; opacity: 0.75; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 .slick-prev:before { content: "‹"; }
