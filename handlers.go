@@ -33,6 +33,8 @@ const (
 	// IsJSON denotes a handler that is serving JSON requests and should send
 	// errors as { "error": "error message" }
 	IsJSON
+
+	defaultMaxDataSize = 100 * 1024 * 1024 // 100 MB
 )
 
 // ReqContext contains data that is useful to access in every http handler
@@ -514,12 +516,20 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string) {
 GET | POST /api/queryasync
 args:
    query : string, query to execute
+   max_rows : int, optional, max number of rows to fetch from the database
+   max_data_size : int64, optional, max amount of data to fetch from the database
+
+Both max_rows and max_data_size can be given, both are respected.
+
+If max_rows and max_data_size are not given, we default to max_data_size of 100 MB.
+
 returns: json in the format
 {
   "query_id": 15
 }
 */
 func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	// TODO: handle max_rows, max_data_size
 	query := strings.TrimSpace(r.FormValue("query"))
 	LogInfof("query: '%s'\n", query)
 
@@ -545,12 +555,6 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 GET | POST /api/queryasyncstatus
 args:
   query_id : string, id of the query
-  max_rows : int, optional, max number of rows to get from the server
-  max_data_size : int, optional, max size of data to get from the server, in bytes
-
-Both max_rows and max_data_size can be given, both are respected.
-
-If max_rows and max_data_size are not given, we default to max_data_size of 100 MB.
 
 returns: json in the format
 {
@@ -564,11 +568,24 @@ returns: json in the format
 }
 */
 func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSONError(w, r, "NYI")
+	queryID := strings.TrimSpace(r.FormValue("query_id"))
+	LogInfof("query_id: '%s'\n", queryID)
+
+	var statusCopy QueryAsyncStatus
+	err := withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		statusCopy = *s
+		statusCopy.rows = nil
+	})
+
+	if err != nil {
+		serveJSONError(w, r, err)
+	} else {
+		serveJSON(w, r, statusCopy)
+	}
 }
 
 /*
-GET | POST /api/queryasync
+GET | POST /api/queryasyncdata
 args:
   start : int, first row to return
   count : int, number of rows, start + count should be < total rows count
