@@ -380,10 +380,7 @@ class App extends React.Component {
     action.offResetPagination(this.cidResetPagination);
   }
 
-  renderSpinner() {
-    if (!this.state.spinnerVisible) {
-      return;
-    }
+  render() {
     var spinnerStyle = {
       position: 'fixed',
       top: '50%',
@@ -391,17 +388,14 @@ class App extends React.Component {
       zIndex: '5',
     };
 
-    return <SpinnerCircle style={spinnerStyle} />;
-  }
-
-  render() {
     if (!this.state.connected) {
       return (
         <div>
           <div onClick={this.handleCloseAlertBar} >
             { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
           </div>
-          {this.renderSpinner()}
+
+          <SpinnerCircle style={spinnerStyle} visible={this.state.spinnerVisible} />
           <ConnectionWindow onDidConnect={this.handleDidConnect} />
         </div>
       );

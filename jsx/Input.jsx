@@ -102,19 +102,6 @@ class Input extends React.Component {
     }
   }
 
-  renderSpinner() {
-    if (!this.props.spinnerVisible) {
-      return;
-    }
-    let spinnerStyle = {
-      display: 'inline-block',
-      top: '4px',
-    };
-
-    return <SpinnerCircle style={spinnerStyle} />;
-  }
-
-
   render() {
     // TODO: add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
@@ -142,7 +129,7 @@ class Input extends React.Component {
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
             {this.renderExplain()}
-            {this.renderSpinner()}
+            <SpinnerCircle visible={this.props.spinnerVisible} style={{display: 'inline-block', top: '4px'}} />
           </div>
         </div>
       </div>
