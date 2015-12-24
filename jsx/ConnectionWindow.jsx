@@ -499,7 +499,7 @@ class ConnectionWindow extends React.Component {
 
     return (
       <div className="col-md-12">
-        <button  onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
+        <button onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
       </div>
     );
   }
