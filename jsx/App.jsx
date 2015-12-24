@@ -415,8 +415,6 @@ class App extends React.Component {
           { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>
 
-
-
         <div>
           <Sidebar
             connectionId={this.state.connectionId}
@@ -434,6 +432,7 @@ class App extends React.Component {
           </div>
 
           <MainContainer
+            spinnerVisible={this.state.spinnerVisible}
             results={this.state.results}
             supportsExplain={this.state.capabilities.HasAnalyze}
             dragBarPosition={this.state.dragBarPosition}

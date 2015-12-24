@@ -100,7 +100,8 @@ class MainContainer extends React.Component {
               supportsExplain={this.props.supportsExplain}
               onMouseDown={this.onMouseDown}
               onMouseMove={this.onMouseMove}
-              onMouseUp={this.onMouseUp} />
+              onMouseUp={this.onMouseUp}
+              spinnerVisible={this.props.spinnerVisible} />
             : null
           }
 

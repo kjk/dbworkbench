@@ -2,10 +2,10 @@
 'use strict';
 
 var React = require('react');
-
 var ReactDOM = require('react-dom');
 
 var action = require('./action.js');
+var SpinnerCircle = require('./Spinners.jsx').Circle;
 
 class Input extends React.Component {
   constructor(props, context) {
@@ -102,6 +102,19 @@ class Input extends React.Component {
     }
   }
 
+  renderSpinner() {
+    if (!this.props.spinnerVisible) {
+      return;
+    }
+    let spinnerStyle = {
+      display: 'inline-block',
+      top: '4px',
+    };
+
+    return <SpinnerCircle style={spinnerStyle} />;
+  }
+
+
   render() {
     // TODO: add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
@@ -129,7 +142,7 @@ class Input extends React.Component {
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
             {this.renderExplain()}
-            <div id="query_progress">Please wait, query is executing...</div>
+            {this.renderSpinner()}
           </div>
         </div>
       </div>
