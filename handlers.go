@@ -587,8 +587,9 @@ func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Requ
 /*
 GET | POST /api/queryasyncdata
 args:
-  start : int, first row to return
-  count : int, number of rows, start + count should be < total rows count
+  query_id : string
+  start    : int, first row to return
+  count    : int, number of rows, start + count should be < total rows count
 result: json in the format
 {
     "rows": [
@@ -598,7 +599,56 @@ result: json in the format
 }
 */
 func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSONError(w, r, "NYI")
+	queryID := strings.TrimSpace(r.FormValue("query_id"))
+	startStr := strings.TrimSpace(r.FormValue("start"))
+	start, err := strconv.Atoi(startStr)
+	if err != nil {
+		LogErrorf("invalid 'start' argument '%s'", startStr)
+		serveJSONError(w, r, err)
+		return
+	}
+	countStr := strings.TrimSpace(r.FormValue("count"))
+	count, err := strconv.Atoi(countStr)
+	if err != nil {
+		LogErrorf("invalid 'start' argument '%s'", countStr)
+		serveJSONError(w, r, err)
+		return
+	}
+
+	LogInfof("query_id: '%s', start: %d, count: %d \n", queryID, start, count)
+
+	// hold the lock for the shortest possible time
+	muQueryAsync.Lock()
+	s := queryAsyncIDToStatus[queryID]
+	if s == nil {
+		muQueryAsync.Unlock()
+		err = fmt.Errorf("invalid query_id '%s'", queryID)
+		LogErrorf("%s\n", err.Error())
+		serveJSONError(w, r, err)
+		return
+	}
+
+	end := start + count
+	rowsCount := s.RowsCount
+	if end >= rowsCount {
+		muQueryAsync.Unlock()
+		err = fmt.Errorf("start+count (%d) too high (max is %d)'", end, rowsCount)
+		LogErrorf("%s\n", err.Error())
+		serveJSONError(w, r, err)
+		return
+	}
+	// make a copy of the results
+	var rows []interface{}
+	for i := 0; i < count; i++ {
+		rows[i] = s.rows[start+i]
+	}
+	muQueryAsync.Unlock()
+	res := struct {
+		Rows []interface{} `json:"rows"`
+	}{
+		Rows: rows,
+	}
+	serveJSON(w, r, res)
 }
 
 // GET | POST /api/explain
