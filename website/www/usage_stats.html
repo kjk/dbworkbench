@@ -53,6 +53,7 @@ function prettyMacVer(ver) {
 }
 
 // http://www.jrsoftware.org/ishelp/index.php?topic=winvernotes
+// https://en.wikipedia.org/wiki/Windows_NT#Releases
 function prettyWinVer(ver) {
   if (strStartsWith(ver, "6.0.600")) {
     return "Vista";
@@ -73,10 +74,13 @@ function prettyWinVer(ver) {
     return "8.1";
   }
   if (strStartsWith(ver, "6.3.9600")) {
-    return "8.1 update 1";
+    return "8.1 UPDATE 1";
   }
-  if (strStartsWith(ver, "10.0.")) {
-    return "10";
+  if (strStartsWith(ver, "10.0.10240")) {
+    return "10 TH1";
+  }
+  if (strStartsWith(ver, "10.0.10586")) {
+    return "10 TH2";
   }
   return ver;
 }
