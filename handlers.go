@@ -9,8 +9,10 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -355,6 +357,159 @@ func handleQuery(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	runQuery(ctx, w, r, query)
 }
 
+// QueryAsyncStatus describes that status of the (possibly stil executing) query
+type QueryAsyncStatus struct {
+	QueryID   string
+	RowsCount int   `json:"rows_count"`
+	DataSize  int64 `json:"data_size"`
+	Finished  bool  `json:"finished"`
+	// if NotComplete is true, we didn't get all data because
+	// we reached max rows or max data limit
+	NotComplete          bool     `json:"not_complete"`
+	TimeToFirstResultMs  float64  `json:"time_to_first_result_ms"`
+	TotalQueryTimeMs     float64  `json:"total_query_time_ms"`
+	Columns              []string `json:"columns"`
+	Error                string   `json:"error"`
+	rows                 []interface{}
+	clientLastAccessTime time.Time // so that we can delete stale data after a while
+}
+
+var (
+	// ID is an int but it's more convenient to treat it as a string
+	currQueryAsyncID     int
+	queryAsyncIDToStatus map[string]*QueryAsyncStatus
+	muQueryAsync         sync.Mutex
+)
+
+func init() {
+	queryAsyncIDToStatus = make(map[string]*QueryAsyncStatus)
+}
+
+// TODO: call this every once in a while
+func gcStaleAsyncQueries() {
+	muQueryAsync.Lock()
+	defer muQueryAsync.Unlock()
+	// I'm not sure what happens when we delete key while iterating
+	// a map, so first collect keys to delete and then delete
+	var toDelete []string
+	for queryID, status := range queryAsyncIDToStatus {
+		if time.Now().Sub(status.clientLastAccessTime) > time.Hour {
+			toDelete = append(toDelete, queryID)
+		}
+	}
+	for _, queryID := range toDelete {
+		delete(queryAsyncIDToStatus, queryID)
+	}
+}
+
+func getNextQueryAsyncID() string {
+	muQueryAsync.Lock()
+	currQueryAsyncID++
+	id := strconv.Itoa(currQueryAsyncID)
+	queryAsyncIDToStatus[id] = &QueryAsyncStatus{
+		QueryID: id,
+	}
+	muQueryAsync.Unlock()
+	return id
+}
+
+func withQueryStatus(queryID string, f func(s *QueryAsyncStatus)) error {
+	muQueryAsync.Lock()
+	defer muQueryAsync.Unlock()
+	status := queryAsyncIDToStatus[queryID]
+	if status == nil {
+		LogErrorf("non-existent queryID '%s'\n", queryID)
+		return fmt.Errorf("non-existent queryID '%s'\n", queryID)
+	}
+	f(status)
+	return nil
+}
+
+func setQueryStatusError(queryID string, err error) {
+	withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		s.Error = err.Error()
+		s.Finished = true
+	})
+}
+
+func durToMs(d time.Duration) float64 {
+	return float64(d / time.Millisecond)
+}
+
+func durMsSince(t time.Time) float64 {
+	return durToMs(time.Now().Sub(t))
+}
+
+// TODO: maxRows, maxDataSize
+func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string) {
+	updateConnectionLastAccess(connInfo.ConnectionID)
+	db := connInfo.Client.Connection()
+
+	rows, err := db.Queryx(query)
+
+	if err != nil {
+		setQueryStatusError(queryID, err)
+		return
+	}
+
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		setQueryStatusError(queryID, err)
+		return
+	}
+
+	withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		s.Columns = cols
+	})
+
+	firstRow := false
+	timeStart := time.Now()
+	maxRows := -1
+	nRows := 0
+	for rows.Next() {
+		obj, err := rows.SliceScan()
+		if err != nil {
+			setQueryStatusError(queryID, err)
+			return
+		}
+		if firstRow {
+			withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+				s.TimeToFirstResultMs = durMsSince(timeStart)
+			})
+		}
+		for i, item := range obj {
+			if item == nil {
+				obj[i] = nil
+				continue
+			}
+			t := reflect.TypeOf(item).Kind().String()
+
+			if t == "slice" {
+				obj[i] = string(item.([]byte))
+			}
+		}
+		withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+			s.rows = append(s.rows, obj)
+			s.TotalQueryTimeMs = durMsSince(timeStart)
+		})
+		nRows++
+		if maxRows != -1 && nRows >= maxRows {
+			withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+				s.NotComplete = true
+			})
+			break
+		}
+	}
+
+	withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		s.Finished = true
+		s.RowsCount = len(s.rows)
+	})
+
+}
+
 /*
 GET | POST /api/queryasync
 args:
@@ -365,7 +520,25 @@ returns: json in the format
 }
 */
 func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSONError(w, r, "NYI")
+	query := strings.TrimSpace(r.FormValue("query"))
+	LogInfof("query: '%s'\n", query)
+
+	if query == "" {
+		serveJSONError(w, r, "Query parameter is missing")
+		return
+	}
+
+	connInfo := ctx.ConnInfo
+	queryID := getNextQueryAsyncID()
+
+	go doQueryAsync(connInfo, query, queryID)
+
+	res := struct {
+		QueryID string `json:"query_id"`
+	}{
+		QueryID: queryID,
+	}
+	serveJSON(w, r, res)
 }
 
 /*
@@ -386,7 +559,8 @@ returns: json in the format
   "finished": false,
   "time_to_first_result_ms": 34, // time it took to get the first result from the server
   "total_query_time_ms": 1234, // time it took to get all results
-  "columns": [ "id", "name" ]
+  "columns": [ "id", "name" ],
+  "error": null, // string if there was an error
 }
 */
 func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {

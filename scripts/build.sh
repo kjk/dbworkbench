@@ -10,9 +10,9 @@ godep go vet github.com/kjk/dbworkbench
 #to filter out Godeps becase . is recursive
 #godep go tool vet -printfuncs=LogInfof,LogErrorf,LogVerbosef .
 
-rm -rf dbworkbench.test
-godep go test -c ./...
-rm -rf dbworkbench.test
+#rm -rf dbworkbench.test
+#godep go test -c ./...
+#rm -rf dbworkbench.test
 
 godep go build -o dbherohelper
 rm -rf dbherohelper
