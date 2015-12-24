@@ -346,7 +346,7 @@ body {
   /*float: right;*/
   width: 3px;
   cursor: col-resize;
-  z-index: 999;
+  z-index: 1;
 }
 
 .query-content-dragbar {
@@ -356,7 +356,7 @@ body {
   /*float: right;*/
   height: 3px;
   cursor: row-resize;
-  z-index: 999;
+  z-index: 1;
 }
 
 .fa-info
@@ -658,7 +658,7 @@ a.disabled {
   height: 200px;
 }
 
-.overlay {
+/*.overlay {
   position: fixed;
   overflow: auto;
   text-align: center;
@@ -673,7 +673,7 @@ a.disabled {
   padding: 0;
   margin: 0;
   border: 0;
-}
+}*/
 
 .button--close {
   font-size: 32px;

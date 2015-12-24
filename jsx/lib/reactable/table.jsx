@@ -391,7 +391,7 @@ export class Table extends React.Component {
 
         // Apply filters
         let filteredChildren = children;
-        if (this.props.filterString !== '') {
+        if (this.props.filterString != '' && this.props.filterString != undefined) {
             filteredChildren = this.applyFilter(this.props.filterString, filteredChildren);
         }
 
