@@ -937,6 +937,13 @@ select#db_type.form-control.input-sm {
 
 /* https://raw.githubusercontent.com/KyleAMathews/react-spinkit/master/css/circle.css */
 
+.fade-in {
+  -webkit-animation: fade-in 2s;
+  -moz-animation: fade-in 2s;
+  -o-animation: fade-in 2s;
+  -ms-animation: fade-in 2s;
+}
+
 .circle-wrapper {
   width: 22px;
   height: 22px;

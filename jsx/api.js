@@ -2,7 +2,7 @@ var action = require('./action.js');
 
 function apiCall2(showSpinner, method, path, params, cb) {
   if (showSpinner) {
-    action.spinner(true);    
+    action.spinner(true);
   }
 
   $.ajax({
@@ -13,7 +13,7 @@ function apiCall2(showSpinner, method, path, params, cb) {
     async: true,
     success: function(data) {
       if (showSpinner) {
-        action.spinner(false);      
+        action.spinner(false);
       }
       if (cb) {
         cb(data);
@@ -21,7 +21,7 @@ function apiCall2(showSpinner, method, path, params, cb) {
     },
     error: function(xhr, status, data) {
       if (showSpinner) {
-        action.spinner(false);      
+        action.spinner(false);
       }
       if (xhr.status == "0") {
         // Backend is down

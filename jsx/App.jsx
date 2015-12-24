@@ -57,7 +57,7 @@ class App extends React.Component {
       dragging: false,
       dragBarPosition: 250,
 
-      spinnerVisible: false,
+      visibleSpinnerNumber: 0,
 
       capabilities: {},
     };
@@ -125,6 +125,9 @@ class App extends React.Component {
 
   handleTableSelected(table) {
     console.log("handleTableSelected: table: ", table);
+
+    this.handleViewSelected(view.SQLQuery);
+
     this.setState({
       selectedTable: table,
     });
@@ -132,9 +135,9 @@ class App extends React.Component {
     // must delay otherwise this.state.selectedTable will not be visible yet
     // in handleViewSelected
     var self = this;
-    setTimeout(function() {
-      self.handleViewSelected(view.SQLQuery);
-    }, 200);
+    // setTimeout(function() {
+    //   self.handleViewSelected(view.SQLQuery);
+    // }, 200);
 
     var connId = this.state.connectionId;
     api.getTableInfo(connId, table, function(data) {
@@ -332,7 +335,15 @@ class App extends React.Component {
   }
 
   handleToggleSpinner(toggle) {
-    this.setState({spinnerVisible: toggle});
+    if (toggle) {
+      this.setState({visibleSpinnerNumber: this.state.visibleSpinnerNumber + 1});
+    } else {
+      if (this.state.visibleSpinnerNumber > 0) {
+        this.setState({visibleSpinnerNumber: this.state.visibleSpinnerNumber - 1});
+      }
+    }
+
+    console.log("spinner count", this.state.visibleSpinnerNumber)
   }
 
   handleResetPagination(toggle) {
@@ -380,7 +391,7 @@ class App extends React.Component {
   }
 
   renderSpinner() {
-    if (!this.state.spinnerVisible) {
+    if (this.state.visibleSpinnerNumber <= 0) {
       return;
     }
     var spinnerStyle = {
@@ -390,7 +401,10 @@ class App extends React.Component {
       zIndex: '5',
     };
 
-    return <SpinnerCircle style={spinnerStyle} />;
+    return(
+      <div className="three-quarters-loader fade-in" style={spinnerStyle}></div>
+    );
+    // return <SpinnerCircle style={spinnerStyle} />;
   }
 
   render() {
@@ -408,8 +422,12 @@ class App extends React.Component {
 
     var dragBarStyle = { left: this.state.dragBarPosition + 'px' };
 
+    if (this.state.visibleSpinnerNumber > 0) {
+      var darkenStyle = {opacity: '1'};
+    }
+
     return (
-      <div>
+      <div style={darkenStyle}>
         <div onClick={this.handleCloseAlertBar} >
           { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
         </div>

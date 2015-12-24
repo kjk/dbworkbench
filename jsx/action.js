@@ -30,7 +30,7 @@ function broadcast(actionIdx) {
   var args = Array.prototype.slice.call(arguments, 1);
   callbacks.map(function(cbInfo) {
     var cb = cbInfo[0];
-    console.log("broadcastAction: calling callback for action", getActionName(actionIdx), "with", args.length, "args");
+    console.log("broadcastAction: calling callback for action", getActionName(actionIdx), "with", args, "args");
     if (args.length > 0) {
       cb.apply(null, args);
     } else {
