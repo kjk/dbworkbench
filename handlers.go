@@ -441,7 +441,6 @@ func durMsSince(t time.Time) float64 {
 	return durToMs(time.Now().Sub(t))
 }
 
-// TODO: respect maxDataSize
 func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int, maxDataSize int64) {
 	updateConnectionLastAccess(connInfo.ConnectionID)
 	db := connInfo.Client.Connection()
@@ -468,6 +467,7 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRow
 	firstRow := false
 	timeStart := time.Now()
 	nRows := 0
+	var dataSize int64
 	for rows.Next() {
 		row, err := rows.SliceScan()
 		if err != nil {
@@ -480,11 +480,18 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRow
 			})
 		}
 
-		updateRow(row)
+		dataSize += int64(updateRow(row))
+		if maxDataSize != -1 && dataSize > maxDataSize {
+			withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+				s.NotComplete = true
+			})
+			break
+		}
 
 		withQueryStatus(queryID, func(s *QueryAsyncStatus) {
 			s.rows = append(s.rows, row)
 			s.TotalQueryTimeMs = durMsSince(timeStart)
+			s.DataSize = dataSize
 		})
 		nRows++
 		if maxRows != -1 && nRows >= maxRows {

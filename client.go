@@ -32,11 +32,26 @@ type ClientCapabilities struct {
 
 // utility functions
 
-func updateRow(row []interface{}) {
+func updateRow(row []interface{}) int {
+	var size int
 	for i, item := range row {
 		if item == nil {
 			row[i] = nil
 			continue
+		}
+		switch v := item.(type) {
+		default:
+			LogInfof("unhandled type %T", item)
+		case bool:
+			size++
+		case int, float32:
+			size += 4
+		case string:
+			size += len(v)
+		case []byte:
+			size += len(v)
+		case int64, float64:
+			size += 8
 		}
 		t := reflect.TypeOf(item).Kind().String()
 
@@ -44,6 +59,7 @@ func updateRow(row []interface{}) {
 			row[i] = string(item.([]byte))
 		}
 	}
+	return size
 }
 
 func dbQuery(db *sqlx.DB, query string, args ...interface{}) (*Result, error) {
