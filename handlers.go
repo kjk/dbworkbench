@@ -442,8 +442,8 @@ func durMsSince(t time.Time) float64 {
 	return durToMs(time.Now().Sub(t))
 }
 
-// TODO: maxRows, maxDataSize
-func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string) {
+// TODO: maxDataSize
+func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int) {
 	updateConnectionLastAccess(connInfo.ConnectionID)
 	db := connInfo.Client.Connection()
 
@@ -468,7 +468,6 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string) {
 
 	firstRow := false
 	timeStart := time.Now()
-	maxRows := -1
 	nRows := 0
 	for rows.Next() {
 		obj, err := rows.SliceScan()
@@ -529,8 +528,20 @@ returns: json in the format
 }
 */
 func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	// TODO: handle max_rows, max_data_size
+	// TODO: handle max_data_size
+	var err error
 	query := strings.TrimSpace(r.FormValue("query"))
+	maxRowsStr := strings.TrimSpace(r.FormValue("max_rows"))
+	maxRows := -1
+	if maxRowsStr != "" {
+		maxRows, err = strconv.Atoi(maxRowsStr)
+		if err != nil {
+			err = fmt.Errorf("invalid 'max_rows': '%s', err: '%s'", maxRowsStr, err)
+			LogErrorf("%s\n", err)
+			serveJSONError(w, r, err.Error())
+			return
+		}
+	}
 	LogInfof("query: '%s'\n", query)
 
 	if query == "" {
@@ -541,7 +552,7 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	connInfo := ctx.ConnInfo
 	queryID := getNextQueryAsyncID()
 
-	go doQueryAsync(connInfo, query, queryID)
+	go doQueryAsync(connInfo, query, queryID, maxRows)
 
 	res := struct {
 		QueryID string `json:"query_id"`
