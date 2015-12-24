@@ -19,8 +19,8 @@ import (
 
 const (
 	// for auto-update
-	latestMacVersion = "0.1.7"
-	latestWinVersion = "0.1.7"
+	latestMacVersion = "0.2.3"
+	latestWinVersion = "0.2.3"
 
 	indexMac = "/gui-database-client-for-mysql-postgresql-mac-osx"
 	indexWin = "/gui-database-client-for-mysql-postgresql-windows"
