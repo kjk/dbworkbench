@@ -32,6 +32,20 @@ type ClientCapabilities struct {
 
 // utility functions
 
+func updateRow(row []interface{}) {
+	for i, item := range row {
+		if item == nil {
+			row[i] = nil
+			continue
+		}
+		t := reflect.TypeOf(item).Kind().String()
+
+		if t == "slice" {
+			row[i] = string(item.([]byte))
+		}
+	}
+}
+
 func dbQuery(db *sqlx.DB, query string, args ...interface{}) (*Result, error) {
 	rows, err := db.Queryx(query, args...)
 
@@ -49,22 +63,11 @@ func dbQuery(db *sqlx.DB, query string, args ...interface{}) (*Result, error) {
 	result := Result{Columns: cols}
 
 	for rows.Next() {
-		obj, err := rows.SliceScan()
-
-		for i, item := range obj {
-			if item == nil {
-				obj[i] = nil
-			} else {
-				t := reflect.TypeOf(item).Kind().String()
-
-				if t == "slice" {
-					obj[i] = string(item.([]byte))
-				}
-			}
-		}
+		row, err := rows.SliceScan()
+		updateRow(row)
 
 		if err == nil {
-			result.Rows = append(result.Rows, obj)
+			result.Rows = append(result.Rows, row)
 		}
 	}
 

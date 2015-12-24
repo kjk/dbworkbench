@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -442,8 +441,8 @@ func durMsSince(t time.Time) float64 {
 	return durToMs(time.Now().Sub(t))
 }
 
-// TODO: maxDataSize
-func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int) {
+// TODO: respect maxDataSize
+func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int, maxDataSize int64) {
 	updateConnectionLastAccess(connInfo.ConnectionID)
 	db := connInfo.Client.Connection()
 
@@ -470,7 +469,7 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRow
 	timeStart := time.Now()
 	nRows := 0
 	for rows.Next() {
-		obj, err := rows.SliceScan()
+		row, err := rows.SliceScan()
 		if err != nil {
 			setQueryStatusError(queryID, err)
 			return
@@ -480,19 +479,11 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRow
 				s.TimeToFirstResultMs = durMsSince(timeStart)
 			})
 		}
-		for i, item := range obj {
-			if item == nil {
-				obj[i] = nil
-				continue
-			}
-			t := reflect.TypeOf(item).Kind().String()
 
-			if t == "slice" {
-				obj[i] = string(item.([]byte))
-			}
-		}
+		updateRow(row)
+
 		withQueryStatus(queryID, func(s *QueryAsyncStatus) {
-			s.rows = append(s.rows, obj)
+			s.rows = append(s.rows, row)
 			s.TotalQueryTimeMs = durMsSince(timeStart)
 		})
 		nRows++
@@ -528,9 +519,14 @@ returns: json in the format
 }
 */
 func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	// TODO: handle max_data_size
 	var err error
 	query := strings.TrimSpace(r.FormValue("query"))
+	if query == "" {
+		LogErrorf("Query parameter is missing, uri: '%s'\n", r.URL.RequestURI())
+		serveJSONError(w, r, "Query parameter is missing")
+		return
+	}
+
 	maxRowsStr := strings.TrimSpace(r.FormValue("max_rows"))
 	maxRows := -1
 	if maxRowsStr != "" {
@@ -542,17 +538,27 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	LogInfof("query: '%s'\n", query)
-
-	if query == "" {
-		serveJSONError(w, r, "Query parameter is missing")
-		return
+	maxDataSizeStr := strings.TrimSpace(r.FormValue("max_data_size"))
+	var maxDataSize int64 = -1
+	if maxDataSizeStr != "" {
+		maxDataSize, err = strconv.ParseInt(maxDataSizeStr, 10, 64)
+		if err != nil {
+			err = fmt.Errorf("invalid 'max_data_size': '%s', err: '%s'", maxDataSizeStr, err)
+			LogErrorf("%s\n", err)
+			serveJSONError(w, r, err.Error())
+			return
+		}
 	}
+	if maxDataSize == -1 && maxRows == -1 {
+		maxDataSize = defaultMaxDataSize
+	}
+
+	LogInfof("query: '%s', max_rows: '%s', max_data_size: '%s'\n", query, maxRowsStr, maxDataSizeStr)
 
 	connInfo := ctx.ConnInfo
 	queryID := getNextQueryAsyncID()
 
-	go doQueryAsync(connInfo, query, queryID, maxRows)
+	go doQueryAsync(connInfo, query, queryID, maxRows, maxDataSize)
 
 	res := struct {
 		QueryID string `json:"query_id"`
