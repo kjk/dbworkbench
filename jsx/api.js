@@ -80,7 +80,7 @@ function getTableIndexes(connId, table, cb) {
 
 function getTableInfo(connId, table, cb) {
   var opts = { conn_id : connId };
-  apiCall("get", "/tables/" + table + "/info", opts, cb);
+  apiCallNoSpinner("get", "/tables/" + table + "/info", opts, cb);
 }
 
 function getHistory(connId, cb) {
