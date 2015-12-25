@@ -2,7 +2,7 @@
 # on mac: brew install python3
 
 import sys, os, os.path
-import urllib.request, zipfile
+import urllib.request, zipfile, subprocess
 
 g_world_db_url = "http://downloads.mysql.com/docs/world.sql.zip"
 
@@ -46,9 +46,14 @@ def dl_and_unzip_world_mysql():
   open(g_world_db_mysql_path, "wb").write(d)
 
 def create_docker_image():
-  s = "docker build -t dbhero/mysql-55 -f scripts/mysql-55.dockerfile ."
-  s = "docker run -it -p 7100:3306 dbhero/mysql-55"
-  print(s + "\n")
+  print("building docker image")
+  subprocess.run(["docker", "build", "-t", "dbhero/mysql-55", "-f", "scripts/mysql-55.dockerfile", "."])
+  #docker build -t dbhero/mysql-55 -f scripts/mysql-55.dockerfile .
+  #s = "docker run -it -p 7100:3306 dbhero/mysql-55"
+  #s = "docker-machine ip default"
+  # 192.168.99.100
+  # /usr/local/Cellar/mysql55/5.5.44/bin/mysql -h 192.168.99.100 --port=7100 -uroot
+  #print(s + "\n")
 
 def main():
   os.makedirs(g_tmp_data_dir, exist_ok=True)
