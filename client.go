@@ -2,6 +2,8 @@ package main
 
 import (
 	"reflect"
+	"time"
+	"unsafe"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -41,7 +43,7 @@ func updateRow(row []interface{}) int {
 		}
 		switch v := item.(type) {
 		default:
-			LogInfof("unhandled type %T", item)
+			LogInfof("unhandled type %T\n", item)
 		case bool:
 			size++
 		case int, float32:
@@ -52,6 +54,8 @@ func updateRow(row []interface{}) int {
 			size += len(v)
 		case int64, float64:
 			size += 8
+		case time.Time:
+			size += int(unsafe.Sizeof(v))
 		}
 		t := reflect.TypeOf(item).Kind().String()
 
