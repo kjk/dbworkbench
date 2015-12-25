@@ -30,3 +30,4 @@ win/dbhero/dbherohelper.exe
 win/dbhero/dbherohelper.exe~
 dbherohelper.exe
 *.csproj.user
+tmp_data

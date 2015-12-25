@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 # on mac: brew install python3
-# helper script to 
+#
+# helper script to update all version numbers (mac, windows, frontend)
 
 import sys, os, os.path, re
 
