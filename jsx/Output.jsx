@@ -34,27 +34,56 @@ class Output extends React.Component {
 
   generateQuery() {
     var self = this;
-    var schema = "public";
-    var table = "countrylanguage";
-    var PK = "countrycode";
-    var PKValue = "ABW";
+    var schema = "";
+    var table = this.props.selectedTable;
 
     _.each(this.state.editedCells, function(value, key, obj) {
-      console.log("Val", value, " Key", key, " Obj", obj);
       var values = key.split('.');
       var rowId = values[0];
       var colId = values[1];
 
       var column = self.props.results.columns[colId];
       var afterChange = value;
+      var columns = self.props.results.columns.join(", ");
 
-      // TODO: get primary key
+      var primaryKeyList = [];
+      _.each(self.resultsToDictionary(self.props.tableStructures[table]), function(obj, id) {
+        // Can move this outside of loop with small changes
+        // Loop doesn't have any effect it's same for all
+        schema = obj["table_schema"];
+        if (obj["is_primary_key"]) {
+          // Need this because the column position can change. (Don't know why)
+          var correctColumnId = -1;
+          _.each(self.props.results.columns, function(col, nId) {
+            if (col == obj["column_name"]) {
+              correctColumnId = nId;
+            }
+          });
 
-      //UPDATE public.countrylanguage SET language='Deneme' WHERE countrycode='ABW' AND language='Dutch' RETURNING countrycode, language, isofficial, percentage;
+          var primaryKeyValue = self.props.results.rows[rowId][correctColumnId];
+          primaryKeyList.push({key: obj["column_name"], value: primaryKeyValue});
+        }
+      });
+
+      if (primaryKeyList.length == 0) {
+        // TODO: the table has no primary keys. Return error
+        // Also we may push invalid data in the upper loop which can make this check useless
+      }
+
+      var queryPK = "";
+      for (var i = 0; i < primaryKeyList.length; i++) {
+        var PKColumnName = primaryKeyList[i]["key"];
+        var PKValue = primaryKeyList[i]["value"];
+        queryPK += PKColumnName + "=\'" + PKValue + "\' ";
+        if (i < primaryKeyList.length - 1) {
+          queryPK += "AND ";
+        }
+      };
+
       var query = "UPDATE " + schema + "." + table + " ";
           query += "SET " + column + "=\'" + afterChange + "\' ";
-          query += "WHERE " + PK + "=\'" + PKValue + "\' ";
-          query += "RETURNING countrycode, language, isofficial, percentage;";
+          query += "WHERE " + queryPK;
+          query += "RETURNING " + columns + ";";
 
       console.log("QUERY: ", query);
     });
@@ -84,12 +113,16 @@ class Output extends React.Component {
     var tempEditedCells = _.clone(this.state.editedCells);
     tempEditedCells[this.generateEditedCellKey(rowId, colId)] = e.target.value;
 
-    console.log("Or: ", this.state.editedCells, "Changed", tempEditedCells);
-    this.generateQuery();
-
     this.setState({
       editedCells: tempEditedCells,
     });
+
+    // Must delay for setState to happen
+    var self = this;
+    setTimeout(function() {
+      self.generateQuery();
+    }, 200);
+
   }
 
   renderHeader(columns, sortColumn, sortOrder) {
@@ -116,10 +149,10 @@ class Output extends React.Component {
     var children = _.map(row, function(value, col) {
       colId = colId + 1;
 
-      var position = {rowId: rowId, colId: colId}
+      var position = {rowId: rowId, colId: colId};
 
       if (self.state.clickedCellPosition.rowId == rowId && self.state.clickedCellPosition.colId == colId) {
-        var isEditable = true
+        var isEditable = true;
       }
 
       if (self.state.editedCells[self.generateEditedCellKey(rowId, colId)] != undefined) {

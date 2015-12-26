@@ -453,7 +453,9 @@ class App extends React.Component {
             supportsExplain={this.state.capabilities.HasAnalyze}
             dragBarPosition={this.state.dragBarPosition}
             selectedView={this.state.selectedView}
-            resetPagination={this.state.resetPagination} />
+            resetPagination={this.state.resetPagination}
+            tableStructures={this.state.tableStructures}
+            selectedTable={this.state.selectedTable} />
         </div>
 
       </div>
