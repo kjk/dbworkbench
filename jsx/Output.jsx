@@ -29,6 +29,16 @@ class Output extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
+      this.setState({
+        clickedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+        filterString: '',
+      });
+    }
+  }
+
   generateEditedCellKey(rowId, colId) {
     return rowId + "." + colId;
   }
@@ -236,6 +246,7 @@ class Output extends React.Component {
         filterString={this.state.filterString}
         itemsPerPage={itemsPerPage}
         resetPagination={this.props.resetPagination} >
+        resetPagination={this.props.viewChanged} >
           {header}
           {rows}
       </Table>
