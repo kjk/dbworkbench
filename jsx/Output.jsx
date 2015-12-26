@@ -12,6 +12,7 @@ var Tr = require('./lib/reactable/tr.jsx').Tr;
 var Td = require('./lib/reactable/td.jsx').Td;
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
+var QueryEditBar = require('./QueryEditBar.jsx');
 
 class Output extends React.Component {
   constructor(props, context) {
@@ -36,6 +37,7 @@ class Output extends React.Component {
     var self = this;
     var schema = "";
     var table = this.props.selectedTable;
+    var query = "";
 
     _.each(this.state.editedCells, function(value, key, obj) {
       var values = key.split('.');
@@ -80,13 +82,13 @@ class Output extends React.Component {
         }
       };
 
-      var query = "UPDATE " + schema + "." + table + " ";
-          query += "SET " + column + "=\'" + afterChange + "\' ";
-          query += "WHERE " + queryPK;
-          query += "RETURNING " + columns + ";";
-
-      console.log("QUERY: ", query);
+      query += "UPDATE " + schema + "." + table + " ";
+      query += "SET " + column + "=\'" + afterChange + "\' ";
+      query += "WHERE " + queryPK;
+      query += "RETURNING " + columns + ";\n";
     });
+
+    return query;
   }
 
   resultsToDictionary(results) {
@@ -107,6 +109,13 @@ class Output extends React.Component {
     });
   }
 
+  handleDiscardChanges() {
+    this.setState({
+      clickedCellPosition: {rowId: -1, colId: -1},
+      editedCells: {},
+    });
+  }
+
   handleOnCellEdit(rowId, colId, e) {
     console.log("handleOnCellEdit ", rowId, colId, e.target.value);
 
@@ -116,13 +125,6 @@ class Output extends React.Component {
     this.setState({
       editedCells: tempEditedCells,
     });
-
-    // Must delay for setState to happen
-    var self = this;
-    setTimeout(function() {
-      self.generateQuery();
-    }, 200);
-
   }
 
   renderHeader(columns, sortColumn, sortOrder) {
@@ -290,10 +292,15 @@ class Output extends React.Component {
       outputStyle['top'] = '60px';
     }
 
+    if (Object.keys(this.state.editedCells).length !== 0) {
+      var queryEditBar = <QueryEditBar generateQuery={this.generateQuery.bind(this)} onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />
+    }
+
     return (
       <div id="output" className={clsOutput} style={outputStyle}>
         <div id="wrapper">
           {children}
+          {queryEditBar}
         </div>
       </div>
     );
