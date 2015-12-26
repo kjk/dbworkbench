@@ -46,6 +46,7 @@ class App extends React.Component {
 
       databaseName: "No Database Selected",
       tables: null,
+      tableStructures: {},
       selectedTable: "",
       selectedTableInfo: null,
       results: null,
@@ -63,6 +64,23 @@ class App extends React.Component {
     };
   }
 
+  getAllTablesStructures(connId, tables) {
+    // We can do this by having the query get all data at once but its harder
+    var self = this;
+    _.each(tables, function(table) {
+      api.getTableStructure(connId, table, function(tableStructureData) {
+        var tempTableStructures = self.state.tableStructures;
+        tempTableStructures[table] = tableStructureData;
+        self.setState({
+          tableStructures: tempTableStructures
+        });
+
+        console.log("Table structrues, ", self.state.tableStructures);
+      });
+    });
+  }
+
+
   handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
     this.setState({
       connected: true,
@@ -76,6 +94,8 @@ class App extends React.Component {
       self.setState({
         tables: data,
       });
+
+      self.getAllTablesStructures(connId, data);
     });
   }
 
@@ -359,6 +379,8 @@ class App extends React.Component {
         self.setState({
           tables: data,
         });
+
+       self.getAllTablesStructures(connId, data);
       });
 
       api.getConnectionInfo(connId, function(data) {
