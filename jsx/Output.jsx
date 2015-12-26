@@ -85,7 +85,7 @@ class Output extends React.Component {
       query += "UPDATE " + schema + "." + table + " ";
       query += "SET " + column + "=\'" + afterChange + "\' ";
       query += "WHERE " + queryPK;
-      query += "RETURNING " + columns + ";\n";
+      query += "RETURNING " + columns + ";";
     });
 
     return query;
@@ -293,7 +293,7 @@ class Output extends React.Component {
     }
 
     if (Object.keys(this.state.editedCells).length !== 0) {
-      var queryEditBar = <QueryEditBar generateQuery={this.generateQuery.bind(this)} onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />
+      var queryEditBar = <QueryEditBar generateQuery={this.generateQuery.bind(this)} onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />;
     }
 
     return (

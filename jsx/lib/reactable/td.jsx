@@ -46,7 +46,7 @@ export class Td extends React.Component {
 
         if (this.props.isEditable) {
             // console.log("Editable Cell", this.props)
-            return <td {...tdProps}> <input value={this.props.children} onChange={this.props.onEdit}></input></td>;
+            return <td {...tdProps}> <textarea value={this.props.children} onChange={this.props.onEdit}></textarea></td>;
         }
 
         return <td {...tdProps}></td>;
