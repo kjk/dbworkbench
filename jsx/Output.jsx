@@ -32,6 +32,34 @@ class Output extends React.Component {
     return rowId + "." + colId;
   }
 
+  generateQuery() {
+    var self = this;
+    var schema = "public";
+    var table = "countrylanguage";
+    var PK = "countrycode";
+    var PKValue = "ABW";
+
+    _.each(this.state.editedCells, function(value, key, obj) {
+      console.log("Val", value, " Key", key, " Obj", obj);
+      var values = key.split('.');
+      var rowId = values[0];
+      var colId = values[1];
+
+      var column = self.props.results.columns[colId];
+      var afterChange = value;
+
+      // TODO: get primary key
+
+      //UPDATE public.countrylanguage SET language='Deneme' WHERE countrycode='ABW' AND language='Dutch' RETURNING countrycode, language, isofficial, percentage;
+      var query = "UPDATE " + schema + "." + table + " ";
+          query += "SET " + column + "=\'" + afterChange + "\' ";
+          query += "WHERE " + PK + "=\'" + PKValue + "\' ";
+          query += "RETURNING countrycode, language, isofficial, percentage;";
+
+      console.log("QUERY: ", query);
+    });
+  }
+
   resultsToDictionary(results) {
     var reformatData = _.map(results.rows, function(row){
       var some = {};
@@ -57,6 +85,7 @@ class Output extends React.Component {
     tempEditedCells[this.generateEditedCellKey(rowId, colId)] = e.target.value;
 
     console.log("Or: ", this.state.editedCells, "Changed", tempEditedCells);
+    this.generateQuery();
 
     this.setState({
       editedCells: tempEditedCells,
