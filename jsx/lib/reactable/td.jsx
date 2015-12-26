@@ -5,15 +5,15 @@ import { isUnsafe } from './unsafe.jsx';
 
 export class Td extends React.Component {
     handleClick(e){
-        if (typeof this.props.handleClick === 'function') {
-            return this.props.handleClick(e, this);
+        if (typeof this.props.onClick === 'function') {
+            return this.props.onClick(e, this);
         }
     }
 
     render() {
         var tdProps = {
             className: this.props.className,
-            onClick: this.handleClick.bind(this)
+            onClick: this.handleClick.bind(this),
         };
 
         // Attach any properties on the column to this Td object to allow things like custom event handlers
@@ -44,6 +44,11 @@ export class Td extends React.Component {
             }
         }
 
-        return <td {...tdProps} />;
+        if (this.props.isEditable) {
+            // console.log("Editable Cell", this.props)
+            return <td {...tdProps}> <input value={this.props.children} onChange={this.props.onEdit}></input></td>;
+        }
+
+        return <td {...tdProps}></td>;
     }
 };
