@@ -71,7 +71,7 @@ class Dropdown extends React.Component {
   }
 
   render() {
-    var customStyles = {
+    var modalStyle = {
       content : {
         display               : 'block',
         overflow              : 'auto',
@@ -83,7 +83,7 @@ class Dropdown extends React.Component {
       }
     };
 
-    var outputStyles = {
+    var modalOutputStyles = {
       // display     :'table-row',
       position    :'absolute',
       padding     :'0',
@@ -94,7 +94,6 @@ class Dropdown extends React.Component {
 
     var appElement = document.getElementById('main');
     Modal.setAppElement(appElement);
-
 
     return (
         <div id="deneme" className='dropdown-window'>
@@ -110,7 +109,7 @@ class Dropdown extends React.Component {
             id='nav'
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
-            style={customStyles} >
+            style={modalStyle} >
 
             <div>
               <div className="modal-header">
@@ -123,7 +122,7 @@ class Dropdown extends React.Component {
               <div className="modal-body">
 
               <Output
-                style={outputStyles}
+                style={modalOutputStyles}
                 results={this.state.results}
                 isSidebar={true}/>
               </div>
