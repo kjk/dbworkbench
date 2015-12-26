@@ -16,14 +16,20 @@ var ConnectionWindow = require('./ConnectionWindow.jsx');
 class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.handleRowClick = this.handleRowClick.bind(this);
+    this.handleCellClick = this.handleCellClick.bind(this);
+    this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
+
 
     this.state = {
-      clickedRowKey: -1,
-      rowStyle: {},
+      clickedCellPosition: {rowId: -1, colId: -1},
+      editedCells: {},
 
       filterString: '',
     };
+  }
+
+  generateEditedCellKey(rowId, colId) {
+    return rowId + "." + colId;
   }
 
   resultsToDictionary(results) {
@@ -36,24 +42,24 @@ class Output extends React.Component {
     return reformatData;
   }
 
-  handleRowClick(key, e) {
-    console.log("Enlarging ", key);
-    var enlargeStyle = {
-      maxWidth: '350px',
-      maxHeight: '100%',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'normal',
-    };
-
-    if (_.isEqual(enlargeStyle, this.state.rowStyle) && key == this.state.clickedRowKey) {
-      console.log("Shrinking");
-      enlargeStyle = {};
-    }
+  handleCellClick(rowId, colId, e) {
+    console.log("handleCellClick ", rowId, colId);
 
     this.setState({
-      clickedRowKey: key,
-      rowStyle: enlargeStyle
+      clickedCellPosition: {rowId: rowId, colId: colId},
+    });
+  }
+
+  handleOnCellEdit(rowId, colId, e) {
+    console.log("handleOnCellEdit ", rowId, colId, e.target.value);
+
+    var tempEditedCells = _.clone(this.state.editedCells);
+    tempEditedCells[this.generateEditedCellKey(rowId, colId)] = e.target.value;
+
+    console.log("Or: ", this.state.editedCells, "Changed", tempEditedCells);
+
+    this.setState({
+      editedCells: tempEditedCells,
     });
   }
 
@@ -75,24 +81,37 @@ class Output extends React.Component {
     );
   }
 
-  renderRow(row, key) {
-    var style = {};
-    if (this.state.clickedRowKey == key) {
-      style = this.state.rowStyle;
-    }
+  renderRow(row, rowId) {
+    var self = this;
+    var colId = -1;
+    var children = _.map(row, function(value, col) {
+      colId = colId + 1;
 
-    var i = 0;
-    var children = _.map(row, function(row, col) {
-      i = i + 1;
+      var position = {rowId: rowId, colId: colId}
 
-      // console.log("row", row, "col", col)
+      if (self.state.clickedCellPosition.rowId == rowId && self.state.clickedCellPosition.colId == colId) {
+        var isEditable = true
+      }
+
+      if (self.state.editedCells[self.generateEditedCellKey(rowId, colId)] != undefined) {
+        var value = self.state.editedCells[self.generateEditedCellKey(rowId, colId)];
+      }
+
       return (
-        <Td key={i} column={col} value={row}><div style={style}>{row}</div></Td>
+        <Td
+          key={position}
+          column={col}
+          position={position}
+          onClick={self.handleCellClick.bind(self, rowId, colId)}
+          isEditable={isEditable}
+          onEdit={self.handleOnCellEdit.bind(self, rowId, colId)}>
+            {value}
+        </Td>
       );
     });
 
     return (
-      <Tr key={key} onClick={this.handleRowClick.bind(this,key)}>{children}</Tr>
+      <Tr key={rowId} >{children}</Tr>
     );
   }
 
