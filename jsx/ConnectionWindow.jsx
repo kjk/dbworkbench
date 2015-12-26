@@ -301,9 +301,9 @@ class ConnectionWindow extends React.Component {
   }
 
   renderBookMarks() {
-    // if (this.state.isConnecting) {
-    //   return;
-    // }
+    if (this.state.isConnecting) {
+      return;
+    }
 
     let bookmarks = [];
     for (var i = 0; i < this.state.bookmarks.length; i++) {
