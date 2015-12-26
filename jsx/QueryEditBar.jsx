@@ -4,7 +4,7 @@
 var React = require('react');
 var _ = require('underscore');
 
-var api = require('./api.js');
+var action = require('./action.js');
 var Modal = require('react-modal');
 
 class QueryEditBar extends React.Component {
@@ -34,13 +34,11 @@ class QueryEditBar extends React.Component {
 
 
   handleSaveChanges() {
-    console.log("handleSaveChanges ");
-    // TODO: execute query
-    // TODO: must support multiple queries for multiple rows changes
-    // var query = this.props.generateQuery();
-    // console.log("Executing query", query);
+    console.log("handleSaveChanges ", query);
 
-    // api.executeQuery(query);
+    // TODO: must support multiple queries for multiple rows changes
+    var query = this.props.generateQuery();
+    action.executeQuery(query);
   }
 
   handleSQLPreview() {

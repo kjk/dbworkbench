@@ -75,11 +75,10 @@ class App extends React.Component {
           tableStructures: tempTableStructures
         });
 
-        console.log("Table structrues, ", self.state.tableStructures);
+        console.log("All Table structrues, ", self.state.tableStructures);
       });
     });
   }
-
 
   handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
     this.setState({
