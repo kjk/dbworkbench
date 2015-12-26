@@ -671,10 +671,19 @@ a.disabled {
   height: 30px;
 }
 
+#query_edit_bar div.row_number {
+  position: fixed;
+  color: #fff;
+  font-size: 12px;
+  padding: 1px;
+  margin-top: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: 130px;
+}
+
 #query_edit_bar button {
   position: fixed;
-  border: none;
-  box-shadow: none;
   background: #3B8686;
   color: #fff;
   border: none;

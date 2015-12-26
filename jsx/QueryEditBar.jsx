@@ -22,6 +22,7 @@ class QueryEditBar extends React.Component {
   handleSaveChanges() {
     console.log("handleSaveChanges ");
     // TODO: execute query
+    // TODO: must support multiple queries for multiple rows changes
     // var query = this.props.generateQuery();
     // console.log("Executing query", query);
 
@@ -39,6 +40,7 @@ class QueryEditBar extends React.Component {
     return (
       <div id="query_edit_bar">
         <button className="discard_changes" onClick={this.props.onHandleDiscardChanges}>Discard Changes</button>
+        <div className="row_number">{this.props.numberOfRowsEdited} edited rows</div>
         <button className="sql_preview" onClick={this.handleSQLPreview.bind(this)}>SQL Preview</button>
         <button className="save_changes" onClick={this.handleSaveChanges.bind(this)}>Save Changes</button>
       </div>

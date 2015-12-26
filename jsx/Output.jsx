@@ -292,8 +292,9 @@ class Output extends React.Component {
       outputStyle['top'] = '60px';
     }
 
-    if (Object.keys(this.state.editedCells).length !== 0) {
-      var queryEditBar = <QueryEditBar generateQuery={this.generateQuery.bind(this)} onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />;
+    var numberOfRowsEdited = Object.keys(this.state.editedCells).length;
+    if (numberOfRowsEdited !== 0) {
+      var queryEditBar = <QueryEditBar numberOfRowsEdited={numberOfRowsEdited} generateQuery={this.generateQuery.bind(this)} onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />;
     }
 
     return (
