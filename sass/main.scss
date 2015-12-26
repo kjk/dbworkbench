@@ -562,6 +562,10 @@ div#output.empty {
   white-space: pre;
 }
 
+#results td textarea {
+  width: 100%;
+}
+
 /* Is this being used?*/
 #sidebar-modal-results td div span.null,
 #results td div span.null {

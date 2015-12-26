@@ -4,11 +4,16 @@
 var React = require('react');
 var _ = require('underscore');
 
+var api = require('./api.js');
+
 class QueryEditBar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleSQLPreview = this.handleSQLPreview.bind(this);
+
+    // 1) Is there a way to move discard changes to here without using action?
+    // 2) maybe move generateQuery from output to here?
 
     this.state = {
     };
@@ -17,12 +22,15 @@ class QueryEditBar extends React.Component {
   handleSaveChanges() {
     console.log("handleSaveChanges ");
     // TODO: execute query
+    // var query = this.props.generateQuery();
+    // console.log("Executing query", query);
+
+    // api.executeQuery(query);
   }
 
   handleSQLPreview() {
     console.log("handleSQLPreview ");
     // TODO: show sqlpreview in modal
-    // TODO: maybe move generateQuery from output to here?
     var query = this.props.generateQuery();
     console.log("Query Preview", query);
   }
