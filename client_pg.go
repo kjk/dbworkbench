@@ -88,7 +88,7 @@ func (c *ClientPg) Tables() ([]string, error) {
 func (c *ClientPg) Table(table string) (*Result, error) {
 	q := `SELECT
 		DISTINCT ON (column_name) column_name, data_type, is_nullable, character_maximum_length, character_set_catalog, column_default,
-			CASE WHEN information_schema.columns.column_name = r.attribute_name  THEN 'true' END AS is_primary_key
+			CASE WHEN information_schema.columns.column_name = r.attribute_name  THEN 'true' END AS is_primary_key, table_name, table_schema
 		FROM information_schema.columns,
 		  (SELECT c.column_name AS attribute_name
 			FROM information_schema.table_constraints tc
