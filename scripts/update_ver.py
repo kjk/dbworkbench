@@ -37,10 +37,9 @@ def update_mac_ver(ver):
 	s = "".join(res)
 	open(path, "w").write(s)
 
-def update_win_ver(ver):
+def update_win_ver_in_file(ver, path):
 	while len(ver.split(".")) < 4:
 		ver += ".0"
-	path = pj("win", "dbhero", "Properties", "AssemblyInfo.cs")
 	s = open(path).read()
 
 	r = re.compile('''AssemblyVersion\(\"([\d\.^"]+)"''', re.MULTILINE | re.DOTALL | re.IGNORECASE)
@@ -53,6 +52,12 @@ def update_win_ver(ver):
 
 	s = s.replace("\n", "\r\n")
 	open(path, "w").write(s)
+
+def update_win_ver(ver):
+    path = pj("win", "dbhero", "Properties", "AssemblyInfo.cs")
+    update_win_ver_in_file(ver, path)
+    path = pj("win-cef", "dbhero", "Properties", "AssemblyInfo.cs")
+    update_win_ver_in_file(ver, path)
 
 def update_frontend_ver(ver):
 	path = pj("s", "index.html")
