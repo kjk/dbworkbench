@@ -658,6 +658,27 @@ a.disabled {
   height: 200px;
 }
 
+#query_edit_bar {
+  font-size: 12px;
+  position: fixed;
+  background-color: red;
+  bottom: 21px;
+  width: 100%;
+}
+
+#query_edit_bar button.discard_changes {
+  background-color: blue;
+}
+
+#query_edit_bar button.sql_preview {
+  background-color: green;
+}
+
+#query_edit_bar button.save_changes {
+  background-color: yellow;
+}
+
+
 /*.overlay {
   position: fixed;
   overflow: auto;
