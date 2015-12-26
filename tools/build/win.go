@@ -9,11 +9,19 @@ import (
 )
 
 func s3SetupPathWin() string {
-	return s3Dir + fmt.Sprintf("rel/dbHero-setup-%s.exe", programVersion)
+	return s3Dir + fmt.Sprintf("rel/dbHero--setup-%s.exe", programVersion)
+}
+
+func s3SetupPathWinCef() string {
+	return s3Dir + fmt.Sprintf("rel/dbHero-cef-setup-%s.exe", programVersion)
 }
 
 func s3SetupPathWinBeta() string {
 	return s3Dir + fmt.Sprintf("beta/dbHero-setup-%s.exe", programVersion)
+}
+
+func s3SetupPathWinCefBeta() string {
+	return s3Dir + fmt.Sprintf("beta/dbHero-cef-setup-%s.exe", programVersion)
 }
 
 func exeSetupPath() string {
@@ -81,12 +89,26 @@ func cleanWin() {
 	removeDirMust("bin")
 }
 
-func winDir() string {
-	return filepath.Join("win", "dbhero")
+var (
+	winDir    string
+	winCefDir string
+)
+
+func rememberDirs() {
+	var err error
+	winDir, err = filepath.Abs(filepath.Join("win", "dbhero"))
+	fataliferr(err)
+	winCefDir, err = filepath.Abs(filepath.Join("win-cef", "dbhero"))
+	fataliferr(err)
 }
 
 func cdToWinDir() {
-	err := os.Chdir(winDir())
+	err := os.Chdir(winDir)
+	fataliferr(err)
+}
+
+func cdToWinCefDir() {
+	err := os.Chdir(winCefDir)
 	fataliferr(err)
 }
 
@@ -98,6 +120,20 @@ func buildWin() {
 	cleanWin()
 
 	out, err := runMsbuildGetOutput(true, "DBHero.csproj", "/t:Rebuild", "/p:Configuration=Release", "/m")
+	if err != nil {
+		fmt.Printf("failed with:\n%s\n", string(out))
+	}
+	fataliferr(err)
+}
+
+func buildWinCef() {
+	if flgUpload {
+		s3VerifyNotExistsMust(s3SetupPathWinCef())
+	}
+	cdToWinCefDir()
+	cleanWin()
+
+	out, err := runMsbuildGetOutput(true, "DBHero.sln", "/t:Rebuild", "/p:Configuration=Release;Platform=x86", "/m")
 	if err != nil {
 		fmt.Printf("failed with:\n%s\n", string(out))
 	}
@@ -122,10 +158,21 @@ func uploadToS3Win() {
 		return
 	}
 
-	s3Path := s3SetupPathWin()
-	s3VerifyNotExistsMust(s3Path)
+	s3Path := ""
 
+	cdToWinDir()
+	s3Path = s3SetupPathWin()
+	s3VerifyNotExistsMust(s3Path)
 	s3UploadFile(s3Path, exeSetupPath(), true)
+
+	cdToWinCefDir()
+	s3Path = s3SetupPathWinCef()
+	s3VerifyNotExistsMust(s3Path)
+	s3UploadFile(s3Path, exeSetupPath(), true)
+
+	// for now we use non-cef version
+	s3Path = s3SetupPathWin()
+
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
@@ -142,10 +189,20 @@ func uploadToS3WinBeta() {
 		return
 	}
 
-	s3Path := s3SetupPathWinBeta()
-	s3VerifyNotExistsMust(s3Path)
+	s3Path := ""
 
+	cdToWinDir()
+	s3Path = s3SetupPathWinBeta()
+	s3VerifyNotExistsMust(s3Path)
 	s3UploadFile(s3Path, exeSetupPath(), true)
+
+	cdToWinCefDir()
+	s3Path = s3SetupPathWinCefBeta()
+	s3VerifyNotExistsMust(s3Path)
+	s3UploadFile(s3Path, exeSetupPath(), true)
+
+	s3Path = s3SetupPathWinBeta()
+
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerWin = "%s";
@@ -157,10 +214,17 @@ var BuiltOnWin = "%s";
 }
 
 func buildWinAll() {
+	rememberDirs()
+
 	verifyHasSecretsMust()
 	detectInnoSetupMust()
+
+	buildWinCef()
+	buildSetupWin()
+
 	buildWin()
 	buildSetupWin()
+
 	if flgBeta {
 		uploadToS3WinBeta()
 	} else {

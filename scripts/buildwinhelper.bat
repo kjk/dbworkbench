@@ -14,4 +14,7 @@ set GOARCH=386
 godep go build -tags embeded_resources -o win\dbhero\dbherohelper.exe
 @IF ERRORLEVEL 1 goto Error
 
+copy win\dbhero\dbherohelper.exe win-cef\dbhero
+@IF ERRORLEVEL 1 goto Error
+
 :Error
