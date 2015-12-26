@@ -133,7 +133,7 @@ func buildWinCef() {
 	cdToWinCefDir()
 	cleanWin()
 
-	out, err := runMsbuildGetOutput(true, "DBHero.sln", "/t:Rebuild", "/p:Configuration=Release;Platform=x86", "/m")
+	out, err := runMsbuildGetOutput(true, "DBHero.sln", "/t:Rebuild", "/p:Configuration=Release", "/m")
 	if err != nil {
 		fmt.Printf("failed with:\n%s\n", string(out))
 	}
