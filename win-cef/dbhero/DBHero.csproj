@@ -117,7 +117,7 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="ext\yepi\Yepi.csproj">
+    <ProjectReference Include="..\..\win\dbhero\ext\yepi\Yepi.csproj">
       <Project>{bc998f7c-a8d0-900d-51bd-76103dd30c0f}</Project>
       <Name>Yepi</Name>
     </ProjectReference>

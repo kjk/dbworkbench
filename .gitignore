@@ -16,7 +16,8 @@ mac/dbHero.xcodeproj/xcuserdata/
 xcuserdata
 mac/build/
 mac/dbherohelper.exe
-win/dbhero/obj/
+obj/
+packages/
 cert.pfx
 website/website_linux
 website/website
