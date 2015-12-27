@@ -89,20 +89,6 @@ namespace DbHero
             return false;
         }
 
-        /*
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            Console.WriteLine($"key: {keyData}");
-            if (keyData == (Keys.Control | Keys.D0))
-            {
-                Console.WriteLine("Ctrl-0 pressed");
-                ViewZoomIn_Click(null, null);
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }*/
-
-
         // could also use MainMenu http://stackoverflow.com/questions/2778109/standard-windows-menu-bars-in-windows-forms
         // in which case probably don't need to layout _mainMenu (it'll be part of non-client area)
         private void CreateMenu()
@@ -369,7 +355,7 @@ namespace DbHero
         */
         private string BuildAutoUpdatePostData()
         {
-            var computerInfo = Util.GetComputerInfo();
+            var computerInfo = Utils.GetComputerInfo();
 
             var s = "";
             s += $"ver: {AppVer()}\n";

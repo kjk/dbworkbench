@@ -25,7 +25,6 @@ namespace DbHero
         string _websiteURL = "https://dbheroapp.com";
         bool _cleanFinish = false;
         string _updateInstallerPath;
-        Settings _settings;
 
         protected override void WndProc(ref Message m)
         {
@@ -247,7 +246,7 @@ namespace DbHero
         */
         private string BuildAutoUpdatePostData()
         {
-            var computerInfo = Util.GetComputerInfo();
+            var computerInfo = Utils.GetComputerInfo();
 
             var s = "";
             s += $"ver: {AppVer()}\n";
