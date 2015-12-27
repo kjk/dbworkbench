@@ -144,6 +144,12 @@ func buildSetupWin() {
 	signMust(exePath())
 	signMust("dbherohelper.exe")
 
+	// only for cef build
+	path := pj("bin", "Release", "CefSharp.BrowserSubprocess.exe")
+	if fileExists(path) {
+		signMust(path)
+	}
+
 	ver := fmt.Sprintf("/dMyAppVersion=%s", programVersion)
 	cmd := exec.Command(innoSetupPath, "/Qp", ver, "installer.iss")
 	fmt.Printf("Running %s\n", cmd.Args)

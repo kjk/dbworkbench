@@ -76,8 +76,15 @@ Source: "bin\Release\libcef.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\icudtl.dat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\cef.pak"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\cef_extensions.pak"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\cef_100_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\cef_200_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\natives_blob.bin"; DestDir: "{app}"; Flags: ignoreversion
+; TODO: include all locales?
+Source: "bin\Release\locales\en-US.pak"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\locales\en-GB.pak"; DestDir: "{app}"; Flags: ignoreversion
+
 ; TODO: might need to include vcredist http://www.codeproject.com/Articles/20868/NET-Framework-Installer-for-InnoSetup
 
 [Icons]
