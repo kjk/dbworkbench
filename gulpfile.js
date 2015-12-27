@@ -1,7 +1,9 @@
 // Pre-requisites: need to install all the npm modules with:
 // npm install
 
+var babelify    = require("babelify");
 var browserify  = require('browserify');
+var buffer      = require('vinyl-buffer')
 var exorcist    = require('exorcist');
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
@@ -10,8 +12,6 @@ var react       = require('gulp-react');
 var sass        = require('gulp-sass');
 var sourcemaps  = require('gulp-sourcemaps');
 var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer')
-var babelify    = require("babelify");
 
 gulp.task('js', function() {
   browserify({
