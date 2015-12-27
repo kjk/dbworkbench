@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace DbHero
 {
@@ -13,6 +14,21 @@ namespace DbHero
         public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
         [DllImport("user32")]
         public static extern int RegisterWindowMessage(string message);
+    }
+
+    public static class FormExtensions
+    {
+        public static void InvokeEx<T>(this T @this, Action<T> action) where T : Form
+        {
+            if (@this.InvokeRequired)
+            {
+                @this.Invoke(action, @this);
+            }
+            else
+            {
+                action(@this);
+            }
+        }
     }
 
     class Util

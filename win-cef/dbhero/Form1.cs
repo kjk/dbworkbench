@@ -295,6 +295,7 @@ namespace DbHero
             // http://blogs.msdn.com/b/jmstall/archive/2006/09/28/createnowindow.aspx
             var p = new Process();
             _backendProcess = p;
+            p.EnableRaisingEvents = true;
             p.StartInfo.WorkingDirectory = dir;
             p.StartInfo.FileName = "dbherohelper.exe";
             p.StartInfo.UseShellExecute = true;
@@ -305,8 +306,7 @@ namespace DbHero
             return ok;
         }
 
-        // happens when go backend process has finished e.g. because of an error
-        private void Backend_Exited(object sender, EventArgs e)
+        private void HandleBackendExited()
         {
             Log.Line($"Backend_Exited. _clienFinish:{_cleanFinish}");
             if (_cleanFinish)
@@ -319,6 +319,11 @@ namespace DbHero
             Close();
         }
 
+        // happens when go backend process has finished e.g. because of an error
+        private void Backend_Exited(object sender, EventArgs e)
+        {
+            this.InvokeEx(f => HandleBackendExited());
+        }
 
         // Note: can't be in utils, must be in this assembly
         public static string AppVer()
