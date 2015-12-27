@@ -57,11 +57,28 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
+; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "bin\Release\dbHero.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\dbHero.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Yepi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dbherohelper.exe"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+; https://github.com/cefsharp/CefSharp/wiki/Output-files-description-table-%28Redistribution%29
+Source: "bin\Release\CefSharp.BrowserSubprocess.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\CefSharp.BrowserSubprocess.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\CefSharp.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\CefSharp.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\CefSharp.WinForms.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\d3dcompiler_47.dll"; DestDir: "{app}"; Flags: ignoreversion
+; only needed for html5 audio/video support
+; Source: "bin\Release\ffmpegsumo.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\libcef.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\icudtl.dat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\cef_100_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\cef_200_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
+; TODO: might need to include vcredist http://www.codeproject.com/Articles/20868/NET-Framework-Installer-for-InnoSetup
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
