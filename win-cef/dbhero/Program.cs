@@ -88,7 +88,7 @@ namespace DbHero
         private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             Log.E(e.Exception);
-            Log.Close();
+            Backend.Stop();
             ShowCrash(e.Exception);
             Application.Exit();
         }
@@ -96,13 +96,13 @@ namespace DbHero
         [HandleProcessCorruptedStateExceptionsAttribute]
         static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
+            Backend.Stop();
             Exception e = args.ExceptionObject as Exception;
             if (e != null)
             {
                 Log.E(e);
                 ShowCrash(e);
             }
-            Log.Close();
             Application.Exit();
         }
 
@@ -110,7 +110,7 @@ namespace DbHero
         private static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs t)
         {
             Log.E(t.Exception);
-            Log.Close();
+            Backend.Stop();
             ShowCrash(t.Exception);
             Application.Exit();
         }
