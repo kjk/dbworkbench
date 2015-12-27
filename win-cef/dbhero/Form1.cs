@@ -23,11 +23,9 @@ namespace DbHero
     {
         ChromiumWebBrowser _webBrowser;
         Panel _webBrowserPanel;
-        Process _backendProcess;
         MenuStrip _mainMenu;
         //string _websiteURL = "http://localhost:5555";
         string _websiteURL = "https://dbheroapp.com";
-        bool _cleanFinish = false;
         string _updateInstallerPath;
 
         protected override void WndProc(ref Message m)
@@ -136,7 +134,7 @@ namespace DbHero
         }
 
         // same as Chrome
-        double[] zoomLevels = new double[]{ 0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5 };
+        double[] zoomLevels = new double[] { 0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5 };
 
         // returns an index at which zoomLevel[i] has the smallest difference from z
         private int FindClosestZoomLevelIdx(double z)
@@ -258,71 +256,6 @@ namespace DbHero
         private void FileExit_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        // Find directory where dbherohelper.exe is
-        // Returns "" if not found
-        private string FindBackendDirectory()
-        {
-            var path = Application.ExecutablePath;
-            var dir = Path.GetDirectoryName(path);
-            while (dir != null)
-            {
-                path = Path.Combine(dir, "dbherohelper.exe");
-                if (File.Exists(path))
-                {
-                    return dir;
-                }
-                var newDir = Path.GetDirectoryName(dir);
-                if (dir == newDir)
-                {
-                    return "";
-                }
-                dir = newDir;
-            }
-            return "";
-        }
-
-        private bool StartBackendServer()
-        {
-            var dir = FindBackendDirectory();
-            if (dir == "")
-            {
-                Log.S("StartBackendServer: FindBackendDirectory() failed\n");
-                return false;
-            }
-            // explanation of StartInfo flags:
-            // http://blogs.msdn.com/b/jmstall/archive/2006/09/28/createnowindow.aspx
-            var p = new Process();
-            _backendProcess = p;
-            p.EnableRaisingEvents = true;
-            p.StartInfo.WorkingDirectory = dir;
-            p.StartInfo.FileName = "dbherohelper.exe";
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.Exited += Backend_Exited;
-            var ok = p.Start();
-            return ok;
-        }
-
-        private void HandleBackendExited()
-        {
-            Log.Line($"Backend_Exited. _clienFinish:{_cleanFinish}");
-            if (_cleanFinish)
-            {
-                // we killed the process ourselves
-                return;
-            }
-            // TODO: show better error message
-            MessageBox.Show("backend exited unexpectedly!");
-            Close();
-        }
-
-        // happens when go backend process has finished e.g. because of an error
-        private void Backend_Exited(object sender, EventArgs e)
-        {
-            this.InvokeEx(f => HandleBackendExited());
         }
 
         // Note: can't be in utils, must be in this assembly
@@ -499,24 +432,39 @@ namespace DbHero
             }
         }
 
+        private bool StartBackendServer()
+        {
+            return Backend.Start(Backend_Exited);
+        }
+
+        private void HandleBackendExited()
+        {
+            Log.Line($"HandleBackendExited");
+            // TODO: a better way to show the error message, e.g. as part of the form at the top
+            BringMeToFront();
+            MessageBox.Show(this, "Backend exited unexpectedly!", "Unexpected error");
+            Close();
+        }
+
+        // happens when go backend process has finished e.g. because of an error
+        // called on non-ui thread
+        private void Backend_Exited(object sender, EventArgs e)
+        {
+            this.InvokeEx(f => HandleBackendExited());
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // TODO: weird. It looks like _backendProcess gets killed after we set _cleanFinish
-            // but before Log.Line().
-            _cleanFinish = true;
-            if (_backendProcess != null)
+            Log.Line($"Form1_FormClosing: killing backend");
+            // might be called from non-ui thread when called in crash handler
+            // due to Appliction.Exit. Don't do complicated things in that case
+            if (!InvokeRequired)
             {
-                Log.Line($"Form1_FormClosing: backend exited: {_backendProcess.HasExited}");
+                // TODO: if we have multiple forms, only when last form is closed
+                Backend.Stop();
+                Cef.Shutdown();
             }
-            // TODO: if we have multiple forms, only when last form is being closed
-            if (_backendProcess != null && !_backendProcess.HasExited)
-            {
-                Log.Line($"Form1_FormClosing: killing backend");
-                _backendProcess.Kill();
-            }
-            SaveSettings();
             Log.Close();
-            Cef.Shutdown();
         }
 
         private async void Form1_Load(object sender, EventArgs e)
