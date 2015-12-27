@@ -20,7 +20,6 @@ class Output extends React.Component {
     this.handleCellClick = this.handleCellClick.bind(this);
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
 
-
     this.state = {
       clickedCellPosition: {rowId: -1, colId: -1},
       editedCells: {},
@@ -45,57 +44,49 @@ class Output extends React.Component {
 
   generateQuery() {
     var self = this;
-    var schema = "";
     var table = this.props.selectedTable;
     var query = "";
+    var resultsAsDictionary = this.resultsToDictionary(this.props.results);
 
     _.each(this.state.editedCells, function(value, key, obj) {
       var values = key.split('.');
       var rowId = values[0];
       var colId = values[1];
 
-      var column = self.props.results.columns[colId];
+      var columnToBeEdited = self.props.results.columns[colId];
       var afterChange = value;
       var columns = self.props.results.columns.join(", ");
 
-      var primaryKeyList = [];
-      _.each(self.resultsToDictionary(self.props.tableStructures[table]), function(obj, id) {
-        // Can move this outside of loop with small changes
-        // Loop doesn't have any effect it's same for all
-        schema = obj["table_schema"];
-        if (obj["is_primary_key"]) {
-          // Need this because the column position can change. (Don't know why)
-          var correctColumnId = -1;
-          _.each(self.props.results.columns, function(col, nId) {
-            if (col == obj["column_name"]) {
-              correctColumnId = nId;
-            }
-          });
-
-          var primaryKeyValue = self.props.results.rows[rowId][correctColumnId];
-          primaryKeyList.push({key: obj["column_name"], value: primaryKeyValue});
-        }
-      });
-
-      if (primaryKeyList.length == 0) {
-        // TODO: the table has no primary keys. Return error
-        // Also we may push invalid data in the upper loop which can make this check useless
+      var tableStructuresAsDictionary = self.resultsToDictionary(self.props.tableStructures[table]);
+      if (tableStructuresAsDictionary.length > 0) {
+        var schema = tableStructuresAsDictionary[0]["table_schema"];
+      } else {
+        console.log("THIS CASE SHOULD NOT HAPPEN IS THERE A WAY TO LOG THIS?");
       }
 
-      var queryPK = "";
-      for (var i = 0; i < primaryKeyList.length; i++) {
-        var PKColumnName = primaryKeyList[i]["key"];
-        var PKValue = primaryKeyList[i]["value"];
-        queryPK += PKColumnName + "=\'" + PKValue + "\' ";
-        if (i < primaryKeyList.length - 1) {
-          queryPK += "AND ";
+      var rowAsDictionary = resultsAsDictionary[rowId];
+
+      var index = 0;
+      var rowToBeEdited = "";
+      _.each(rowAsDictionary, function(value, key, obj) {
+        rowToBeEdited += key + "=\'" + obj[key] + "\' ";
+        if (index < Object.keys(rowAsDictionary).length - 1) {
+          rowToBeEdited += "AND ";
         }
-      };
+        index += 1;
+      });
 
       query += "UPDATE " + schema + "." + table + " ";
-      query += "SET " + column + "=\'" + afterChange + "\' ";
-      query += "WHERE " + queryPK;
+      query += "SET " + columnToBeEdited + "=\'" + afterChange + "\' ";
+      query += "WHERE ctid IN (SELECT ctid FROM " + schema + "." + table + " ";
+      query += "WHERE " + rowToBeEdited + " ";
+      query += "LIMIT 1 FOR UPDATE) ";
       query += "RETURNING " + columns + ";";
+
+      console.log("QUERY:", query);
+      // WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5'
+      // UPDATE countrylanguage SET language='Not furkan' WHERE ctid IN (SELECT ctid FROM countrylanguage WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5' LIMIT 1 FOR UPDATE) RETURNING language;
+
     });
 
     return query;
