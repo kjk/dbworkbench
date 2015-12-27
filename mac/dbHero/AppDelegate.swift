@@ -94,7 +94,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let dataStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
             let urlVer = parseAutoUpdateCheck(dataStr as! String)
             if programVersionGreater(urlVer.ver!, ver2: myVer) {
-                self.notifyAboutUpdate(urlVer.ver!)
+                dispatch_async(dispatch_get_main_queue(),{
+                    self.notifyAboutUpdate(urlVer.ver!)
+                })
             }
         })
         task.resume()
