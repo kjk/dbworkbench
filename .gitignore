@@ -15,7 +15,6 @@ cmd/import_stack_overflow/import_stack_overflow
 mac/dbHero.xcodeproj/xcuserdata/
 xcuserdata
 mac/build/
-mac/dbherohelper.exe
 obj/
 packages/
 cert.pfx
@@ -25,10 +24,10 @@ website/website.exe
 resources.go
 dbherohelper.zip
 dbherohelper
-dbhero.exe
-scripts/secrets.json
-win/dbhero/dbherohelper.exe
-win/dbhero/dbherohelper.exe~
 dbherohelper.exe
+dbherohelper.exe~
+dbhero.exe
+nuget.exe
+scripts/secrets.json
 *.csproj.user
 tmp_data

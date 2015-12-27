@@ -224,6 +224,8 @@ func httpDlToFileMust(uri string, path string, sha1Hex string) {
 	if fileExists(path) {
 		sha1File, err := fileSha1Hex(path)
 		fataliferr(err)
+		sha1Hex = strings.ToUpper(sha1Hex)
+		sha1File = strings.ToUpper(sha1File)
 		fatalif(sha1File != sha1Hex, "file '%s' exists but has sha1 of %s and we expected %s", path, sha1File, sha1Hex)
 		return
 	}

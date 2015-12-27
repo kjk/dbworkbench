@@ -126,12 +126,21 @@ func buildWin() {
 	fataliferr(err)
 }
 
+func nugetRestore() {
+	httpDlToFileMust("https://dist.nuget.org/win-x86-commandline/v3.3.0/nuget.exe", "nuget.exe", "56de2b3f051ef6d114ad71ece4ceb5330fe44e0e")
+	cmd := exec.Command("nuget", "restore")
+	fmt.Printf("Running %s\n", cmd.Args)
+	runCmdMust(cmd, true)
+}
+
 func buildWinCef() {
 	if flgUpload {
 		s3VerifyNotExistsMust(s3SetupPathWinCef())
 	}
 	cdToWinCefDir()
 	cleanWin()
+
+	nugetRestore()
 
 	out, err := runMsbuildGetOutput(true, "DBHero.sln", "/t:Rebuild", "/p:Configuration=Release", "/m")
 	if err != nil {
