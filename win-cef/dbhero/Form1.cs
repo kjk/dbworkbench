@@ -391,7 +391,6 @@ namespace DbHero
 
             var myVer = AppVer();
             var postData = BuildAutoUpdatePostData();
-            Log.Line(postData);
 
             var url = _websiteURL + "/api/winupdatecheck?ver=" + myVer;
             var result = await Http.PostStringAsync(url, postData);
@@ -510,7 +509,6 @@ namespace DbHero
                 Log.Line($"Form1_FormClosing: killing backend");
                 _backendProcess.Kill();
             }
-            Log.Line($"Loc: {Location}, Size: {Size}");
             SaveSettings();
             Log.Close();
             Cef.Shutdown();
