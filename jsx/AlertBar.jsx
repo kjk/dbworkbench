@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default class AlertBar extends React.Component {
-  render() {
-    return <div id="alert-bar">{this.props.errorMessage}</div>;
-  }
-}
+let AlertBar = (props) => {
+  return <div id="alert-bar">{props.errorMessage}</div>;
+};
+
+module.exports = AlertBar;
