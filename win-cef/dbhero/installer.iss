@@ -1,4 +1,4 @@
-; Requires https://www.dropbox.com/s/lkr9qh3uj0hkqqp/idpsetup-1.5.0.exe?dl=0 to be installed
+; using https://github.com/stfx/innodependencyinstaller for net 4.5 and vs 2013 x86 redist installations
 ; more info:
 ;  http://stackoverflow.com/questions/16054969/inno-setup-how-can-i-put-a-message-on-the-welcome-page
 ;  http://stackoverflow.com/questions/27587827/how-to-add-new-text-in-welcome-page-in-blank-space-by-changing-inno-setup-script
@@ -10,8 +10,6 @@
 ;
 ; TODO: fully custom page with just "Install" button
 ; TODO: always create desktop icon
-
-#include <idp.iss>
 
 #define MyAppName "dbHero"
 ;MyAppVersion is set from cmd-line
@@ -49,9 +47,11 @@ MinVersion=6.0.6002
 DisableDirPage=yes
 ;DisableWelcomePage=yes
 ;DisableReadyPage=yes
+UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -85,7 +85,6 @@ Source: "bin\Release\cef_100_percent.pak"; DestDir: "{app}"; Flags: ignoreversio
 Source: "bin\Release\cef_200_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\natives_blob.bin"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\locales\*"; DestDir: "{app}\locales"; Flags: ignoreversion
-; TODO: might need to include vcredist http://www.codeproject.com/Articles/20868/NET-Framework-Installer-for-InnoSetup
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -94,60 +93,25 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+; based on https://github.com/stfx/innodependencyinstaller/blob/master/setup.iss
 [Code]
-function Framework45IsNotInstalled(): Boolean;
-var
-  bSuccess: Boolean;
-  regVersion: Cardinal;
+#include "scripts\products.iss"
+
+#include "scripts\products\stringversion.iss"
+#include "scripts\products\winversion.iss"
+#include "scripts\products\fileversion.iss"
+#include "scripts\products\dotnetfxversion.iss"
+
+#include "scripts\products\dotnetfx46.iss"
+#include "scripts\products\msiproduct.iss" ; apprently vcredist2013 needs dist
+#include "scripts\products\vcredist2013.iss"
+
+function InitializeSetup(): boolean;
 begin
-  Result := True;
-
-  bSuccess := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', regVersion);
-  if (True = bSuccess) and (regVersion >= 378389) then begin
-    Result := False;
-  end;
-end;
-
-procedure InitializeWizard;
-begin
-  if Framework45IsNotInstalled() then
-  begin
-    idpAddFile('http://go.microsoft.com/fwlink/?LinkId=397707', ExpandConstant('{tmp}\NetFrameworkInstaller.exe'));
-    idpDownloadAfter(wpReady);
-  end;
-end;
-
-procedure InstallFramework;
-var
-  StatusText: string;
-  ResultCode: Integer;
-begin
-  StatusText := WizardForm.StatusLabel.Caption;
-  WizardForm.StatusLabel.Caption := 'Installing .NET Framework 4.5.2. This might take a few minutes...';
-  WizardForm.ProgressGauge.Style := npbstMarquee;
-  try
-    if not Exec(ExpandConstant('{tmp}\NetFrameworkInstaller.exe'), '/passive /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
-    begin
-      MsgBox('.NET installation failed with code: ' + IntToStr(ResultCode) + '.', mbError, MB_OK);
-    end;
-  finally
-    WizardForm.StatusLabel.Caption := StatusText;
-    WizardForm.ProgressGauge.Style := npbstNormal;
-
-    DeleteFile(ExpandConstant('{tmp}\NetFrameworkInstaller.exe'));
-  end;
-end;
-
-
-procedure CurStepChanged(CurStep: TSetupStep);
-begin
-  case CurStep of
-    ssPostInstall:
-      begin
-        if Framework45IsNotInstalled() then
-        begin
-          InstallFramework();
-        end;
-      end;
-  end;
+	initwinversion();
+    dotnetfx46(50); // min allowed version is 4.5.0
+	SetForceX86(true); // force 32-bit install of next products
+	vcredist2013();
+	SetForceX86(false); // disable forced 32-bit install again
+	Result := true;
 end;
