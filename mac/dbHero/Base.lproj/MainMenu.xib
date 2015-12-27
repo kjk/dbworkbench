@@ -279,21 +279,21 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="View" id="nvc-T9-xMz" userLabel="View">
+                <menuItem title="View" hidden="YES" enabled="NO" id="nvc-T9-xMz" userLabel="View">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="wMk-HT-d2K">
                         <items>
-                            <menuItem title="Actual Size" keyEquivalent="0" id="not-zG-iIc" userLabel="Default Zoom">
+                            <menuItem title="Actual Size" enabled="NO" keyEquivalent="0" id="not-zG-iIc" userLabel="Default Zoom">
                                 <connections>
                                     <action selector="actualSize:" target="Voe-Tx-rLC" id="Hdb-gq-IVR"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Zoom In" keyEquivalent="=" id="7hJ-gy-jjR" userLabel="Zoom In">
+                            <menuItem title="Zoom In" enabled="NO" keyEquivalent="=" id="7hJ-gy-jjR" userLabel="Zoom In">
                                 <connections>
                                     <action selector="zoomIn:" target="Voe-Tx-rLC" id="Yvk-Np-Chy"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Zoom Out" keyEquivalent="-" id="l71-Ss-C3O" userLabel="Zoom Out">
+                            <menuItem title="Zoom Out" enabled="NO" keyEquivalent="-" id="l71-Ss-C3O" userLabel="Zoom Out">
                                 <connections>
                                     <action selector="zoomOut:" target="Voe-Tx-rLC" id="gX4-c4-gjf"/>
                                 </connections>
