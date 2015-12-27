@@ -38,8 +38,23 @@ class Output extends React.Component {
     }
   }
 
-  generateEditedCellKey(rowId, colId) {
-    return rowId + "." + colId;
+  setEditedCells(rowId, colId, value) {
+    var tempEditedCells = _.clone(this.state.editedCells);
+    if (tempEditedCells[rowId] == undefined) {
+      tempEditedCells[rowId] = {};
+    }
+    tempEditedCells[rowId][colId] = value;
+
+    this.setState({
+      editedCells: tempEditedCells,
+    });
+  }
+
+  getEditedCells(rowId, colId) {
+    if (this.state.editedCells[rowId] == undefined) {
+      return undefined;
+    }
+    return this.state.editedCells[rowId][colId];
   }
 
   generateQuery() {
@@ -48,13 +63,27 @@ class Output extends React.Component {
     var query = "";
     var resultsAsDictionary = this.resultsToDictionary(this.props.results);
 
+    console.log("edited cells", this.state.editedCells);
+
     _.each(this.state.editedCells, function(value, key, obj) {
       var values = key.split('.');
-      var rowId = values[0];
-      var colId = values[1];
+      var rowId = key;
 
-      var columnToBeEdited = self.props.results.columns[colId];
-      var afterChange = value;
+      var thisRow = obj[key];
+      var index = 0;
+      var colsAfterEdit = "";
+      _.each(thisRow, function(value, key, obj) {
+        var colId = key;
+        var columnToBeEdited = self.props.results.columns[colId];
+        var afterChange = value;
+
+        colsAfterEdit += columnToBeEdited + "=\'" + afterChange + "\'";
+        if (index < Object.keys(thisRow).length - 1) {
+          colsAfterEdit += ", ";
+        }
+        index += 1;
+      });
+
       var columns = self.props.results.columns.join(", ");
 
       var tableStructuresAsDictionary = self.resultsToDictionary(self.props.tableStructures[table]);
@@ -66,7 +95,7 @@ class Output extends React.Component {
 
       var rowAsDictionary = resultsAsDictionary[rowId];
 
-      var index = 0;
+      index = 0;
       var rowToBeEdited = "";
       _.each(rowAsDictionary, function(value, key, obj) {
         rowToBeEdited += key + "=\'" + obj[key] + "\' ";
@@ -77,7 +106,7 @@ class Output extends React.Component {
       });
 
       query += "UPDATE " + schema + "." + table + " ";
-      query += "SET " + columnToBeEdited + "=\'" + afterChange + "\' ";
+      query += "SET " + colsAfterEdit + " ";
       query += "WHERE ctid IN (SELECT ctid FROM " + schema + "." + table + " ";
       query += "WHERE " + rowToBeEdited + " ";
       query += "LIMIT 1 FOR UPDATE) ";
@@ -121,11 +150,7 @@ class Output extends React.Component {
     console.log("handleOnCellEdit ", rowId, colId, e.target.value);
 
     var tempEditedCells = _.clone(this.state.editedCells);
-    tempEditedCells[this.generateEditedCellKey(rowId, colId)] = e.target.value;
-
-    this.setState({
-      editedCells: tempEditedCells,
-    });
+    this.setEditedCells(rowId, colId, e.target.value);
   }
 
   renderHeader(columns, sortColumn, sortOrder) {
@@ -158,8 +183,8 @@ class Output extends React.Component {
         var isEditable = true;
       }
 
-      if (self.state.editedCells[self.generateEditedCellKey(rowId, colId)] != undefined) {
-        var value = self.state.editedCells[self.generateEditedCellKey(rowId, colId)];
+      if (self.getEditedCells(rowId, colId) != undefined) {
+        var value = self.getEditedCells(rowId, colId);
       }
 
       return (
