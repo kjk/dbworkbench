@@ -224,9 +224,8 @@ class Output extends React.Component {
     var data = this.resultsToDictionary(results);
     var header = this.renderHeader(results.columns);
 
-    var self = this;
-    var rows = _.map(data, function(row, i) {
-      return self.renderRow(row, i);
+    var rows = _.map(data, (row, i) => {
+      return this.renderRow(row, i);
     });
 
     var footer = this.renderFooter();

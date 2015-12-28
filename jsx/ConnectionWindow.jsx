@@ -118,13 +118,12 @@ class ConnectionWindow extends React.Component {
   }
 
   getBookmarks() {
-    var self = this;
-    api.getBookmarks(function(data) {
+    api.getBookmarks((data) => {
       console.log("getBookmarks: ", data);
       if (!data) {
           data = [newEmptyBookmark()];
       }
-      self.setState({
+      this.setState({
         bookmarks: data,
       });
     });
@@ -153,8 +152,7 @@ class ConnectionWindow extends React.Component {
       return;
     }
 
-    let self = this;
-    api.removeBookmark(id, function(data) {
+    api.removeBookmark(id, (data) => {
       console.log("deleteBookmarks removing: ", id, " data: ", data);
 
       let bookmarks = [newEmptyBookmark()];
@@ -163,7 +161,7 @@ class ConnectionWindow extends React.Component {
         bookmarks = data;
       }
 
-      self.setState({
+      this.setState({
         bookmarks: bookmarks,
         selectedBookmarkIdx: selectedBookmarkIdx,
       });
@@ -264,12 +262,11 @@ class ConnectionWindow extends React.Component {
     }
 
     console.log("URL:" + url);
-    const self = this;
     this.setState({
       isConnecting: true,
     });
     const myConnectionId = currConnectionId;
-    api.connect(dbType, url, urlSafe, function(resp) {
+    api.connect(dbType, url, urlSafe, (resp) => {
       if (myConnectionId != currConnectionId) {
         console.log("ignoring completion of a cancelled connection");
         return;
@@ -278,25 +275,25 @@ class ConnectionWindow extends React.Component {
       if (resp.error) {
         console.log("handleConnect: resp.error: ", resp.error);
 
-        self.setState({
+        this.setState({
           connectionErrorMessage: resp.error,
           isConnecting: false,
         });
         return;
       }
 
-      b = self.getSelectedBookmark();
+      b = this.getSelectedBookmark();
       if (!rememberConnection) {
         console.log("did connect, not saving a bookmark");
         return;
       }
       console.log("did connect, saving a bookmark " + b);
-      api.addBookmark(b, function(data) {
+      api.addBookmark(b, (data) => {
         const connId = resp.ConnectionID;
         const connStr = url;
         const databaseName = resp.CurrentDatabase;
         const capabilities = resp.Capabilities;
-        self.props.onDidConnect(connStr, connId, databaseName, capabilities);
+        this.props.onDidConnect(connStr, connId, databaseName, capabilities);
       });
     });
   }
