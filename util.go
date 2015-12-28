@@ -5,6 +5,7 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -12,6 +13,18 @@ func fatalIfErr(err error, what string) {
 	if err != nil {
 		log.Fatalf("%s failed with %s\n", what, err)
 	}
+}
+
+func isMac() bool {
+	return runtime.GOOS == "darwin"
+}
+
+func isLinux() bool {
+	return runtime.GOOS == "linux"
+}
+
+func isWindows() bool {
+	return runtime.GOOS == "windows"
 }
 
 var extraMimeTypes = map[string]string{

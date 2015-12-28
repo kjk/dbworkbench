@@ -19,12 +19,15 @@ g_containerName = "mysql-55-for-tests"
 kStatusRunning = "running"
 kStatusExited = "exited"
 
+def print_cmd(cmd):
+  print("cmd:" + " ".join(cmd))
+
 def run_cmd(cmd):
-  print("cmd: " + " ".join(cmd))
+  print_cmd(cmd)
   subprocess.run(cmd, check=True)
 
 def run_cmd_out(cmd):
-  print("cmd: " + " ".join(cmd))
+  print_cmd(cmd)
   s = subprocess.check_output(cmd)
   return s.decode("utf-8")
 
@@ -74,11 +77,32 @@ def start_fresh_container(imageName, containerName, portMapping):
   remove_container(containerName)
   cmd = ["docker", "run", "-d", "--name=" + containerName, "-p", portMapping, imageName]
   run_cmd(cmd)
+
+#DBHERO_TEST_CONN="root@tcp(192.168.99.100:7100)/world?parseTime=true" godep go test .
+def run_tests(dbConnURL):
+  timeoutInSecs = 25
+  print("conn: %s" % dbConnURL)
+  env = os.environ.copy()
+  env["DBHERO_TEST_CONN"] = dbConnURL
+  cmd = ["godep", "go", "test", "."]
+  print_cmd(cmd)
+  p = subprocess.Popen(cmd, env=env, stderr=subprocess.STDOUT,stdout=subprocess.PIPE)
+  p.wait(timeoutInSecs)   
+  s = p.stdout.read().decode("utf-8")
+  print(s)
+  # TODO: remove dbworkbench.test 
   
 def main():
   verify_docker_running()
   ip = get_docker_machine_ip()
   start_fresh_container(g_imageName, g_containerName, "7100:3306")
+  port = "7100"
+  dbName = "world"
+  #conn = "postgres://postgres@%s:%s/world?sslmode=disable" % (ip, "7100")
+  connURL = "root@tcp(%s:%s)/%s?parseTime=true" % (ip, port, dbName)
+  #root@tcp(:%s)/%s?parseTime=true"
+  run_tests(connURL)
+
 
 if __name__ == "__main__":
   main()

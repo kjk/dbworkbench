@@ -25,7 +25,7 @@ type ClientMysql struct {
 	connectionString string
 }
 
-// NewClientMysqlFromURL opens a Postgres db connection
+// NewClientMysqlFromURL opens a mysql db connection
 func NewClientMysqlFromURL(uri string) (Client, error) {
 	db, err := sqlx.Open("mysql", uri)
 	if err != nil {

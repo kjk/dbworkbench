@@ -3,135 +3,42 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO: needs to rename db name here and in data/world.sql to world_test
-// so that I can have a test db for testing the program and be able to run tests
+var (
+	testClient Client
+	isPg       bool
+	isMysql    bool
+)
 
-var testClient *Client
-
-func onWindows() bool {
-	return runtime.GOOS == "windows"
-}
-
-func exeName(cmd string) string {
-	if onWindows() {
-		return cmd + ".exe"
+func setupClient(t *testing.T) bool {
+	var err error
+	connURL := os.Getenv("DBHERO_TEST_CONN")
+	fmt.Printf("connURL: %s\n", connURL)
+	assert.NotEqual(t, "", connURL)
+	if strings.HasPrefix(connURL, "postgres") {
+		isPg = true
+		testClient, err = connectPostgres(connURL)
+	} else {
+		isMysql = true
+		testClient, err = connectMysql(connURL)
 	}
-	return cmd
-}
-
-func buildArgs() []string {
-	pgHost := "localhost"
-	pgPort := "5432"
-	pgUser := "postgres"
-
-	s := os.Getenv("WERCKER_POSTGRESQL_HOST")
-	if s != "" {
-		pgHost = s
-	}
-
-	s = os.Getenv("WERCKER_POSTGRESQL_PORT")
-	if s != "" {
-		pgPort = s
-	}
-
-	s = os.Getenv("WERCKER_POSTGRESQL_USERNAME")
-	if s != "" {
-		pgUser = s
-	}
-
-	res := []string{
-		"-U", pgUser,
-		"-h", pgHost,
-		"-p", pgPort,
-	}
-	return res
-}
-
-func dbURL() string {
-	host := os.Getenv("WERCKER_POSTGRESQL_HOST")
-	if host == "" {
-		return "postgres://postgres@localhost/world?sslmode=disable"
-	}
-	port := os.Getenv("WERCKER_POSTGRESQL_PORT")
-	user := os.Getenv("WERCKER_POSTGRESQL_USERNAME")
-	pwd := os.Getenv("WERCKER_POSTGRESQL_PASSWORD")
-	s := fmt.Sprintf("postgres://%s:%s@%s:%s/world?sslmode=disable", user, pwd, host, port)
-	return s
-}
-
-func setupCmdPgPassword(cmd *exec.Cmd) {
-	pwd := os.Getenv("WERCKER_POSTGRESQL_PASSWORD")
-	if pwd != "" {
-		cmd.Env = append(cmd.Env, "PGPASSWORD="+pwd)
-	}
-}
-
-func setup() {
-	args := buildArgs()
-	args = append(args, "world")
-	cmd := exec.Command(exeName("createdb"), args...)
-	setupCmdPgPassword(cmd)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Database creation failed:", string(out))
-		fmt.Println("Error:", err)
-		os.Exit(1)
-	}
-
-	args = buildArgs()
-	args = append(args, "-f", "./data/world.sql", "world")
-	cmd = exec.Command(exeName("psql"), args...)
-	setupCmdPgPassword(cmd)
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Database import failed:", string(out))
-		fmt.Println("Error:", err)
-		os.Exit(1)
-	}
-}
-
-func setupClient() {
-	testClient, _ = NewClientPgFromURL(dbURL())
+	assert.NoError(t, err)
+	return err == nil
 }
 
 func teardownClient() {
 	if testClient != nil {
-		testClient.db.Close()
+		testClient.Connection().Close()
 	}
-}
-
-func teardown() {
-	args := buildArgs()
-	args = append(args, "world")
-	cmd := exec.Command(exeName("dropdb"), args...)
-	setupCmdPgPassword(cmd)
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Teardown error:", err)
-	}
-}
-
-func testNewClientFromURL(t *testing.T) {
-	url := dbURL()
-	client, err := NewClientPgFromURL(url)
-
-	if err != nil {
-		defer client.db.Close()
-	}
-
-	assert.Equal(t, nil, err)
-	assert.Equal(t, url, client.connectionString)
 }
 
 func testTest(t *testing.T) {
-	assert.Equal(t, nil, testClient.Test())
+	//assert.Equal(t, nil, testClient.Test())
 }
 
 func testInfo(t *testing.T) {
@@ -155,16 +62,18 @@ func testDatabases(t *testing.T) {
 
 	assert.Equal(t, nil, err)
 	assert.True(t, strInArray("world", res))
-	assert.True(t, strInArray("postgres", res))
+	if isPg {
+		assert.True(t, strInArray("postgres", res))
+	}
 }
 
 func testTables(t *testing.T) {
 	res, err := testClient.Tables()
 
 	expected := []string{
-		"city",
-		"country",
-		"countrylanguage",
+		"City",
+		"Country",
+		"CountryLanguage",
 	}
 
 	assert.Equal(t, nil, err)
@@ -264,16 +173,16 @@ func testHistoryError(t *testing.T) {
 */
 
 func TestAll(t *testing.T) {
-	if onWindows() {
+	fmt.Printf("TestAll: started\n")
+	if isWindows() {
 		// Dont have access to windows machines at the moment...
 		return
 	}
 
-	teardown()
-	setup()
-	setupClient()
+	if !setupClient(t) {
+		return
+	}
 
-	testNewClientFromURL(t)
 	testTest(t)
 	testInfo(t)
 	testDatabases(t)
@@ -292,5 +201,4 @@ func TestAll(t *testing.T) {
 		testHistoryError(t)
 	*/
 	teardownClient()
-	teardown()
 }

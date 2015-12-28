@@ -82,18 +82,6 @@ func verifyDirs() {
 	}
 }
 
-func isMac() bool {
-	return runtime.GOOS == "darwin"
-}
-
-func isLinux() bool {
-	return runtime.GOOS == "linux"
-}
-
-func isWindows() bool {
-	return runtime.GOOS == "windows"
-}
-
 func getDataDirMac() string {
 	d, err := homedir.Dir()
 	if err != nil {

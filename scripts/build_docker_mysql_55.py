@@ -50,12 +50,6 @@ def create_docker_image():
   #docker build -t dbhero/mysql-55 -f scripts/mysql-55.dockerfile .
   subprocess.run(["docker", "build", "-t", "dbhero/mysql-55", "-f", "scripts/mysql-55.dockerfile", "."])
 
-  #s = "docker run -it -p 7100:3306 dbhero/mysql-55"
-  #s = "docker-machine ip default"
-  # 192.168.99.100
-  # /usr/local/Cellar/mysql55/5.5.44/bin/mysql -h 192.168.99.100 --port=7100 -uroot
-  #print(s + "\n")
-
 def verify_docker_running():
   try:
     subprocess.check_output("docker ps", shell=True)
