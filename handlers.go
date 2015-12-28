@@ -661,9 +661,10 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// start is 0-based
 	end := start + count
 	rowsCount := s.RowsCount
-	if end >= rowsCount {
+	if end > rowsCount {
 		muQueryAsync.Unlock()
 		err = fmt.Errorf("start+count (%d) too high (max is %d)'", end, rowsCount)
 		LogErrorf("%s\n", err.Error())
@@ -671,7 +672,7 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 	// make a copy of the results
-	var rows []interface{}
+	rows := make([]interface{}, count, count)
 	for i := 0; i < count; i++ {
 		rows[i] = s.rows[start+i]
 	}

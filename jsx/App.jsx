@@ -45,7 +45,8 @@ class App extends React.Component {
     this.handleResetPagination = this.handleResetPagination.bind(this);
     this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
     this.handleEditedCells = this.handleEditedCells.bind(this);
-    this.runQueryAsyncStatus = this.runQueryAsyncStatus.bind(this);
+    this.getQueryAsyncStatus = this.getQueryAsyncStatus.bind(this);
+    this.getQueryAsyncData = this.getQueryAsyncData.bind(this);
     this.handleQueryAsync = this.handleQueryAsync.bind(this);
     this.handleQuerySync = this.handleQuerySync.bind(this);
 
@@ -311,9 +312,44 @@ class App extends React.Component {
     });
   }
 
-  runQueryAsyncStatus() {
-    console.log("runQueryAsyncStatus");
+  getQueryAsyncData() {
     const queryId = this.state.queryIdInProgress;
+    console.log(`getQueryAsyncData: queryId={queryId}`);
+    if (queryId == "") {
+      console.log("no async query in progress");
+      return;
+    }
+    const count = this.state.queryStatus.rows_count;
+    if (count == 0) {
+      this.setState({
+        results: null,
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {}
+      });
+      return;
+    }
+    const connId = this.state.connectionId;
+    const start = 0;
+    const columns = this.state.queryStatus.columns;
+    api.queryAsyncData(connId, queryId, start, count, (data) => {
+      const results = {
+        columns: columns,
+        rows: data.rows
+      };
+      this.setState({
+        results: results,
+        spinnerVisible: false,
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+      });
+    });
+  }
+
+  getQueryAsyncStatus() {
+    const queryId = this.state.queryIdInProgress;
+    console.log(`getQueryAsyncStatus: queryId={queryId}`);
     if (queryId == "") {
       console.log("no async query in progress");
       return;
@@ -323,10 +359,13 @@ class App extends React.Component {
       const queryStatus = data; 
       this.setState({
         queryStatus: queryStatus,
+        spinnerVisible: !queryStatus.finished,
       });
       // repeat until async query finishes
       if (!queryStatus.finished) {
-        setTimeout(this.runQueryAsyncStatus, 1000);
+        setTimeout(this.getQueryAsyncStatus, 1000);
+      } else {
+        this.getQueryAsyncData();
       }
     });
   }
@@ -336,6 +375,7 @@ class App extends React.Component {
     const connId = this.state.connectionId;
     api.queryAsync(connId, query, (data) => {
       this.setState({
+        spinnerVisible: true,
         queryIdInProgress: data.query_id,
         // TODO: not sure if should reset the data right away
         // maybe only after received some data or an error message
@@ -343,7 +383,7 @@ class App extends React.Component {
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
       });
-      setTimeout(this.runQueryAsyncStatus, 1000);
+      setTimeout(this.getQueryAsyncStatus, 1000);
     });
   }
 

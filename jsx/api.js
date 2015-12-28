@@ -90,21 +90,21 @@ function getHistory(connId, cb) {
 }
 
 function queryAsync(connId, query, cb) {
-  apiCall("post", "/queryasync", {
+  apiCallNoSpinner("post", "/queryasync", {
     conn_id: connId,
     query: query
   }, cb);
 }
 
 function queryAsyncStatus(connId, queryId, cb) {
-  apiCall("post", "/queryasyncstatus", {
+  apiCallNoSpinner("post", "/queryasyncstatus", {
     conn_id: connId,
     query_id: queryId
   }, cb);
 }
 
 function queryAsyncData(connId, queryId, start, count, cb) {
-  apiCall("post", "/queryasyncdata", {
+  apiCallNoSpinner("post", "/queryasyncdata", {
     conn_id: connId,
     query_id: queryId,
     start: start,
