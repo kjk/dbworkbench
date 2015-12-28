@@ -43,9 +43,8 @@ func testTest(t *testing.T) {
 
 func testInfo(t *testing.T) {
 	res, err := testClient.Info()
-
-	assert.Equal(t, nil, err)
-	assert.NotEqual(t, nil, res)
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
 }
 
 func strInArray(s string, arr []string) bool {
@@ -60,7 +59,7 @@ func strInArray(s string, arr []string) bool {
 func testDatabases(t *testing.T) {
 	res, err := testClient.Databases()
 
-	assert.Equal(t, nil, err)
+	assert.NoError(t, err)
 	assert.True(t, strInArray("world", res))
 	if isPg {
 		assert.True(t, strInArray("postgres", res))
@@ -76,7 +75,7 @@ func testTables(t *testing.T) {
 		"CountryLanguage",
 	}
 
-	assert.Equal(t, nil, err)
+	assert.NoError(t, err)
 	assert.Equal(t, expected, res)
 }
 
@@ -92,7 +91,7 @@ func testTable(t *testing.T) {
 		"column_default",
 	}
 
-	assert.Equal(t, nil, err)
+	assert.NoError(t, err)
 	assert.Equal(t, columns, res.Columns)
 	assert.Equal(t, 5, len(res.Rows))
 }
@@ -100,7 +99,7 @@ func testTable(t *testing.T) {
 func testTableRows(t *testing.T) {
 	res, err := testClient.TableRows("City", RowsOptions{})
 
-	assert.Equal(t, nil, err)
+	assert.NoError(t, err)
 	assert.Equal(t, 5, len(res.Columns))
 	assert.Equal(t, 4079, len(res.Rows))
 }
@@ -108,69 +107,89 @@ func testTableRows(t *testing.T) {
 func testTableInfo(t *testing.T) {
 	res, err := testClient.TableInfo("City")
 
-	assert.Equal(t, nil, err)
-	assert.Equal(t, 5, len(res.Columns))
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(res.Columns))
 	assert.Equal(t, 1, len(res.Rows))
 }
 
-/*
 func testTableIndexes(t *testing.T) {
-	res, err := testClient.TableIndexes("books")
-
-	assert.Equal(t, nil, err)
-	assert.Equal(t, 2, len(res.Columns))
+	res, err := testClient.TableIndexes("City")
+	//res.DumpFull()
+	assert.NoError(t, err)
+	assert.Equal(t, 13, len(res.Columns))
 	assert.Equal(t, 2, len(res.Rows))
 }
 
 func testQuery(t *testing.T) {
-	res, err := testClient.Query("SELECT * FROM books")
+	res, err := testClient.Query("SELECT * FROM City")
+	assert.NoError(t, err)
+	assert.Equal(t, 5, len(res.Columns))
+	assert.Equal(t, 4079, len(res.Rows))
+}
 
-	assert.Equal(t, nil, err)
-	assert.Equal(t, 4, len(res.Columns))
-	assert.Equal(t, 15, len(res.Rows))
+func strEq(s string, args ...string) bool {
+	for _, arg := range args {
+		if s == arg {
+			return true
+		}
+	}
+	return false
 }
 
 func testQueryError(t *testing.T) {
-	res, err := testClient.Query("SELCT * FROM books")
-
-	assert.NotEqual(t, nil, err)
-	assert.Equal(t, "pq: syntax error at or near \"SELCT\"", err.Error())
-	assert.Equal(t, true, res == nil)
+	res, err := testClient.Query("SELCT * FROM City")
+	assert.Error(t, err)
+	assert.Nil(t, res)
+	cond := func() bool {
+		s := err.Error()
+		if s == "" {
+			return true
+		}
+		return strings.HasPrefix(s, "Error 1064: You have an error in your SQL syntax")
+	}
+	assert.Condition(t, cond, err.Error())
 }
 
 func testQueryInvalidTable(t *testing.T) {
 	res, err := testClient.Query("SELECT * FROM books2")
-
-	assert.NotEqual(t, nil, err)
-	assert.Equal(t, "pq: relation \"books2\" does not exist", err.Error())
-	assert.Equal(t, true, res == nil)
-}
-
-func testResultCsv(t *testing.T) {
-	res, _ := testClient.Query("SELECT * FROM books ORDER BY id ASC LIMIT 1")
-	csv := res.CSV()
-
-	expected := "id,title,author_id,subject_id\n156,The Tell-Tale Heart,115,9\n"
-
-	assert.Equal(t, expected, string(csv))
+	assert.Error(t, err)
+	assert.Nil(t, res)
+	cond := func() bool {
+		return strEq(err.Error(), `pq: relation "books2" does not exist`, `Error 1146: Table 'world.books2' doesn't exist`)
+	}
+	assert.Condition(t, cond, err.Error())
 }
 
 func testHistory(t *testing.T) {
-	_, err := testClient.Query("SELECT * FROM books")
-	query := testClient.history[len(testClient.history)-1].Query
-
-	assert.Equal(t, nil, err)
-	assert.Equal(t, "SELECT * FROM books", query)
+	q := "SELECT * FROM City LIMIT 1"
+	_, err := testClient.Query(q)
+	h := testClient.History()
+	n := len(h)
+	query := h[n-1].Query
+	assert.NoError(t, err)
+	assert.Equal(t, q, query)
 }
 
+// invalid query should not be remembered
 func testHistoryError(t *testing.T) {
-	_, err := testClient.Query("SELECT * FROM books123")
-	query := testClient.history[len(testClient.history)-1].Query
-
-	assert.NotEqual(t, nil, err)
-	assert.NotEqual(t, "SELECT * FROM books123", query)
+	q := "SELECT * FROM books123"
+	res, err := testClient.Query(q)
+	assert.Error(t, err)
+	assert.Nil(t, res)
+	h := testClient.History()
+	n := len(h)
+	query := h[n-1].Query
+	assert.NotEqual(t, q, query)
 }
-*/
+
+func testResultCsv(t *testing.T) {
+	res, err := testClient.Query("SELECT * FROM City ORDER BY ID ASC LIMIT 1")
+	assert.NoError(t, err)
+	csv := string(res.CSV())
+	fmt.Printf("csv: '%s'\n", csv)
+	expected := "ID,Name,CountryCode,District,Population\n1,Kabul,AFG,Kabol,1780000\n"
+	assert.Equal(t, expected, csv)
+}
 
 func TestAll(t *testing.T) {
 	fmt.Printf("TestAll: started\n")
@@ -189,16 +208,13 @@ func TestAll(t *testing.T) {
 	testTables(t)
 	testTable(t)
 	testTableRows(t)
-	// TODO: update for world database
-	/*
-		testTableInfo(t)
-		testTableIndexes(t)
-		testQuery(t)
-		testQueryError(t)
-		testQueryInvalidTable(t)
-		testResultCsv(t)
-		testHistory(t)
-		testHistoryError(t)
-	*/
+	testTableInfo(t)
+	testTableIndexes(t)
+	testQuery(t)
+	testQueryError(t)
+	testQueryInvalidTable(t)
+	testResultCsv(t)
+	testHistory(t)
+	testHistoryError(t)
 	teardownClient()
 }

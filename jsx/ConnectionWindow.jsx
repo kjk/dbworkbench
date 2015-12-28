@@ -45,8 +45,8 @@ var guard = function(key, fn){
 };
 
 guard.flags = {};
-guard.activate = function(key){ guard.flags[key] = true };
-guard.deactivate = function(key){ guard.flags[key] = false };
+guard.activate = function(key){ guard.flags[key] = true; };
+guard.deactivate = function(key){ guard.flags[key] = false; };
 
 function newEmptyBookmark() {
   emptyBookmarkId -= 1;
