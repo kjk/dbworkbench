@@ -61,7 +61,7 @@ export class Paginator extends React.Component {
     }
 
     renderPageButton() {
-        return (<span className='reactable-page'> Page {this.props.currentPage + 1} / {this.props.numPages} </span>);
+        return (<span className='reactable-page'>{this.props.currentPage + 1} / {this.props.numPages} </span>);
     }
 
     render() {
