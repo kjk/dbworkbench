@@ -69,7 +69,12 @@ class Output extends React.Component {
         var columnToBeEdited = self.props.results.columns[colId];
         var afterChange = value;
 
-        colsAfterEdit += columnToBeEdited + "=\'" + afterChange + "\'";
+        if (afterChange == "") {
+          colsAfterEdit += columnToBeEdited + "=NULL ";
+        } else {
+          colsAfterEdit += columnToBeEdited + "=\'" + afterChange + "\'";
+        }
+
         if (index < Object.keys(thisRow).length - 1) {
           colsAfterEdit += ", ";
         }
@@ -90,7 +95,12 @@ class Output extends React.Component {
       index = 0;
       var rowToBeEdited = "";
       _.each(rowAsDictionary, function(value, key, obj) {
-        rowToBeEdited += key + "=\'" + obj[key] + "\' ";
+        if (value == null) {
+          rowToBeEdited += key + " IS NULL ";
+        } else {
+          rowToBeEdited += key + "=\'" + value + "\' ";
+        }
+
         if (index < Object.keys(rowAsDictionary).length - 1) {
           rowToBeEdited += "AND ";
         }
