@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 # on mac: brew install python3
 
-import sys, os, os.path
+import sys, os, os.path, time
 import urllib.request, subprocess
 
 """
@@ -77,32 +77,48 @@ def start_fresh_container(imageName, containerName, portMapping):
   remove_container(containerName)
   cmd = ["docker", "run", "-d", "--name=" + containerName, "-p", portMapping, imageName]
   run_cmd(cmd)
+  wait_for_container(containerName)
+
+def wait_for_container(containerName):
+  # 8 secs is a heuristic
+  timeOut = 8
+  print("waiting %s secs for container to start" % timeOut, end="", flush=True)
+  while timeOut > 0:
+    print(".", end="", flush=True)
+    time.sleep(1)
+    timeOut -= 1
+  print("")
 
 #DBHERO_TEST_CONN="root@tcp(192.168.99.100:7100)/world?parseTime=true" godep go test .
 def run_tests(dbConnURL):
   timeoutInSecs = 25
-  print("conn: %s" % dbConnURL)
+  print("conn: '%s'" % dbConnURL)
   env = os.environ.copy()
   env["DBHERO_TEST_CONN"] = dbConnURL
-  cmd = ["godep", "go", "test", "."]
-  print_cmd(cmd)
+  if True:
+    cmd = ["godep", "go", "test", "."]
+    print_cmd(cmd)
+  else:
+    cmd = "godep go test ."
   p = subprocess.Popen(cmd, env=env, stderr=subprocess.STDOUT,stdout=subprocess.PIPE)
   p.wait(timeoutInSecs)   
   s = p.stdout.read().decode("utf-8")
   print(s)
   # TODO: remove dbworkbench.test 
   
+def mysql_conn(ip, port, dbName):
+  return "root@tcp(%s:%s)/%s?parseTime=true" % (ip, port, dbName)
+
+def pg_conn(ip, port, dbName):
+  return "postgres://postgres@%s:%s/world?sslmode=disable" % (ip, port, dbName)
+
 def main():
   verify_docker_running()
   ip = get_docker_machine_ip()
   start_fresh_container(g_imageName, g_containerName, "7100:3306")
-  port = "7100"
-  dbName = "world"
-  #conn = "postgres://postgres@%s:%s/world?sslmode=disable" % (ip, "7100")
-  connURL = "root@tcp(%s:%s)/%s?parseTime=true" % (ip, port, dbName)
-  #root@tcp(:%s)/%s?parseTime=true"
-  run_tests(connURL)
-
+  conn = mysql_conn(ip, "7100", "world")
+  run_tests(conn)
+  remove_container(g_containerName)  
 
 if __name__ == "__main__":
   main()

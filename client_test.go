@@ -18,7 +18,7 @@ var (
 func setupClient(t *testing.T) bool {
 	var err error
 	connURL := os.Getenv("DBHERO_TEST_CONN")
-	fmt.Printf("connURL: %s\n", connURL)
+	fmt.Printf("connURL: '%s'\n", connURL)
 	assert.NotEqual(t, "", connURL)
 	if strings.HasPrefix(connURL, "postgres") {
 		isPg = true
