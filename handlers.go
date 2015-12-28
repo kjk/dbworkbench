@@ -515,8 +515,9 @@ func doQueryAsync(client Client, query string, queryID string, maxRows int, maxD
 /*
 GET | POST /api/queryasync
 args:
-   query : string, query to execute
-   max_rows : int, optional, max number of rows to fetch from the database
+   conn_id       : string, connection
+   query         : string, query to execute
+   max_rows      : int, optional, max number of rows to fetch from the database
    max_data_size : int64, optional, max amount of data to fetch from the database
 
 Both max_rows and max_data_size can be given, both are respected.
@@ -590,6 +591,7 @@ func getQueryStatus(queryID string) (*QueryAsyncStatus, error) {
 /*
 GET | POST /api/queryasyncstatus
 args:
+  conn_id  : string, connection
   query_id : string, id of the query
 
 returns: json in the format
@@ -617,6 +619,7 @@ func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Requ
 /*
 GET | POST /api/queryasyncdata
 args:
+  conn_id  : string, connection
   query_id : string
   start    : int, first row to return
   count    : int, number of rows, start + count should be < total rows count
@@ -658,9 +661,10 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// start is 0-based
 	end := start + count
 	rowsCount := s.RowsCount
-	if end >= rowsCount {
+	if end > rowsCount {
 		muQueryAsync.Unlock()
 		err = fmt.Errorf("start+count (%d) too high (max is %d)'", end, rowsCount)
 		LogErrorf("%s\n", err.Error())
@@ -668,7 +672,7 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 	// make a copy of the results
-	var rows []interface{}
+	rows := make([]interface{}, count, count)
 	for i := 0; i < count; i++ {
 		rows[i] = s.rows[start+i]
 	}
@@ -681,7 +685,12 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	serveJSON(w, r, res)
 }
 
-// GET | POST /api/explain
+/*
+GET | POST /api/explain
+args:
+  conn_id : string, connection
+  query   : string, query to explain
+*/
 func handleExplain(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	//LogInfof("query: '%s'\n", query)

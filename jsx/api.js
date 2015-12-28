@@ -63,11 +63,6 @@ function getTables(connId, cb) {
   apiCall("get", "/tables", opts, cb);
 }
 
-function getTableRows(connId, table, opts, cb) {
-  opts.conn_id = connId;
-  apiCall("get", "/tables/" + table + "/rows", opts, cb);
-}
-
 function getTableStructure(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table, opts, cb);
@@ -92,6 +87,29 @@ function getHistory(connId, cb) {
     }
     cb({ columns: ["id", "query", "timestamp"], rows: rows });
   });
+}
+
+function queryAsync(connId, query, cb) {
+  apiCallNoSpinner("post", "/queryasync", {
+    conn_id: connId,
+    query: query
+  }, cb);
+}
+
+function queryAsyncStatus(connId, queryId, cb) {
+  apiCallNoSpinner("post", "/queryasyncstatus", {
+    conn_id: connId,
+    query_id: queryId
+  }, cb);
+}
+
+function queryAsyncData(connId, queryId, start, count, cb) {
+  apiCallNoSpinner("post", "/queryasyncdata", {
+    conn_id: connId,
+    query_id: queryId,
+    start: start,
+    count: count
+  }, cb);
 }
 
 function getBookmarks(cb) {
@@ -155,7 +173,6 @@ module.exports = {
   connect: connect,
   disconnect: disconnect,
   getTables: getTables,
-  getTableRows: getTableRows,
   getTableStructure: getTableStructure,
   getTableIndexes: getTableIndexes,
   getTableInfo: getTableInfo,
@@ -166,5 +183,8 @@ module.exports = {
   getActivity: getActivity,
   executeQuery: executeQuery,
   explainQuery: explainQuery,
-  getConnectionInfo: getConnectionInfo
+  getConnectionInfo: getConnectionInfo,
+  queryAsync: queryAsync,
+  queryAsyncStatus: queryAsyncStatus,
+  queryAsyncData: queryAsyncData
 };
