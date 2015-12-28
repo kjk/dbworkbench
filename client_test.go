@@ -80,9 +80,8 @@ func testTables(t *testing.T) {
 	assert.Equal(t, expected, res)
 }
 
-/*
 func testTable(t *testing.T) {
-	res, err := testClient.Table("books")
+	res, err := testClient.Table("City")
 
 	columns := []string{
 		"column_name",
@@ -95,9 +94,10 @@ func testTable(t *testing.T) {
 
 	assert.Equal(t, nil, err)
 	assert.Equal(t, columns, res.Columns)
-	assert.Equal(t, 4, len(res.Rows))
+	assert.Equal(t, 5, len(res.Rows))
 }
 
+/*
 func testTableRows(t *testing.T) {
 	res, err := testClient.TableRows("books", RowsOptions{})
 
@@ -187,9 +187,9 @@ func TestAll(t *testing.T) {
 	testInfo(t)
 	testDatabases(t)
 	testTables(t)
+	testTable(t)
 	// TODO: update for world database
 	/*
-		testTable(t)
 		testTableRows(t)
 		testTableInfo(t)
 		testTableIndexes(t)

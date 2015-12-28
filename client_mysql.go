@@ -91,9 +91,10 @@ func (c *ClientMysql) Tables() ([]string, error) {
 // Table returns schema for a given table
 func (c *ClientMysql) Table(table string) (*Result, error) {
 	// https://dev.mysql.com/doc/refman/5.0/en/columns-table.html
-	// TODO: don't know if CHARACTER_SET_NAME is the same as character_set_catalog
+	// Note: returning character_set_name as character_set_catalog
+	// for pg compat. TODO: don't know if they mean the same thing
 	q := `SELECT 
-column_name, data_type, is_nullable, character_maximum_length, character_set_name, column_default
+column_name, data_type, is_nullable, character_maximum_length, character_set_name as character_set_catalog, column_default
 FROM information_schema.columns
 WHERE table_name = ?`
 	return dbQuery(c.db, q, table)
