@@ -184,6 +184,11 @@ class Output extends React.Component {
 
       if (self.getEditedCells(rowId, colId) != undefined) {
         var value = self.getEditedCells(rowId, colId);
+        var tdStyle = {
+          background: '#7DCED2',
+          color: '#ffffff',
+          border: 'solid 1px #3B8686',
+        };
       }
 
       return (
@@ -191,6 +196,7 @@ class Output extends React.Component {
           key={position}
           column={col}
           position={position}
+          style={tdStyle}
           onClick={self.handleCellClick.bind(self, rowId, colId)}
           isEditable={isEditable}
           onEdit={self.handleOnCellEdit.bind(self, rowId, colId)}>

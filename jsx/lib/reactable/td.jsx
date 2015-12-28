@@ -14,6 +14,7 @@ export class Td extends React.Component {
         var tdProps = {
             className: this.props.className,
             onClick: this.handleClick.bind(this),
+            style: this.props.style,
         };
 
         // Attach any properties on the column to this Td object to allow things like custom event handlers
@@ -45,7 +46,7 @@ export class Td extends React.Component {
         }
 
         if (this.props.isEditable) {
-            // console.log("Editable Cell", this.props)
+            // console.log("Editable Cell", this.props, tdProps)
             return <td {...tdProps}><textarea value={this.props.children} onChange={this.props.onEdit}></textarea></td>;
         }
 
