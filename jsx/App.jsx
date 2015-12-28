@@ -22,6 +22,14 @@ var SpinnerCircle = require('./Spinners.jsx').Circle;
 const minSidebarDx = 128;
 const maxSidebarDx = 128*3;
 
+function isCreateOrDropQuery(query) {
+  return query.match(/(create|drop) table/i);
+}
+
+function  isSelectQuery(query) {
+  return query.match(/select/i);
+}
+
 class App extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -37,6 +45,9 @@ class App extends React.Component {
     this.handleResetPagination = this.handleResetPagination.bind(this);
     this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
     this.handleEditedCells = this.handleEditedCells.bind(this);
+    this.runQueryAsyncStatus = this.runQueryAsyncStatus.bind(this);
+    this.handleQueryAsync = this.handleQueryAsync.bind(this);
+    this.handleQuerySync = this.handleQuerySync.bind(this);
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -50,6 +61,7 @@ class App extends React.Component {
       databaseName: "No Database Selected",
 
       queryIdInProgress: null,
+      queryStatus: null,
 
       tables: null,
       tableStructures: {},
@@ -174,22 +186,9 @@ class App extends React.Component {
   }
 
   getTableContent() {
-    var sortColumn = null;
-    var sortOrder = null;
-    var params = { limit: 100000, sort_column: sortColumn, sort_order: sortOrder };
-
-    var self = this;
-    var connId = this.state.connectionId;
-    var selectedTable = this.state.selectedTable;
-    api.getTableRows(connId, selectedTable, params, function(data) {
-      console.log("getTableContent: ", data);
-      self.setState({
-        results: data,
-        resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
-        editedCells: {},
-      });
-    });
+    const table = this.state.selectedTable;
+    const query = `SELECT * FROM ${table};`;
+    this.handleExecuteQuery(query);
   }
 
   getTableStructure() {
@@ -289,14 +288,6 @@ class App extends React.Component {
     }
   }
 
-  isCreateOrDropQuery(query) {
-    return query.match(/(create|drop) table/i);
-  }
-
-  isSelectQuery(query) {
-    return query.match(/select/i);
-  }
-
   handleQuerySync(query) {
     console.log("handleQuerySync", query);
     var self = this;
@@ -320,16 +311,31 @@ class App extends React.Component {
     });
   }
 
-  handleQueryAsyncStatus() {
-
+  runQueryAsyncStatus() {
+    console.log("runQueryAsyncStatus");
+    const queryId = this.state.queryIdInProgress;
+    if (queryId == "") {
+      console.log("no async query in progress");
+      return;
+    }
+    const connId = this.state.connectionId;
+    api.queryAsyncStatus(connId, queryId, (data) => {
+      const queryStatus = data; 
+      this.setState({
+        queryStatus: queryStatus,
+      });
+      // repeat until async query finishes
+      if (!queryStatus.finished) {
+        setTimeout(this.runQueryAsyncStatus, 1000);
+      }
+    });
   }
 
   handleQueryAsync(query) {
     console.log("handleQueryAsync", query);
-    var self = this;
-    var connId = this.state.connectionId;
-    api.queryAsync(connId, query, function(data) {
-      self.setState({
+    const connId = this.state.connectionId;
+    api.queryAsync(connId, query, (data) => {
+      this.setState({
         queryIdInProgress: data.query_id,
         // TODO: not sure if should reset the data right away
         // maybe only after received some data or an error message
@@ -337,7 +343,7 @@ class App extends React.Component {
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
       });
-      setTimeout(this.handleQueryAsyncStatus)
+      setTimeout(this.runQueryAsyncStatus, 1000);
     });
   }
 
@@ -345,9 +351,9 @@ class App extends React.Component {
     console.log("handleExecuteQuery", query);
     query = query.trim();
     if (isSelectQuery(query)) {
-      handleQueryAsync(query);
+      this.handleQueryAsync(query);
     } else {
-      handleQuerySync(query);
+      this.handleQuerySync(query);
     }
   }
 

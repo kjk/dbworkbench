@@ -63,11 +63,6 @@ function getTables(connId, cb) {
   apiCall("get", "/tables", opts, cb);
 }
 
-function getTableRows(connId, table, opts, cb) {
-  opts.conn_id = connId;
-  apiCall("get", "/tables/" + table + "/rows", opts, cb);
-}
-
 function getTableStructure(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table, opts, cb);
@@ -178,7 +173,6 @@ module.exports = {
   connect: connect,
   disconnect: disconnect,
   getTables: getTables,
-  getTableRows: getTableRows,
   getTableStructure: getTableStructure,
   getTableIndexes: getTableIndexes,
   getTableInfo: getTableInfo,
