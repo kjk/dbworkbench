@@ -160,33 +160,36 @@ func testQueryInvalidTable(t *testing.T) {
 	assert.Condition(t, cond, err.Error())
 }
 
-/*
+func testHistory(t *testing.T) {
+	q := "SELECT * FROM City LIMIT 1"
+	_, err := testClient.Query(q)
+	h := testClient.History()
+	n := len(h)
+	query := h[n-1].Query
+	assert.NoError(t, err)
+	assert.Equal(t, q, query)
+}
+
+// invalid query should not be remembered
+func testHistoryError(t *testing.T) {
+	q := "SELECT * FROM books123"
+	res, err := testClient.Query(q)
+	assert.Error(t, err)
+	assert.Nil(t, res)
+	h := testClient.History()
+	n := len(h)
+	query := h[n-1].Query
+	assert.NotEqual(t, q, query)
+}
 
 func testResultCsv(t *testing.T) {
-	res, _ := testClient.Query("SELECT * FROM books ORDER BY id ASC LIMIT 1")
-	csv := res.CSV()
-
-	expected := "id,title,author_id,subject_id\n156,The Tell-Tale Heart,115,9\n"
-
-	assert.Equal(t, expected, string(csv))
+	res, err := testClient.Query("SELECT * FROM City ORDER BY ID ASC LIMIT 1")
+	assert.NoError(t, err)
+	csv := string(res.CSV())
+	fmt.Printf("csv: '%s'\n", csv)
+	expected := "ID,Name,CountryCode,District,Population\n1,Kabul,AFG,Kabol,1780000\n"
+	assert.Equal(t, expected, csv)
 }
-
-func testHistory(t *testing.T) {
-	_, err := testClient.Query("SELECT * FROM books")
-	query := testClient.history[len(testClient.history)-1].Query
-
-	assert.Equal(t, nil, err)
-	assert.Equal(t, "SELECT * FROM books", query)
-}
-
-func testHistoryError(t *testing.T) {
-	_, err := testClient.Query("SELECT * FROM books123")
-	query := testClient.history[len(testClient.history)-1].Query
-
-	assert.NotEqual(t, nil, err)
-	assert.NotEqual(t, "SELECT * FROM books123", query)
-}
-*/
 
 func TestAll(t *testing.T) {
 	fmt.Printf("TestAll: started\n")
@@ -210,11 +213,8 @@ func TestAll(t *testing.T) {
 	testQuery(t)
 	testQueryError(t)
 	testQueryInvalidTable(t)
-	// TODO: update for world database
-	/*
-		testResultCsv(t)
-		testHistory(t)
-		testHistoryError(t)
-	*/
+	testResultCsv(t)
+	testHistory(t)
+	testHistoryError(t)
 	teardownClient()
 }
