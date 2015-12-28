@@ -105,16 +105,15 @@ func testTableRows(t *testing.T) {
 	assert.Equal(t, 4079, len(res.Rows))
 }
 
-/*
-
 func testTableInfo(t *testing.T) {
-	res, err := testClient.TableInfo("books")
+	res, err := testClient.TableInfo("City")
 
 	assert.Equal(t, nil, err)
-	assert.Equal(t, 4, len(res.Columns))
+	assert.Equal(t, 5, len(res.Columns))
 	assert.Equal(t, 1, len(res.Rows))
 }
 
+/*
 func testTableIndexes(t *testing.T) {
 	res, err := testClient.TableIndexes("books")
 
