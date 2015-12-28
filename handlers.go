@@ -370,7 +370,8 @@ type QueryAsyncStatus struct {
 	TimeToFirstResultMs  float64  `json:"time_to_first_result_ms"`
 	TotalQueryTimeMs     float64  `json:"total_query_time_ms"`
 	Columns              []string `json:"columns"`
-	Error                string   `json:"error"`
+	ErrorString          string   `json:"error"`
+	err                  error
 	rows                 []interface{}
 	clientLastAccessTime time.Time // so that we can delete stale data after a while
 }
@@ -428,7 +429,10 @@ func withQueryStatus(queryID string, f func(s *QueryAsyncStatus)) error {
 
 func setQueryStatusError(queryID string, err error) {
 	withQueryStatus(queryID, func(s *QueryAsyncStatus) {
-		s.Error = err.Error()
+		s.err = err
+		if err != nil {
+			s.ErrorString = err.Error()
+		}
 		s.Finished = true
 	})
 }
@@ -441,9 +445,8 @@ func durMsSince(t time.Time) float64 {
 	return durToMs(time.Now().Sub(t))
 }
 
-func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int, maxDataSize int64) {
-	updateConnectionLastAccess(connInfo.ConnectionID)
-	db := connInfo.Client.Connection()
+func doQueryAsync(client Client, query string, queryID string, maxRows int, maxDataSize int64) {
+	db := client.Connection()
 
 	rows, err := db.Queryx(query)
 
@@ -565,7 +568,8 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	connInfo := ctx.ConnInfo
 	queryID := getNextQueryAsyncID()
 
-	go doQueryAsync(connInfo, query, queryID, maxRows, maxDataSize)
+	go doQueryAsync(connInfo.Client, query, queryID, maxRows, maxDataSize)
+	updateConnectionLastAccess(connInfo.ConnectionID)
 
 	res := struct {
 		QueryID string `json:"query_id"`
@@ -573,6 +577,14 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 		QueryID: queryID,
 	}
 	serveJSON(w, r, res)
+}
+
+func getQueryStatus(queryID string) (*QueryAsyncStatus, error) {
+	var statusCopy QueryAsyncStatus
+	err := withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		statusCopy = *s
+	})
+	return &statusCopy, err
 }
 
 /*
@@ -594,17 +606,11 @@ returns: json in the format
 func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	queryID := strings.TrimSpace(r.FormValue("query_id"))
 	LogInfof("query_id: '%s'\n", queryID)
-
-	var statusCopy QueryAsyncStatus
-	err := withQueryStatus(queryID, func(s *QueryAsyncStatus) {
-		statusCopy = *s
-		statusCopy.rows = nil
-	})
-
+	status, err := getQueryStatus(queryID)
 	if err != nil {
 		serveJSONError(w, r, err)
 	} else {
-		serveJSON(w, r, statusCopy)
+		serveJSON(w, r, status)
 	}
 }
 

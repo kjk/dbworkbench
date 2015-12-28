@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +19,7 @@ var (
 func setupClient(t *testing.T) bool {
 	var err error
 	connURL := os.Getenv("DBHERO_TEST_CONN")
-	fmt.Printf("connURL: '%s'\n", connURL)
+	//fmt.Printf("connURL: '%s'\n", connURL)
 	assert.NotEqual(t, "", connURL)
 	if strings.HasPrefix(connURL, "postgres") {
 		isPg = true
@@ -191,6 +192,30 @@ func testResultCsv(t *testing.T) {
 	assert.Equal(t, expected, csv)
 }
 
+func testQueryAsync(t *testing.T) {
+	q := "SELECT * FROM City"
+	queryID := getNextQueryAsyncID()
+	go doQueryAsync(testClient, q, queryID, -1, -1)
+	maxWait := 10
+	var res *QueryAsyncStatus
+	var err error
+	for i := 0; i < maxWait; i++ {
+		res, err = getQueryStatus(queryID)
+		assert.NoError(t, err)
+		if err != nil {
+			return
+		}
+		if res.Finished {
+			break
+		}
+		time.Sleep(time.Second)
+	}
+	assert.True(t, res.Finished)
+	assert.NoError(t, res.err)
+	assert.Equal(t, 4079, len(res.rows))
+	assert.Equal(t, 5, len(res.Columns))
+}
+
 func TestAll(t *testing.T) {
 	fmt.Printf("TestAll: started\n")
 	if isWindows() {
@@ -216,5 +241,7 @@ func TestAll(t *testing.T) {
 	testResultCsv(t)
 	testHistory(t)
 	testHistoryError(t)
+	testQueryAsync(t)
+
 	teardownClient()
 }
