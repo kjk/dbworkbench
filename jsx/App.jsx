@@ -88,18 +88,16 @@ class App extends React.Component {
 
   getAllTablesStructures(connId, tables) {
     // We can do this by having the query get all data at once but its harder
-    var self = this;
-    _.each(tables, function(table) {
-      api.getTableStructure(connId, table, function(tableStructureData) {
-        var tempTableStructures = self.state.tableStructures;
-        tempTableStructures[table] = tableStructureData;
-        self.setState({
-          tableStructures: tempTableStructures
+    for (let table of tables) {
+      api.getTableStructure(connId, table, (tableStructureData) => {
+        let tmp = this.state.tableStructures;
+        tmp[table] = tableStructureData;
+        this.setState({
+          tableStructures: tmp
         });
-
-        console.log("All Table structrues, ", self.state.tableStructures);
+        //console.log("All Table structrues, ", this.state.tableStructures);
       });
-    });
+    }
   }
 
   handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
@@ -109,14 +107,13 @@ class App extends React.Component {
       databaseName: databaseName,
       capabilities: capabilities
     });
-    var self = this;
     var connId = this.state.connectionId;
-    api.getTables(connId, function(data) {
-      self.setState({
+    api.getTables(connId, (data) => {
+      this.setState({
         tables: data,
       });
 
-      self.getAllTablesStructures(connId, data);
+      this.getAllTablesStructures(connId, data);
     });
   }
 
@@ -173,14 +170,11 @@ class App extends React.Component {
 
     // must delay otherwise this.state.selectedTable will not be visible yet
     // in handleViewSelected
-    var self = this;
-    setTimeout(function() {
-      self.handleViewSelected(view.SQLQuery);
-    }, 200);
+    setTimeout(() => this.handleViewSelected(view.SQLQuery), 200);
 
     var connId = this.state.connectionId;
-    api.getTableInfo(connId, table, function(data) {
-      self.setState({
+    api.getTableInfo(connId, table, (data) => {
+      this.setState({
         selectedTableInfo: data,
       });
     });
@@ -193,12 +187,11 @@ class App extends React.Component {
   }
 
   getTableStructure() {
-    var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
-    api.getTableStructure(connId, selectedTable, function(data) {
+    api.getTableStructure(connId, selectedTable, (data) => {
       console.log("getTableStructure: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -207,12 +200,11 @@ class App extends React.Component {
   }
 
   getTableIndexes() {
-    var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
-    api.getTableIndexes(connId, selectedTable, function(data) {
+    api.getTableIndexes(connId, selectedTable, (data) => {
       console.log("getTableIndexes: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -221,11 +213,10 @@ class App extends React.Component {
   }
 
   getHistory() {
-    var self = this;
     var connId = this.state.connectionId;
-    api.getHistory(connId, function(data) {
+    api.getHistory(connId, (data) => {
       console.log("getHistory: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -235,10 +226,9 @@ class App extends React.Component {
 
   /*
   getBookmarks() {
-    var self = this;
-    api.getBookmarks(function(data) {
+    api.getBookmarks((data) => {
       console.log("getBookmarks: ", data);
-      self.setState({
+      this.setState({
         results: data
       });
     });
@@ -291,10 +281,9 @@ class App extends React.Component {
 
   handleQuerySync(query) {
     console.log("handleQuerySync", query);
-    var self = this;
     var connId = this.state.connectionId;
-    api.executeQuery(connId, query, function(data) {
-      self.setState({
+    api.executeQuery(connId, query, (data) => {
+      this.setState({
         results: data,
         resetPagination: true,
         selectedCellPosition: {rowId: -1, colId: -1},
@@ -302,13 +291,14 @@ class App extends React.Component {
       });
 
       // refresh tables list if table was added or removed
-      if (isCreateOrDropQuery(query)) {
-        api.getTables(self.state.connectionId, function(data) {
-          self.setState({
-            tables: data,
-          });
-        });
+      if (!isCreateOrDropQuery(query)) {
+        return;
       }
+      api.getTables(this.state.connectionId, (data) => {
+        this.setState({
+          tables: data,
+        });
+      });
     });
   }
 
@@ -399,10 +389,9 @@ class App extends React.Component {
 
   handleExplainQuery(query) {
     console.log("handleExplainQuery", query);
-    var self = this;
     var connId = this.state.connectionId;
-    api.explainQuery(connId, query, function(data) {
-      self.setState({
+    api.explainQuery(connId, query, (data) => {
+      this.setState({
         selectedView: view.SQLQuery,
         results: data,
         resetPagination: true,
@@ -421,11 +410,10 @@ class App extends React.Component {
   }
 
   handleDisconnectDatabase() {
-    var self = this;
-    api.disconnect(this.state.connectionId, function(data) {
+    api.disconnect(this.state.connectionId, (data) => {
       console.log("disconnect");
 
-      self.setState({
+      this.setState({
         connectionId: 0,
         connected: false,
         tables: null,
@@ -443,7 +431,7 @@ class App extends React.Component {
   }
 
   handleAlertBar(message) {
-    console.log("Create Alert Bar");
+    console.log("handleAlertBar");
 
     this.setState({
       errorVisible: true,
@@ -451,10 +439,7 @@ class App extends React.Component {
     });
 
     // Dissmiss AlertBar with timer
-    // var self = this;
-    // setTimeout(function() {
-    //   self.handleCloseAlertBar()
-    // }, 5000);
+    // setTimeout(() => this.handleCloseAlertBar(), 5000);
   }
 
   handleCloseAlertBar() {
@@ -492,18 +477,17 @@ class App extends React.Component {
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
     var connId = this.state.connectionId;
-    var self = this;
     if (connId !== 0) {
-      api.getTables(connId, function(data) {
-        self.setState({
+      api.getTables(connId, (data) => {
+        this.setState({
           tables: data,
         });
 
-       self.getAllTablesStructures(connId, data);
+       this.getAllTablesStructures(connId, data);
       });
 
-      api.getConnectionInfo(connId, function(data) {
-        self.setState({
+      api.getConnectionInfo(connId, (data) => {
+        this.setState({
           databaseName: _.filter(data.rows, function (el) { return (el[0] == "current_database"); })[0][1],
         });
       });
