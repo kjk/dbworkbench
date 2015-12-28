@@ -75,7 +75,7 @@ class QueryEditBar extends React.Component {
       <div id="query_edit_bar">
         <button className="discard_changes" onClick={this.props.onHandleDiscardChanges}>Discard Changes</button>
         <div className="row_number">{this.props.numberOfRowsEdited} edited rows</div>
-        <button className="sql_preview" onClick={this.handleSQLPreview.bind(this)}>SQL Preview</button>
+        <button className="sql_preview" onClick={this.handleSQLPreview.bind(this)}>{!this.state.modalIsOpen ? "Show SQL Preview" : "Hide SQL Preview"}</button>
         <button className="save_changes" onClick={this.handleSaveChanges.bind(this)}>Save Changes</button>
 
         <Modal
