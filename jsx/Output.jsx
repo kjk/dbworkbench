@@ -14,6 +14,7 @@ var Td = require('./lib/reactable/td.jsx').Td;
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 var QueryEditBar = require('./QueryEditBar.jsx');
 var action = require('./action.js');
+var view = require('./view.js');
 
 class Output extends React.Component {
   constructor(props, context) {
@@ -175,7 +176,9 @@ class Output extends React.Component {
 
       var position = {rowId: rowId, colId: colId};
 
-      if (self.props.selectedCellPosition.rowId == rowId && self.props.selectedCellPosition.colId == colId) {
+      if (self.props.selectedCellPosition.rowId == rowId &&
+          self.props.selectedCellPosition.colId == colId &&
+          self.props.selectedView == view.SQLQuery) {
         var isEditable = true;
       }
 
