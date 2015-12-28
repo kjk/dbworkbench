@@ -13,6 +13,7 @@ var Td = require('./lib/reactable/td.jsx').Td;
 
 var ConnectionWindow = require('./ConnectionWindow.jsx');
 var QueryEditBar = require('./QueryEditBar.jsx');
+var action = require('./action.js');
 
 class Output extends React.Component {
   constructor(props, context) {
@@ -21,9 +22,6 @@ class Output extends React.Component {
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
 
     this.state = {
-      clickedCellPosition: {rowId: -1, colId: -1},
-      editedCells: {},
-
       filterString: '',
     };
   }
@@ -31,30 +29,26 @@ class Output extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
       this.setState({
-        clickedCellPosition: {rowId: -1, colId: -1},
-        editedCells: {},
         filterString: '',
       });
     }
   }
 
   setEditedCells(rowId, colId, value) {
-    var tempEditedCells = _.clone(this.state.editedCells);
+    var tempEditedCells = _.clone(this.props.editedCells);
     if (tempEditedCells[rowId] == undefined) {
       tempEditedCells[rowId] = {};
     }
     tempEditedCells[rowId][colId] = value;
 
-    this.setState({
-      editedCells: tempEditedCells,
-    });
+    action.editedCells(tempEditedCells);
   }
 
   getEditedCells(rowId, colId) {
-    if (this.state.editedCells[rowId] == undefined) {
+    if (this.props.editedCells[rowId] == undefined) {
       return undefined;
     }
-    return this.state.editedCells[rowId][colId];
+    return this.props.editedCells[rowId][colId];
   }
 
   generateQuery() {
@@ -63,9 +57,7 @@ class Output extends React.Component {
     var query = "";
     var resultsAsDictionary = this.resultsToDictionary(this.props.results);
 
-    console.log("edited cells", this.state.editedCells);
-
-    _.each(this.state.editedCells, function(value, key, obj) {
+    _.each(this.props.editedCells, function(value, key, obj) {
       var values = key.split('.');
       var rowId = key;
 
@@ -133,23 +125,17 @@ class Output extends React.Component {
 
   handleCellClick(rowId, colId, e) {
     console.log("handleCellClick ", rowId, colId);
-
-    this.setState({
-      clickedCellPosition: {rowId: rowId, colId: colId},
-    });
+    action.selectedCellPosition({rowId: rowId, colId: colId});
   }
 
   handleDiscardChanges() {
-    this.setState({
-      clickedCellPosition: {rowId: -1, colId: -1},
-      editedCells: {},
-    });
+    // TODO: do these togethor
+    action.editedCells({});
+    action.selectedCellPosition({rowId: -1, colId: -1});
   }
 
   handleOnCellEdit(rowId, colId, e) {
     console.log("handleOnCellEdit ", rowId, colId, e.target.value);
-
-    var tempEditedCells = _.clone(this.state.editedCells);
     this.setEditedCells(rowId, colId, e.target.value);
   }
 
@@ -179,7 +165,7 @@ class Output extends React.Component {
 
       var position = {rowId: rowId, colId: colId};
 
-      if (self.state.clickedCellPosition.rowId == rowId && self.state.clickedCellPosition.colId == colId) {
+      if (self.props.selectedCellPosition.rowId == rowId && self.props.selectedCellPosition.colId == colId) {
         var isEditable = true;
       }
 
@@ -319,7 +305,7 @@ class Output extends React.Component {
       outputStyle['top'] = '60px';
     }
 
-    var numberOfRowsEdited = Object.keys(this.state.editedCells).length;
+    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
     if (numberOfRowsEdited !== 0) {
       var queryEditBar = (
         <QueryEditBar

@@ -34,7 +34,7 @@ class QueryEditBar extends React.Component {
 
 
   handleSaveChanges() {
-    console.log("handleSaveChanges ", query);
+    console.log("handleSaveChanges ");
 
     // TODO: must support multiple queries for multiple rows changes
     var query = this.props.generateQuery();
@@ -42,7 +42,7 @@ class QueryEditBar extends React.Component {
   }
 
   handleSQLPreview() {
-    console.log("handleSQLPreview", query);
+    console.log("handleSQLPreview");
     var query = this.props.generateQuery();
 
     this.setState({

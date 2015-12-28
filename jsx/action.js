@@ -78,6 +78,8 @@ var disconnectDatabaseIdx = 4;
 var alertBarIdx = 5;
 var spinnerIdx = 6;
 var resetPaginationIdx = 7;
+var selectedCellPositionIdx = 8;
+var editedCellsIdx = 9;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -89,6 +91,8 @@ var actionNames = [
   "alertBar",
   "spinner",
   "resetPagination",
+  "selectedCellPosition",
+  "editedCells",
 ];
 
 function tableSelected(name) {
@@ -187,6 +191,29 @@ function offResetPagination(cbId) {
   off(resetPaginationIdx, cbId);
 }
 
+function selectedCellPosition(newPosition) {
+  broadcast(selectedCellPositionIdx, newPosition);
+}
+
+function onSelectedCellPosition(cb) {
+  return on(selectedCellPositionIdx, cb);
+}
+
+function offSelectedCellPosition(cbId) {
+  off(selectedCellPositionIdx, cbId);
+}
+
+function editedCells(newCells) {
+  broadcast(editedCellsIdx, newCells);
+}
+
+function onEditedCells(cb) {
+  return on(editedCellsIdx, cb);
+}
+
+function offEditedCells(cbId) {
+  off(editedCellsIdx, cbId);
+}
 
 module.exports = {
   tableSelected: tableSelected,
@@ -220,4 +247,12 @@ module.exports = {
   resetPagination: resetPagination,
   onResetPagination: onResetPagination,
   offResetPagination: offResetPagination,
+
+  selectedCellPosition: selectedCellPosition,
+  onSelectedCellPosition: onSelectedCellPosition,
+  offSelectedCellPosition: offSelectedCellPosition,
+
+  editedCells: editedCells,
+  onEditedCells: onEditedCells,
+  offEditedCells: offEditedCells,
 };

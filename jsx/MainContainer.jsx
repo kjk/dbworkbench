@@ -113,7 +113,9 @@ class MainContainer extends React.Component {
             withInput={withInput}
             resetPagination={this.props.resetPagination}
             tableStructures={this.props.tableStructures}
-            selectedTable={this.props.selectedTable} />
+            selectedTable={this.props.selectedTable}
+            selectedCellPosition={this.props.selectedCellPosition}
+            editedCells={this.props.editedCells} />
       </div>
     );
   }

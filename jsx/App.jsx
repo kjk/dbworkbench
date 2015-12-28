@@ -35,6 +35,9 @@ class App extends React.Component {
     this.handleViewSelected = this.handleViewSelected.bind(this);
     this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
     this.handleResetPagination = this.handleResetPagination.bind(this);
+    this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
+    this.handleEditedCells = this.handleEditedCells.bind(this);
+
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -51,6 +54,9 @@ class App extends React.Component {
       selectedTableInfo: null,
       results: null,
       resetPagination: false,
+
+      selectedCellPosition: {rowId: -1, colId: -1},
+      editedCells: {},
 
       errorMessage: "",
       errorVisible: false,
@@ -177,6 +183,8 @@ class App extends React.Component {
       self.setState({
         results: data,
         resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
     });
   }
@@ -188,7 +196,9 @@ class App extends React.Component {
     api.getTableStructure(connId, selectedTable, function(data) {
       console.log("getTableStructure: ", data);
       self.setState({
-        results: data
+        results: data,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
     });
   }
@@ -200,7 +210,9 @@ class App extends React.Component {
     api.getTableIndexes(connId, selectedTable, function(data) {
       console.log("getTableIndexes: ", data);
       self.setState({
-        results: data
+        results: data,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
     });
   }
@@ -211,7 +223,9 @@ class App extends React.Component {
     api.getHistory(connId, function(data) {
       console.log("getHistory: ", data);
       self.setState({
-        results: data
+        results: data,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
     });
   }
@@ -280,6 +294,8 @@ class App extends React.Component {
       self.setState({
         results: data,
         resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
 
       // refresh tables list if table was added or removed
@@ -301,7 +317,10 @@ class App extends React.Component {
     api.explainQuery(connId, query, function(data) {
       self.setState({
         selectedView: view.SQLQuery,
-        results: data
+        results: data,
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
       });
     });
   }
@@ -328,6 +347,10 @@ class App extends React.Component {
         results: null,
         errorMessage: "",
         errorVisible: false,
+        resetPagination: false,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+        spinnerVisible: 0,
       });
     });
   }
@@ -359,6 +382,14 @@ class App extends React.Component {
     this.setState({resetPagination: toggle});
   }
 
+  handleSelectedCellPosition(newPosition) {
+    this.setState({selectedCellPosition: newPosition});
+  }
+
+  handleEditedCells(newCells) {
+    this.setState({editedCells: newCells});
+  }
+
   componentWillMount() {
     //this.adHocTest();
 
@@ -370,6 +401,8 @@ class App extends React.Component {
     this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
     this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
     this.cidResetPagination = action.onResetPagination(this.handleResetPagination);
+    this.cidSelectedCellPosition = action.onSelectedCellPosition(this.handleSelectedCellPosition);
+    this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
     var connId = this.state.connectionId;
     var self = this;
@@ -399,6 +432,8 @@ class App extends React.Component {
     action.offAlertBar(this.cidAlertBar);
     action.offSpinner(this.cidSpinner);
     action.offResetPagination(this.cidResetPagination);
+    action.offSelectedCellPosition(this.cidSelectedCellPosition);
+    action.offEditedCells(this.cidEditedCells);
   }
 
   render() {
@@ -454,7 +489,9 @@ class App extends React.Component {
             selectedView={this.state.selectedView}
             resetPagination={this.state.resetPagination}
             tableStructures={this.state.tableStructures}
-            selectedTable={this.state.selectedTable} />
+            selectedTable={this.state.selectedTable}
+            selectedCellPosition={this.state.selectedCellPosition}
+            editedCells={this.state.editedCells} />
         </div>
 
       </div>
