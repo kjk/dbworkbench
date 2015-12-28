@@ -94,6 +94,29 @@ function getHistory(connId, cb) {
   });
 }
 
+function queryAsync(connId, query, cb) {
+  apiCall("post", "/queryasync", {
+    conn_id: connId,
+    query: query
+  }, cb);
+}
+
+function queryAsyncStatus(connId, queryId, cb) {
+  apiCall("post", "/queryasyncstatus", {
+    conn_id: connId,
+    query_id: queryId
+  }, cb);
+}
+
+function queryAsyncData(connId, queryId, start, count, cb) {
+  apiCall("post", "/queryasyncdata", {
+    conn_id: connId,
+    query_id: queryId,
+    start: start,
+    count: count
+  }, cb);
+}
+
 function getBookmarks(cb) {
   apiCall("get", "/getbookmarks", {}, cb);
 }
@@ -166,5 +189,8 @@ module.exports = {
   getActivity: getActivity,
   executeQuery: executeQuery,
   explainQuery: explainQuery,
-  getConnectionInfo: getConnectionInfo
+  getConnectionInfo: getConnectionInfo,
+  queryAsync: queryAsync,
+  queryAsyncStatus: queryAsyncStatus,
+  queryAsyncData: queryAsyncData
 };

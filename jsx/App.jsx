@@ -48,6 +48,9 @@ class App extends React.Component {
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
 
       databaseName: "No Database Selected",
+
+      queryIdInProgress: null,
+
       tables: null,
       tableStructures: {},
       selectedTable: "",
@@ -286,8 +289,16 @@ class App extends React.Component {
     }
   }
 
-  handleExecuteQuery(query) {
-    console.log("handleExecuteQuery", query);
+  isCreateOrDropQuery(query) {
+    return query.match(/(create|drop) table/i);
+  }
+
+  isSelectQuery(query) {
+    return query.match(/select/i);
+  }
+
+  handleQuerySync(query) {
+    console.log("handleQuerySync", query);
     var self = this;
     var connId = this.state.connectionId;
     api.executeQuery(connId, query, function(data) {
@@ -299,8 +310,7 @@ class App extends React.Component {
       });
 
       // refresh tables list if table was added or removed
-      var re = /(create|drop) table/i;
-      if (query.match(re)) {
+      if (isCreateOrDropQuery(query)) {
         api.getTables(self.state.connectionId, function(data) {
           self.setState({
             tables: data,
@@ -308,6 +318,37 @@ class App extends React.Component {
         });
       }
     });
+  }
+
+  handleQueryAsyncStatus() {
+
+  }
+
+  handleQueryAsync(query) {
+    console.log("handleQueryAsync", query);
+    var self = this;
+    var connId = this.state.connectionId;
+    api.queryAsync(connId, query, function(data) {
+      self.setState({
+        queryIdInProgress: data.query_id,
+        // TODO: not sure if should reset the data right away
+        // maybe only after received some data or an error message
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+      });
+      setTimeout(this.handleQueryAsyncStatus)
+    });
+  }
+
+  handleExecuteQuery(query) {
+    console.log("handleExecuteQuery", query);
+    query = query.trim();
+    if (isSelectQuery(query)) {
+      handleQueryAsync(query);
+    } else {
+      handleQuerySync(query);
+    }
   }
 
   handleExplainQuery(query) {
