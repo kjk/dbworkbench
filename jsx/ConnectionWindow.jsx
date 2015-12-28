@@ -30,6 +30,24 @@ let emptyBookmarkId = -1;
 // of those at any given time so global is just as good
 let currConnectionId = 1;
 
+// http://stackoverflow.com/questions/26187189/in-react-js-is-there-any-way-to-disable-all-children-events
+// var sayHi = guard("enabled", function(){ alert("hi"); });
+// guard.deactivate("enabled");
+// sayHi(); // nothing happens
+// guard.activate("enabled");
+// sayHi(); // shows the alert
+var guard = function(key, fn){
+  return function(){
+    if (guard.flags[key]) {
+      return fn.apply(this, arguments);
+    }
+  };
+};
+
+guard.flags = {};
+guard.activate = function(key){ guard.flags[key] = true };
+guard.deactivate = function(key){ guard.flags[key] = false };
+
 function newEmptyBookmark() {
   emptyBookmarkId -= 1;
   // Maybe: change to a class?
@@ -301,8 +319,9 @@ class ConnectionWindow extends React.Component {
   }
 
   renderBookMarks() {
+    guard.activate("bookmarksEnabled");
     if (this.state.isConnecting) {
-      return;
+      guard.deactivate("bookmarksEnabled");
     }
 
     let bookmarks = [];
@@ -317,16 +336,16 @@ class ConnectionWindow extends React.Component {
       }
 
       bookmarks.push(
-        <a key={id} data-custom-attribute={i} href="#" className={className} onClick={this.selectBookmark}>
+        <a key={id} data-custom-attribute={i} href="#" className={className} onClick={guard("bookmarksEnabled", this.selectBookmark)}>
           {nick}
-          <i data-custom-attribute={id} onClick={this.deleteBookmark} className="fa fa-times pull-right"></i>
+          <i data-custom-attribute={id} onClick={guard("bookmarksEnabled", this.deleteBookmark)} className="fa fa-times pull-right"></i>
         </a>
       );
     }
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={this.newConnectionInfo} >
+        <a href="#" className="list-group-item title" onClick={guard("bookmarksEnabled", this.newConnectionInfo)} >
           Connections
           <i className="fa fa-plus pull-right"></i>
         </a>
