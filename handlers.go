@@ -847,42 +847,6 @@ func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, tab
 	serveJSON(w, r, res)
 }
 
-func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	LogInfof("table='%s'\n", table)
-	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
-	limit := 1000 // Number of rows to fetch
-	limitVal := r.FormValue("limit")
-
-	if limitVal != "" {
-		num, err := strconv.Atoi(limitVal)
-		if err != nil {
-			serveJSONError(w, r, "Invalid limit value")
-			return
-		}
-
-		if num <= 0 {
-			serveJSONError(w, r, "Limit should be greater than 0")
-			return
-		}
-
-		limit = num
-	}
-
-	opts := RowsOptions{
-		Limit:      limit,
-		SortColumn: r.FormValue("sort_column"),
-		SortOrder:  r.FormValue("sort_order"),
-	}
-
-	res, err := ctx.ConnInfo.Client.TableRows(table, opts)
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
-	}
-
-	serveJSON(w, r, res)
-}
-
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := ctx.ConnInfo.Client.TableInfo(table)
 	if err != nil {
@@ -903,7 +867,12 @@ func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request,
 	serveJSON(w, r, res)
 }
 
-// GET /api/tables/:table/:action
+/*
+GET /api/tables/:table/:action
+args:
+  action : "info", "indexes"
+*/
+
 func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
 	uriPath := uri[len("/api/tables/"):]
@@ -916,8 +885,6 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	}
 	cmd := parts[1]
 	switch cmd {
-	case "rows":
-		apiGetTableRows(ctx, w, r, table)
 	case "info":
 		apiGetTableInfo(ctx, w, r, table)
 	case "indexes":
