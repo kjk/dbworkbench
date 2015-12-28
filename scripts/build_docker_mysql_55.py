@@ -37,7 +37,7 @@ def dl_world_mysql():
 
 def dl_and_unzip_world_mysql():
   if os.path.exists(g_world_db_mysql_path):
-    print("dl_and_unzip_world_mysql: '%s' already exists\n", g_world_db_mysql_path)
+    print("dl_and_unzip_world_mysql: '%s' already exists\n" % g_world_db_mysql_path)
     return
   dl_world_mysql()
   print("dl_and_unzip_world_mysql: extracting world.sql")
@@ -47,17 +47,27 @@ def dl_and_unzip_world_mysql():
 
 def create_docker_image():
   print("building docker image")
-  subprocess.run(["docker", "build", "-t", "dbhero/mysql-55", "-f", "scripts/mysql-55.dockerfile", "."])
   #docker build -t dbhero/mysql-55 -f scripts/mysql-55.dockerfile .
+  subprocess.run(["docker", "build", "-t", "dbhero/mysql-55", "-f", "scripts/mysql-55.dockerfile", "."])
+
   #s = "docker run -it -p 7100:3306 dbhero/mysql-55"
   #s = "docker-machine ip default"
   # 192.168.99.100
   # /usr/local/Cellar/mysql55/5.5.44/bin/mysql -h 192.168.99.100 --port=7100 -uroot
   #print(s + "\n")
 
+def verify_docker_running():
+  try:
+    subprocess.check_output("docker ps", shell=True)
+  except:
+    print("docker is not running! must run docker")
+    sys.exit(10)
+
 def main():
+  verify_docker_running()
   os.makedirs(g_tmp_data_dir, exist_ok=True)
   dl_and_unzip_world_mysql()
+  create_docker_image()
   
 if __name__ == "__main__":
   main()
