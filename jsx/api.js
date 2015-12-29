@@ -1,4 +1,4 @@
-var action = require('./action.js');
+import action from './action.js';
 
 function apiCall2(showSpinner, method, path, params, cb) {
   if (showSpinner) {

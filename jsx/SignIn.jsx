@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SignIn extends React.Component {
+export default class SignIn extends React.Component {
   render() {
     return (
       <div className="overlay-dialog overlay-dialog--signin " tabindex="-1">
@@ -23,4 +23,3 @@ class SignIn extends React.Component {
   }
 }
 
-module.exports = SignIn;

@@ -1,9 +1,8 @@
 import React from 'react';
+import Modal from 'react-modal';
+import action from './action.js';
 
-var action = require('./action.js');
-var Modal = require('react-modal');
-
-class QueryEditBar extends React.Component {
+export default class QueryEditBar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
@@ -84,5 +83,3 @@ class QueryEditBar extends React.Component {
     );
   }
 }
-
-module.exports = QueryEditBar;

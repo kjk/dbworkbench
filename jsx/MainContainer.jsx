@@ -1,11 +1,10 @@
 import React from 'react';
+import DbNav from './DbNav.jsx';
+import Input from './Input.jsx';
+import Output from './Output.jsx';
+import view from './view.js';
 
-var DbNav = require('./DbNav.jsx');
-var Input = require('./Input.jsx');
-var Output = require('./Output.jsx');
-var view = require('./view.js');
-
-class MainContainer extends React.Component {
+export default class MainContainer extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -115,5 +114,3 @@ class MainContainer extends React.Component {
     );
   }
 }
-
-module.exports = MainContainer;

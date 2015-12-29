@@ -1,18 +1,17 @@
 import React from 'react';
+import action from './action.js';
+import view from './view.js';
 
-var action = require('./action.js');
-var view = require('./view.js');
-
-class DbNav extends React.Component {
+export default class DbNav extends React.Component {
   render() {
     //console.log("DbNav.render: view: ", this.props.view);
-    var currentView = this.props.view;
-    var children = view.MainTabViews.map(function(viewName) {
-      var handler = function() {
+    const currentView = this.props.view;
+    const children = view.MainTabViews.map(function(viewName) {
+      const handler = function() {
         action.viewSelected(viewName);
       };
 
-      var selected = (currentView == viewName);
+      const selected = (currentView == viewName);
       if (selected) {
         return <li key={viewName} onClick={handler} className="selected"><u>{viewName}</u></li>;
       } else {
@@ -29,5 +28,3 @@ class DbNav extends React.Component {
     );
   }
 }
-
-module.exports = DbNav;

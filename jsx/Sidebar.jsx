@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-var Modal = require('react-modal');
-
-var action = require('./action.js');
-var api = require('./api.js');
-var Output = require('./Output.jsx');
-var filesize = require('filesize');
+import Modal from 'react-modal';
+import Output from './Output.jsx';
+import action from './action.js';
+import api from './api.js';
+import filesize from 'filesize';
 
 class Dropdown extends React.Component {
   constructor(props, context) {
@@ -181,7 +179,7 @@ class TableInformation extends React.Component {
   }
 }
 
-class Sidebar extends React.Component {
+export default class Sidebar extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -276,4 +274,3 @@ class Sidebar extends React.Component {
   }
 }
 
-module.exports = Sidebar;

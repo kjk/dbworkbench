@@ -2,18 +2,15 @@ require("babel-polyfill");
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-var utils = require('./utils.js');
-var api = require('./api.js');
-var action = require('./action.js');
-var view = require('./view.js');
-
-var ConnectionWindow = require('./ConnectionWindow.jsx');
-var Sidebar = require('./Sidebar.jsx');
-var AlertBar = require('./AlertBar.jsx');
-var MainContainer = require('./MainContainer.jsx');
-
+import ConnectionWindow from './ConnectionWindow.jsx';
+import Sidebar from './Sidebar.jsx';
+import AlertBar from './AlertBar.jsx';
+import MainContainer from'./MainContainer.jsx';
 import SpinnerCircle from './SpinnerCircle.jsx';
+import utils from './utils.js';
+import api from './api.js';
+import action from './action.js';
+import view from './view.js';
 
 const minSidebarDx = 128;
 const maxSidebarDx = 128*3;
@@ -229,17 +226,6 @@ class App extends React.Component {
       });
     });
   }
-
-  /*
-  getBookmarks() {
-    api.getBookmarks((data) => {
-      console.log("getBookmarks: ", data);
-      this.setState({
-        results: data
-      });
-    });
-  }
-  */
 
   handleViewSelected(viewName) {
     console.log("handleViewSelected: ", viewName);

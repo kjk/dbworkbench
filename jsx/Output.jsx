@@ -1,18 +1,18 @@
 import React from 'react';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
-var Table = require('./lib/reactable/table.jsx').Table;
-var Thead = require('./lib/reactable/thead.jsx').Thead;
-var Tfoot = require('./lib/reactable/tfoot.jsx').Tfoot;
-var Th = require('./lib/reactable/th.jsx').Th;
-var Tr = require('./lib/reactable/tr.jsx').Tr;
-var Td = require('./lib/reactable/td.jsx').Td;
+const Table = require('./lib/reactable/table.jsx').Table;
+const Thead = require('./lib/reactable/thead.jsx').Thead;
+const Tfoot = require('./lib/reactable/tfoot.jsx').Tfoot;
+const Th = require('./lib/reactable/th.jsx').Th;
+const Tr = require('./lib/reactable/tr.jsx').Tr;
+const Td = require('./lib/reactable/td.jsx').Td;
 
-var ConnectionWindow = require('./ConnectionWindow.jsx');
-var QueryEditBar = require('./QueryEditBar.jsx');
-var action = require('./action.js');
-var view = require('./view.js');
+import ConnectionWindow from './ConnectionWindow.jsx';
+import QueryEditBar from './QueryEditBar.jsx';
+import action from './action.js';
+import view from './view.js';
 
 class Output extends React.Component {
   constructor(props, context) {
