@@ -16,7 +16,7 @@ export default class Input extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    var query = $.trim(this.editor.getValue());
+    var query = this.editor.getValue().trim();
     console.log("runQuery", query);
     if (query.length > 0) {
       action.executeQuery(query);
@@ -27,7 +27,7 @@ export default class Input extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    var query = $.trim(this.editor.getValue());
+    var query = this.editor.getValue().trim();
     console.log("runExplain", query);
     if (query.length > 0) {
       action.explainQuery(query);
@@ -38,7 +38,7 @@ export default class Input extends React.Component {
     e.preventDefault();
     console.log("downloadCsv");
 
-    var query = $.trim(this.editor.getValue());
+    var query = this.editor.getValue().trim();
 
     if (query.length === 0) {
       return;

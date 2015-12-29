@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import action from './action.js';
 
 function apiCall(method, path, params, cb) {
@@ -24,7 +25,7 @@ function apiCall(method, path, params, cb) {
         // API call failed
       }
       if (cb) {
-        cb(jQuery.parseJSON(xhr.responseText));
+        cb($.parseJSON(xhr.responseText));
       }
     }
   });

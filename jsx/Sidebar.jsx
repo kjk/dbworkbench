@@ -6,6 +6,12 @@ import action from './action.js';
 import api from './api.js';
 import filesize from 'filesize';
 
+function isEmptyObject(object) {
+  let name;
+  for (name in object) {}
+  return name === undefined;
+};
+
 class Dropdown extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -155,7 +161,7 @@ class TableInformation extends React.Component {
 
   renderTableInfoContainer() {
     const info = this.props.tableInfo;
-    if (!info || $.isEmptyObject(info)) {
+    if (!info || isEmptyObject(info)) {
       return;
     }
 
