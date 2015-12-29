@@ -31,7 +31,7 @@ function apiCall(method, path, params, cb) {
   });
 }
 
-function connect(type, url, urlSafe, cb) {
+export function connect(type, url, urlSafe, cb) {
   var opts = {
     type: type,
     url: url,
@@ -40,32 +40,32 @@ function connect(type, url, urlSafe, cb) {
   apiCall("post", "/connect", opts, cb);
 }
 
-function disconnect(connId, cb) {
+export function disconnect(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("post", "/disconnect", opts, cb);
 }
 
-function getTables(connId, cb) {
+export function getTables(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables", opts, cb);
 }
 
-function getTableStructure(connId, table, cb) {
+export function getTableStructure(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table, opts, cb);
 }
 
-function getTableIndexes(connId, table, cb) {
+export function getTableIndexes(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table + "/indexes", opts, cb);
 }
 
-function getTableInfo(connId, table, cb) {
+export function getTableInfo(connId, table, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/tables/" + table + "/info", opts, cb);
 }
 
-function getHistory(connId, cb) {
+export function getHistory(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/history", opts, function(data) {
     var rows = [];
@@ -76,21 +76,21 @@ function getHistory(connId, cb) {
   });
 }
 
-function queryAsync(connId, query, cb) {
+export function queryAsync(connId, query, cb) {
   apiCall("post", "/queryasync", {
     conn_id: connId,
     query: query
   }, cb);
 }
 
-function queryAsyncStatus(connId, queryId, cb) {
+export function queryAsyncStatus(connId, queryId, cb) {
   apiCall("post", "/queryasyncstatus", {
     conn_id: connId,
     query_id: queryId
   }, cb);
 }
 
-function queryAsyncData(connId, queryId, start, count, cb) {
+export function queryAsyncData(connId, queryId, start, count, cb) {
   apiCall("post", "/queryasyncdata", {
     conn_id: connId,
     query_id: queryId,
@@ -99,11 +99,11 @@ function queryAsyncData(connId, queryId, start, count, cb) {
   }, cb);
 }
 
-function getBookmarks(cb) {
+export function getBookmarks(cb) {
   apiCall("get", "/getbookmarks", {}, cb);
 }
 
-function addBookmark(bookmark, cb) {
+export function addBookmark(bookmark, cb) {
   var opts = {
     id: bookmark["id"],
     nick: bookmark["nick"],
@@ -117,31 +117,31 @@ function addBookmark(bookmark, cb) {
   apiCall("post", "/addbookmark", opts, cb);
 }
 
-function removeBookmark(id, cb) {
+export function removeBookmark(id, cb) {
   var opts = { id: id };
   apiCall("post", "/removebookmark", opts, cb);
 }
 
-function getActivity(connId, cb) {
+export function getActivity(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/activity", opts, cb);
 }
 
-function executeQuery(connId, query, cb) {
+export function executeQuery(connId, query, cb) {
   apiCall("post", "/query", {
     conn_id : connId,
     query: query
   }, cb);
 }
 
-function explainQuery(connId, query, cb) {
+export function explainQuery(connId, query, cb) {
   apiCall("post", "/explain", {
     conn_id: connId,
     query: query
   }, cb);
 }
 
-function getConnectionInfo(connId, cb) {
+export function getConnectionInfo(connId, cb) {
   var opts = { conn_id : connId };
   apiCall("get", "/connection", opts, function(data) {
     var rows = [];
@@ -155,23 +155,3 @@ function getConnectionInfo(connId, cb) {
     });
   });
 }
-
-module.exports = {
-  connect: connect,
-  disconnect: disconnect,
-  getTables: getTables,
-  getTableStructure: getTableStructure,
-  getTableIndexes: getTableIndexes,
-  getTableInfo: getTableInfo,
-  getHistory: getHistory,
-  getBookmarks: getBookmarks,
-  addBookmark: addBookmark,
-  removeBookmark: removeBookmark,
-  getActivity: getActivity,
-  executeQuery: executeQuery,
-  explainQuery: explainQuery,
-  getConnectionInfo: getConnectionInfo,
-  queryAsync: queryAsync,
-  queryAsyncStatus: queryAsyncStatus,
-  queryAsyncData: queryAsyncData
-};

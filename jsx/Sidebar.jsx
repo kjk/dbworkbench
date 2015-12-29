@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Output from './Output.jsx';
 import action from './action.js';
-import api from './api.js';
+import * as api from './api.js';
 import filesize from 'filesize';
 
 function isEmptyObject(object) {
