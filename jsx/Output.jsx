@@ -150,10 +150,8 @@ RETURNING ${columns};
   }
 
   renderHeader(columns, sortColumn, sortOrder) {
-    var i = 0;
-    if (!columns) {
-      columns = [];
-    }
+    let i = 0;
+    columns = columns || [];
     var children = columns.map(function(col) {
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
