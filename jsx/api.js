@@ -1,34 +1,66 @@
-import $ from 'jquery';
 import * as action from './action.js';
+import 'whatwg-fetch';
+
+function formDataFromObject(params) {
+  let form = new FormData();
+  for (let k in params) {
+    const v = params[k];
+    form.append(k, v);
+  }
+  return form;
+}
+
+function urlArgsFromObject(params) {
+  let s = "";
+  for (let k in params) {
+    const v = encodeURIComponent(params[k]);
+    k = encodeURIComponent(k);
+    if (s == "") {
+      s = "?";
+    } else {
+      s += "&";
+    }
+    s += `${k}=${v}`;
+  }
+  return s;
+}
 
 function apiCall(method, path, params, cb) {
-  action.spinnerShow();
-
-  $.ajax({
-    url: "/api" + path,
+  const opts = {
     method: method,
-    cache: false,
-    data: params,
-    async: true,
-    success: function(data) {
+    cache: "no-cache"
+  };
+  if (method == "post") {
+    opts.body = formDataFromObject(params);
+  } else {
+    path += urlArgsFromObject(params);
+  }
+
+  let spinnerHidden = false;
+  action.spinnerShow();
+  const url = "/api" + path;
+  fetch(url, opts)
+    .then((resp) => {
       action.spinnerHide();
-      if (cb) {
-        cb(data);
-      }
-    },
-    error: function(xhr, status, data) {
-      action.spinnerHide();
-      if (xhr.status == "0") {
-        // Backend is down
-        action.alertBar("Something is wrong. Please restart the application.");
+      spinnerHidden = true;
+      if (resp.ok) {
+        if (cb) {
+          return resp.json().then( (json) => {
+            cb(json);
+            return;
+          });
+        }
       } else {
-        // API call failed
+        action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
       }
-      if (cb) {
-        cb($.parseJSON(xhr.responseText));
+    })
+    .catch( (error) => {
+      if (!spinnerHidden) {
+        action.spinnerHide();
       }
-    }
-  });
+      const msg = error.message;
+      action.alertBar(`Something is wrong. Please restart the application. Error: '${msg}'`);
+    });
 }
 
 export function connect(type, url, urlSafe, cb) {
