@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import action from './action.js';
+import * as action from './action.js';
 
 export default class QueryEditBar extends React.Component {
   constructor(props, context) {

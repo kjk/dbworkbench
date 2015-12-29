@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Output from './Output.jsx';
-import action from './action.js';
+import * as action from './action.js';
 import * as api from './api.js';
 import filesize from 'filesize';
 

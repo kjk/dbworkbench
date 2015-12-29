@@ -7,7 +7,7 @@ import AlertBar from './AlertBar.jsx';
 import MainContainer from'./MainContainer.jsx';
 import utils from './utils.js';
 import * as api from './api.js';
-import action from './action.js';
+import * as action from './action.js';
 import view from './view.js';
 
 const minSidebarDx = 128;

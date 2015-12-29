@@ -1,5 +1,5 @@
 import React from 'react';
-import action from './action.js';
+import * as action from './action.js';
 
 export default class SpinnerCircle extends React.Component {
 

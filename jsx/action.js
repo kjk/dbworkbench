@@ -92,75 +92,75 @@ var actionNames = [
   "editedCells",
 ];
 
-function tableSelected(name) {
+export function tableSelected(name) {
   broadcast(tableSelectedIdx, name);
 }
 
-function onTableSelected(cb) {
+export function onTableSelected(cb) {
   return on(tableSelectedIdx, cb);
 }
 
-function offTableSelected(cbId) {
+export function offTableSelected(cbId) {
   off(tableSelectedIdx, cbId);
 }
 
-function viewSelected(view) {
+export function viewSelected(view) {
   broadcast(viewSelectedIdx, view);
 }
 
-function onViewSelected(cb) {
+export function onViewSelected(cb) {
   return on(viewSelectedIdx, cb);
 }
 
-function offViewSelected(cbId) {
+export function offViewSelected(cbId) {
   off(viewSelectedIdx, cbId);
 }
 
-function executeQuery(query) {
+export function executeQuery(query) {
   broadcast(executeQueryIdx, query);
 }
 
-function onExecuteQuery(cb) {
+export function onExecuteQuery(cb) {
   return on(executeQueryIdx, cb);
 }
 
-function offExecuteQuery(cbId) {
+export function offExecuteQuery(cbId) {
   off(executeQueryIdx, cbId);
 }
 
-function explainQuery(query) {
+export function explainQuery(query) {
   broadcast(explainQueryIdx, query);
 }
 
-function onExplainQuery(cb) {
+export function onExplainQuery(cb) {
   return on(explainQueryIdx, cb);
 }
 
-function offExplainQuery(cbId) {
+export function offExplainQuery(cbId) {
   off(explainQueryIdx, cbId);
 }
 
-function disconnectDatabase(query) {
+export function disconnectDatabase(query) {
   broadcast(disconnectDatabaseIdx, query);
 }
 
-function onDisconnectDatabase(cb) {
+export function onDisconnectDatabase(cb) {
   return on(disconnectDatabaseIdx, cb);
 }
 
-function offDisconnectDatabase(cbId) {
+export function offDisconnectDatabase(cbId) {
   off(disconnectDatabaseIdx, cbId);
 }
 
-function alertBar(message) {
+export function alertBar(message) {
   broadcast(alertBarIdx, message);
 }
 
-function onAlertBar(cb) {
+export function onAlertBar(cb) {
   return on(alertBarIdx, cb);
 }
 
-function offAlertBar(cbId) {
+export function offAlertBar(cbId) {
   off(alertBarIdx, cbId);
 }
 
@@ -170,11 +170,11 @@ function offAlertBar(cbId) {
 // and we only notify subscribers on state transitions
 let spinnerState = 0;
 
-function spinnerIsVisible() {
+export function spinnerIsVisible() {
   return spinnerState > 0;
 }
 
-function spinnerShow() {
+export function spinnerShow() {
   spinnerState += 1;
   if (spinnerState == 1) {
     // we transitioned from 'not visible' to 'visible' state 
@@ -182,7 +182,7 @@ function spinnerShow() {
   }
 }
 
-function spinnerHide() {
+export function spinnerHide() {
   spinnerState -= 1;
   if (spinnerState == 0) {
     // we transitioned from 'visible' to 'not visible' state
@@ -193,91 +193,46 @@ function spinnerHide() {
   }
 }
 
-function onSpinner(cb) {
+export function onSpinner(cb) {
   return on(spinnerIdx, cb);
 }
 
-function offSpinner(cbId) {
+export function offSpinner(cbId) {
   off(spinnerIdx, cbId);
 }
 
-function resetPagination(toggle) {
+export function resetPagination(toggle) {
   broadcast(resetPaginationIdx, toggle);
 }
 
-function onResetPagination(cb) {
+export function onResetPagination(cb) {
   return on(resetPaginationIdx, cb);
 }
 
-function offResetPagination(cbId) {
+export function offResetPagination(cbId) {
   off(resetPaginationIdx, cbId);
 }
 
-function selectedCellPosition(newPosition) {
+export function selectedCellPosition(newPosition) {
   broadcast(selectedCellPositionIdx, newPosition);
 }
 
-function onSelectedCellPosition(cb) {
+export function onSelectedCellPosition(cb) {
   return on(selectedCellPositionIdx, cb);
 }
 
-function offSelectedCellPosition(cbId) {
+export function offSelectedCellPosition(cbId) {
   off(selectedCellPositionIdx, cbId);
 }
 
-function editedCells(newCells) {
+export function editedCells(newCells) {
   broadcast(editedCellsIdx, newCells);
 }
 
-function onEditedCells(cb) {
+export function onEditedCells(cb) {
   return on(editedCellsIdx, cb);
 }
 
-function offEditedCells(cbId) {
+export function offEditedCells(cbId) {
   off(editedCellsIdx, cbId);
 }
-
-module.exports = {
-  tableSelected: tableSelected,
-  onTableSelected: onTableSelected,
-  offTableSelected: offTableSelected,
-
-  viewSelected: viewSelected,
-  onViewSelected: onViewSelected,
-  offViewSelected: offViewSelected,
-
-  executeQuery: executeQuery,
-  onExecuteQuery: onExecuteQuery,
-  offExecuteQuery: offExecuteQuery,
-
-  explainQuery: explainQuery,
-  onExplainQuery: onExplainQuery,
-  offExplainQuery: offExplainQuery,
-
-  disconnectDatabase: disconnectDatabase,
-  onDisconnectDatabase: onDisconnectDatabase,
-  offDisconnectDatabase: offDisconnectDatabase,
-
-  alertBar: alertBar,
-  onAlertBar: onAlertBar,
-  offAlertBar: offAlertBar,
-
-  spinnerShow: spinnerShow,
-  spinnerHide: spinnerHide,
-  spinnerIsVisible: spinnerIsVisible,
-
-  onSpinner: onSpinner,
-  offSpinner: offSpinner,
-
-  resetPagination: resetPagination,
-  onResetPagination: onResetPagination,
-  offResetPagination: offResetPagination,
-
-  selectedCellPosition: selectedCellPosition,
-  onSelectedCellPosition: onSelectedCellPosition,
-  offSelectedCellPosition: offSelectedCellPosition,
-
-  editedCells: editedCells,
-  onEditedCells: onEditedCells,
-  offEditedCells: offEditedCells,
-};

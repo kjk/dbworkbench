@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SpinnerCircle from './SpinnerCircle.jsx';
-import action from'./action.js';
+import * as action from'./action.js';
 
 export default class Input extends React.Component {
   constructor(props, context) {

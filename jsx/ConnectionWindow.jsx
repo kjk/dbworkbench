@@ -1,7 +1,7 @@
 import React from 'react';
 import SpinnerCircle from './SpinnerCircle.jsx';
 import * as api from './api.js';
-import action from './action.js';
+import * as action from './action.js';
 
 const initialConnectionName = "New connection";
 

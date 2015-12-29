@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import action from './action.js';
+import * as action from './action.js';
 
 function apiCall(method, path, params, cb) {
   action.spinnerShow();

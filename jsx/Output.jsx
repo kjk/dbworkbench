@@ -7,7 +7,7 @@ import { Tr } from './lib/reactable/tr.jsx';
 import { Td } from './lib/reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
-import action from './action.js';
+import * as action from './action.js';
 import view from './view.js';
 
 export default class Output extends React.Component {

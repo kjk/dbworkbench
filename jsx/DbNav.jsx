@@ -1,5 +1,5 @@
 import React from 'react';
-import action from './action.js';
+import * as action from './action.js';
 import view from './view.js';
 
 export default class DbNav extends React.Component {
