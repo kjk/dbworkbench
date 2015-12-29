@@ -9,7 +9,6 @@ import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import action from './action.js';
 import view from './view.js';
-import _ from 'underscore';
 
 export default class Output extends React.Component {
   constructor(props, context) {
@@ -31,13 +30,13 @@ export default class Output extends React.Component {
   }
 
   setEditedCells(rowId, colId, value) {
-    var tempEditedCells = _.clone(this.props.editedCells);
-    if (tempEditedCells[rowId] == undefined) {
-      tempEditedCells[rowId] = {};
+    var tmp = Object.assign({}, this.props.editedCells);
+    if (tmp[rowId] == undefined) {
+      tmp[rowId] = {};
     }
-    tempEditedCells[rowId][colId] = value;
+    tmp[rowId][colId] = value;
 
-    action.editedCells(tempEditedCells);
+    action.editedCells(tmp);
   }
 
   getEditedCells(rowId, colId) {
@@ -48,22 +47,25 @@ export default class Output extends React.Component {
   }
 
   generateQuery() {
-    var self = this;
-    var table = this.props.selectedTable;
-    var query = "";
-    var resultsAsDictionary = this.resultsToDictionary(this.props.results);
+    let self = this;
+    const table = this.props.selectedTable;
+    let query = "";
+    let resultsAsDictionary = this.resultsToDictionary(this.props.results);
+    let editedCells = this.props.editedCells;
 
-    _.each(this.props.editedCells, function(value, key, obj) {
-      var values = key.split('.');
-      var rowId = key;
+    for (let key in editedCells) {
+      let value = editedCells[key];
+      let values = key.split('.');
+      let rowId = key;
 
-      var thisRow = obj[key];
-      var index = 0;
-      var colsAfterEdit = "";
-      _.each(thisRow, function(value, key, obj) {
-        var colId = key;
-        var columnToBeEdited = self.props.results.columns[colId];
-        var afterChange = value;
+      let thisRow = editedCells[key];
+      let index = 0;
+      let colsAfterEdit = "";
+      for (let key in thisRow) {
+        let value = thisRow[key];
+        const colId = key;
+        const columnToBeEdited = self.props.results.columns[colId];
+        const afterChange = value;
 
         if (afterChange == "") {
           colsAfterEdit += columnToBeEdited + "=NULL ";
@@ -75,22 +77,24 @@ export default class Output extends React.Component {
           colsAfterEdit += ", ";
         }
         index += 1;
-      });
+      }
 
-      var columns = self.props.results.columns.join(", ");
+      const columns = self.props.results.columns.join(", ");
 
-      var tableStructuresAsDictionary = self.resultsToDictionary(self.props.tableStructures[table]);
+      const tableStructuresAsDictionary = self.resultsToDictionary(self.props.tableStructures[table]);
+      let schema = null;
       if (tableStructuresAsDictionary.length > 0) {
-        var schema = tableStructuresAsDictionary[0]["table_schema"];
+        schema = tableStructuresAsDictionary[0]["table_schema"];
       } else {
         console.log("THIS CASE SHOULD NOT HAPPEN IS THERE A WAY TO LOG THIS?");
       }
 
-      var rowAsDictionary = resultsAsDictionary[rowId];
+      const rowAsDictionary = resultsAsDictionary[rowId];
 
       index = 0;
-      var rowToBeEdited = "";
-      _.each(rowAsDictionary, function(value, key, obj) {
+      let rowToBeEdited = "";
+      for (let key in rowAsDictionary) {
+        value = rowAsDictionary[key];
         if (value == null) {
           rowToBeEdited += key + " IS NULL ";
         } else {
@@ -101,28 +105,29 @@ export default class Output extends React.Component {
           rowToBeEdited += "AND ";
         }
         index += 1;
-      });
+      }
 
       query += `UPDATE ${schema}.${table}
 SET ${colsAfterEdit}
 WHERE ctid IN (SELECT ctid FROM ${schema}.${table}
 WHERE ${rowToBeEdited}
 LIMIT 1 FOR UPDATE)
-RETURNING ${columns};`;
+RETURNING ${columns};
+`;
 
       console.log("QUERY:", query);
       // WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5'
       // UPDATE countrylanguage SET language='Not furkan' WHERE ctid IN (SELECT ctid FROM countrylanguage WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5' LIMIT 1 FOR UPDATE) RETURNING language;
 
-    });
+    }
 
     return query;
   }
 
   resultsToDictionary(results) {
-    var reformatData = _.map(results.rows, function(row){
-      var some = {};
-      _.each(results.columns,function(key,i){some[key] = row[i];});
+    const reformatData = results.rows.map( (row) => {
+      let some = {};
+      results.columns.forEach((key,i) => some[key] = row[i]);
       return some;
     });
 
@@ -164,21 +169,21 @@ RETURNING ${columns};`;
   }
 
   renderRow(row, rowId) {
-    var self = this;
-    var colId = -1;
-    var children = _.map(row, function(value, col) {
+    let colId = -1;
+    const selectedCellPosition = this.props.selectedCellPosition;
+    const selectedView = this.props.selectedView;
+    let children = [];
+    for (let col in row) {
+      let value = row[col];
       colId = colId + 1;
+      const position = {rowId: rowId, colId: colId};
 
-      var position = {rowId: rowId, colId: colId};
+      const isEditable = selectedCellPosition.rowId == rowId &&
+          selectedCellPosition.colId == colId &&
+          selectedView == view.SQLQuery;
 
-      if (self.props.selectedCellPosition.rowId == rowId &&
-          self.props.selectedCellPosition.colId == colId &&
-          self.props.selectedView == view.SQLQuery) {
-        var isEditable = true;
-      }
-
-      if (self.getEditedCells(rowId, colId) != undefined) {
-        var value = self.getEditedCells(rowId, colId);
+      if (this.getEditedCells(rowId, colId) != undefined) {
+        value = this.getEditedCells(rowId, colId);
         var tdStyle = {
           background: '#7DCED2',
           color: '#ffffff',
@@ -186,22 +191,22 @@ RETURNING ${columns};`;
         };
       }
 
-      return (
+      children.push(
         <Td
           key={position}
           column={col}
           position={position}
           style={tdStyle}
-          onClick={self.handleCellClick.bind(self, rowId, colId)}
+          onClick={this.handleCellClick.bind(this, rowId, colId)}
           isEditable={isEditable}
-          onEdit={self.handleOnCellEdit.bind(self, rowId, colId)}>
+          onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
             {value}
         </Td>
       );
-    });
+    }
 
     return (
-      <Tr key={rowId} >{children}</Tr>
+      <Tr key={rowId}>{children}</Tr>
     );
   }
 
@@ -216,15 +221,10 @@ RETURNING ${columns};`;
   }
 
   renderResults(results) {
-    var data = this.resultsToDictionary(results);
-    var header = this.renderHeader(results.columns);
-
-    var self = this;
-    var rows = _.map(data, function(row, i) {
-      return self.renderRow(row, i);
-    });
-
-    var footer = this.renderFooter();
+    const data = this.resultsToDictionary(results);
+    const header = this.renderHeader(results.columns);
+    const rows = data.map((row, i) => this.renderRow(row, i));
+    //const footer = this.renderFooter();
 
     if (this.props.withInput) {
       var filterable = results.columns;
