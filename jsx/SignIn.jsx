@@ -1,6 +1,3 @@
-/* jshint -W097,-W117 */
-'use strict';
-
 var React = require('react');
 
 class SignIn extends React.Component {

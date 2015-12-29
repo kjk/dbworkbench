@@ -1,10 +1,4 @@
-/* jshint -W097,-W117 */
-'use strict';
-
 var React = require('react');
-
-// var action = require('./action.js');
-// var api = require('./api.js');
 var DbNav = require('./DbNav.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');

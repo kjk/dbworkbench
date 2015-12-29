@@ -1,6 +1,3 @@
-/* jshint -W097,-W117 */
-'use strict';
-
 const React = require('react');
 const SpinnerCircle = require('./Spinners.jsx').Circle;
 

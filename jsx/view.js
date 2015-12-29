@@ -1,12 +1,9 @@
-/* jshint -W097,-W117 */
-'use strict';
+const Structure = "Structure";
+const Indexes = "Indexes";
+const SQLQuery = "Query";
+const History = "History";
 
-var Structure = "Structure";
-var Indexes = "Indexes";
-var SQLQuery = "Query";
-var History = "History";
-
-var MainTabViews = [
+const MainTabViews = [
   SQLQuery,
   Structure,
   Indexes,

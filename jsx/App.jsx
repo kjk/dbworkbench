@@ -1,6 +1,3 @@
-/* jshint -W097,-W117 */
-'use strict';
-
 require("babel-polyfill");
 
 var React = require('react');

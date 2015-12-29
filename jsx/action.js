@@ -1,6 +1,3 @@
-/* jshint -W097,-W117 */
-'use strict';
-
 /* reusable part */
 
 // Loosely inspired by flux ideas.
