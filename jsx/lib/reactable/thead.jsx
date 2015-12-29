@@ -1,6 +1,6 @@
 import React from 'react';
 import { Th } from './th.jsx';
-import { filterPropsFrom } from './lib/filter_props_from.jsx';
+import { filterPropsFrom } from './utils.jsx';
 
 export class Thead extends React.Component {
     static getColumns(component) {

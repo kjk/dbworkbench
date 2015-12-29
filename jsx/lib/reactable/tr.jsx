@@ -1,7 +1,6 @@
 import React from 'react';
 import { Td } from './td.jsx';
-import { toArray } from './lib/to_array.jsx';
-import { filterPropsFrom } from './lib/filter_props_from.jsx';
+import { toArray, filterPropsFrom } from './utils.jsx';
 
 export class Tr extends React.Component {
     render() {

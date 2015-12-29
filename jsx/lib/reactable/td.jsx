@@ -1,6 +1,5 @@
 import React from 'react';
-import { isReactComponent } from './lib/is_react_component.jsx';
-import { stringable } from './lib/stringable.jsx';
+import { stringable, isReactComponent } from './utils.jsx';
 import { isUnsafe } from './unsafe.jsx';
 
 export class Td extends React.Component {

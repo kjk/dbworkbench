@@ -1,6 +1,6 @@
 import React from 'react';
 import { isUnsafe } from './unsafe.jsx';
-import { filterPropsFrom } from './lib/filter_props_from.jsx';
+import { filterPropsFrom } from './utils.jsx';
 
 export class Th extends React.Component {
     render() {

@@ -1,6 +1,5 @@
 import React from 'react';
-import { filterPropsFrom } from './lib/filter_props_from.jsx';
-import { extractDataFrom } from './lib/extract_data_from.jsx';
+import { extractDataFrom, filterPropsFrom } from './utils.jsx';
 import { isUnsafe } from './unsafe.jsx';
 import { Thead } from './thead.jsx';
 import { Th } from './th.jsx';
