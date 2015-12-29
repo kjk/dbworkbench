@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 import SpinnerCircle from './SpinnerCircle.jsx';
 
 const api = require('./api.js');

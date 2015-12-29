@@ -1,4 +1,5 @@
-var React = require('react');
+import React from 'react';
+
 var DbNav = require('./DbNav.jsx');
 var Input = require('./Input.jsx');
 var Output = require('./Output.jsx');

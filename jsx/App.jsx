@@ -1,7 +1,7 @@
 require("babel-polyfill");
 
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 var utils = require('./utils.js');
 var api = require('./api.js');

@@ -1,8 +1,8 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SpinnerCircle from './SpinnerCircle.jsx';
 
 var action = require('./action.js');
-import SpinnerCircle from './SpinnerCircle.jsx';
 
 class Input extends React.Component {
   constructor(props, context) {

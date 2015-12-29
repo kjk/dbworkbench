@@ -1,4 +1,5 @@
-var React = require('react');
+import React from 'react';
+
 var _ = require('underscore');
 
 var Table = require('./lib/reactable/table.jsx').Table;

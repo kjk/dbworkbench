@@ -1,5 +1,6 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 var Modal = require('react-modal');
 
 var action = require('./action.js');

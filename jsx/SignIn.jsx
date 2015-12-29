@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 
 class SignIn extends React.Component {
   render() {
