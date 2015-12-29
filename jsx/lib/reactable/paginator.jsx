@@ -26,10 +26,9 @@ export class Paginator extends React.Component {
 
     handleSetCurrentPage(selectedPageNumber, e) {
         if (this.props.numPages > selectedPageNumber || selectedPageNumber < 1) {
-            console.log("Not possible ERRRR");
-        } else {
-            this.props.onPageChange(number);
+            throw new Error(`invalid page number: ${selectedPageNumber}`);
         }
+        this.props.onPageChange(number);
     }
 
     renderPrevious() {
