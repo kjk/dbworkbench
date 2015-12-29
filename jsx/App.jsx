@@ -6,8 +6,6 @@ require("babel-polyfill");
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var _ = require('underscore');
-
 var utils = require('./utils.js');
 var api = require('./api.js');
 var action = require('./action.js');
@@ -26,8 +24,18 @@ function isCreateOrDropQuery(query) {
   return query.match(/(create|drop) table/i);
 }
 
-function  isSelectQuery(query) {
+function isSelectQuery(query) {
   return query.match(/select/i);
+}
+
+// rows is [ [name, val], ...]
+function databaseNameFromConnectionInfoRows(rows) {
+  for (let row of rows) {
+    if (row[0] == "current_database") {
+      return row[1];
+    }
+  }
+  return "";
 }
 
 class App extends React.Component {
@@ -490,10 +498,9 @@ class App extends React.Component {
     });
 
     api.getConnectionInfo(connId, (data) => {
+      const dbName = databaseNameFromConnectionInfoRows(data.rows);
       this.setState({
-        databaseName: _.filter(data.rows, function (el) { 
-          return (el[0] == "current_database"); }
-          )[0][1],
+        databaseName: dbName
       });
     });
   }
