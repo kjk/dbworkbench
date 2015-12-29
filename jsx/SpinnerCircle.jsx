@@ -1,11 +1,37 @@
 import React from 'react';
+import action from './action.js';
 
 export default class SpinnerCircle extends React.Component {
-  render() {
-    if (!this.props.visible) {
-      return <div></div>;
-    }
 
+  constructor(props, context) {
+    super(props, context);
+    this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
+    this.state = {
+      visible: action.spinnerIsVisible()
+    };
+  }
+
+  handleToggleSpinner(newVisibleState) {
+    this.setState({visible: newVisibleState});
+  }
+  
+  componentWillMount() {
+    if (!this.props.forceVisible) {
+      this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
+    }
+  }
+
+  componentWillUnmount() {
+    if (!this.props.forceVisible) {
+      action.offSpinner(this.cidSpinner);
+    }
+  }
+
+  render() {
+    const isVisible = this.props.forceVisible || this.state.visible;
+    if (!isVisible) {
+      return null;
+    }
     return (
       <div style={this.props.style} className="circle-wrapper fade-in spinner">
         <div className="circle1 circle"></div>

@@ -73,8 +73,6 @@ export default class MainContainer extends React.Component {
       left: this.props.dragBarPosition + 'px',
     };
 
-
-
     // var results = this.props.results
     // if (results != null && results.rows != null) {
     //   if (results.rows.length > 100) {
@@ -94,12 +92,9 @@ export default class MainContainer extends React.Component {
               supportsExplain={this.props.supportsExplain}
               onMouseDown={this.onMouseDown}
               onMouseMove={this.onMouseMove}
-              onMouseUp={this.onMouseUp}
-              spinnerVisible={this.props.spinnerVisible} />
+              onMouseUp={this.onMouseUp} />
             : null
           }
-
-
           <Output
             dragBarPosition={this.state.dragBarPosition}
             selectedView={this.props.selectedView}

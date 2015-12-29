@@ -503,7 +503,7 @@ class ConnectionWindow extends React.Component {
       return (
         <div className="col-md-12" style={styleDiv}>
           <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>
-          <SpinnerCircle visible={true} style={styleSpinner}/>
+          <SpinnerCircle forceVisible={true} style={styleSpinner}/>
         </div>
       );
     }

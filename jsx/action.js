@@ -7,11 +7,11 @@
 
 // index is one of the above constants.
 // value at a given index is [[cbFunc, cbId], ...]
-var actionCallbacks = [];
+let actionCallbacks = [];
 
 // current global callback id to hand out in on()
 // we don't bother recycling them after off()
-var currCid = 0;
+let currCid = 0;
 
 function getActionName(idx) {
   return actionNames[idx] + " (" + idx + ")";
@@ -67,16 +67,16 @@ function off(actionIdx, cbId) {
 /* actions specific to an app */
 
 // index in actionCallbacks array for a given action
-var tableSelectedIdx = 0;
-var viewSelectedIdx = 1;
-var executeQueryIdx = 2;
-var explainQueryIdx = 3;
-var disconnectDatabaseIdx = 4;
-var alertBarIdx = 5;
-var spinnerIdx = 6;
-var resetPaginationIdx = 7;
-var selectedCellPositionIdx = 8;
-var editedCellsIdx = 9;
+const tableSelectedIdx = 0;
+const viewSelectedIdx = 1;
+const executeQueryIdx = 2;
+const explainQueryIdx = 3;
+const disconnectDatabaseIdx = 4;
+const alertBarIdx = 5;
+const spinnerIdx = 6;
+const resetPaginationIdx = 7;
+const selectedCellPositionIdx = 8;
+const editedCellsIdx = 9;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -164,8 +164,33 @@ function offAlertBar(cbId) {
   off(alertBarIdx, cbId);
 }
 
-function spinner(toggle) {
-  broadcast(spinnerIdx, toggle);
+// there's only one logical spinner whose state is
+// reflected by spinner component. For simplicity we
+// want to nest calls to spinnerShow()/spinnerHide()
+// and we only notify subscribers on state transitions
+let spinnerState = 0;
+
+function spinnerIsVisible() {
+  return spinnerState > 0;
+}
+
+function spinnerShow() {
+  spinnerState += 1;
+  if (spinnerState == 1) {
+    // we transitioned from 'not visible' to 'visible' state 
+    broadcast(spinnerIdx, true);
+  }
+}
+
+function spinnerHide() {
+  spinnerState -= 1;
+  if (spinnerState == 0) {
+    // we transitioned from 'visible' to 'not visible' state
+    broadcast(spinnerIdx, false);
+  }
+  if (spinnerState < 0) {
+    throw new Error(`negative spinnerState (${spinnerState}))`);
+  }
 }
 
 function onSpinner(cb) {
@@ -237,7 +262,10 @@ module.exports = {
   onAlertBar: onAlertBar,
   offAlertBar: offAlertBar,
 
-  spinner: spinner,
+  spinnerShow: spinnerShow,
+  spinnerHide: spinnerHide,
+  spinnerIsVisible: spinnerIsVisible,
+
   onSpinner: onSpinner,
   offSpinner: offSpinner,
 

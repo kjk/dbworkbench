@@ -5,7 +5,6 @@ import ConnectionWindow from './ConnectionWindow.jsx';
 import Sidebar from './Sidebar.jsx';
 import AlertBar from './AlertBar.jsx';
 import MainContainer from'./MainContainer.jsx';
-import SpinnerCircle from './SpinnerCircle.jsx';
 import utils from './utils.js';
 import api from './api.js';
 import action from './action.js';
@@ -43,7 +42,6 @@ class App extends React.Component {
     this.handleExplainQuery = this.handleExplainQuery.bind(this);
     this.handleTableSelected = this.handleTableSelected.bind(this);
     this.handleViewSelected = this.handleViewSelected.bind(this);
-    this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
     this.handleResetPagination = this.handleResetPagination.bind(this);
     this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
     this.handleEditedCells = this.handleEditedCells.bind(this);
@@ -81,8 +79,6 @@ class App extends React.Component {
 
       dragging: false,
       dragBarPosition: 250,
-
-      spinnerVisible: 0,
 
       capabilities: {},
     };
@@ -295,7 +291,7 @@ class App extends React.Component {
 
   getQueryAsyncData() {
     const queryId = this.state.queryIdInProgress;
-    console.log(`getQueryAsyncData: queryId={queryId}`);
+    console.log(`getQueryAsyncData: queryId=${queryId}`);
     if (queryId == "") {
       console.log("no async query in progress");
       return;
@@ -320,7 +316,6 @@ class App extends React.Component {
       };
       this.setState({
         results: results,
-        spinnerVisible: false,
         resetPagination: true,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -330,7 +325,7 @@ class App extends React.Component {
 
   getQueryAsyncStatus() {
     const queryId = this.state.queryIdInProgress;
-    console.log(`getQueryAsyncStatus: queryId={queryId}`);
+    console.log(`getQueryAsyncStatus: queryId=${queryId}`);
     if (queryId == "") {
       console.log("no async query in progress");
       return;
@@ -339,14 +334,14 @@ class App extends React.Component {
     api.queryAsyncStatus(connId, queryId, (data) => {
       const queryStatus = data; 
       this.setState({
-        queryStatus: queryStatus,
-        spinnerVisible: !queryStatus.finished,
+        queryStatus: queryStatus
       });
       // repeat until async query finishes
       if (!queryStatus.finished) {
         setTimeout(this.getQueryAsyncStatus, 1000);
       } else {
         this.getQueryAsyncData();
+        action.spinnerHide();
       }
     });
   }
@@ -354,9 +349,9 @@ class App extends React.Component {
   handleQueryAsync(query) {
     console.log("handleQueryAsync", query);
     const connId = this.state.connectionId;
+    action.spinnerShow(); // TODO: probably wil not get reset in case of error response 
     api.queryAsync(connId, query, (data) => {
       this.setState({
-        spinnerVisible: true,
         queryIdInProgress: data.query_id,
         // TODO: not sure if should reset the data right away
         // maybe only after received some data or an error message
@@ -415,8 +410,7 @@ class App extends React.Component {
         errorVisible: false,
         resetPagination: false,
         selectedCellPosition: {rowId: -1, colId: -1},
-        editedCells: {},
-        spinnerVisible: 0,
+        editedCells: {}
       });
     });
   }
@@ -435,10 +429,6 @@ class App extends React.Component {
 
   handleCloseAlertBar() {
     this.setState({errorVisible: false});
-  }
-
-  handleToggleSpinner(toggle) {
-    this.setState({spinnerVisible: toggle});
   }
 
   handleResetPagination(toggle) {
@@ -462,7 +452,6 @@ class App extends React.Component {
     this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
     this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
     this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
-    this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
     this.cidResetPagination = action.onResetPagination(this.handleResetPagination);
     this.cidSelectedCellPosition = action.onSelectedCellPosition(this.handleSelectedCellPosition);
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
@@ -495,20 +484,12 @@ class App extends React.Component {
     action.offExplainQuery(this.cidExplainQuery);
     action.offDisconnectDatabase(this.cidDisconnectDatabase);
     action.offAlertBar(this.cidAlertBar);
-    action.offSpinner(this.cidSpinner);
     action.offResetPagination(this.cidResetPagination);
     action.offSelectedCellPosition(this.cidSelectedCellPosition);
     action.offEditedCells(this.cidEditedCells);
   }
 
   render() {
-    var spinnerStyle = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      zIndex: '5',
-    };
-
     if (!this.state.connected) {
       return (
         <div>
@@ -516,7 +497,6 @@ class App extends React.Component {
             { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
           </div>
 
-          <SpinnerCircle style={spinnerStyle} visible={this.state.spinnerVisible} />
           <ConnectionWindow onDidConnect={this.handleDidConnect} />
         </div>
       );
@@ -547,7 +527,6 @@ class App extends React.Component {
           </div>
 
           <MainContainer
-            spinnerVisible={this.state.spinnerVisible}
             results={this.state.results}
             supportsExplain={this.state.capabilities.HasAnalyze}
             dragBarPosition={this.state.dragBarPosition}

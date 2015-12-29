@@ -1,9 +1,7 @@
 import action from './action.js';
 
-function apiCall2(showSpinner, method, path, params, cb) {
-  if (showSpinner) {
-    action.spinner(true);
-  }
+function apiCall(method, path, params, cb) {
+  action.spinnerShow();
 
   $.ajax({
     url: "/api" + path,
@@ -12,20 +10,16 @@ function apiCall2(showSpinner, method, path, params, cb) {
     data: params,
     async: true,
     success: function(data) {
-      if (showSpinner) {
-        action.spinner(false);
-      }
+      action.spinnerHide();
       if (cb) {
         cb(data);
       }
     },
     error: function(xhr, status, data) {
-      if (showSpinner) {
-        action.spinner(false);
-      }
+      action.spinnerHide();
       if (xhr.status == "0") {
         // Backend is down
-        action.alertBar("Something is wrong. Please restart");
+        action.alertBar("Something is wrong. Please restart the application.");
       } else {
         // API call failed
       }
@@ -36,21 +30,13 @@ function apiCall2(showSpinner, method, path, params, cb) {
   });
 }
 
-function apiCall(method, path, params, cb) {
-  apiCall2(true, method, path, params, cb);
-}
-
-function apiCallNoSpinner(method, path, params, cb) {
-  apiCall2(false, method, path, params, cb);
-}
-
 function connect(type, url, urlSafe, cb) {
   var opts = {
     type: type,
     url: url,
     urlSafe: urlSafe
   };
-  apiCallNoSpinner("post", "/connect", opts, cb);
+  apiCall("post", "/connect", opts, cb);
 }
 
 function disconnect(connId, cb) {
@@ -75,7 +61,7 @@ function getTableIndexes(connId, table, cb) {
 
 function getTableInfo(connId, table, cb) {
   var opts = { conn_id : connId };
-  apiCallNoSpinner("get", "/tables/" + table + "/info", opts, cb);
+  apiCall("get", "/tables/" + table + "/info", opts, cb);
 }
 
 function getHistory(connId, cb) {
@@ -90,21 +76,21 @@ function getHistory(connId, cb) {
 }
 
 function queryAsync(connId, query, cb) {
-  apiCallNoSpinner("post", "/queryasync", {
+  apiCall("post", "/queryasync", {
     conn_id: connId,
     query: query
   }, cb);
 }
 
 function queryAsyncStatus(connId, queryId, cb) {
-  apiCallNoSpinner("post", "/queryasyncstatus", {
+  apiCall("post", "/queryasyncstatus", {
     conn_id: connId,
     query_id: queryId
   }, cb);
 }
 
 function queryAsyncData(connId, queryId, start, count, cb) {
-  apiCallNoSpinner("post", "/queryasyncdata", {
+  apiCall("post", "/queryasyncdata", {
     conn_id: connId,
     query_id: queryId,
     start: start,

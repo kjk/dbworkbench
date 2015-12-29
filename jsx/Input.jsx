@@ -125,7 +125,7 @@ export default class Input extends React.Component {
             <input type="button" onClick={this.runQuery} id="run"
               value="Run Query" className="btn btn-sm btn-primary" />
             {this.renderExplain()}
-            <SpinnerCircle visible={this.props.spinnerVisible} style={{display: 'inline-block', top: '4px'}} />
+            <SpinnerCircle style={{display: 'inline-block', top: '4px'}} />
           </div>
         </div>
       </div>
