@@ -1,20 +1,17 @@
 import React from 'react';
-
-const _ = require('underscore');
-
-const Table = require('./lib/reactable/table.jsx').Table;
-const Thead = require('./lib/reactable/thead.jsx').Thead;
-const Tfoot = require('./lib/reactable/tfoot.jsx').Tfoot;
-const Th = require('./lib/reactable/th.jsx').Th;
-const Tr = require('./lib/reactable/tr.jsx').Tr;
-const Td = require('./lib/reactable/td.jsx').Td;
-
+import { Table } from './lib/reactable/table.jsx';
+import { Thead } from './lib/reactable/thead.jsx';
+import { Tfoot } from './lib/reactable/tfoot.jsx';
+import { Th } from './lib/reactable/th.jsx';
+import { Tr } from './lib/reactable/tr.jsx';
+import { Td } from './lib/reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import action from './action.js';
 import view from './view.js';
+import _ from 'underscore';
 
-class Output extends React.Component {
+export default class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleCellClick = this.handleCellClick.bind(this);
@@ -342,5 +339,3 @@ RETURNING ${columns};`;
     );
   }
 }
-
-module.exports = Output;

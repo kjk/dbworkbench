@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import SpinnerCircle from './SpinnerCircle.jsx';
 import action from'./action.js';
 
-class Input extends React.Component {
+export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.exportToCSV = this.exportToCSV.bind(this);
@@ -132,5 +132,3 @@ class Input extends React.Component {
     );
   }
 }
-
-module.exports = Input;
