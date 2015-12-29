@@ -38,10 +38,9 @@ class Dropdown extends React.Component {
   handleConnection() {
     console.log("handleConnection");
 
-    var self = this;
     var connId = this.props.connectionId;
-    api.getConnectionInfo(connId, function(data) {
-      self.setState({
+    api.getConnectionInfo(connId, (data) => {
+      this.setState({
         results: data,
         modalIsOpen: true,
         selectedView: "Connection Info"
@@ -52,11 +51,10 @@ class Dropdown extends React.Component {
   handleActivity() {
     console.log("handleActivity");
 
-    var self = this;
     var connId = this.props.connectionId;
-    api.getActivity(connId, function(data) {
+    api.getActivity(connId, (data) => {
       console.log("getActivity: ", data);
-      self.setState({
+      this.setState({
         results: data,
         modalIsOpen: true,
         selectedView: "Activity"
@@ -217,23 +215,19 @@ class Sidebar extends React.Component {
   refreshTables() {
     var connectionId = this.props.connectionId;
 
-    var self = this;
-    api.getTables(connectionId, function(data) {
+    api.getTables(connectionId, (data) => {
       // console.log("Refreshing.. " + JSON.stringify(data));
-      self.setState({
+      this.setState({
         tables: data,
       });
     });
   }
 
   renderTables(tables) {
-    var self = this;
-
-    var res = tables.map(function(table) {
-      var cls = (table == self.props.selectedTable) ? ' selected' : '';
-      var handler = function(e) {
-        self.handleSelectTable(e, table);
-      };
+    const selectedTable = this.props.selectedTable;
+    const res = tables.map((table) => {
+      const cls = (table == selectedTable) ? ' selected' : '';
+      let handler = (e) => this.handleSelectTable(e, table);
       return (
         <li onClick={handler} key={table} className={cls}>
           <span><i className='fa fa-table'></i>{table}</span>
