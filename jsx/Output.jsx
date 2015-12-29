@@ -108,12 +108,12 @@ class Output extends React.Component {
         index += 1;
       });
 
-      query += "UPDATE " + schema + "." + table + " ";
-      query += "SET " + colsAfterEdit + " ";
-      query += "WHERE ctid IN (SELECT ctid FROM " + schema + "." + table + " ";
-      query += "WHERE " + rowToBeEdited + " ";
-      query += "LIMIT 1 FOR UPDATE) ";
-      query += "RETURNING " + columns + ";";
+      query += `UPDATE ${schema}.${table}
+SET ${colsAfterEdit}
+WHERE ctid IN (SELECT ctid FROM ${schema}.${table}
+WHERE ${rowToBeEdited}
+LIMIT 1 FOR UPDATE)
+RETURNING ${columns};`;
 
       console.log("QUERY:", query);
       // WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5'
