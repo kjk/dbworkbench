@@ -64,17 +64,15 @@ export default class Output extends React.Component {
     const editedCells = this.props.editedCells;
 
     let query = "";
-    for (let key in editedCells) {
-      let value = editedCells[key];
-      let values = key.split('.');
-      let rowId = key;
+    for (let rowId in editedCells) {
+      let value = editedCells[rowId];
+      //let values = rowId.split('.');
 
-      let thisRow = editedCells[key];
+      const thisRow = editedCells[rowId];
       let index = 0;
       let colsAfterEdit = "";
-      for (let key in thisRow) {
-        let value = thisRow[key];
-        const colId = key;
+      for (let colId in thisRow) {
+        let value = thisRow[colId];
         const columnToBeEdited = results.columns[colId];
         const afterChange = value;
 
