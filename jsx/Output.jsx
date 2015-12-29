@@ -10,6 +10,16 @@ import QueryEditBar from './QueryEditBar.jsx';
 import * as action from './action.js';
 import view from './view.js';
 
+function resultsToDictionary(results) {
+  const reformatData = results.rows.map(function(row) {
+    let some = {};
+    results.columns.forEach((key,i) => some[key] = row[i]);
+    return some;
+  });
+
+  return reformatData;
+}
+
 export default class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -47,12 +57,13 @@ export default class Output extends React.Component {
   }
 
   generateQuery() {
-    let self = this;
     const table = this.props.selectedTable;
-    let query = "";
-    let resultsAsDictionary = this.resultsToDictionary(this.props.results);
-    let editedCells = this.props.editedCells;
+    const results = this.props.results;
+    const tableStructures = this.props.tableStructures;
+    const resultsAsDictionary = resultsToDictionary(results);
+    const editedCells = this.props.editedCells;
 
+    let query = "";
     for (let key in editedCells) {
       let value = editedCells[key];
       let values = key.split('.');
@@ -64,7 +75,7 @@ export default class Output extends React.Component {
       for (let key in thisRow) {
         let value = thisRow[key];
         const colId = key;
-        const columnToBeEdited = self.props.results.columns[colId];
+        const columnToBeEdited = results.columns[colId];
         const afterChange = value;
 
         if (afterChange == "") {
@@ -79,9 +90,9 @@ export default class Output extends React.Component {
         index += 1;
       }
 
-      const columns = self.props.results.columns.join(", ");
+      const columns = results.columns.join(", ");
 
-      const tableStructuresAsDictionary = self.resultsToDictionary(self.props.tableStructures[table]);
+      const tableStructuresAsDictionary = resultsToDictionary(tableStructures[table]);
       let schema = null;
       if (tableStructuresAsDictionary.length > 0) {
         schema = tableStructuresAsDictionary[0]["table_schema"];
@@ -122,16 +133,6 @@ RETURNING ${columns};
     }
 
     return query;
-  }
-
-  resultsToDictionary(results) {
-    const reformatData = results.rows.map( (row) => {
-      let some = {};
-      results.columns.forEach((key,i) => some[key] = row[i]);
-      return some;
-    });
-
-    return reformatData;
   }
 
   handleCellClick(rowId, colId, e) {
@@ -221,7 +222,7 @@ RETURNING ${columns};
   }
 
   renderResults(results) {
-    const data = this.resultsToDictionary(results);
+    const data = resultsToDictionary(results);
     const header = this.renderHeader(results.columns);
     const rows = data.map((row, i) => this.renderRow(row, i));
     //const footer = this.renderFooter();
