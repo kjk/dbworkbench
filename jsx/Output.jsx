@@ -1,10 +1,10 @@
 import React from 'react';
-import { Table } from './lib/reactable/table.jsx';
-import { Thead } from './lib/reactable/thead.jsx';
-import { Tfoot } from './lib/reactable/tfoot.jsx';
-import { Th } from './lib/reactable/th.jsx';
-import { Tr } from './lib/reactable/tr.jsx';
-import { Td } from './lib/reactable/td.jsx';
+import { Table } from './reactable/table.jsx';
+import { Thead } from './reactable/thead.jsx';
+import { Tfoot } from './reactable/tfoot.jsx';
+import { Th } from './reactable/th.jsx';
+import { Tr } from './reactable/tr.jsx';
+import { Td } from './reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import * as action from './action.js';

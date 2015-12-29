@@ -7,7 +7,7 @@ import { Tr } from './tr.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';
 import { Filterer } from './filterer.jsx';
-import * as action from '../../action.js';
+import * as action from '../action.js';
 
 export class Table extends React.Component {
     constructor(props) {
