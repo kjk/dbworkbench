@@ -19,7 +19,6 @@ import (
 // Options defines cmd-line and computed configuration options
 type Options struct {
 	// options that come from command-line
-	Debug    bool
 	URL      string
 	Host     string
 	Port     int
@@ -39,7 +38,6 @@ type Options struct {
 var options Options
 
 func parseCmdLine() {
-	flag.BoolVar(&options.Debug, "debug", false, "enable debug mode")
 	flag.StringVar(&options.URL, "url", "", "database connection string")
 	flag.StringVar(&options.Host, "host", "", "database host name or ip address")
 	flag.IntVar(&options.Port, "port", 5432, "database port")
@@ -47,13 +45,8 @@ func parseCmdLine() {
 	flag.StringVar(&options.Pass, "pass", "", "database password for user")
 	flag.StringVar(&options.DbName, "db", "", "database name")
 	flag.StringVar(&options.Ssl, "ssl", "", "SSL options")
-	// using 127.0.0.1 so that windows firewall doesn't complain about
-	// opening externally-accessible ports
-	if isWindows() {
-		flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
-	} else {
-		flag.StringVar(&options.HTTPHost, "bind", "", "HTTP server host")
-	}
+	// using 127.0.0.1 so that windows/mac firewall doesn't complain about
+	flag.StringVar(&options.HTTPHost, "bind", "127.0.0.1", "HTTP server host")
 	flag.IntVar(&options.HTTPPort, "listen", 5444, "HTTP server listen port")
 	flag.BoolVar(&options.IsDev, "dev", false, "true for running in dev mode")
 	flag.BoolVar(&options.Test, "test", false, "if true, runs a test (whatever it might be)")
