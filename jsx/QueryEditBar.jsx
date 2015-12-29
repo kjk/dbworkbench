@@ -2,7 +2,6 @@
 'use strict';
 
 var React = require('react');
-var _ = require('underscore');
 
 var action = require('./action.js');
 var Modal = require('react-modal');

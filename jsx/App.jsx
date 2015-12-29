@@ -477,21 +477,25 @@ class App extends React.Component {
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
     var connId = this.state.connectionId;
-    if (connId !== 0) {
-      api.getTables(connId, (data) => {
-        this.setState({
-          tables: data,
-        });
-
-       this.getAllTablesStructures(connId, data);
-      });
-
-      api.getConnectionInfo(connId, (data) => {
-        this.setState({
-          databaseName: _.filter(data.rows, function (el) { return (el[0] == "current_database"); })[0][1],
-        });
-      });
+    if (connId == 0) {
+      return;
     }
+
+    api.getTables(connId, (data) => {
+      this.setState({
+        tables: data,
+      });
+
+      this.getAllTablesStructures(connId, data);
+    });
+
+    api.getConnectionInfo(connId, (data) => {
+      this.setState({
+        databaseName: _.filter(data.rows, function (el) { 
+          return (el[0] == "current_database"); }
+          )[0][1],
+      });
+    });
   }
 
   componentWillUnmount() {
