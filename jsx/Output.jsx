@@ -2,7 +2,6 @@
 'use strict';
 
 var React = require('react');
-var _ = require('underscore');
 
 var Table = require('./lib/reactable/table.jsx').Table;
 var Thead = require('./lib/reactable/thead.jsx').Thead;
@@ -21,6 +20,7 @@ class Output extends React.Component {
     super(props, context);
     this.handleCellClick = this.handleCellClick.bind(this);
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
+    this.renderTd = this.renderTd.bind(this);
 
     this.state = {
       filterString: '',
@@ -36,13 +36,13 @@ class Output extends React.Component {
   }
 
   setEditedCells(rowId, colId, value) {
-    var tempEditedCells = _.clone(this.props.editedCells);
-    if (tempEditedCells[rowId] == undefined) {
-      tempEditedCells[rowId] = {};
+    var tmp = this.props.editedCells.slice();
+    if (tmp[rowId] == undefined) {
+      tmp[rowId] = {};
     }
-    tempEditedCells[rowId][colId] = value;
+    tmp[rowId][colId] = value;
 
-    action.editedCells(tempEditedCells);
+    action.editedCells(tmp);
   }
 
   getEditedCells(rowId, colId) {
@@ -168,42 +168,48 @@ class Output extends React.Component {
     );
   }
 
+  renderTd(rowId, colId, col, value) {
+    var position = {rowId: rowId, colId: colId};
+    let isEditable = false;
+    if (this.props.selectedCellPosition.rowId == rowId &&
+        this.props.selectedCellPosition.colId == colId &&
+        this.props.selectedView == view.SQLQuery) {
+      isEditable = true;
+    }
+    let tdStyle = {};
+    if (this.getEditedCells(rowId, colId) != undefined) {
+      value = this.getEditedCells(rowId, colId);
+      tdStyle = {
+        background: '#7DCED2',
+        color: '#ffffff',
+        border: 'solid 1px #3B8686',
+      };
+    }
+
+    return (
+      <Td
+        key={position}
+        column={col}
+        position={position}
+        style={tdStyle}
+        onClick={this.handleCellClick.bind(this, rowId, colId)}
+        isEditable={isEditable}
+        onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
+          {value}
+      </Td>
+    );
+  }
+
+  // row is object where keys are table column names and
+  // values are row values for that column
   renderRow(row, rowId) {
-    var colId = -1;
-    var children = row.map( (value, col) => {
-      colId = colId + 1;
-
-      var position = {rowId: rowId, colId: colId};
-
-      if (this.props.selectedCellPosition.rowId == rowId &&
-          this.props.selectedCellPosition.colId == colId &&
-          this.props.selectedView == view.SQLQuery) {
-        var isEditable = true;
-      }
-
-      if (this.getEditedCells(rowId, colId) != undefined) {
-        var value = this.getEditedCells(rowId, colId);
-        var tdStyle = {
-          background: '#7DCED2',
-          color: '#ffffff',
-          border: 'solid 1px #3B8686',
-        };
-      }
-
-      return (
-        <Td
-          key={position}
-          column={col}
-          position={position}
-          style={tdStyle}
-          onClick={this.handleCellClick.bind(this, rowId, colId)}
-          isEditable={isEditable}
-          onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
-            {value}
-        </Td>
-      );
-    });
-
+    let colId = -1;
+    let children = [];
+    for (let col in row) {
+      colId += 1;
+      let val = row[col];
+      children.push(this.renderTd(rowId, colId, col, val));
+    }
     return (
       <Tr key={rowId} >{children}</Tr>
     );

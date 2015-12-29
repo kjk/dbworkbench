@@ -63,6 +63,7 @@ class Input extends React.Component {
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
 
+    var self = this;
     this.editor.commands.addCommands([
       {
         name: "run_query",

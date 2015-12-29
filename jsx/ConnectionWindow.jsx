@@ -6,7 +6,6 @@ const SpinnerCircle = require('./Spinners.jsx').Circle;
 
 const api = require('./api.js');
 const action = require('./action.js');
-const _ = require('underscore');
 
 const initialConnectionName = "New connection";
 
@@ -137,7 +136,7 @@ class ConnectionWindow extends React.Component {
     // bookmarks with negative id are not yet saved (only exist in the frontend)
     if (id < 0) {
       let selectedIdx = this.state.selectedBookmarkIdx;
-      let bookmarks = _.reject(this.state.bookmarks, function(b) { return b.id == id; });
+      let bookmarks = this.state.bookmarks.filter((b) => b.id != id);
       if (selectedIdx >= bookmarks.length) {
         selectedIdx = bookmarks.length - 1;
       }
