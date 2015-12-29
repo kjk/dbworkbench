@@ -1,7 +1,7 @@
 import React from 'react';
 
 function pageHref(num) {
-    return `#page-${num + 1}`
+    return `#page-${num + 1}`;
 }
 
 export class Paginator extends React.Component {
@@ -10,12 +10,12 @@ export class Paginator extends React.Component {
     }
 
     handlePrevious(e) {
-        e.preventDefault()
-        this.props.onPageChange(this.props.currentPage - 1)
+        e.preventDefault();
+        this.props.onPageChange(this.props.currentPage - 1);
     }
 
     handleNext(e) {
-        e.preventDefault()
+        e.preventDefault();
         this.props.onPageChange(this.props.currentPage + 1);
     }
 
@@ -26,7 +26,7 @@ export class Paginator extends React.Component {
 
     handleSetCurrentPage(selectedPageNumber, e) {
         if (this.props.numPages > selectedPageNumber || selectedPageNumber < 1) {
-            console.log("Not possible ERRRR")
+            console.log("Not possible ERRRR");
         } else {
             this.props.onPageChange(number);
         }
@@ -61,7 +61,7 @@ export class Paginator extends React.Component {
     }
 
     renderPageButton() {
-        return (<span className='reactable-page'> Page {this.props.currentPage + 1} / {this.props.numPages} </span>);
+        return (<span className='reactable-page'>{this.props.currentPage + 1} / {this.props.numPages} </span>);
     }
 
     render() {

@@ -6,8 +6,6 @@ require("babel-polyfill");
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var _ = require('underscore');
-
 var utils = require('./utils.js');
 var api = require('./api.js');
 var action = require('./action.js');
@@ -21,6 +19,24 @@ var SpinnerCircle = require('./Spinners.jsx').Circle;
 
 const minSidebarDx = 128;
 const maxSidebarDx = 128*3;
+
+function isCreateOrDropQuery(query) {
+  return query.match(/(create|drop) table/i);
+}
+
+function isSelectQuery(query) {
+  return query.match(/select/i);
+}
+
+// rows is [ [name, val], ...]
+function databaseNameFromConnectionInfoRows(rows) {
+  for (let row of rows) {
+    if (row[0] == "current_database") {
+      return row[1];
+    }
+  }
+  return "";
+}
 
 class App extends React.Component {
   constructor(props, context) {
@@ -37,6 +53,10 @@ class App extends React.Component {
     this.handleResetPagination = this.handleResetPagination.bind(this);
     this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
     this.handleEditedCells = this.handleEditedCells.bind(this);
+    this.getQueryAsyncStatus = this.getQueryAsyncStatus.bind(this);
+    this.getQueryAsyncData = this.getQueryAsyncData.bind(this);
+    this.handleQueryAsync = this.handleQueryAsync.bind(this);
+    this.handleQuerySync = this.handleQuerySync.bind(this);
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -48,6 +68,10 @@ class App extends React.Component {
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
 
       databaseName: "No Database Selected",
+
+      queryIdInProgress: null,
+      queryStatus: null,
+
       tables: null,
       tableStructures: {},
       selectedTable: "",
@@ -72,18 +96,16 @@ class App extends React.Component {
 
   getAllTablesStructures(connId, tables) {
     // We can do this by having the query get all data at once but its harder
-    var self = this;
-    _.each(tables, function(table) {
-      api.getTableStructure(connId, table, function(tableStructureData) {
-        var tempTableStructures = self.state.tableStructures;
-        tempTableStructures[table] = tableStructureData;
-        self.setState({
-          tableStructures: tempTableStructures
+    for (let table of tables) {
+      api.getTableStructure(connId, table, (tableStructureData) => {
+        let tmp = this.state.tableStructures;
+        tmp[table] = tableStructureData;
+        this.setState({
+          tableStructures: tmp
         });
-
-        console.log("All Table structrues, ", self.state.tableStructures);
+        //console.log("All Table structrues, ", this.state.tableStructures);
       });
-    });
+    }
   }
 
   handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
@@ -93,14 +115,13 @@ class App extends React.Component {
       databaseName: databaseName,
       capabilities: capabilities
     });
-    var self = this;
     var connId = this.state.connectionId;
-    api.getTables(connId, function(data) {
-      self.setState({
+    api.getTables(connId, (data) => {
+      this.setState({
         tables: data,
       });
 
-      self.getAllTablesStructures(connId, data);
+      this.getAllTablesStructures(connId, data);
     });
   }
 
@@ -157,45 +178,28 @@ class App extends React.Component {
 
     // must delay otherwise this.state.selectedTable will not be visible yet
     // in handleViewSelected
-    var self = this;
-    setTimeout(function() {
-      self.handleViewSelected(view.SQLQuery);
-    }, 200);
+    setTimeout(() => this.handleViewSelected(view.SQLQuery), 200);
 
     var connId = this.state.connectionId;
-    api.getTableInfo(connId, table, function(data) {
-      self.setState({
+    api.getTableInfo(connId, table, (data) => {
+      this.setState({
         selectedTableInfo: data,
       });
     });
   }
 
   getTableContent() {
-    var sortColumn = null;
-    var sortOrder = null;
-    var params = { limit: 100000, sort_column: sortColumn, sort_order: sortOrder };
-
-    var self = this;
-    var connId = this.state.connectionId;
-    var selectedTable = this.state.selectedTable;
-    api.getTableRows(connId, selectedTable, params, function(data) {
-      console.log("getTableContent: ", data);
-      self.setState({
-        results: data,
-        resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
-        editedCells: {},
-      });
-    });
+    const table = this.state.selectedTable;
+    const query = `SELECT * FROM ${table};`;
+    this.handleExecuteQuery(query);
   }
 
   getTableStructure() {
-    var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
-    api.getTableStructure(connId, selectedTable, function(data) {
+    api.getTableStructure(connId, selectedTable, (data) => {
       console.log("getTableStructure: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -204,12 +208,11 @@ class App extends React.Component {
   }
 
   getTableIndexes() {
-    var self = this;
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
-    api.getTableIndexes(connId, selectedTable, function(data) {
+    api.getTableIndexes(connId, selectedTable, (data) => {
       console.log("getTableIndexes: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -218,11 +221,10 @@ class App extends React.Component {
   }
 
   getHistory() {
-    var self = this;
     var connId = this.state.connectionId;
-    api.getHistory(connId, function(data) {
+    api.getHistory(connId, (data) => {
       console.log("getHistory: ", data);
-      self.setState({
+      this.setState({
         results: data,
         selectedCellPosition: {rowId: -1, colId: -1},
         editedCells: {},
@@ -232,10 +234,9 @@ class App extends React.Component {
 
   /*
   getBookmarks() {
-    var self = this;
-    api.getBookmarks(function(data) {
+    api.getBookmarks((data) => {
       console.log("getBookmarks: ", data);
-      self.setState({
+      this.setState({
         results: data
       });
     });
@@ -286,12 +287,11 @@ class App extends React.Component {
     }
   }
 
-  handleExecuteQuery(query) {
-    console.log("handleExecuteQuery", query);
-    var self = this;
+  handleQuerySync(query) {
+    console.log("handleQuerySync", query);
     var connId = this.state.connectionId;
-    api.executeQuery(connId, query, function(data) {
-      self.setState({
+    api.executeQuery(connId, query, (data) => {
+      this.setState({
         results: data,
         resetPagination: true,
         selectedCellPosition: {rowId: -1, colId: -1},
@@ -299,23 +299,107 @@ class App extends React.Component {
       });
 
       // refresh tables list if table was added or removed
-      var re = /(create|drop) table/i;
-      if (query.match(re)) {
-        api.getTables(self.state.connectionId, function(data) {
-          self.setState({
-            tables: data,
-          });
+      if (!isCreateOrDropQuery(query)) {
+        return;
+      }
+      api.getTables(this.state.connectionId, (data) => {
+        this.setState({
+          tables: data,
         });
+      });
+    });
+  }
+
+  getQueryAsyncData() {
+    const queryId = this.state.queryIdInProgress;
+    console.log(`getQueryAsyncData: queryId={queryId}`);
+    if (queryId == "") {
+      console.log("no async query in progress");
+      return;
+    }
+    const count = this.state.queryStatus.rows_count;
+    if (count == 0) {
+      this.setState({
+        results: null,
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {}
+      });
+      return;
+    }
+    const connId = this.state.connectionId;
+    const start = 0;
+    const columns = this.state.queryStatus.columns;
+    api.queryAsyncData(connId, queryId, start, count, (data) => {
+      const results = {
+        columns: columns,
+        rows: data.rows
+      };
+      this.setState({
+        results: results,
+        spinnerVisible: false,
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+      });
+    });
+  }
+
+  getQueryAsyncStatus() {
+    const queryId = this.state.queryIdInProgress;
+    console.log(`getQueryAsyncStatus: queryId={queryId}`);
+    if (queryId == "") {
+      console.log("no async query in progress");
+      return;
+    }
+    const connId = this.state.connectionId;
+    api.queryAsyncStatus(connId, queryId, (data) => {
+      const queryStatus = data; 
+      this.setState({
+        queryStatus: queryStatus,
+        spinnerVisible: !queryStatus.finished,
+      });
+      // repeat until async query finishes
+      if (!queryStatus.finished) {
+        setTimeout(this.getQueryAsyncStatus, 1000);
+      } else {
+        this.getQueryAsyncData();
       }
     });
   }
 
+  handleQueryAsync(query) {
+    console.log("handleQueryAsync", query);
+    const connId = this.state.connectionId;
+    api.queryAsync(connId, query, (data) => {
+      this.setState({
+        spinnerVisible: true,
+        queryIdInProgress: data.query_id,
+        // TODO: not sure if should reset the data right away
+        // maybe only after received some data or an error message
+        resetPagination: true,
+        selectedCellPosition: {rowId: -1, colId: -1},
+        editedCells: {},
+      });
+      setTimeout(this.getQueryAsyncStatus, 1000);
+    });
+  }
+
+  handleExecuteQuery(query) {
+    console.log("handleExecuteQuery", query);
+    query = query.trim();
+    if (isSelectQuery(query)) {
+      this.handleQueryAsync(query);
+    } else {
+      this.handleQuerySync(query);
+    }
+  }
+
   handleExplainQuery(query) {
     console.log("handleExplainQuery", query);
-    var self = this;
     var connId = this.state.connectionId;
-    api.explainQuery(connId, query, function(data) {
-      self.setState({
+    api.explainQuery(connId, query, (data) => {
+      this.setState({
         selectedView: view.SQLQuery,
         results: data,
         resetPagination: true,
@@ -334,11 +418,10 @@ class App extends React.Component {
   }
 
   handleDisconnectDatabase() {
-    var self = this;
-    api.disconnect(this.state.connectionId, function(data) {
+    api.disconnect(this.state.connectionId, (data) => {
       console.log("disconnect");
 
-      self.setState({
+      this.setState({
         connectionId: 0,
         connected: false,
         tables: null,
@@ -356,7 +439,7 @@ class App extends React.Component {
   }
 
   handleAlertBar(message) {
-    console.log("Create Alert Bar");
+    console.log("handleAlertBar");
 
     this.setState({
       errorVisible: true,
@@ -364,10 +447,7 @@ class App extends React.Component {
     });
 
     // Dissmiss AlertBar with timer
-    // var self = this;
-    // setTimeout(function() {
-    //   self.handleCloseAlertBar()
-    // }, 5000);
+    // setTimeout(() => this.handleCloseAlertBar(), 5000);
   }
 
   handleCloseAlertBar() {
@@ -405,22 +485,24 @@ class App extends React.Component {
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
     var connId = this.state.connectionId;
-    var self = this;
-    if (connId !== 0) {
-      api.getTables(connId, function(data) {
-        self.setState({
-          tables: data,
-        });
-
-       self.getAllTablesStructures(connId, data);
-      });
-
-      api.getConnectionInfo(connId, function(data) {
-        self.setState({
-          databaseName: _.filter(data.rows, function (el) { return (el[0] == "current_database"); })[0][1],
-        });
-      });
+    if (connId == 0) {
+      return;
     }
+
+    api.getTables(connId, (data) => {
+      this.setState({
+        tables: data,
+      });
+
+      this.getAllTablesStructures(connId, data);
+    });
+
+    api.getConnectionInfo(connId, (data) => {
+      const dbName = databaseNameFromConnectionInfoRows(data.rows);
+      this.setState({
+        databaseName: dbName
+      });
+    });
   }
 
   componentWillUnmount() {

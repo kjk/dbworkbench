@@ -370,7 +370,8 @@ type QueryAsyncStatus struct {
 	TimeToFirstResultMs  float64  `json:"time_to_first_result_ms"`
 	TotalQueryTimeMs     float64  `json:"total_query_time_ms"`
 	Columns              []string `json:"columns"`
-	Error                string   `json:"error"`
+	ErrorString          string   `json:"error"`
+	err                  error
 	rows                 []interface{}
 	clientLastAccessTime time.Time // so that we can delete stale data after a while
 }
@@ -428,7 +429,10 @@ func withQueryStatus(queryID string, f func(s *QueryAsyncStatus)) error {
 
 func setQueryStatusError(queryID string, err error) {
 	withQueryStatus(queryID, func(s *QueryAsyncStatus) {
-		s.Error = err.Error()
+		s.err = err
+		if err != nil {
+			s.ErrorString = err.Error()
+		}
 		s.Finished = true
 	})
 }
@@ -441,9 +445,8 @@ func durMsSince(t time.Time) float64 {
 	return durToMs(time.Now().Sub(t))
 }
 
-func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRows int, maxDataSize int64) {
-	updateConnectionLastAccess(connInfo.ConnectionID)
-	db := connInfo.Client.Connection()
+func doQueryAsync(client Client, query string, queryID string, maxRows int, maxDataSize int64) {
+	db := client.Connection()
 
 	rows, err := db.Queryx(query)
 
@@ -512,8 +515,9 @@ func doQueryAsync(connInfo *ConnectionInfo, query string, queryID string, maxRow
 /*
 GET | POST /api/queryasync
 args:
-   query : string, query to execute
-   max_rows : int, optional, max number of rows to fetch from the database
+   conn_id       : string, connection
+   query         : string, query to execute
+   max_rows      : int, optional, max number of rows to fetch from the database
    max_data_size : int64, optional, max amount of data to fetch from the database
 
 Both max_rows and max_data_size can be given, both are respected.
@@ -565,7 +569,8 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	connInfo := ctx.ConnInfo
 	queryID := getNextQueryAsyncID()
 
-	go doQueryAsync(connInfo, query, queryID, maxRows, maxDataSize)
+	go doQueryAsync(connInfo.Client, query, queryID, maxRows, maxDataSize)
+	updateConnectionLastAccess(connInfo.ConnectionID)
 
 	res := struct {
 		QueryID string `json:"query_id"`
@@ -575,9 +580,18 @@ func handleQueryAsync(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, res)
 }
 
+func getQueryStatus(queryID string) (*QueryAsyncStatus, error) {
+	var statusCopy QueryAsyncStatus
+	err := withQueryStatus(queryID, func(s *QueryAsyncStatus) {
+		statusCopy = *s
+	})
+	return &statusCopy, err
+}
+
 /*
 GET | POST /api/queryasyncstatus
 args:
+  conn_id  : string, connection
   query_id : string, id of the query
 
 returns: json in the format
@@ -594,23 +608,18 @@ returns: json in the format
 func handleQueryAsyncStatus(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	queryID := strings.TrimSpace(r.FormValue("query_id"))
 	LogInfof("query_id: '%s'\n", queryID)
-
-	var statusCopy QueryAsyncStatus
-	err := withQueryStatus(queryID, func(s *QueryAsyncStatus) {
-		statusCopy = *s
-		statusCopy.rows = nil
-	})
-
+	status, err := getQueryStatus(queryID)
 	if err != nil {
 		serveJSONError(w, r, err)
 	} else {
-		serveJSON(w, r, statusCopy)
+		serveJSON(w, r, status)
 	}
 }
 
 /*
 GET | POST /api/queryasyncdata
 args:
+  conn_id  : string, connection
   query_id : string
   start    : int, first row to return
   count    : int, number of rows, start + count should be < total rows count
@@ -652,9 +661,10 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// start is 0-based
 	end := start + count
 	rowsCount := s.RowsCount
-	if end >= rowsCount {
+	if end > rowsCount {
 		muQueryAsync.Unlock()
 		err = fmt.Errorf("start+count (%d) too high (max is %d)'", end, rowsCount)
 		LogErrorf("%s\n", err.Error())
@@ -662,7 +672,7 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 		return
 	}
 	// make a copy of the results
-	var rows []interface{}
+	rows := make([]interface{}, count, count)
 	for i := 0; i < count; i++ {
 		rows[i] = s.rows[start+i]
 	}
@@ -675,7 +685,12 @@ func handleQueryAsyncData(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	serveJSON(w, r, res)
 }
 
-// GET | POST /api/explain
+/*
+GET | POST /api/explain
+args:
+  conn_id : string, connection
+  query   : string, query to explain
+*/
 func handleExplain(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("query"))
 	//LogInfof("query: '%s'\n", query)
@@ -832,42 +847,6 @@ func handleGetTable(ctx *ReqContext, w http.ResponseWriter, r *http.Request, tab
 	serveJSON(w, r, res)
 }
 
-func apiGetTableRows(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
-	LogInfof("table='%s'\n", table)
-	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
-	limit := 1000 // Number of rows to fetch
-	limitVal := r.FormValue("limit")
-
-	if limitVal != "" {
-		num, err := strconv.Atoi(limitVal)
-		if err != nil {
-			serveJSONError(w, r, "Invalid limit value")
-			return
-		}
-
-		if num <= 0 {
-			serveJSONError(w, r, "Limit should be greater than 0")
-			return
-		}
-
-		limit = num
-	}
-
-	opts := RowsOptions{
-		Limit:      limit,
-		SortColumn: r.FormValue("sort_column"),
-		SortOrder:  r.FormValue("sort_order"),
-	}
-
-	res, err := ctx.ConnInfo.Client.TableRows(table, opts)
-	if err != nil {
-		serveJSONError(w, r, err)
-		return
-	}
-
-	serveJSON(w, r, res)
-}
-
 func apiGetTableInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request, table string) {
 	res, err := ctx.ConnInfo.Client.TableInfo(table)
 	if err != nil {
@@ -888,7 +867,12 @@ func apiGetTableIndexes(ctx *ReqContext, w http.ResponseWriter, r *http.Request,
 	serveJSON(w, r, res)
 }
 
-// GET /api/tables/:table/:action
+/*
+GET /api/tables/:table/:action
+args:
+  action : "info", "indexes"
+*/
+
 func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Path
 	uriPath := uri[len("/api/tables/"):]
@@ -901,8 +885,6 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	}
 	cmd := parts[1]
 	switch cmd {
-	case "rows":
-		apiGetTableRows(ctx, w, r, table)
 	case "info":
 		apiGetTableInfo(ctx, w, r, table)
 	case "indexes":

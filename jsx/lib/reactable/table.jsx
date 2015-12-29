@@ -313,12 +313,12 @@ export class Table extends React.Component {
             this.props.children.length > 0 &&
             this.props.children[0].type === Thead
         ) {
-            firstChild = this.props.children[0]
+            firstChild = this.props.children[0];
         } else if (
             typeof this.props.children !== 'undefined' &&
             this.props.children.type === Thead
         ) {
-            firstChild = this.props.children
+            firstChild = this.props.children;
         }
 
         if (firstChild !== null) {
@@ -401,7 +401,7 @@ export class Table extends React.Component {
         let numPages;
         var currentPage = this.state.currentPage;
         if (this.props.resetPagination) {
-            currentPage = 0
+            currentPage = 0;
         }
 
         // let pageButtonLimit = this.props.pageButtonLimit || 10;

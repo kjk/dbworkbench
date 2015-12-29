@@ -58,14 +58,14 @@ class Output extends React.Component {
     var query = "";
     var resultsAsDictionary = this.resultsToDictionary(this.props.results);
 
-    _.each(this.props.editedCells, function(value, key, obj) {
+    this.props.editedCells.forEach((value, key, obj) => {
       var values = key.split('.');
       var rowId = key;
 
       var thisRow = obj[key];
       var index = 0;
       var colsAfterEdit = "";
-      _.each(thisRow, function(value, key, obj) {
+      thisRow.forEach((value, key, obj) => {
         var colId = key;
         var columnToBeEdited = self.props.results.columns[colId];
         var afterChange = value;
@@ -95,7 +95,7 @@ class Output extends React.Component {
 
       index = 0;
       var rowToBeEdited = "";
-      _.each(rowAsDictionary, function(value, key, obj) {
+      rowAsDictionary.forEach((value, key, obj) => {
         if (value == null) {
           rowToBeEdited += key + " IS NULL ";
         } else {
@@ -125,9 +125,9 @@ class Output extends React.Component {
   }
 
   resultsToDictionary(results) {
-    var reformatData = _.map(results.rows, function(row){
+    var reformatData = results.rows.map(function(row){
       var some = {};
-      _.each(results.columns,function(key,i){some[key] = row[i];});
+      results.columns.forEach((key,i) => some[key] = row[i]);
       return some;
     });
 
@@ -169,21 +169,20 @@ class Output extends React.Component {
   }
 
   renderRow(row, rowId) {
-    var self = this;
     var colId = -1;
-    var children = _.map(row, function(value, col) {
+    var children = row.map( (value, col) => {
       colId = colId + 1;
 
       var position = {rowId: rowId, colId: colId};
 
-      if (self.props.selectedCellPosition.rowId == rowId &&
-          self.props.selectedCellPosition.colId == colId &&
-          self.props.selectedView == view.SQLQuery) {
+      if (this.props.selectedCellPosition.rowId == rowId &&
+          this.props.selectedCellPosition.colId == colId &&
+          this.props.selectedView == view.SQLQuery) {
         var isEditable = true;
       }
 
-      if (self.getEditedCells(rowId, colId) != undefined) {
-        var value = self.getEditedCells(rowId, colId);
+      if (this.getEditedCells(rowId, colId) != undefined) {
+        var value = this.getEditedCells(rowId, colId);
         var tdStyle = {
           background: '#7DCED2',
           color: '#ffffff',
@@ -197,9 +196,9 @@ class Output extends React.Component {
           column={col}
           position={position}
           style={tdStyle}
-          onClick={self.handleCellClick.bind(self, rowId, colId)}
+          onClick={this.handleCellClick.bind(this, rowId, colId)}
           isEditable={isEditable}
-          onEdit={self.handleOnCellEdit.bind(self, rowId, colId)}>
+          onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
             {value}
         </Td>
       );
@@ -224,10 +223,7 @@ class Output extends React.Component {
     var data = this.resultsToDictionary(results);
     var header = this.renderHeader(results.columns);
 
-    var self = this;
-    var rows = _.map(data, function(row, i) {
-      return self.renderRow(row, i);
-    });
+    var rows = data.map((row, i) => this.renderRow(row, i));
 
     var footer = this.renderFooter();
 
