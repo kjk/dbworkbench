@@ -12,7 +12,8 @@ var ConnectionWindow = require('./ConnectionWindow.jsx');
 var Sidebar = require('./Sidebar.jsx');
 var AlertBar = require('./AlertBar.jsx');
 var MainContainer = require('./MainContainer.jsx');
-var SpinnerCircle = require('./Spinners.jsx').Circle;
+
+import SpinnerCircle from './SpinnerCircle.jsx';
 
 const minSidebarDx = 128;
 const maxSidebarDx = 128*3;
