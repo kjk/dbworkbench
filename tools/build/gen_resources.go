@@ -12,10 +12,6 @@ var (
 	blacklisted = []string{
 		"s/dist/bundle.js.map",
 		".gitkeep",
-		// TODO: eventually delete the files we don't use
-		// currently we use bootstrap-flatly.css
-		"s/css/bootstrap.css",
-		"s/css/normalize.css",
 	}
 )
 
