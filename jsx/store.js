@@ -6,16 +6,16 @@ notified when the value changes.
 
 Apis:
 
-cid = store.on(keyIdx, cb);
-cid = store.onMap(keyIdx, subkey, cb);
+cid = store.on(key, cb);
+cid = store.onMap(key, subkey, cb);
 
 store.off(cid);
 
-store.set(keyIdx, value);
-store.setMap(keyIdx, subkey, cb);
+store.set(key, value);
+store.setMap(key, subkey, cb);
 
-store.del(keyIdx);
-store.delMap(keyIdx, subkey);
+store.del(key);
+store.delMap(key, subkey);
 
 del() and delMap() are useful for freeing memory for a given value.
 
@@ -23,8 +23,8 @@ Callbacks always take one argument: new value of the variable.
 */
 
 /*
-Maps keys to their values. For non-map values, key is a string keyNames[keyIdx]
-For map values, key is keyNames[keyIdx] + subkey.
+Maps keys to their values. For non-map values, key is a known string.
+For map values, key is key + subkey.
 Value is [val, [cb1, cbId1], [cb2, cbId2], ...] i.e. current value followed by zero or more callbacks
 */
 let store = {};
@@ -36,19 +36,15 @@ let currCid = 0;
 // is used to mark deleted values
 const deletedValue = {};
 
-function keyNamePretty(keyIdx) {
-  return `${keyNames[keyIdx]} (${keyIdx})`;
-}
-
-function keyToStr(keyIdx, subkey) {
+function keyToStr(key, subkey) {
   if (subkey) {
-    return keyNames[keyIdx] + "-" + subkey;
+    return key + "-" + subkey;
   }
-  return keyNames[keyIdx];
+  return key;
 }
 
-function broadcast(keyIdx, val, subkey) {
-  const keyStr = keyToStr(keyIdx, subkey);
+function broadcast(key, val, subkey) {
+  const keyStr = keyToStr(key, subkey);
   const valAndCbs = store[keyStr];
   const n = valAndCbs.length;
   if (n < 2) {
@@ -63,13 +59,13 @@ function broadcast(keyIdx, val, subkey) {
   }
 }
 
-function on2(keyIdx, cb, subkey) {
+function on2(key, cb, subkey) {
   currCid++;
-  const keyStr = keyToStr(keyIdx, subkey);
+  const keyStr = keyToStr(key, subkey);
   const cbInfo = [cb, currCid];
   let valAndCbs = store[keyStr];
   if (!valAndCbs) {
-    const defVal = defValues[keyIdx];
+    const defVal = defValues[key];
     store[keyStr] = [defVal, cbInfo];
   } else {
     if (deletedValue === valAndCbs[0]) {
@@ -80,16 +76,16 @@ function on2(keyIdx, cb, subkey) {
   return currCid;
 }
 
-export function on(keyIdx, cb) {
-  return on2(keyIdx, cb);
+export function on(key, cb) {
+  return on2(key, cb);
 }
 
-export function onMap(keyIdx, subkey, cb) {
-  return on2(keyIdx, cb, subkey);
+export function onMap(key, subkey, cb) {
+  return on2(key, cb, subkey);
 }
 
-function off2(keyIdx, cbId, subkey) {
-  const keyStr = keyToStr(keyIdx, subkey);
+function off2(key, cbId, subkey) {
+  const keyStr = keyToStr(key, subkey);
   const valAndCbs = store[keyStr];
   const n = valAndCbs.length;
   for (let i = 1; i < n; i++) {
@@ -102,19 +98,19 @@ function off2(keyIdx, cbId, subkey) {
   console.log(`store.off: didn't find callback '${cbId}' for '{keyStr}'`);
 }
 
-export function off(keyIdx, cbId) {
-  off2(keyIdx, cbId);
+export function off(key, cbId) {
+  off2(key, cbId);
 }
 
-export function offMap(keyIdx, subkey, cbId) {
-  off2(keyIdx, cbId, subkey); 
+export function offMap(key, subkey, cbId) {
+  off2(key, cbId, subkey); 
 }
 
-function get2(keyIdx, subkey) {
-  let keyStr = keyToStr(keyIdx, subkey);
+function get2(key, subkey) {
+  let keyStr = keyToStr(key, subkey);
   const valAndCbs = store[keyStr];
   if (!valAndCbs) {
-    const defVal = defValues[keyIdx]; 
+    const defVal = defValues[key]; 
     store[keyStr] = [defVal];
     return defVal;
   }
@@ -124,29 +120,29 @@ function get2(keyIdx, subkey) {
   return valAndCbs[0];
 }
 
-export function get(keyIdx) {
-  return get2(keyIdx);
+export function get(key) {
+  return get2(key);
 }
 
-export function getMap(keyIdx, subkey) {
-  return get2(keyIdx, subkey);
+export function getMap(key, subkey) {
+  return get2(key, subkey);
 }
 
 /*
 shouldBroadcast: some values are synthetic values i.e. the value we broadcast
                  is not the same as raw value
 */
-function set2(keyIdx, newVal, subkey, shouldBroadcast) {
+function set2(key, newVal, subkey, shouldBroadcast) {
   if (deletedValue === newVal) {
     shouldBroadcast = false;
   }
-  let keyStr = keyToStr(keyIdx, subkey);
+  let keyStr = keyToStr(key, subkey);
   const valAndCbs = store[keyStr];
   if (!valAndCbs) {
-    const defVal = defValues[keyIdx]; 
+    const defVal = defValues[key]; 
     store[keyStr] = [defVal];
     if (shouldBroadcast) {
-      broadcast(keyIdx, defVal, subkey);
+      broadcast(key, defVal, subkey);
     }
     return;
   }
@@ -162,71 +158,65 @@ function set2(keyIdx, newVal, subkey, shouldBroadcast) {
   }
   valAndCbs[0] = newVal;
   if (shouldBroadcast) {
-    broadcast(keyIdx, newVal, subkey);
+    broadcast(key, newVal, subkey);
   }
 }
 
-export function set(keyIdx, newVal) {
-  set2(keyIdx, newVal, null, true);
+export function set(key, newVal) {
+  set2(key, newVal, null, true);
 }
 
-export function setMap(keyIdx, newVal, subkey) {
-  set2(keyIdx, newVal, subkey, true);
+export function setMap(key, newVal, subkey) {
+  set2(key, newVal, subkey, true);
 }
 
 // TODO: not sure if should broadcast deletions or not
-export function del(keyIdx) {
-  set2(keyIdx, deletedValue, null, false);
+export function del(key) {
+  set2(key, deletedValue, null, false);
 }
 
-export function delMap(keyIdx, subkey) {
-  set2(keyIdx, deletedValue, subkey, false);
+export function delMap(key, subkey) {
+  set2(key, deletedValue, subkey, false);
 }
 
 /* things specific to an app */
 
-// index into keyNames
-const queryIdx = 0;
-const spinnerIdx = 1;
+const queryCmd = "query";
+const spinnerCmd = "spinner";
 
-var keyNames = [
-  "query",
-  "spinner",
-];
-
-var defValues = [
-  null,   // query
-  0,      //spinner
-];
+var defValues = {
+  queryCmd: null,
+  spinnerCmd: 0
+};
 
 export function onQuery(queryId, cb) { 
-  return onMap(queryIdx, queryId, cb);
+  return onMap(queryCmd, queryId, cb);
 }
 
 export function offQuery(queryId, cbId) {
-  offMap(queryIdx, queryId, cbId);
+  offMap(queryCmd, queryId, cbId);
 }
 
 export function spinnerIsVisible() {
-  return get(spinnerIdx) > 0;
+  return get(spinnerCmd) > 0;
 }
 
 export function spinnerShow() {
-  const newSpinnerState = get(spinnerIdx) + 1;
-  set2(spinnerIdx, newSpinnerState, null, false);
+  const newSpinnerState = get(spinnerCmd) + 1;
+  set2(spinnerCmd, newSpinnerState, null, false);
   if (newSpinnerState == 1) {
     // we transitioned from 'not visible' to 'visible' state 
-    broadcast(spinnerIdx, true);
+    broadcast(spinnerCmd, true);
   }
   //console.log(`spinnerShow: ${newSpinnerState}`);
 }
 
 export function spinnerHide() {
-  const newSpinnerState = get(spinnerIdx) - 1;
-  set2(spinnerIdx, newSpinnerState, null, false);
+  const newSpinnerState = get(spinnerCmd) - 1;
+  set2(spinnerCmd, newSpinnerState, null, false);
   if (newSpinnerState == 0) {
     // we transitioned from 'visible' to 'not visible' state
-    broadcast(spinnerIdx, false);
+    broadcast(spinnerCmd, false);
   }
   if (newSpinnerState < 0) {
     throw new Error(`negative spinnerState (${newSpinnerState}))`);
@@ -235,10 +225,9 @@ export function spinnerHide() {
 }
 
 export function onSpinner(cb) {
-  return on(spinnerIdx, cb);
+  return on(spinnerCmd, cb);
 }
 
 export function offSpinner(cbId) {
-  off(spinnerIdx, cbId);
+  off(spinnerCmd, cbId);
 }
-
