@@ -50,7 +50,7 @@ export default class Output extends React.Component {
   }
 
   getEditedCells(rowId, colId) {
-    if (this.props.editedCells[rowId] == undefined) {
+    if (this.props.editedCells == undefined || this.props.editedCells[rowId] == undefined) {
       return undefined;
     }
     return this.props.editedCells[rowId][colId];
@@ -175,9 +175,12 @@ RETURNING ${columns};
       colId = colId + 1;
       const position = {rowId: rowId, colId: colId};
 
-      const isEditable = selectedCellPosition.rowId == rowId &&
+      var isEditable = false;
+      if (selectedCellPosition != undefined) {
+        isEditable = selectedCellPosition.rowId == rowId &&
           selectedCellPosition.colId == colId &&
           selectedView == view.SQLQuery;
+      }
 
       let tdStyle = {};
       if (this.getEditedCells(rowId, colId) != undefined) {
