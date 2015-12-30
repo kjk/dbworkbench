@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mime"
 	"net/http"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -72,4 +75,32 @@ func IntAppendIfNotExists(arr []int, n int) []int {
 
 func getMyHost(r *http.Request) string {
 	return "http://" + r.Host
+}
+
+func openDefaultBrowserMac(uri string) error {
+	cmd := exec.Command("open", uri)
+	return cmd.Run()
+}
+
+// https://github.com/skratchdot/open-golang/blob/master/open/exec_windows.go
+
+func opneDefaultBrowserWin2(uri string) error {
+	return exec.Command("cmd", "/c", "start", uri).Run()
+}
+
+func openDefaultBrowserWin(uri string) error {
+	runDll32 := filepath.Join(os.Getenv("SYSTEMROOT"), "System32", "rundll32.exe")
+	return exec.Command(runDll32, "url.dll,FileProtocolHandler", uri).Run()
+}
+
+func openDefaultBrowser(uri string) error {
+	var err error
+	if isMac() {
+		err = openDefaultBrowserMac(uri)
+	} else if isWindows() {
+		err = openDefaultBrowserWin(uri)
+	} else {
+		err = fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+	}
+	return err
 }

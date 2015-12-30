@@ -2,6 +2,15 @@ import * as action from './action.js';
 import * as store from './store.js';
 import 'whatwg-fetch';
 
+function mapObject(o, cb) {
+  let res = [];
+  for (let k in o) {
+    const v = o[k];
+    res.push(cb(k, v));
+  }
+  return res;
+}
+
 function formDataFromObject(params) {
   let form = new FormData();
   for (let k in params) {
@@ -11,7 +20,7 @@ function formDataFromObject(params) {
   return form;
 }
 
-function urlArgsFromObject(params) {
+function urlFragmentFromObject(params) {
   let s = "";
   for (let k in params) {
     const v = encodeURIComponent(params[k]);
@@ -26,7 +35,7 @@ function urlArgsFromObject(params) {
   return s;
 }
 
-function apiCall(method, path, params, cb) {
+function apiCall(method, url, params, cb) {
   const opts = {
     method: method,
     cache: "no-cache"
@@ -34,12 +43,11 @@ function apiCall(method, path, params, cb) {
   if (method == "post") {
     opts.body = formDataFromObject(params);
   } else {
-    path += urlArgsFromObject(params);
+    url += urlFragmentFromObject(params);
   }
 
   let spinnerHidden = false;
   store.spinnerShow();
-  const url = "/api" + path;
   fetch(url, opts)
     .then((resp) => {
       store.spinnerHide();
@@ -65,44 +73,44 @@ function apiCall(method, path, params, cb) {
 }
 
 export function connect(type, url, urlSafe, cb) {
-  var opts = {
+  const params = {
     type: type,
     url: url,
     urlSafe: urlSafe
   };
-  apiCall("post", "/connect", opts, cb);
+  apiCall("post", "/api/connect", params, cb);
 }
 
 export function disconnect(connId, cb) {
-  var opts = { conn_id : connId };
-  apiCall("post", "/disconnect", opts, cb);
+  const params = { conn_id : connId };
+  apiCall("post", "/api/disconnect", params, cb);
 }
 
 export function getTables(connId, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/tables", opts, cb);
+  const params = { conn_id : connId };
+  apiCall("get", "/api/tables", params, cb);
 }
 
 export function getTableStructure(connId, table, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/tables/" + table, opts, cb);
+  const params = { conn_id : connId };
+  apiCall("get", "/api/tables/" + table, params, cb);
 }
 
 export function getTableIndexes(connId, table, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/tables/" + table + "/indexes", opts, cb);
+  const params = { conn_id : connId };
+  apiCall("get", "/api/tables/" + table + "/indexes", params, cb);
 }
 
 export function getTableInfo(connId, table, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/tables/" + table + "/info", opts, cb);
+  const params = { conn_id : connId };
+  apiCall("get", "/api/tables/" + table + "/info", params, cb);
 }
 
 export function getHistory(connId, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/history", opts, function(data) {
-    var rows = [];
-    for (var i in data) {
+  const params = { conn_id : connId };
+  apiCall("get", "/api/history", params, function(data) {
+    let rows = [];
+    for (let i in data) {
       rows.unshift([parseInt(i) + 1, data[i].query, data[i].timestamp]);
     }
     cb({ columns: ["id", "query", "timestamp"], rows: rows });
@@ -110,34 +118,37 @@ export function getHistory(connId, cb) {
 }
 
 export function queryAsync(connId, query, cb) {
-  apiCall("post", "/queryasync", {
+  const params = {
     conn_id: connId,
     query: query
-  }, cb);
+  };
+  apiCall("post", "/api/queryasync", params, cb);
 }
 
 export function queryAsyncStatus(connId, queryId, cb) {
-  apiCall("post", "/queryasyncstatus", {
+  const params = {
     conn_id: connId,
     query_id: queryId
-  }, cb);
+  };
+  apiCall("post", "/api/queryasyncstatus", params, cb);
 }
 
 export function queryAsyncData(connId, queryId, start, count, cb) {
-  apiCall("post", "/queryasyncdata", {
+  const params = {
     conn_id: connId,
     query_id: queryId,
     start: start,
     count: count
-  }, cb);
+  };
+  apiCall("post", "/api/queryasyncdata", params, cb);
 }
 
 export function getBookmarks(cb) {
-  apiCall("get", "/getbookmarks", {}, cb);
+  apiCall("get", "/api/getbookmarks", {}, cb);
 }
 
 export function addBookmark(bookmark, cb) {
-  var opts = {
+  const params = {
     id: bookmark["id"],
     nick: bookmark["nick"],
     type: bookmark["type"],
@@ -147,44 +158,52 @@ export function addBookmark(bookmark, cb) {
     user: bookmark["user"],
     password: bookmark["password"],
   };
-  apiCall("post", "/addbookmark", opts, cb);
+  apiCall("post", "/api/addbookmark", params, cb);
 }
 
 export function removeBookmark(id, cb) {
-  var opts = { id: id };
-  apiCall("post", "/removebookmark", opts, cb);
+  const params = { id: id };
+  apiCall("post", "/api/removebookmark", params, cb);
 }
 
 export function getActivity(connId, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/activity", opts, cb);
+  const params = { conn_id : connId };
+  apiCall("get", "/api/activity", params, cb);
 }
 
 export function executeQuery(connId, query, cb) {
-  apiCall("post", "/query", {
+  const params = {
     conn_id : connId,
     query: query
-  }, cb);
+  };
+  apiCall("post", "/api/query", params, cb);
 }
 
 export function explainQuery(connId, query, cb) {
-  apiCall("post", "/explain", {
+  const params = {
     conn_id: connId,
     query: query
-  }, cb);
+  };
+  apiCall("post", "/api/explain", params, cb);
 }
 
 export function getConnectionInfo(connId, cb) {
-  var opts = { conn_id : connId };
-  apiCall("get", "/connection", opts, function(data) {
-    var rows = [];
-    for (var key in data) {
+  const params = { conn_id : connId };
+  apiCall("get", "/api/connection", params, function(data) {
+    //const rows = mapObject(data, (k, v) => [k, v]);
+    let rows = [];
+    for (let key in data) {
       rows.push([key, data[key]]);
     }
-
-    cb({
+    const res = {
       columns: ["attribute", "value"],
       rows: rows
-    });
+    }; 
+    cb(res);
   });
+}
+
+export function launchBrowserWithURL(url) {
+  const params = { url: url };
+  apiCall("get", "/api/launchbrowser", params);
 }

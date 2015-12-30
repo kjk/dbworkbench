@@ -809,8 +809,10 @@ func handleActivity(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	serveJSON(w, r, res)
 }
 
-// GET /api/schemas
-// Note: not used by frontend
+/*
+GET /api/schemas
+Note: not used by frontend
+*/
 func handleGetSchemas(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	updateConnectionLastAccess(ctx.ConnInfo.ConnectionID)
 	names, err := ctx.ConnInfo.Client.Schemas()
@@ -895,10 +897,12 @@ func handleTablesDispatch(ctx *ReqContext, w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// GET /api/userinfo
-// Returns information about the user
-// Arguments:
-//  - jsonp : jsonp wrapper, optional
+/*
+GET /api/userinfo
+args:
+  jsonp : jsonp wrapper, optional
+Returns information about the user
+*/
 func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	jsonp := strings.TrimSpace(r.FormValue("jsonp"))
 	//LogInfof("User: %#v\n", ctx.User)
@@ -914,6 +918,30 @@ func handleUserInfo(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	}
 	LogVerbosef("v: %#v\n", v)
 	serveJSONP(w, r, v, jsonp)
+}
+
+/*
+GET /api/launchbrowser
+args:
+  url : url to open in the default browser
+*/
+func handleLaunchBrowser(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
+	url := strings.TrimSpace(r.FormValue("url"))
+	LogInfof("url: '%s'\n", url)
+
+	if url == "" {
+		serveJSONError(w, r, "'url' parameter is missing")
+		return
+	}
+
+	err := openDefaultBrowser(url)
+	if err != nil {
+		LogError(err.Error())
+	}
+
+	v := struct {
+	}{}
+	serveJSON(w, r, v)
 }
 
 func registerHTTPHandlers() {
@@ -937,9 +965,8 @@ func registerHTTPHandlers() {
 	http.HandleFunc("/api/queryasync", withCtx(handleQueryAsync, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/queryasyncstatus", withCtx(handleQueryAsyncStatus, MustHaveConnection|IsJSON))
 	http.HandleFunc("/api/queryasyncdata", withCtx(handleQueryAsyncData, MustHaveConnection|IsJSON))
-
 	http.HandleFunc("/api/userinfo", withCtx(handleUserInfo, IsJSON))
-
+	http.HandleFunc("/api/launchbrowser", withCtx(handleLaunchBrowser, IsJSON))
 	http.HandleFunc("/showmyhost", handleShowMyHost)
 }
 
