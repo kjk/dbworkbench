@@ -19,7 +19,7 @@ export default class QueryEditBar extends React.Component {
   }
 
   togglePopover() {
-    this.setState({ isOpen: !this.state.isOpen })
+    this.setState({ isOpen: !this.state.isOpen });
   }
 
   handleSaveChanges() {

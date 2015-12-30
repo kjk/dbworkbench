@@ -119,12 +119,12 @@ class Dropdown extends React.Component {
                 </button>
                 <h4 className="modal-title">{this.state.selectedView}</h4>
               </div>
-              <div className="modal-body">
 
-              <Output
-                style={modalOutputStyles}
-                results={this.state.results}
-                isSidebar={true}/>
+              <div className="modal-body">
+                <Output
+                  style={modalOutputStyles}
+                  results={this.state.results}
+                  isSidebar={true}/>
               </div>
             </div>
 
