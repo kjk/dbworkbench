@@ -39,6 +39,7 @@ export default class QueryEditBar extends React.Component {
   handleSQLPreview() {
     console.log("handleSQLPreview");
     var query = this.props.generateQuery();
+    query = query.split(";").join("\n");
 
     this.setState({
       modalIsOpen: true,
@@ -60,6 +61,7 @@ export default class QueryEditBar extends React.Component {
         fontSize              : '12px',
         background            : '#3B8686',
         color                 : '#fff',
+        whiteSpace            : 'pre',
       }
     };
 
