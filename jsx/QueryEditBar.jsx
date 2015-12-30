@@ -1,32 +1,26 @@
 import React from 'react';
-import Modal from 'react-modal';
 import * as action from './action.js';
+import Popover from 'react-popover';
+
 
 export default class QueryEditBar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
-    this.handleSQLPreview = this.handleSQLPreview.bind(this);
+    this.handleToggleSQLPreview = this.handleToggleSQLPreview.bind(this);
 
     // 1) Is there a way to move discard changes to here without using action?
     // 2) maybe move generateQuery from output to here?
 
     this.state = {
-      modalIsOpen: false,
-      modalText: "",
+      isOpen: false,
+      popOverText: "",
     };
   }
 
-  closeModal() {
-    this.setState({modalIsOpen: false});
+  togglePopover() {
+    this.setState({ isOpen: !this.state.isOpen })
   }
-
-  handleModalCloseRequest() {
-    // opportunity to validate something and keep the modal open even if it
-    // requested to be closed
-    this.closeModal();
-  }
-
 
   handleSaveChanges() {
     console.log("handleSaveChanges ");
@@ -36,51 +30,37 @@ export default class QueryEditBar extends React.Component {
     action.executeQuery(query);
   }
 
-  handleSQLPreview() {
+  handleToggleSQLPreview() {
     console.log("handleSQLPreview");
-    var query = this.props.generateQuery();
-    query = query.split(";").join("\n");
+    if (this.state.isOpen){
+      this.setState({isOpen: false});
+    } else {
+      var query = this.props.generateQuery();
+      query = query.split(";").join("\n");
 
-    this.setState({
-      modalIsOpen: true,
-      modalText: query,
-    });
+      this.setState({
+        popOverText: query,
+        isOpen: true,
+      });
+    }
   }
 
   render() {
-    var modalStyle = {
-      content : {
-        display               : 'block',
-        overflow              : 'auto',
-        top                   : '40%',
-        left                  : '50%',
-        right                 : 'none',
-        bottom                : 'none',
-        maxWidth              : '60%',
-        transform             : 'translate(-50%, -50%)',
-        fontSize              : '12px',
-        background            : '#3B8686',
-        color                 : '#fff',
-        whiteSpace            : 'pre',
-      }
-    };
-
-    var appElement = document.getElementById('main');
-    Modal.setAppElement(appElement);
-
     return (
       <div id="query_edit_bar">
         <button className="discard_changes" onClick={this.props.onHandleDiscardChanges}>Discard Changes</button>
         <div className="row_number">{this.props.numberOfRowsEdited} edited rows</div>
-        <button className="sql_preview" onClick={this.handleSQLPreview.bind(this)}>{!this.state.modalIsOpen ? "Show SQL Preview" : "Hide SQL Preview"}</button>
-        <button className="save_changes" onClick={this.handleSaveChanges.bind(this)}>Save Changes</button>
 
-        <Modal
-            isOpen={this.state.modalIsOpen}
-            onRequestClose={this.closeModal.bind(this)}
-            style={modalStyle} >
-            {this.state.modalText}
-        </Modal>
+        <Popover
+          isOpen={this.state.isOpen}
+          body={this.state.popOverText}
+          target={"sql_preview"}
+          targetElement={"sql_preview"}
+          tipSize={10}>
+          <button className="sql_preview" onClick={this.handleToggleSQLPreview.bind(this)}>{!this.state.isOpen ? "Show SQL Preview" : "Hide SQL Preview"}</button>
+        </Popover>
+
+        <button className="save_changes" onClick={this.handleSaveChanges.bind(this)}>Save Changes</button>
       </div>
     );
   }

@@ -185,7 +185,7 @@ RETURNING ${columns};
         tdStyle = {
           background: '#7DCED2',
           color: '#ffffff',
-          border: 'solid 1px #3B8686',
+          // border: 'solid 1px #3B8686',
         };
       }
 

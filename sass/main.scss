@@ -710,6 +710,27 @@ a.disabled {
   right: 10px;
 }
 
+.Popover-body {
+  padding: 4rem;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 32px 64px;
+  padding: 2rem 4rem;
+  background: hsl(0, 0%, 27%);
+  color: white;
+  border-radius: 0.3rem;
+  z-index: 10000;
+  white-space: pre;
+  font-size: 12px;
+}
+
 
 /*.overlay {
   position: fixed;
