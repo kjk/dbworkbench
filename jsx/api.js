@@ -1,4 +1,5 @@
 import * as action from './action.js';
+import * as store from './store.js';
 import 'whatwg-fetch';
 
 function formDataFromObject(params) {
@@ -37,11 +38,11 @@ function apiCall(method, path, params, cb) {
   }
 
   let spinnerHidden = false;
-  action.spinnerShow();
+  store.spinnerShow();
   const url = "/api" + path;
   fetch(url, opts)
     .then((resp) => {
-      action.spinnerHide();
+      store.spinnerHide();
       spinnerHidden = true;
       if (resp.ok) {
         if (cb) {
@@ -56,7 +57,7 @@ function apiCall(method, path, params, cb) {
     })
     .catch( (error) => {
       if (!spinnerHidden) {
-        action.spinnerHide();
+        store.spinnerHide();
       }
       const msg = error.message;
       action.alertBar(`Something is wrong. Please restart the application. Error: '${msg}'`);
