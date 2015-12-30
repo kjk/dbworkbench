@@ -8,6 +8,7 @@ import MainContainer from'./MainContainer.jsx';
 import utils from './utils.js';
 import * as api from './api.js';
 import * as action from './action.js';
+import * as store from './store.js';
 import view from './view.js';
 
 const minSidebarDx = 128;
@@ -341,7 +342,7 @@ class App extends React.Component {
         setTimeout(this.getQueryAsyncStatus, 1000);
       } else {
         this.getQueryAsyncData();
-        action.spinnerHide();
+        store.spinnerHide();
       }
     });
   }
@@ -349,7 +350,7 @@ class App extends React.Component {
   handleQueryAsync(query) {
     console.log("handleQueryAsync", query);
     const connId = this.state.connectionId;
-    action.spinnerShow(); // TODO: probably wil not get reset in case of error response 
+    store.spinnerShow(); // TODO: probably wil not get reset in case of error response 
     api.queryAsync(connId, query, (data) => {
       this.setState({
         queryIdInProgress: data.query_id,

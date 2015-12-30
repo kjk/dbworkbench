@@ -13,35 +13,35 @@ let actionCallbacks = [];
 // we don't bother recycling them after off()
 let currCid = 0;
 
-function getActionName(idx) {
-  return actionNames[idx] + " (" + idx + ")";
+function actionName(idx) {
+  return `${actionNames[idx]} (${idx})`;
 }
 
 function broadcast(actionIdx) {
-  var callbacks = actionCallbacks[actionIdx];
-  if (!callbacks || callbacks.length === 0) {
-    console.log("action.broadcast: no callback for action", getActionName(actionIdx));
+  const callbacks = actionCallbacks[actionIdx];
+  if (!callbacks || callbacks.length == 0) {
+    console.log("action.broadcast: no callback for action", actionName(actionIdx));
     return;
   }
 
-  var args = Array.prototype.slice.call(arguments, 1);
-  callbacks.map(function(cbInfo) {
-    var cb = cbInfo[0];
-    console.log("broadcastAction: calling callback for action", getActionName(actionIdx), "with", args, "args");
+  const args = Array.prototype.slice.call(arguments, 1);
+  for(let cbInfo of callbacks) {
+    const cb = cbInfo[0];
+    console.log("action.broadcast: action: ", actionName(actionIdx), "args: ", args);
     if (args.length > 0) {
       cb.apply(null, args);
     } else {
       cb();
     }
-  });
+  }
 }
 
 // subscribe to be notified about an action.
 // returns an id that can be used to unsubscribe with off()
 function on(action, cb) {
   currCid++;
-  var callbacks = actionCallbacks[action];
-  var el = [cb, currCid];
+  const callbacks = actionCallbacks[action];
+  let el = [cb, currCid];
   if (!callbacks) {
     actionCallbacks[action] = [el];
   } else {
@@ -51,17 +51,17 @@ function on(action, cb) {
 }
 
 function off(actionIdx, cbId) {
-  var callbacks = actionCallbacks[actionIdx];
+  const callbacks = actionCallbacks[actionIdx];
   if (callbacks && callbacks.length > 0) {
-    var n = callbacks.length;
-    for (var i = 0; i < n; i++) {
+    const n = callbacks.length;
+    for (let i = 0; i < n; i++) {
       if (callbacks[i][1] === cbId) {
         callbacks.splice(i, 1);
         return;
       }
     }
   }
-  console.log("action.off: didn't find callback id", cbId, "for action", getActionName(actionIdx));
+  console.log(`action.off: didn't find callback '${cbId}' for '${actionName(actionIdx)}'`);
 }
 
 /* actions specific to an app */
@@ -73,10 +73,9 @@ const executeQueryIdx = 2;
 const explainQueryIdx = 3;
 const disconnectDatabaseIdx = 4;
 const alertBarIdx = 5;
-const spinnerIdx = 6;
-const resetPaginationIdx = 7;
-const selectedCellPositionIdx = 8;
-const editedCellsIdx = 9;
+const resetPaginationIdx = 6;
+const selectedCellPositionIdx = 7;
+const editedCellsIdx = 8;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -86,7 +85,6 @@ var actionNames = [
   "explainQuery",
   "disconnectDatabase",
   "alertBar",
-  "spinner",
   "resetPagination",
   "selectedCellPosition",
   "editedCells",
@@ -162,43 +160,6 @@ export function onAlertBar(cb) {
 
 export function offAlertBar(cbId) {
   off(alertBarIdx, cbId);
-}
-
-// there's only one logical spinner whose state is
-// reflected by spinner component. For simplicity we
-// want to nest calls to spinnerShow()/spinnerHide()
-// and we only notify subscribers on state transitions
-let spinnerState = 0;
-
-export function spinnerIsVisible() {
-  return spinnerState > 0;
-}
-
-export function spinnerShow() {
-  spinnerState += 1;
-  if (spinnerState == 1) {
-    // we transitioned from 'not visible' to 'visible' state 
-    broadcast(spinnerIdx, true);
-  }
-}
-
-export function spinnerHide() {
-  spinnerState -= 1;
-  if (spinnerState == 0) {
-    // we transitioned from 'visible' to 'not visible' state
-    broadcast(spinnerIdx, false);
-  }
-  if (spinnerState < 0) {
-    throw new Error(`negative spinnerState (${spinnerState}))`);
-  }
-}
-
-export function onSpinner(cb) {
-  return on(spinnerIdx, cb);
-}
-
-export function offSpinner(cbId) {
-  off(spinnerIdx, cbId);
 }
 
 export function resetPagination(toggle) {

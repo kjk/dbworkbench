@@ -1,5 +1,5 @@
 import React from 'react';
-import * as action from './action.js';
+import * as store from './store.js';
 
 export default class SpinnerCircle extends React.Component {
 
@@ -7,7 +7,7 @@ export default class SpinnerCircle extends React.Component {
     super(props, context);
     this.handleToggleSpinner = this.handleToggleSpinner.bind(this);
     this.state = {
-      visible: action.spinnerIsVisible()
+      visible: store.spinnerIsVisible()
     };
   }
 
@@ -17,13 +17,13 @@ export default class SpinnerCircle extends React.Component {
   
   componentWillMount() {
     if (!this.props.forceVisible) {
-      this.cidSpinner = action.onSpinner(this.handleToggleSpinner);
+      this.cidSpinner = store.onSpinner(this.handleToggleSpinner);
     }
   }
 
   componentWillUnmount() {
     if (!this.props.forceVisible) {
-      action.offSpinner(this.cidSpinner);
+      store.offSpinner(this.cidSpinner);
     }
   }
 
