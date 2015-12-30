@@ -2,6 +2,8 @@ import React from 'react';
 import * as action from './action.js';
 import view from './view.js';
 import Modal from 'react-modal';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
 
 export default class DbNav extends React.Component {
   constructor(props, context) {
@@ -87,7 +89,6 @@ export default class DbNav extends React.Component {
   }
 
   render() {
-    //console.log("DbNav.render: view: ", this.props.view);
     const currentView = this.props.view;
     const children = view.MainTabViews.map(function(viewName) {
       const handler = function() {
@@ -102,12 +103,18 @@ export default class DbNav extends React.Component {
       }
     });
 
+    const tooltip = (
+      <Tooltip id="feedback">Let us know how we can improve dbHero</Tooltip>
+    );
+
     return (
       <div id="nav">
         <ul>
           {children}
         </ul>
-        <button className="feedback-button" onClick={this.handleFeedbackButton.bind(this)}>Contact</button>
+        <OverlayTrigger placement="left" overlay={tooltip}>
+          <button className="feedback-button" onClick={this.handleFeedbackButton.bind(this)}>Feedback</button>
+        </OverlayTrigger>
         {this.renderModal()}
       </div>
     );
