@@ -179,9 +179,10 @@ RETURNING ${columns};
           selectedCellPosition.colId == colId &&
           selectedView == view.SQLQuery;
 
+      let tdStyle = {};
       if (this.getEditedCells(rowId, colId) != undefined) {
         value = this.getEditedCells(rowId, colId);
-        var tdStyle = {
+        tdStyle = {
           background: '#7DCED2',
           color: '#ffffff',
           border: 'solid 1px #3B8686',
