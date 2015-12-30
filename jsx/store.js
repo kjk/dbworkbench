@@ -5,14 +5,19 @@ Store is a collection global variables and ability to get
 notified when the value changes.
 
 Apis:
-cid = store.on(variableIdx, cb);
+
+cid = store.on(keyIdx, cb);
+cid = store.onMap(keyIdx, subkey, cb);
+
 store.off(cid);
 
-store.set(variableIdx, value);
-store.delete(variableIdx);
+store.set(keyIdx, value);
+store.setMap(keyIdx, subkey, cb);
 
-cid = store.onMap(variableIdx, key, cb);
-store.setMap(variableIdx, key, cb);
+store.del(keyIdx);
+store.delMap(keyIdx, subkey);
+
+del() and delMap() are useful for freeing memory for a given value.
 
 Callbacks always take one argument: new value of the variable.
 */
@@ -27,6 +32,9 @@ let store = {};
 // current global callback id to hand out in on()
 // we don't bother recycling them after off()
 let currCid = 0;
+
+// is used to mark deleted values
+const deletedValue = {};
 
 function keyNamePretty(keyIdx) {
   return `${keyNames[keyIdx]} (${keyIdx})`;
@@ -59,14 +67,16 @@ function on2(keyIdx, cb, subkey) {
   currCid++;
   const keyStr = keyToStr(keyIdx, subkey);
   const cbInfo = [cb, currCid];
-  let newValAndCbs = store[keyStr];
-  if (!newValAndCbs) {
+  let valAndCbs = store[keyStr];
+  if (!valAndCbs) {
     const defVal = defValues[keyIdx];
-    newValAndCbs = [defVal, cbInfo];
+    store[keyStr] = [defVal, cbInfo];
   } else {
-    newValAndCbs.push(cbInfo);
+    if (deletedValue === valAndCbs[0]) {
+      throw new Error(`trying to subscribe to delete value with key ${keyStr}`);
+    }
+    valAndCbs.push(cbInfo);
   }
-  store[keyStr] = newValAndCbs;
   return currCid;
 }
 
@@ -108,6 +118,9 @@ function get2(keyIdx, subkey) {
     store[keyStr] = [defVal];
     return defVal;
   }
+  if (deletedValue === valAndCbs[0]) {
+    throw new Error(`trying to get delete value with key ${keyStr}`);
+  }
   return valAndCbs[0];
 }
 
@@ -124,6 +137,9 @@ shouldBroadcast: some values are synthetic values i.e. the value we broadcast
                  is not the same as raw value
 */
 function set2(keyIdx, newVal, subkey, shouldBroadcast) {
+  if (deletedValue === newVal) {
+    shouldBroadcast = false;
+  }
   let keyStr = keyToStr(keyIdx, subkey);
   const valAndCbs = store[keyStr];
   if (!valAndCbs) {
@@ -132,8 +148,13 @@ function set2(keyIdx, newVal, subkey, shouldBroadcast) {
     if (shouldBroadcast) {
       broadcast(keyIdx, defVal, subkey);
     }
+    return;
   }
   const prevVal = valAndCbs[0];
+  if (deletedValue === prevVal) {
+    throw new Error(`trying to set delete value with key ${keyStr}`);
+  }
+
   // optimization: don't notify if those are exactly the same objects
   // TODO: also do a by-value compare
   if (prevVal === newVal) {
@@ -151,6 +172,15 @@ export function set(keyIdx, newVal) {
 
 export function setMap(keyIdx, newVal, subkey) {
   set2(keyIdx, newVal, subkey, true);
+}
+
+// TODO: not sure if should broadcast deletions or not
+export function del(keyIdx) {
+  set2(keyIdx, deletedValue, null, false);
+}
+
+export function delMap(keyIdx, subkey) {
+  set2(keyIdx, deletedValue, subkey, false);
 }
 
 /* things specific to an app */
