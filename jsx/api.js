@@ -56,11 +56,14 @@ function apiCall(method, url, params, cb) {
         action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
         return;
       }
-      if (!cb) {
-        return;
-      }
       resp.json().then( (json) => {
-        cb(json);
+        if (cb) {
+          cb(json);
+        }
+        return;
+      })
+      .catch( (error) => {
+        action.alertBar(`Something is wrong. Please restart the application. Error parsing json response"`);
         return;
       });
     })

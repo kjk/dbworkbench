@@ -16,7 +16,9 @@ const maxBookmarks = 10;
 
 // we need unique ids for unsaved bookmarks. We use negative numbers
 // to make sure they don't clash with saved bookmarks (those have positive numbers)
-let emptyBookmarkId = -1;
+let emptyBookmarkId = -10;
+
+const pagilaDemoBookmarkId = -1;
 
 // connecting is async process which might be cancelled
 // we use this to uniquely identify connection attempt so that
@@ -58,6 +60,22 @@ function newEmptyBookmark() {
       port: "" ,
     };
 }
+
+function newTestDbBookmark() {
+  return {
+      id: pagilaDemoBookmarkId,
+      type: dbTypePostgres,
+      nick: "demo database",
+      database: "pagila_demo",
+      url: "",
+      host: "banana-pepper-468.db.databaselabs.io",
+      user: "pagila_demo_user",
+      password: "pwd",
+      port: "" ,
+    };
+}
+
+const testDatabases = [newTestDbBookmark()];
 
 class ConnectionWindow extends React.Component {
   constructor(props, context) {
@@ -109,7 +127,13 @@ class ConnectionWindow extends React.Component {
   }
 
   getSelectedBookmark() {
-    return this.state.bookmarks[this.state.selectedBookmarkIdx];
+    const bookmarks = this.state.bookmarks;
+    const nBookmarks = bookmarks.length;
+    const i = this.state.selectedBookmarkIdx;
+    if (i < nBookmarks) {
+      return bookmarks[i];
+    }
+    return testDatabases[nBookmarks-i];
   }
 
   getBookmarks() {
@@ -223,6 +247,9 @@ class ConnectionWindow extends React.Component {
     let pass = b["password"];
     let db = b["database"];
     let rememberConnection = this.state.remember;
+    if (id == pagilaDemoBookmarkId) {
+      rememberConnection = false;
+    }
 
     let url = "";
     let urlSafe = "";
@@ -280,6 +307,11 @@ class ConnectionWindow extends React.Component {
       b = this.getSelectedBookmark();
       if (!rememberConnection) {
         console.log("did connect, not saving a bookmark");
+        const connId = resp.ConnectionID;
+        const connStr = url;
+        const databaseName = resp.CurrentDatabase;
+        const capabilities = resp.Capabilities;
+        this.props.onDidConnect(connStr, connId, databaseName, capabilities);
         return;
       }
       console.log("did connect, saving a bookmark " + b);
@@ -318,9 +350,9 @@ class ConnectionWindow extends React.Component {
 
     let bookmarks = [];
     for (var i = 0; i < this.state.bookmarks.length; i++) {
-      let b = this.state.bookmarks[i];
-      let id = b["id"];
-      let nick = b["nick"];
+      const b = this.state.bookmarks[i];
+      const id = b["id"];
+      const nick = b["nick"];
 
       let className = "list-group-item";
       if (i == this.state.selectedBookmarkIdx) {
@@ -347,6 +379,42 @@ class ConnectionWindow extends React.Component {
         {bookmarks}
       </div>
     );
+  }
+
+  renderTestDatabases() {
+    let bookmarks = [];
+    const nBookmarks = this.state.bookmarks.length;
+    for (let i = 0; i < testDatabases.length; i++) {
+      const b = testDatabases[i];
+      const id = b["id"];
+      const nick = b["nick"];
+      const idx = i + nBookmarks;
+
+      let className = "list-group-item";
+      if (idx == this.state.selectedBookmarkIdx) {
+        className = "list-group-item active";
+      }
+
+      bookmarks.push(
+        <a key={id} data-custom-attribute={idx} href="#" className={className} onClick={guard("bookmarksEnabled", this.selectBookmark)}>
+          {nick}
+          <i data-custom-attribute={id} onClick={guard("bookmarksEnabled", this.deleteBookmark)} className="fa fa-times pull-right"></i>
+        </a>
+      );
+    }
+
+    return (
+      <div className="list-group list-special">
+        <a href="#" className="list-group-item title" onClick={guard("bookmarksEnabled", this.newConnectionInfo)} >
+          Test databases
+        </a>
+
+        <hr/>
+
+        {bookmarks}
+      </div>
+    );
+
   }
 
   renderFormElements() {
@@ -549,6 +617,7 @@ class ConnectionWindow extends React.Component {
 
           <div className="col-md-4">
             {this.renderBookMarks()}
+            {this.renderTestDatabases()}
           </div>
 
           <div className="col-md-8">

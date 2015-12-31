@@ -50,7 +50,7 @@ func writeHeader(w http.ResponseWriter, code int, contentType string) {
 
 // err can be an error, a string or anything that can be converted to string
 func serveJSONError(w http.ResponseWriter, r *http.Request, errMsg interface{}) {
-	writeHeader(w, 400, "application/json") // Note: maybe different code, like 500?
+	writeHeader(w, 200, "application/json") // Note: maybe different code, like 500?
 	msg := fmt.Sprintf("%s", errMsg)
 	LogErrorf("url: '%s', err: '%s'\n", r.RequestURI, msg)
 	v := struct {
