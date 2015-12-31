@@ -27,9 +27,11 @@ export class Td extends React.Component {
     }
 
     handleKeyDown(e) {
+        console.log(e)
         var ENTER = 13;
-        if( e.keyCode == ENTER ) {
-            console.log("Enter pressed", this)
+        var SHIFT = 16;
+        if( e.keyCode == ENTER && !e.shiftKey) {
+            console.log("Enter pressed without shift", this)
             this.setState({isEditable: false});
         }
     }
