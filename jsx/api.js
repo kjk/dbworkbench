@@ -52,16 +52,17 @@ function apiCall(method, url, params, cb) {
     .then((resp) => {
       store.spinnerHide();
       spinnerHidden = true;
-      if (resp.ok) {
-        if (cb) {
-          return resp.json().then( (json) => {
-            cb(json);
-            return;
-          });
-        }
-      } else {
+      if (!resp.ok) {
         action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
+        return;
       }
+      if (!cb) {
+        return;
+      }
+      resp.json().then( (json) => {
+        cb(json);
+        return;
+      });
     })
     .catch( (error) => {
       if (!spinnerHidden) {
