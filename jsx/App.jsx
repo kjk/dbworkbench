@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import Sidebar from './Sidebar.jsx';
 import AlertBar from './AlertBar.jsx';
-import MainContainer from'./MainContainer.jsx';
+import MainContainer from './MainContainer.jsx';
+import DragBarVert from './DragBarVert.jsx';
 import utils from './utils.js';
 import * as api from './api.js';
 import * as action from './action.js';
@@ -114,10 +115,6 @@ class App extends React.Component {
 
       this.getAllTablesStructures(connId, data);
     });
-  }
-
-  onDragStart(e) {
-    console.log("onDragStart");
   }
 
   componentDidUpdate(props, state) {
@@ -524,12 +521,12 @@ class App extends React.Component {
             selectedTableInfo={this.state.selectedTableInfo}
             databaseName={this.state.databaseName} />
 
-          <div id="side-dragbar"
-            style={dragBarStyle}
-            onMouseDown={this.onMouseDown}
-            onMouseMove={this.onMouseMove}
-            onMouseUp={this.onMouseUp}>
-          </div>
+          <DragBarVert
+            min={minSidebarDx}
+            max={maxSidebarDx}
+            initialX={store.getSidebarDx()}
+            onPosChanged={(dx) => store.setSidebarDx(dx)}
+          />
 
           <MainContainer
             results={this.state.results}

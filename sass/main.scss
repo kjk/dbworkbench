@@ -373,16 +373,6 @@ body {
   min-width: 100%;
 }
 
-#side-dragbar {
-  position: absolute;
-  background-color: #377CE4;
-  min-height: 100%;
-  /*float: right;*/
-  width: 3px;
-  cursor: col-resize;
-  z-index: 1;
-}
-
 .query-content-dragbar {
   position: absolute;
   background-color: #377CE4;
