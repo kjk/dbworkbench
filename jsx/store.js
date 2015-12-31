@@ -185,8 +185,8 @@ const queryCmd = "query";
 const spinnerCmd = "spinner";
 
 var defValues = {
-  queryCmd: null,
-  spinnerCmd: 0
+  "query": null,
+  "spinner": 0
 };
 
 export function onQuery(queryId, cb) { 
