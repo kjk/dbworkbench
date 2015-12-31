@@ -33,10 +33,7 @@ let store = {};
 // we don't bother recycling them after off()
 let currCid = 0;
 
-// is used to mark deleted values
-const deletedValue = {};
-
-function keyToStr(key, subkey) {
+function getFullKey(key, subkey) {
   if (subkey) {
     return key + "-" + subkey;
   }
@@ -44,49 +41,42 @@ function keyToStr(key, subkey) {
 }
 
 function broadcast(key, val, subkey) {
-  const keyStr = keyToStr(key, subkey);
-  const valAndCbs = store[keyStr];
+  const fullKey = getFullKey(key, subkey);
+  const valAndCbs = store[fullKey];
   const n = valAndCbs.length;
   if (n < 2) {
-    console.log(`store.broadcast: no callbacks for key '${keyStr}'`);
+    console.log(`store.broadcast: no callbacks for key '${fullKey}'`);
     return;
   }
 
-  console.log(`store.broadcast: key: '${keyStr}', val: '${val}', nObservers: ${n-1}`);
+  console.log(`store.broadcast: key: '${fullKey}', val: '${val}', nObservers: ${n-1}`);
   for (let i = 1; i < n; i++) {
     const cb = valAndCbs[i][0];
     cb(val);
   }
 }
 
-function on2(key, cb, subkey) {
+export function onMap(key, subkey, cb) {
   currCid++;
-  const keyStr = keyToStr(key, subkey);
+  const fullKey = getFullKey(key, subkey);
   const cbInfo = [cb, currCid];
-  let valAndCbs = store[keyStr];
+  let valAndCbs = store[fullKey];
   if (!valAndCbs) {
     const defVal = defValues[key];
-    store[keyStr] = [defVal, cbInfo];
+    store[fullKey] = [defVal, cbInfo];
   } else {
-    if (deletedValue === valAndCbs[0]) {
-      throw new Error(`trying to subscribe to delete value with key ${keyStr}`);
-    }
     valAndCbs.push(cbInfo);
   }
   return currCid;
 }
 
 export function on(key, cb) {
-  return on2(key, cb);
+  return onMap(key, null, cb);
 }
 
-export function onMap(key, subkey, cb) {
-  return on2(key, cb, subkey);
-}
-
-function off2(key, cbId, subkey) {
-  const keyStr = keyToStr(key, subkey);
-  const valAndCbs = store[keyStr];
+export function offMap(key, subkey, cbId) {
+  const fullKey = getFullKey(key, subkey);
+  const valAndCbs = store[fullKey];
   const n = valAndCbs.length;
   for (let i = 1; i < n; i++) {
     const cbId2 = valAndCbs[i][1];
@@ -95,37 +85,24 @@ function off2(key, cbId, subkey) {
       return;
     }
   }
-  console.log(`store.off: didn't find callback '${cbId}' for '{keyStr}'`);
+  console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
 }
 
 export function off(key, cbId) {
-  off2(key, cbId);
+  offMap(key, null, cbId);
 }
 
-export function offMap(key, subkey, cbId) {
-  off2(key, cbId, subkey); 
-}
-
-function get2(key, subkey) {
-  let keyStr = keyToStr(key, subkey);
-  const valAndCbs = store[keyStr];
+export function getMap(key, subkey) {
+  let fullKey = getFullKey(key, subkey);
+  const valAndCbs = store[fullKey];
   if (!valAndCbs) {
-    const defVal = defValues[key]; 
-    store[keyStr] = [defVal];
-    return defVal;
-  }
-  if (deletedValue === valAndCbs[0]) {
-    throw new Error(`trying to get delete value with key ${keyStr}`);
+    return defValues[key];
   }
   return valAndCbs[0];
 }
 
 export function get(key) {
-  return get2(key);
-}
-
-export function getMap(key, subkey) {
-  return get2(key, subkey);
+  return getMap(key);
 }
 
 /*
@@ -133,22 +110,15 @@ shouldBroadcast: some values are synthetic values i.e. the value we broadcast
                  is not the same as raw value
 */
 function set2(key, newVal, subkey, shouldBroadcast) {
-  if (deletedValue === newVal) {
-    shouldBroadcast = false;
-  }
-  let keyStr = keyToStr(key, subkey);
-  const valAndCbs = store[keyStr];
+  let fullKey = getFullKey(key, subkey);
+  let valAndCbs = store[fullKey];
+  let prevVal;
   if (!valAndCbs) {
-    const defVal = defValues[key]; 
-    store[keyStr] = [defVal];
-    if (shouldBroadcast) {
-      broadcast(key, defVal, subkey);
-    }
-    return;
-  }
-  const prevVal = valAndCbs[0];
-  if (deletedValue === prevVal) {
-    throw new Error(`trying to set delete value with key ${keyStr}`);
+    store[fullKey] = [newVal];
+    prevVal = defValues[key]; 
+  } else {
+    prevVal = valAndCbs[0];
+    valAndCbs[0] = newVal;
   }
 
   // optimization: don't notify if those are exactly the same objects
@@ -156,27 +126,28 @@ function set2(key, newVal, subkey, shouldBroadcast) {
   if (prevVal === newVal) {
     return;
   }
-  valAndCbs[0] = newVal;
   if (shouldBroadcast) {
     broadcast(key, newVal, subkey);
   }
-}
-
-export function set(key, newVal) {
-  set2(key, newVal, null, true);
 }
 
 export function setMap(key, newVal, subkey) {
   set2(key, newVal, subkey, true);
 }
 
-// TODO: not sure if should broadcast deletions or not
-export function del(key) {
-  set2(key, deletedValue, null, false);
+export function set(key, newVal) {
+  set2(key, newVal, null, true);
 }
 
+// TODO: not sure if should broadcast deletions or not
 export function delMap(key, subkey) {
-  set2(key, deletedValue, subkey, false);
+  const fullKey = getFullKey(key, subkey);
+  delete store[fullKey];
+}
+
+// TODO: not sure if should broadcast deletions or not
+export function del(key) {
+  delMap(key);
 }
 
 /* things specific to an app */
