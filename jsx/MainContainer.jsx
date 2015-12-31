@@ -3,6 +3,7 @@ import DbNav from './DbNav.jsx';
 import Input from './Input.jsx';
 import Output from './Output.jsx';
 import view from './view.js';
+import * as store from './store.js';
 
 export default class MainContainer extends React.Component {
   constructor(props, context) {
@@ -12,10 +13,27 @@ export default class MainContainer extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
 
     this.state = {
+      sidebarDx: store.getSidebarDx(),
       dragBarPosition: 200,
       dragging: false,
     };
   }
+
+  componentWillMount() {
+    this.cidSidebarDx = store.onSidebarDx( (dx) => {
+      // TODO: maybe it's safe to update the DOM node
+      // for style.width changes? It would avoid re-rendering
+      // the children
+      this.setState({
+        sidebarDx: dx
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    store.offSidebarDx(this.cidSidebarDx);
+  }
+
   componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove);
@@ -70,7 +88,7 @@ export default class MainContainer extends React.Component {
     var withInput = (this.props.selectedView === view.SQLQuery);
 
     var divStyle = {
-      left: this.props.dragBarPosition + 'px',
+      left: this.state.sidebarDx + 'px',
     };
 
     // var results = this.props.results

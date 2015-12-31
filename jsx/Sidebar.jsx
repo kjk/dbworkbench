@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Output from './Output.jsx';
+import filesize from 'filesize';
 import * as action from './action.js';
 import * as api from './api.js';
-import filesize from 'filesize';
+import * as store from './store.js';
 
 function isEmptyObject(object) {
   let name;
@@ -191,12 +192,22 @@ export default class Sidebar extends React.Component {
 
     this.state = {
       dragging: false,
+      sidebarDx: store.getSidebarDx(),
       tables: [],
     };
   }
 
   componentWillMount() {
     this.refreshTables();
+    this.cidSidebarDx = store.onSidebarDx( (dx) => {
+      this.setState({
+        sidebarDx: dx
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    store.offSidebarDx(this.cidSidebarDx);
   }
 
   handleRefreshDatabase(e) {
@@ -242,7 +253,7 @@ export default class Sidebar extends React.Component {
   render() {
     var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
     var divStyle = {
-        width: this.props.dragBarPosition + 'px',
+        width: this.state.sidebarDx + 'px',
     };
 
     if (this.props.selectedTableInfo != null) {

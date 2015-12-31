@@ -152,53 +152,61 @@ export function del(key) {
 
 /* things specific to an app */
 
-const queryCmd = "query";
-const spinnerCmd = "spinner";
+const spinnerKey = "spinner";
+const sidebarDxKey = "sidebarDx";
 
 var defValues = {
-  "query": null,
-  "spinner": 0
+  "spinner": 0,
+  "sidebarDx": 250,
 };
 
-export function onQuery(queryId, cb) { 
-  return onMap(queryCmd, queryId, cb);
-}
-
-export function offQuery(queryId, cbId) {
-  offMap(queryCmd, queryId, cbId);
-}
-
 export function spinnerIsVisible() {
-  return get(spinnerCmd) > 0;
+  return get(spinnerKey) > 0;
 }
 
 export function spinnerShow() {
-  const newSpinnerState = get(spinnerCmd) + 1;
-  set2(spinnerCmd, newSpinnerState, null, false);
-  if (newSpinnerState == 1) {
+  const newVal = get(spinnerKey) + 1;
+  set2(spinnerKey, newVal, null, false);
+  if (newVal == 1) {
     // we transitioned from 'not visible' to 'visible' state 
-    broadcast(spinnerCmd, true);
+    broadcast(spinnerKey, true);
   }
-  //console.log(`spinnerShow: ${newSpinnerState}`);
+  //console.log(`spinnerShow: ${newVal}`);
 }
 
 export function spinnerHide() {
-  const newSpinnerState = get(spinnerCmd) - 1;
-  set2(spinnerCmd, newSpinnerState, null, false);
-  if (newSpinnerState == 0) {
+  const newVal = get(spinnerKey) - 1;
+  set2(spinnerKey, newVal, null, false);
+  if (newVal == 0) {
     // we transitioned from 'visible' to 'not visible' state
-    broadcast(spinnerCmd, false);
+    broadcast(spinnerKey, false);
   }
-  if (newSpinnerState < 0) {
-    throw new Error(`negative spinnerState (${newSpinnerState}))`);
+  if (newVal < 0) {
+    throw new Error(`negative spinnerState (${newVal}))`);
   }
-  //console.log(`spinnerHide: ${newSpinnerState}`);
+  //console.log(`spinnerHide: ${newVal}`);
 }
 
 export function onSpinner(cb) {
-  return on(spinnerCmd, cb);
+  return on(spinnerKey, cb);
 }
 
 export function offSpinner(cbId) {
-  off(spinnerCmd, cbId);
+  off(spinnerKey, cbId);
+}
+
+export function onSidebarDx(cb) {
+  return on(sidebarDxKey, cb);
+}
+
+export function offSidebarDx(cbId) {
+  return off(sidebarDxKey, cbId);
+}
+
+export function getSidebarDx() {
+  return get(sidebarDxKey);
+}
+
+export function setSidebarDx(newVal) {
+  set(sidebarDxKey, newVal);
 }

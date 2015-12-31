@@ -79,7 +79,7 @@ class App extends React.Component {
       errorVisible: false,
 
       dragging: false,
-      dragBarPosition: 250,
+      dragBarPosition: store.getSidebarDx(),
 
       capabilities: {},
     };
@@ -153,9 +153,7 @@ class App extends React.Component {
     if ((e.pageX < minSidebarDx) || (e.pageX > maxSidebarDx)) {
       return;
     }
-    this.setState({
-      dragBarPosition: e.pageX,
-    });
+    store.setSidebarDx(e.pageX);
     e.stopPropagation();
     e.preventDefault();
   }
@@ -333,7 +331,7 @@ class App extends React.Component {
     }
     const connId = this.state.connectionId;
     api.queryAsyncStatus(connId, queryId, (data) => {
-      const queryStatus = data; 
+      const queryStatus = data;
       this.setState({
         queryStatus: queryStatus
       });
@@ -350,7 +348,7 @@ class App extends React.Component {
   handleQueryAsync(query) {
     console.log("handleQueryAsync", query);
     const connId = this.state.connectionId;
-    store.spinnerShow(); // TODO: probably wil not get reset in case of error response 
+    store.spinnerShow(); // TODO: probably wil not get reset in case of error response
     api.queryAsync(connId, query, (data) => {
       this.setState({
         queryIdInProgress: data.query_id,
@@ -457,6 +455,12 @@ class App extends React.Component {
     this.cidSelectedCellPosition = action.onSelectedCellPosition(this.handleSelectedCellPosition);
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
+    this.cidSidebarDx = store.onSidebarDx( (dx) => {
+      this.setState({
+        dragBarPosition: dx
+      });
+    });
+
     var connId = this.state.connectionId;
     if (connId == 0) {
       return;
@@ -488,6 +492,7 @@ class App extends React.Component {
     action.offResetPagination(this.cidResetPagination);
     action.offSelectedCellPosition(this.cidSelectedCellPosition);
     action.offEditedCells(this.cidEditedCells);
+    store.offSidebarDx(this.cidSidebarDx);
   }
 
   render() {
@@ -517,8 +522,7 @@ class App extends React.Component {
             tables={this.state.tables}
             selectedTable={this.state.selectedTable}
             selectedTableInfo={this.state.selectedTableInfo}
-            databaseName={this.state.databaseName}
-            dragBarPosition={this.state.dragBarPosition} />
+            databaseName={this.state.databaseName} />
 
           <div id="side-dragbar"
             style={dragBarStyle}
@@ -530,7 +534,6 @@ class App extends React.Component {
           <MainContainer
             results={this.state.results}
             supportsExplain={this.state.capabilities.HasAnalyze}
-            dragBarPosition={this.state.dragBarPosition}
             selectedView={this.state.selectedView}
             resetPagination={this.state.resetPagination}
             tableStructures={this.state.tableStructures}
