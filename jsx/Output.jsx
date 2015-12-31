@@ -186,7 +186,7 @@ RETURNING ${columns};
       if (this.getEditedCells(rowId, colId) != undefined) {
         value = this.getEditedCells(rowId, colId);
         tdStyle = {
-          background: '#7DCED2',
+          background: '#6EACE3',
           color: '#ffffff',
           // border: 'solid 1px #3B8686',
         };
@@ -211,27 +211,20 @@ RETURNING ${columns};
     );
   }
 
-  renderFooter() {
-    return (
-      <Tfoot>
-        <tr className="foot">
-          <td className="foot" colspan="99999">Temp Footer</td>
-        </tr>
-      </Tfoot>
-    );
-  }
-
   renderResults(results) {
     const data = resultsToDictionary(results);
     const header = this.renderHeader(results.columns);
     const rows = data.map((row, i) => this.renderRow(row, i));
-    //const footer = this.renderFooter();
 
-    if (this.props.withInput) {
+    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
+    if (this.props.withInput && numberOfRowsEdited == 0) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
-      var itemsPerPage = 100;
       var filterStyle = { top: this.props.dragBarPosition + 6 + 'px' };
+    }
+
+    if (this.props.withInput) {
+      var itemsPerPage = 100;
     } else {
       var tableStyle = { height: '0' };
     }
@@ -263,7 +256,6 @@ RETURNING ${columns};
         filterString={this.state.filterString}
         itemsPerPage={itemsPerPage}
         resetPagination={this.props.resetPagination} >
-        resetPagination={this.props.viewChanged} >
           {header}
           {rows}
       </Table>
@@ -324,6 +316,7 @@ RETURNING ${columns};
     if (numberOfRowsEdited !== 0) {
       var queryEditBar = (
         <QueryEditBar
+          dragBarPosition={this.props.dragBarPosition}
           numberOfRowsEdited={numberOfRowsEdited}
           generateQuery={this.generateQuery.bind(this)}
           onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />

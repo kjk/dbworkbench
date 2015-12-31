@@ -46,21 +46,29 @@ export default class QueryEditBar extends React.Component {
   }
 
   render() {
+    var positionStyle = { top: this.props.dragBarPosition + 'px' };
+
     return (
       <div id="query_edit_bar">
-        <button className="discard_changes" onClick={this.props.onHandleDiscardChanges}>Discard Changes</button>
-        <div className="row_number">{this.props.numberOfRowsEdited} edited rows</div>
+        <button className="save_changes" onClick={this.handleSaveChanges.bind(this)} style={positionStyle}>Save Changes</button>
+        <button className="discard_changes" onClick={this.props.onHandleDiscardChanges} style={positionStyle}>Discard Changes</button>
+        <div className="row_number" style={positionStyle}>{this.props.numberOfRowsEdited} edited rows</div>
 
         <Popover
           isOpen={this.state.isOpen}
           body={this.state.popOverText}
+          preferPlace={"right"}
           target={"sql_preview"}
           targetElement={"sql_preview"}
           tipSize={10}>
-          <button className="sql_preview" onClick={this.handleToggleSQLPreview.bind(this)}>{!this.state.isOpen ? "Show SQL Preview" : "Hide SQL Preview"}</button>
+          <div
+            className="sql_preview"
+            onClick={this.handleToggleSQLPreview.bind(this)}
+            style={positionStyle}>
+              {!this.state.isOpen ? "Show SQL Preview" :
+                                    "Hide SQL Preview" }
+          </div>
         </Popover>
-
-        <button className="save_changes" onClick={this.handleSaveChanges.bind(this)}>Save Changes</button>
       </div>
     );
   }

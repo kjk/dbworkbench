@@ -98,6 +98,17 @@ export default class Input extends React.Component {
     }
   }
 
+  renderButtons() {
+    return (
+      <div className="actions">
+        <input type="button" onClick={this.runQuery} id="run"
+          value="Run Query" className="btn btn-sm btn-primary" />
+        {this.renderExplain()}
+        <SpinnerCircle style={{display: 'inline-block', top: '4px'}} />
+      </div>
+    );
+  }
+
   render() {
     // TODO: add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
@@ -107,6 +118,11 @@ export default class Input extends React.Component {
       var inputStyle = { height: this.props.dragBarPosition + 'px' };
       var customQueryStyle = { height: this.props.dragBarPosition - 50 + 'px' };
       var dragBarStyle = { top: this.props.dragBarPosition - 50 + 'px' };
+    }
+
+    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
+    if (numberOfRowsEdited == 0) {
+      var renderButtons = this.renderButtons();
     }
 
     return (
@@ -121,12 +137,8 @@ export default class Input extends React.Component {
             onMouseUp={this.props.onMouseUp}>
           </div>
 
-          <div className="actions">
-            <input type="button" onClick={this.runQuery} id="run"
-              value="Run Query" className="btn btn-sm btn-primary" />
-            {this.renderExplain()}
-            <SpinnerCircle style={{display: 'inline-block', top: '4px'}} />
-          </div>
+          {renderButtons}
+
         </div>
       </div>
     );
