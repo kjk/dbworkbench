@@ -9,9 +9,9 @@ export default class DragBarVert extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
 
     this.state = {
       x: this.props.initialX,
@@ -21,15 +21,17 @@ export default class DragBarVert extends React.Component {
 
   componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove);
-      document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('mousemove', this.handleMouseMove);
+      document.addEventListener('mouseup', this.handleMouseUp);
+      //console.log("DragBarVert adding event handlers");
     } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
+      document.removeEventListener('mousemove', this.handleMouseMove);
+      document.removeEventListener('mouseup', this.handleMouseUp);
+      //console.log("DragBarVert removing event handlers");
     }
   }
 
-  onMouseDown(e) {
+  handleMouseDown(e) {
     // only left mouse button
     if (e.button !== 0)
       return;
@@ -40,7 +42,7 @@ export default class DragBarVert extends React.Component {
     });
   }
 
-  onMouseUp(e) {
+  handleMouseUp(e) {
     e.stopPropagation();
     e.preventDefault();
     this.setState({
@@ -48,14 +50,17 @@ export default class DragBarVert extends React.Component {
     });
   }
 
-  onMouseMove(e) {
-    if (!this.state.dragging)
+  handleMouseMove(e) {
+    if (!this.state.dragging) {
+      //console.log("DragBarVert not dragging");
       return;
+    }
+
     const x = e.pageX;
     const xMin = this.props.min || 0;
     const xMax = this.props.max || 9999999;
     if (x >= xMin && x <= xMax) {
-      // TODO: maybe can set th
+      // TODO: maybe can set the element.style.width directly?
       this.setState({
         x: x
       });
@@ -80,10 +85,19 @@ export default class DragBarVert extends React.Component {
     return (
       <div
         style={style}
-        onMouseDown={this.onMouseDown}
-        onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}>
-      </div>
+        onMouseDown={this.handleMouseDown}
+      ></div>
     );
+
+    /*
+    return (
+      <div
+        style={style}
+        onMouseDown={this.handleMouseDown}
+        onMouseMove={this.handleMouseMove}
+        onMouseUp={this.handleMouseUp}>
+      </div>
+    );*/
+
   }
 }

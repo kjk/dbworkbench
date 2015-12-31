@@ -16,7 +16,7 @@ export class Td extends React.Component {
     }
 
     handleOnFocus() {
-        console.log("handleOnFocus")
+        console.log("handleOnFocus");
         // TODO: somehow move the cursor to end
     }
 
@@ -27,11 +27,11 @@ export class Td extends React.Component {
     }
 
     handleKeyDown(e) {
-        console.log(e)
+        console.log(e);
         var ENTER = 13;
         var SHIFT = 16;
         if( e.keyCode == ENTER && !e.shiftKey) {
-            console.log("Enter pressed without shift", this)
+            console.log("Enter pressed without shift", this);
             this.setState({isEditable: false});
         }
     }

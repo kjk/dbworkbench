@@ -49,7 +49,9 @@ function broadcast(key, val, subkey) {
     return;
   }
 
-  console.log(`store.broadcast: key: '${fullKey}', val: '${val}', nObservers: ${n-1}`);
+  if (watchingBroadcast[key]) {
+    console.log(`store.broadcast: key: '${fullKey}', val: '${val}', nObservers: ${n-1}`);
+  }
   for (let i = 1; i < n; i++) {
     const cb = valAndCbs[i][0];
     cb(val);
@@ -115,7 +117,7 @@ function set2(key, newVal, subkey, shouldBroadcast) {
   let prevVal;
   if (!valAndCbs) {
     store[fullKey] = [newVal];
-    prevVal = defValues[key]; 
+    prevVal = defValues[key];
   } else {
     prevVal = valAndCbs[0];
     valAndCbs[0] = newVal;
@@ -155,6 +157,10 @@ export function del(key) {
 const spinnerKey = "spinner";
 const sidebarDxKey = "sidebarDx";
 
+// for debugging: keys that we're watching i.e.
+// we'll log broadcasting new value
+var watchingBroadcast = {};
+
 var defValues = {
   "spinner": 0,
   "sidebarDx": 250,
@@ -168,7 +174,7 @@ export function spinnerShow() {
   const newVal = get(spinnerKey) + 1;
   set2(spinnerKey, newVal, null, false);
   if (newVal == 1) {
-    // we transitioned from 'not visible' to 'visible' state 
+    // we transitioned from 'not visible' to 'visible' state
     broadcast(spinnerKey, true);
   }
   //console.log(`spinnerShow: ${newVal}`);
