@@ -304,24 +304,17 @@ class ConnectionWindow extends React.Component {
         return;
       }
 
-      b = this.getSelectedBookmark();
-      if (!rememberConnection) {
+      if (rememberConnection) {
+        console.log("did connect, saving a bookmark ", b);
+        api.addBookmark(this.getSelectedBookmark());
+      } else {
         console.log("did connect, not saving a bookmark");
-        const connId = resp.ConnectionID;
-        const connStr = url;
-        const databaseName = resp.CurrentDatabase;
-        const capabilities = resp.Capabilities;
-        this.props.onDidConnect(connStr, connId, databaseName, capabilities);
-        return;
       }
-      console.log("did connect, saving a bookmark " + b);
-      api.addBookmark(b, (data) => {
-        const connId = resp.ConnectionID;
-        const connStr = url;
-        const databaseName = resp.CurrentDatabase;
-        const capabilities = resp.Capabilities;
-        this.props.onDidConnect(connStr, connId, databaseName, capabilities);
-      });
+      const connId = resp.ConnectionID;
+      const connStr = url;
+      const databaseName = resp.CurrentDatabase;
+      const capabilities = resp.Capabilities;
+      this.props.onDidConnect(connStr, connId, databaseName, capabilities);
     });
   }
 
