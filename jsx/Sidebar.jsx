@@ -1,67 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DatabaseMenuDropdown from './DatabaseMenuDropdown.jsx'
+import DatabaseMenuDropdown from './DatabaseMenuDropdown.jsx';
+import TableInformation from './TableInformation.jsx';
 import filesize from 'filesize';
 import * as action from './action.js';
 import * as api from './api.js';
 import * as store from './store.js';
-
-function isEmptyObject(object) {
-  let name;
-  for (name in object) {}
-  return name === undefined;
-};
-
-class TableInformation extends React.Component {
-  renderTableInfo(info) {
-    const dataSize = parseInt(info.data_size);
-    const dataSizePretty = filesize(dataSize);
-    const indexSize = parseInt(info.index_size);
-    const indexSizePretty = filesize(indexSize);
-    const totalSize = dataSize + indexSize;
-    const totalSizePretty = filesize(totalSize);
-    const rowCount = parseInt(info.rows_count);
-
-    // TODO: better done as a class,maybe on parent element
-    const style = {
-      backgroundColor: "white",
-    };
-
-    return (
-      <ul style={style}>
-        <li><span className="table-info-light">Size: </span><span>{totalSizePretty}</span></li>
-        <li><span className="table-info-light">Data size: </span><span>{dataSizePretty}</span></li>
-        <li><span className="table-info-light">Index size: </span><span>{indexSizePretty}</span></li>
-        <li><span className="table-info-light">Estimated rows: </span><span>{rowCount}</span></li>
-      </ul>
-    );
-  }
-
-  renderTableInfoContainer() {
-    const info = this.props.tableInfo;
-    if (!info || isEmptyObject(info)) {
-      return;
-    }
-
-    const tableInfo = this.renderTableInfo(info);
-    return (
-      <div className="wrap">
-          <div className="title">
-          <i className="fa fa-info"></i>
-          <span className="current-table-information">Table Information</span></div>
-          {tableInfo}
-      </div>
-    );
-  }
-
-  render() {
-    return (
-      <div className="table-information">
-        {this.renderTableInfoContainer()}
-      </div>
-    );
-  }
-}
 
 export default class Sidebar extends React.Component {
   constructor(props, context) {
@@ -102,7 +46,7 @@ export default class Sidebar extends React.Component {
   }
 
   refreshTables() {
-    var connectionId = this.props.connectionId;
+    const connectionId = this.props.connectionId;
 
     api.getTables(connectionId, (data) => {
       // console.log("Refreshing.. " + JSON.stringify(data));
@@ -133,13 +77,14 @@ export default class Sidebar extends React.Component {
     // TODO: on database connect gets rendered 28 times
     //console.log("Sidebar render");
 
-    var tables = this.renderTables(this.state.tables);
-    var style = {
+    const tables = this.renderTables(this.state.tables);
+    const style = {
         width: this.sidebarDx,
     };
 
+    let sortList = {};
     if (this.props.selectedTableInfo != null) {
-      var sortList = {
+      sortList = {
         height: 'calc(100% - 135px)',
       };
     }
