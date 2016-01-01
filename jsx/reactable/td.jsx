@@ -20,12 +20,6 @@ export class Td extends React.Component {
         // TODO: somehow move the cursor to end
     }
 
-    handleClick(e){
-        if (typeof this.props.onClick === 'function') {
-            return this.props.onClick(e, this);
-        }
-    }
-
     handleKeyDown(e) {
         console.log(e);
         var ENTER = 13;
@@ -36,11 +30,9 @@ export class Td extends React.Component {
         }
     }
 
-
     render() {
         var tdProps = {
             className: this.props.className,
-            onClick: this.handleClick.bind(this),
             style: this.props.style,
         };
 
@@ -54,7 +46,8 @@ export class Td extends React.Component {
         }
 
         var data = this.props.data;
-
+        let pos = this.props.position;
+        const rowCol = pos.rowId + "-" + pos.colId;
         if (typeof(this.props.children) !== 'undefined') {
             if (isReactComponent(this.props.children)) {
                 data = this.props.children;
@@ -75,7 +68,7 @@ export class Td extends React.Component {
         if (this.state.isEditable) {
             // console.log("Editable Cell", this.props, tdProps)
             return (
-                <td {...tdProps}>
+                <td {...tdProps} data-custom-attribute={rowCol}>
                     <textarea
                         id="editable"
                         autoFocus
@@ -88,6 +81,6 @@ export class Td extends React.Component {
             );
         }
 
-        return <td {...tdProps}></td>;
+        return <td {...tdProps} data-custom-attribute={rowCol}></td>;
     }
 };

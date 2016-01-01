@@ -149,8 +149,19 @@ RETURNING ${columns};
     return query;
   }
 
-  handleCellClick(rowId, colId, e) {
-    console.log("handleCellClick ", rowId, colId);
+  handleCellClick(e) {
+    const node = e.target.nodeName;
+    if (node != "TD") {
+      return;
+    }
+    const rowColStr = e.target.attributes["data-custom-attribute"].value;
+    const parts = rowColStr.split("-");
+    if (parts.length != 2) {
+      return;
+    }
+    const rowId = parseInt(parts[0], 10);
+    const colId = parseInt(parts[1], 10);
+    console.log("handleCellClick rowId: ", rowId, " : ", colId);
     action.selectedCellPosition({rowId: rowId, colId: colId});
   }
 
@@ -214,7 +225,6 @@ RETURNING ${columns};
           column={col}
           position={position}
           style={tdStyle}
-          onClick={this.handleCellClick.bind(this, rowId, colId)}
           isEditable={isEditable}
           onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
             {value}
@@ -256,6 +266,7 @@ RETURNING ${columns};
         <Table
           id="sidebar-modal-results"
           className="sidebar-modal-results"
+          onClick={this.handleCellClick}
           sortable={true} >
             {header}
             {rows}
@@ -267,6 +278,7 @@ RETURNING ${columns};
       <Table
         id="results"
         className="results"
+        onClick={this.handleCellClick}
         style={tableStyle}
         sortable={true}
         filterable={filterable}
