@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import DbNav from './DbNav.jsx';
 import Input from './Input.jsx';
 import Output from './Output.jsx';
@@ -12,8 +13,8 @@ export default class MainContainer extends React.Component {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
 
+    this.sidebarDx = store.getSidebarDx();
     this.state = {
-      sidebarDx: store.getSidebarDx(),
       dragBarPosition: 200,
       dragging: false,
     };
@@ -21,12 +22,9 @@ export default class MainContainer extends React.Component {
 
   componentWillMount() {
     this.cidSidebarDx = store.onSidebarDx( (dx) => {
-      // TODO: maybe it's safe to update the DOM node
-      // for style.width changes? It would avoid re-rendering
-      // the children
-      this.setState({
-        sidebarDx: dx
-      });
+      this.sidebarDx = dx;
+      const el = ReactDOM.findDOMNode(this);
+      el.style.left = dx + "px";
     });
   }
 
@@ -84,11 +82,14 @@ export default class MainContainer extends React.Component {
   // }
 
   render() {
+    // TODO: after database connect, this happens 28 times
+    //console.log("MainContainer render");
+
     // when showing sql query, results are below editor window
     var withInput = (this.props.selectedView === view.SQLQuery);
 
-    var divStyle = {
-      left: this.state.sidebarDx + 'px',
+    var style = {
+      left: this.sidebarDx,
     };
 
     // var results = this.props.results
@@ -101,7 +102,7 @@ export default class MainContainer extends React.Component {
     // }
 
     return (
-      <div id="body" style={divStyle}>
+      <div id="body" style={style}>
           <DbNav view={this.props.selectedView}/>
 
           { withInput ?
