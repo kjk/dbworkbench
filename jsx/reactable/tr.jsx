@@ -8,10 +8,12 @@ export class Tr extends React.Component {
 
     if (
       this.props.data &&
-        this.props.columns &&
-          typeof this.props.columns.map === 'function'
+      this.props.columns &&
+      typeof this.props.columns.map === 'function'
     ) {
-      if (typeof(children.concat) === 'undefined') { console.log(children); }
+      if (typeof (children.concat) === 'undefined') {
+        console.log(children);
+      }
 
       children = children.concat(this.props.columns.map(function(column, i) {
         if (this.props.data.hasOwnProperty(column.key)) {
@@ -19,17 +21,19 @@ export class Tr extends React.Component {
           var props = {};
 
           if (
-            typeof(value) !== 'undefined' &&
-              value !== null &&
-                value.__reactableMeta === true
+            typeof (value) !== 'undefined' &&
+            value !== null &&
+            value.__reactableMeta === true
           ) {
             props = value.props;
             value = value.value;
           }
 
-          return <Td column={column} key={column.key} {...props}>{value}</Td>;
+          return <Td column={ column } key={ column.key } {...props}>
+                   { value }
+                 </Td>;
         } else {
-          return <Td column={column} key={column.key} />;
+          return <Td column={ column } key={ column.key } />;
         }
       }.bind(this)));
     }
@@ -39,7 +43,7 @@ export class Tr extends React.Component {
 
     return React.DOM.tr(props, children);
   }
-};
+}
 
 Tr.childNode = Td;
 Tr.dataType = 'object';
