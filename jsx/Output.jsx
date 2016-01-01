@@ -15,7 +15,7 @@ import * as store from './store.js';
 function resultsToDictionary(results) {
   const reformatData = results.rows.map(function(row) {
     let some = {};
-    results.columns.forEach((key,i) => some[key] = row[i]);
+    results.columns.forEach((key, i) => some[key] = row[i]);
     return some;
   });
 
@@ -36,7 +36,7 @@ export default class Output extends React.Component {
   }
 
   componentWillMount() {
-    store.onQueryEditDy( (dy) => {
+    store.onQueryEditDy((dy) => {
       this.queryEditDy = dy;
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();
@@ -79,55 +79,55 @@ export default class Output extends React.Component {
     const resultsAsDictionary = resultsToDictionary(results);
     const editedCells = this.props.editedCells;
 
-    let query = "";
+    let query = '';
     for (let rowId in editedCells) {
       let value = editedCells[rowId];
       //let values = rowId.split('.');
 
       const thisRow = editedCells[rowId];
       let index = 0;
-      let colsAfterEdit = "";
+      let colsAfterEdit = '';
       for (let colId in thisRow) {
         let value = thisRow[colId];
         const columnToBeEdited = results.columns[colId];
         const afterChange = value;
 
-        if (afterChange == "") {
-          colsAfterEdit += columnToBeEdited + "=NULL ";
+        if (afterChange == '') {
+          colsAfterEdit += columnToBeEdited + '=NULL ';
         } else {
-          colsAfterEdit += columnToBeEdited + "=\'" + afterChange + "\'";
+          colsAfterEdit += columnToBeEdited + "='" + afterChange + "'";
         }
 
         if (index < Object.keys(thisRow).length - 1) {
-          colsAfterEdit += ", ";
+          colsAfterEdit += ', ';
         }
         index += 1;
       }
 
-      const columns = results.columns.join(", ");
+      const columns = results.columns.join(', ');
 
       const tableStructuresAsDictionary = resultsToDictionary(tableStructures[table]);
       let schema = null;
       if (tableStructuresAsDictionary.length > 0) {
-        schema = tableStructuresAsDictionary[0]["table_schema"];
+        schema = tableStructuresAsDictionary[0]['table_schema'];
       } else {
-        console.log("THIS CASE SHOULD NOT HAPPEN IS THERE A WAY TO LOG THIS?");
+        console.log('THIS CASE SHOULD NOT HAPPEN IS THERE A WAY TO LOG THIS?');
       }
 
       const rowAsDictionary = resultsAsDictionary[rowId];
 
       index = 0;
-      let rowToBeEdited = "";
+      let rowToBeEdited = '';
       for (let key in rowAsDictionary) {
         value = rowAsDictionary[key];
         if (value == null) {
-          rowToBeEdited += key + " IS NULL ";
+          rowToBeEdited += key + ' IS NULL ';
         } else {
-          rowToBeEdited += key + "=\'" + value + "\' ";
+          rowToBeEdited += key + "='" + value + "' ";
         }
 
         if (index < Object.keys(rowAsDictionary).length - 1) {
-          rowToBeEdited += "AND ";
+          rowToBeEdited += 'AND ';
         }
         index += 1;
       }
@@ -140,7 +140,7 @@ LIMIT 1 FOR UPDATE)
 RETURNING ${columns};
 `;
 
-      console.log("QUERY:", query);
+      console.log('QUERY:', query);
       // WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5'
       // UPDATE countrylanguage SET language='Not furkan' WHERE ctid IN (SELECT ctid FROM countrylanguage WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5' LIMIT 1 FOR UPDATE) RETURNING language;
 
@@ -151,28 +151,34 @@ RETURNING ${columns};
 
   handleCellClick(e) {
     const node = e.target.nodeName;
-    if (node != "TD") {
+    if (node != 'TD') {
       return;
     }
-    const rowColStr = e.target.attributes["data-custom-attribute"].value;
-    const parts = rowColStr.split("-");
+    const rowColStr = e.target.attributes['data-custom-attribute'].value;
+    const parts = rowColStr.split('-');
     if (parts.length != 2) {
       return;
     }
     const rowId = parseInt(parts[0], 10);
     const colId = parseInt(parts[1], 10);
-    console.log("handleCellClick rowId: ", rowId, " : ", colId);
-    action.selectedCellPosition({rowId: rowId, colId: colId});
+    console.log('handleCellClick rowId: ', rowId, ' : ', colId);
+    action.selectedCellPosition({
+      rowId: rowId,
+      colId: colId
+    });
   }
 
   handleDiscardChanges() {
     // TODO: do these togethor
     action.editedCells({});
-    action.selectedCellPosition({rowId: -1, colId: -1});
+    action.selectedCellPosition({
+      rowId: -1,
+      colId: -1
+    });
   }
 
   handleOnCellEdit(rowId, colId, e) {
-    console.log("handleOnCellEdit ", rowId, colId, e.target.value);
+    console.log('handleOnCellEdit ', rowId, colId, e.target.value);
     this.setEditedCells(rowId, colId, e.target.value);
   }
 
@@ -183,13 +189,17 @@ RETURNING ${columns};
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
-        <Th key={i} data={col} column={col}>{col}</Th>
-      );
+        <Th key={ i } data={ col } column={ col }>
+          { col }
+        </Th>
+        );
     });
 
     return (
-      <Thead>{children}</Thead>
-    );
+      <Thead>
+        { children }
+      </Thead>
+      );
   }
 
   renderRow(row, rowId) {
@@ -200,7 +210,10 @@ RETURNING ${columns};
     for (let col in row) {
       let value = row[col];
       colId = colId + 1;
-      const position = {rowId: rowId, colId: colId};
+      const position = {
+        rowId: rowId,
+        colId: colId
+      };
 
       var isEditable = false;
       if (selectedCellPosition != undefined) {
@@ -215,26 +228,27 @@ RETURNING ${columns};
         tdStyle = {
           background: '#6EACE3',
           color: '#ffffff',
-          // border: 'solid 1px #3B8686',
+        // border: 'solid 1px #3B8686',
         };
       }
 
       children.push(
-        <Td
-          key={position}
-          column={col}
-          position={position}
-          style={tdStyle}
-          isEditable={isEditable}
-          onEdit={this.handleOnCellEdit.bind(this, rowId, colId)}>
-            {value}
+        <Td key={ position }
+          column={ col }
+          position={ position }
+          style={ tdStyle }
+          isEditable={ isEditable }
+          onEdit={ this.handleOnCellEdit.bind(this, rowId, colId) }>
+          { value }
         </Td>
       );
     }
 
     return (
-      <Tr key={rowId}>{children}</Tr>
-    );
+      <Tr key={ rowId }>
+        { children }
+      </Tr>
+      );
   }
 
   renderResults(results) {
@@ -248,68 +262,73 @@ RETURNING ${columns};
     }
     if (this.props.withInput && nRowsEdited == 0) {
       var filterable = results.columns;
-      var filterPlaceholder = "Filter Results";
+      var filterPlaceholder = 'Filter Results';
 
       // TODO: need to update this style when resizing
       // probably filter shouldn't be inside table
-      var filterStyle = { top: this.queryEditDy + 6 };
+      var filterStyle = {
+        top: this.queryEditDy + 6
+      };
     }
 
     if (this.props.withInput) {
       var itemsPerPage = 100;
     } else {
-      var tableStyle = { height: '0' };
+      var tableStyle = {
+        height: '0'
+      };
     }
 
     if (this.props.isSidebar) {
       return (
-        <Table
-          id="sidebar-modal-results"
+        <Table id="sidebar-modal-results"
           className="sidebar-modal-results"
-          onClick={this.handleCellClick}
-          sortable={true} >
-            {header}
-            {rows}
+          onClick={ this.handleCellClick }
+          sortable={ true }>
+          { header }
+          { rows }
         </Table>
-      );
+        );
     }
 
     return (
-      <Table
-        id="results"
+      <Table id="results"
         className="results"
-        onClick={this.handleCellClick}
-        style={tableStyle}
-        sortable={true}
-        filterable={filterable}
-        filterPlaceholder={filterPlaceholder}
-        filterStyle={filterStyle}
-        onFilter={filter => {
-            this.setState({ filterString: filter });
-        }}
-        filterString={this.state.filterString}
-        itemsPerPage={itemsPerPage}
-        resetPagination={this.props.resetPagination} >
-          {header}
-          {rows}
+        onClick={ this.handleCellClick }
+        style={ tableStyle }
+        sortable={ true }
+        filterable={ filterable }
+        filterPlaceholder={ filterPlaceholder }
+        filterStyle={ filterStyle }
+        onFilter={ filter => {
+                     this.setState({
+                       filterString: filter
+                     });
+                   } }
+        filterString={ this.state.filterString }
+        itemsPerPage={ itemsPerPage }
+        resetPagination={ this.props.resetPagination }>
+        { header }
+        { rows }
       </Table>
-    );
+      );
   }
 
   renderNoResults() {
     return (
       <div>
-          No records found
+        No records found
       </div>
-    );
+      );
   }
 
   renderError(errorMsg) {
     return (
       <div>
-          Err: {errorMsg}
+        Err:
+        { errorMsg }
       </div>
-    );
+      );
   }
 
   topPos() {
@@ -317,20 +336,15 @@ RETURNING ${columns};
     if (this.props.withInput) {
       top = this.queryEditDy + 60;
     }
-    return top + "px";
+    return top + 'px';
   }
 
   renderQueryEditBar() {
     const nRowsEdited = Object.keys(this.props.editedCells).length;
     if (nRowsEdited > 0) {
       return (
-        <QueryEditBar
-
-          numberOfRowsEdited={nRowsEdited}
-          generateQuery={this.generateQuery.bind(this)}
-          onHandleDiscardChanges={this.handleDiscardChanges.bind(this)}
-        />
-      );
+        <QueryEditBar numberOfRowsEdited={ nRowsEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
+        );
     }
   }
   render() {
@@ -340,13 +354,13 @@ RETURNING ${columns};
     const results = this.props.results;
     if (!results) {
       children = this.renderNoResults();
-      clsOutput = "empty";
+      clsOutput = 'empty';
     } else {
       if (results.error) {
         children = this.renderError(results.error);
       } else if (!results.rows || results.rows.length === 0) {
         children = this.renderNoResults();
-        clsOutput = "empty";
+        clsOutput = 'empty';
       } else {
         children = this.renderResults(results);
       }
@@ -355,23 +369,25 @@ RETURNING ${columns};
     if (this.props.isSidebar) {
       return (
         <div id="sidebar-result-wrapper">
-          {children}
+          { children }
         </div>
-      );
+        );
     }
 
-    let style = { top: this.topPos() };
-    if (clsOutput != "empty") {
+    let style = {
+      top: this.topPos()
+    };
+    if (clsOutput != 'empty') {
       style['marginTop'] = '-10px';
     }
 
     return (
-      <div id="output" className={clsOutput} style={style}>
+      <div id="output" className={ clsOutput } style={ style }>
         <div id="wrapper">
-          {children}
-          {this.renderQueryEditBar()}
+          { children }
+          { this.renderQueryEditBar() }
         </div>
       </div>
-    );
+      );
   }
 }

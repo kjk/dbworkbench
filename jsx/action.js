@@ -20,14 +20,14 @@ function actionName(idx) {
 function broadcast(actionIdx) {
   const callbacks = actionCallbacks[actionIdx];
   if (!callbacks || callbacks.length == 0) {
-    console.log("action.broadcast: no callback for action", actionName(actionIdx));
+    console.log('action.broadcast: no callback for action', actionName(actionIdx));
     return;
   }
 
   const args = Array.prototype.slice.call(arguments, 1);
-  for(let cbInfo of callbacks) {
+  for (let cbInfo of callbacks) {
     const cb = cbInfo[0];
-    console.log("action.broadcast: action: ", actionName(actionIdx), "args: ", args);
+    console.log('action.broadcast: action: ', actionName(actionIdx), 'args: ', args);
     if (args.length > 0) {
       cb.apply(null, args);
     } else {
@@ -86,15 +86,15 @@ var lastIdx = 8;
 
 // must be in same order as *Idx above
 var actionNames = [
-  "tableSelected",
-  "viewSelected",
-  "executeQuery",
-  "explainQuery",
-  "disconnectDatabase",
-  "alertBar",
-  "resetPagination",
-  "selectedCellPosition",
-  "editedCells",
+  'tableSelected',
+  'viewSelected',
+  'executeQuery',
+  'explainQuery',
+  'disconnectDatabase',
+  'alertBar',
+  'resetPagination',
+  'selectedCellPosition',
+  'editedCells',
 ];
 
 export function tableSelected(name) {

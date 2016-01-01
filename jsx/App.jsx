@@ -13,7 +13,7 @@ import * as store from './store.js';
 import view from './view.js';
 
 const minSidebarDx = 128;
-const maxSidebarDx = 128*3;
+const maxSidebarDx = 128 * 3;
 
 function isCreateOrDropQuery(query) {
   return query.match(/(create|drop) table/i);
@@ -26,11 +26,11 @@ function isSelectQuery(query) {
 // rows is [ [name, val], ...]
 function databaseNameFromConnectionInfoRows(rows) {
   for (let row of rows) {
-    if (row[0] == "current_database") {
+    if (row[0] == 'current_database') {
       return row[1];
     }
   }
-  return "";
+  return '';
 }
 
 class App extends React.Component {
@@ -57,22 +57,25 @@ class App extends React.Component {
       connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
       connected: gUserInfo ? gUserInfo.ConnectionID !== 0 : false,
 
-      databaseName: "No Database Selected",
+      databaseName: 'No Database Selected',
 
       queryIdInProgress: null,
       queryStatus: null,
 
       tables: null,
       tableStructures: {},
-      selectedTable: "",
+      selectedTable: '',
       selectedTableInfo: null,
       results: null,
       resetPagination: false,
 
-      selectedCellPosition: {rowId: -1, colId: -1},
+      selectedCellPosition: {
+        rowId: -1,
+        colId: -1
+      },
       editedCells: {},
 
-      errorMessage: "",
+      errorMessage: '',
       errorVisible: false,
 
       capabilities: {},
@@ -88,7 +91,7 @@ class App extends React.Component {
         this.setState({
           tableStructures: tmp
         });
-        //console.log("All Table structrues, ", this.state.tableStructures);
+      //console.log("All Table structrues, ", this.state.tableStructures);
       });
     }
   }
@@ -111,7 +114,7 @@ class App extends React.Component {
   }
 
   handleTableSelected(table) {
-    console.log("handleTableSelected: ", table);
+    console.log('handleTableSelected: ', table);
 
     this.setState({
       selectedTable: table,
@@ -139,10 +142,13 @@ class App extends React.Component {
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
     api.getTableStructure(connId, selectedTable, (data) => {
-      console.log("getTableStructure: ", data);
+      console.log('getTableStructure: ', data);
       this.setState({
         results: data,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
     });
@@ -152,10 +158,13 @@ class App extends React.Component {
     var connId = this.state.connectionId;
     var selectedTable = this.state.selectedTable;
     api.getTableIndexes(connId, selectedTable, (data) => {
-      console.log("getTableIndexes: ", data);
+      console.log('getTableIndexes: ', data);
       this.setState({
         results: data,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
     });
@@ -164,23 +173,26 @@ class App extends React.Component {
   getHistory() {
     var connId = this.state.connectionId;
     api.getHistory(connId, (data) => {
-      console.log("getHistory: ", data);
+      console.log('getHistory: ', data);
       this.setState({
         results: data,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
     });
   }
 
   handleViewSelected(viewName) {
-    console.log("handleViewSelected: ", viewName);
+    console.log('handleViewSelected: ', viewName);
     this.setState({
       selectedView: viewName
     });
 
     if (this.state.connectionId === 0) {
-      console.log("handleViewSelected: not connected, connectionId: ", this.state.connectionId);
+      console.log('handleViewSelected: not connected, connectionId: ', this.state.connectionId);
       return;
     }
 
@@ -191,14 +203,14 @@ class App extends React.Component {
         break;
     }
 
-    if (this.state.selectedTable === "") {
+    if (this.state.selectedTable === '') {
       //console.log("handleViewSelected: no selectedTable");
       return;
     }
 
     switch (viewName) {
       case view.SQLQuery:
-        if (this.state.selectedTable == "") {
+        if (this.state.selectedTable == '') {
           this.setState({
             results: null,
           });
@@ -213,18 +225,21 @@ class App extends React.Component {
         this.getTableIndexes();
         break;
       default:
-        console.log("handleViewSelected: unknown view: ", viewName);
+        console.log('handleViewSelected: unknown view: ', viewName);
     }
   }
 
   handleQuerySync(query) {
-    console.log("handleQuerySync", query);
+    console.log('handleQuerySync', query);
     var connId = this.state.connectionId;
     api.executeQuery(connId, query, (data) => {
       this.setState({
         results: data,
         resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
 
@@ -243,8 +258,8 @@ class App extends React.Component {
   getQueryAsyncData() {
     const queryId = this.state.queryIdInProgress;
     console.log(`getQueryAsyncData: queryId=${queryId}`);
-    if (queryId == "") {
-      console.log("no async query in progress");
+    if (queryId == '') {
+      console.log('no async query in progress');
       return;
     }
     const count = this.state.queryStatus.rows_count;
@@ -252,7 +267,10 @@ class App extends React.Component {
       this.setState({
         results: null,
         resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {}
       });
       return;
@@ -268,7 +286,10 @@ class App extends React.Component {
       this.setState({
         results: results,
         resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
     });
@@ -277,8 +298,8 @@ class App extends React.Component {
   getQueryAsyncStatus() {
     const queryId = this.state.queryIdInProgress;
     console.log(`getQueryAsyncStatus: queryId=${queryId}`);
-    if (queryId == "") {
-      console.log("no async query in progress");
+    if (queryId == '') {
+      console.log('no async query in progress');
       return;
     }
     const connId = this.state.connectionId;
@@ -298,7 +319,7 @@ class App extends React.Component {
   }
 
   handleQueryAsync(query) {
-    console.log("handleQueryAsync", query);
+    console.log('handleQueryAsync', query);
     const connId = this.state.connectionId;
     store.spinnerShow(); // TODO: probably wil not get reset in case of error response
     api.queryAsync(connId, query, (data) => {
@@ -307,7 +328,10 @@ class App extends React.Component {
         // TODO: not sure if should reset the data right away
         // maybe only after received some data or an error message
         resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
       setTimeout(this.getQueryAsyncStatus, 1000);
@@ -315,7 +339,7 @@ class App extends React.Component {
   }
 
   handleExecuteQuery(query) {
-    console.log("handleExecuteQuery", query);
+    console.log('handleExecuteQuery', query);
     query = query.trim();
     if (isSelectQuery(query)) {
       this.handleQueryAsync(query);
@@ -325,14 +349,17 @@ class App extends React.Component {
   }
 
   handleExplainQuery(query) {
-    console.log("handleExplainQuery", query);
+    console.log('handleExplainQuery', query);
     var connId = this.state.connectionId;
     api.explainQuery(connId, query, (data) => {
       this.setState({
         selectedView: view.SQLQuery,
         results: data,
         resetPagination: true,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {},
       });
     });
@@ -348,26 +375,29 @@ class App extends React.Component {
 
   handleDisconnectDatabase() {
     api.disconnect(this.state.connectionId, (data) => {
-      console.log("disconnect");
+      console.log('disconnect');
 
       this.setState({
         connectionId: 0,
         connected: false,
         tables: null,
-        selectedTable: "",
+        selectedTable: '',
         selectedTableInfo: null,
         results: null,
-        errorMessage: "",
+        errorMessage: '',
         errorVisible: false,
         resetPagination: false,
-        selectedCellPosition: {rowId: -1, colId: -1},
+        selectedCellPosition: {
+          rowId: -1,
+          colId: -1
+        },
         editedCells: {}
       });
     });
   }
 
   handleAlertBar(message) {
-    console.log("handleAlertBar");
+    console.log('handleAlertBar');
 
     this.setState({
       errorVisible: true,
@@ -379,19 +409,27 @@ class App extends React.Component {
   }
 
   handleCloseAlertBar() {
-    this.setState({errorVisible: false});
+    this.setState({
+      errorVisible: false
+    });
   }
 
   handleResetPagination(toggle) {
-    this.setState({resetPagination: toggle});
+    this.setState({
+      resetPagination: toggle
+    });
   }
 
   handleSelectedCellPosition(newPosition) {
-    this.setState({selectedCellPosition: newPosition});
+    this.setState({
+      selectedCellPosition: newPosition
+    });
   }
 
   handleEditedCells(newCells) {
-    this.setState({editedCells: newCells});
+    this.setState({
+      editedCells: newCells
+    });
   }
 
   componentWillMount() {
@@ -436,49 +474,40 @@ class App extends React.Component {
     if (!this.state.connected) {
       return (
         <div>
-          <div onClick={this.handleCloseAlertBar} >
-            { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
+          <div onClick={ this.handleCloseAlertBar }>
+            { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
           </div>
-
-          <ConnectionWindow onDidConnect={this.handleDidConnect} />
+          <ConnectionWindow onDidConnect={ this.handleDidConnect } />
         </div>
-      );
+        );
     }
 
     return (
       <div>
-        <div onClick={this.handleCloseAlertBar} >
-          { this.state.errorVisible ? <AlertBar errorMessage={this.state.errorMessage}/> : null }
+        <div onClick={ this.handleCloseAlertBar }>
+          { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
         </div>
-
         <div>
-          <Sidebar
-            connectionId={this.state.connectionId}
-            tables={this.state.tables}
-            selectedTable={this.state.selectedTable}
-            selectedTableInfo={this.state.selectedTableInfo}
-            databaseName={this.state.databaseName} />
-
-          <DragBarVert
-            min={minSidebarDx}
-            max={maxSidebarDx}
-            initialX={store.getSidebarDx()}
-            onPosChanged={(dx) => store.setSidebarDx(dx)}
-          />
-
-          <MainContainer
-            results={this.state.results}
-            supportsExplain={this.state.capabilities.HasAnalyze}
-            selectedView={this.state.selectedView}
-            resetPagination={this.state.resetPagination}
-            tableStructures={this.state.tableStructures}
-            selectedTable={this.state.selectedTable}
-            selectedCellPosition={this.state.selectedCellPosition}
-            editedCells={this.state.editedCells} />
+          <Sidebar connectionId={ this.state.connectionId }
+            tables={ this.state.tables }
+            selectedTable={ this.state.selectedTable }
+            selectedTableInfo={ this.state.selectedTableInfo }
+            databaseName={ this.state.databaseName } />
+          <DragBarVert min={ minSidebarDx }
+            max={ maxSidebarDx }
+            initialX={ store.getSidebarDx() }
+            onPosChanged={ (dx) => store.setSidebarDx(dx) } />
+          <MainContainer results={ this.state.results }
+            supportsExplain={ this.state.capabilities.HasAnalyze }
+            selectedView={ this.state.selectedView }
+            resetPagination={ this.state.resetPagination }
+            tableStructures={ this.state.tableStructures }
+            selectedTable={ this.state.selectedTable }
+            selectedCellPosition={ this.state.selectedCellPosition }
+            editedCells={ this.state.editedCells } />
         </div>
-
       </div>
-    );
+      );
   }
 }
 

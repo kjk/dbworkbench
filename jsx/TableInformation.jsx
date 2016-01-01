@@ -8,7 +8,8 @@ function isNullOrEmptyObject(object) {
   let name;
   for (name in object) {}
   return name === undefined;
-};
+}
+;
 
 export default class TableInformation extends React.Component {
   renderTableInfo(info) {
@@ -22,17 +23,25 @@ export default class TableInformation extends React.Component {
 
     // TODO: better done as a class,maybe on parent element
     const style = {
-      backgroundColor: "white",
+      backgroundColor: 'white',
     };
 
     return (
-      <ul style={style}>
-        <li><span className="table-info-light">Size: </span><span>{totalSizePretty}</span></li>
-        <li><span className="table-info-light">Data size: </span><span>{dataSizePretty}</span></li>
-        <li><span className="table-info-light">Index size: </span><span>{indexSizePretty}</span></li>
-        <li><span className="table-info-light">Estimated rows: </span><span>{rowCount}</span></li>
+      <ul style={ style }>
+        <li>
+          <span className="table-info-light">Size:</span><span>{ totalSizePretty }</span>
+        </li>
+        <li>
+          <span className="table-info-light">Data size:</span><span>{ dataSizePretty }</span>
+        </li>
+        <li>
+          <span className="table-info-light">Index size:</span><span>{ indexSizePretty }</span>
+        </li>
+        <li>
+          <span className="table-info-light">Estimated rows:</span><span>{ rowCount }</span>
+        </li>
       </ul>
-    );
+      );
   }
 
   renderTableInfoContainer() {
@@ -44,20 +53,21 @@ export default class TableInformation extends React.Component {
     const tableInfo = this.renderTableInfo(info);
     return (
       <div className="wrap">
-          <div className="title">
+        <div className="title">
           <i className="fa fa-info"></i>
-          <span className="current-table-information">Table Information</span></div>
-          {tableInfo}
+          <span className="current-table-information">Table Information</span>
+        </div>
+        { tableInfo }
       </div>
-    );
+      );
   }
 
   render() {
     return (
       <div className="table-information">
-        {this.renderTableInfoContainer()}
+        { this.renderTableInfoContainer() }
       </div>
-    );
+      );
   }
 }
 

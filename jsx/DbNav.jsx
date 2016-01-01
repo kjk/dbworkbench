@@ -15,7 +15,7 @@ export default class DbNav extends React.Component {
 
   handleFeedbackButton(e) {
     e.preventDefault();
-    api.launchBrowserWithURL("http://dbheroapp.com/feedback");
+    api.launchBrowserWithURL('http://dbheroapp.com/feedback');
   }
 
   render() {
@@ -27,26 +27,34 @@ export default class DbNav extends React.Component {
 
       const selected = (currentView == viewName);
       if (selected) {
-        return <li key={viewName} onClick={handler} className="selected"><u>{viewName}</u></li>;
+        return <li key={ viewName } onClick={ handler } className="selected">
+                 <u>{ viewName }</u>
+               </li>;
       } else {
-        return <li key={viewName} onClick={handler}>{viewName}</li>;
+        return <li key={ viewName } onClick={ handler }>
+                 { viewName }
+               </li>;
       }
     });
 
     const tooltip = (
-      <Tooltip id="feedback">Let us know how we can improve dbHero.</Tooltip>
+    <Tooltip id="feedback">
+      Let us know how we can improve dbHero.
+    </Tooltip>
     );
 
     return (
       <div id="nav">
         <ul>
-          {children}
+          { children }
         </ul>
-        <OverlayTrigger placement="left" overlay={tooltip}>
-          <button className="feedback-button" onClick={this.handleFeedbackButton.bind(this)}>Feedback</button>
+        <OverlayTrigger placement="left" overlay={ tooltip }>
+          <button className="feedback-button" onClick={ this.handleFeedbackButton.bind(this) }>
+            Feedback
+          </button>
         </OverlayTrigger>
       </div>
-    );
+      );
   }
 }
 

@@ -1,7 +1,7 @@
-const Structure = "Structure";
-const Indexes = "Indexes";
-const SQLQuery = "Query";
-const History = "History";
+const Structure = 'Structure';
+const Indexes = 'Indexes';
+const SQLQuery = 'Query';
+const History = 'History';
 
 const MainTabViews = [
   SQLQuery,

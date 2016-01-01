@@ -21,14 +21,14 @@ function formDataFromObject(params) {
 }
 
 function urlFragmentFromObject(params) {
-  let s = "";
+  let s = '';
   for (let k in params) {
     const v = encodeURIComponent(params[k]);
     k = encodeURIComponent(k);
-    if (s == "") {
-      s = "?";
+    if (s == '') {
+      s = '?';
     } else {
-      s += "&";
+      s += '&';
     }
     s += `${k}=${v}`;
   }
@@ -50,7 +50,7 @@ function json_failed(error) {
   action.alertBar(`Something is wrong. Please restart the application. Error parsing json response. Error: ${msg}`);
 }
 
-function fetch_ok(resp, cb,  method, url) {
+function fetch_ok(resp, cb, method, url) {
   store.spinnerHide();
   if (!resp.ok) {
     action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
@@ -71,9 +71,9 @@ function fetch_failed(error) {
 function apiCall(method, url, params, cb) {
   const opts = {
     method: method,
-    cache: "no-cache"
+    cache: 'no-cache'
   };
-  if (method == "post") {
+  if (method == 'post') {
     opts.body = formDataFromObject(params);
   } else {
     url += urlFragmentFromObject(params);
@@ -92,42 +92,57 @@ export function connect(type, url, urlSafe, cb) {
     url: url,
     urlSafe: urlSafe
   };
-  apiCall("post", "/api/connect", params, cb);
+  apiCall('post', '/api/connect', params, cb);
 }
 
 export function disconnect(connId, cb) {
-  const params = { conn_id : connId };
-  apiCall("post", "/api/disconnect", params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('post', '/api/disconnect', params, cb);
 }
 
 export function getTables(connId, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/tables", params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/tables', params, cb);
 }
 
 export function getTableStructure(connId, table, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/tables/" + table, params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/tables/' + table, params, cb);
 }
 
 export function getTableIndexes(connId, table, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/tables/" + table + "/indexes", params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/tables/' + table + '/indexes', params, cb);
 }
 
 export function getTableInfo(connId, table, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/tables/" + table + "/info", params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/tables/' + table + '/info', params, cb);
 }
 
 export function getHistory(connId, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/history", params, function(data) {
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/history', params, function(data) {
     let rows = [];
     for (let i in data) {
       rows.unshift([parseInt(i) + 1, data[i].query, data[i].timestamp]);
     }
-    cb({ columns: ["id", "query", "timestamp"], rows: rows });
+    cb({
+      columns: ['id', 'query', 'timestamp'],
+      rows: rows
+    });
   });
 }
 
@@ -136,7 +151,7 @@ export function queryAsync(connId, query, cb) {
     conn_id: connId,
     query: query
   };
-  apiCall("post", "/api/queryasync", params, cb);
+  apiCall('post', '/api/queryasync', params, cb);
 }
 
 export function queryAsyncStatus(connId, queryId, cb) {
@@ -144,7 +159,7 @@ export function queryAsyncStatus(connId, queryId, cb) {
     conn_id: connId,
     query_id: queryId
   };
-  apiCall("post", "/api/queryasyncstatus", params, cb);
+  apiCall('post', '/api/queryasyncstatus', params, cb);
 }
 
 export function queryAsyncData(connId, queryId, start, count, cb) {
@@ -154,43 +169,47 @@ export function queryAsyncData(connId, queryId, start, count, cb) {
     start: start,
     count: count
   };
-  apiCall("post", "/api/queryasyncdata", params, cb);
+  apiCall('post', '/api/queryasyncdata', params, cb);
 }
 
 export function getBookmarks(cb) {
-  apiCall("get", "/api/getbookmarks", {}, cb);
+  apiCall('get', '/api/getbookmarks', {}, cb);
 }
 
 export function addBookmark(bookmark, cb) {
   const params = {
-    id: bookmark["id"],
-    nick: bookmark["nick"],
-    type: bookmark["type"],
-    database: bookmark["database"],
-    host: bookmark["host"],
-    port: bookmark["port"],
-    user: bookmark["user"],
-    password: bookmark["password"],
+    id: bookmark['id'],
+    nick: bookmark['nick'],
+    type: bookmark['type'],
+    database: bookmark['database'],
+    host: bookmark['host'],
+    port: bookmark['port'],
+    user: bookmark['user'],
+    password: bookmark['password'],
   };
-  apiCall("post", "/api/addbookmark", params, cb);
+  apiCall('post', '/api/addbookmark', params, cb);
 }
 
 export function removeBookmark(id, cb) {
-  const params = { id: id };
-  apiCall("post", "/api/removebookmark", params, cb);
+  const params = {
+    id: id
+  };
+  apiCall('post', '/api/removebookmark', params, cb);
 }
 
 export function getActivity(connId, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/activity", params, cb);
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/activity', params, cb);
 }
 
 export function executeQuery(connId, query, cb) {
   const params = {
-    conn_id : connId,
+    conn_id: connId,
     query: query
   };
-  apiCall("post", "/api/query", params, cb);
+  apiCall('post', '/api/query', params, cb);
 }
 
 export function explainQuery(connId, query, cb) {
@@ -198,19 +217,21 @@ export function explainQuery(connId, query, cb) {
     conn_id: connId,
     query: query
   };
-  apiCall("post", "/api/explain", params, cb);
+  apiCall('post', '/api/explain', params, cb);
 }
 
 export function getConnectionInfo(connId, cb) {
-  const params = { conn_id : connId };
-  apiCall("get", "/api/connection", params, function(data) {
+  const params = {
+    conn_id: connId
+  };
+  apiCall('get', '/api/connection', params, function(data) {
     //const rows = mapObject(data, (k, v) => [k, v]);
     let rows = [];
     for (let key in data) {
       rows.push([key, data[key]]);
     }
     const res = {
-      columns: ["attribute", "value"],
+      columns: ['attribute', 'value'],
       rows: rows
     };
     cb(res);
@@ -218,6 +239,8 @@ export function getConnectionInfo(connId, cb) {
 }
 
 export function launchBrowserWithURL(url) {
-  const params = { url: url };
-  apiCall("get", "/api/launchbrowser", params);
+  const params = {
+    url: url
+  };
+  apiCall('get', '/api/launchbrowser', params);
 }

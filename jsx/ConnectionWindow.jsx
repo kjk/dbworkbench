@@ -3,14 +3,14 @@ import SpinnerCircle from './SpinnerCircle.jsx';
 import * as api from './api.js';
 import * as action from './action.js';
 
-const initialConnectionName = "New connection";
+const initialConnectionName = 'New connection';
 
 // must match bookmarks.go
-const dbTypePostgres = "postgres";
-const dbTypeMysql = "mysql";
+const dbTypePostgres = 'postgres';
+const dbTypeMysql = 'mysql';
 
-const defaultPortPostgres = "5432";
-const defaultPortMysql = "3306";
+const defaultPortPostgres = '5432';
+const defaultPortMysql = '3306';
 
 const maxBookmarks = 10;
 
@@ -33,8 +33,8 @@ let currConnectionId = 1;
 // sayHi(); // nothing happens
 // guard.activate("enabled");
 // sayHi(); // shows the alert
-var guard = function(key, fn){
-  return function(){
+var guard = function(key, fn) {
+  return function() {
     if (guard.flags[key]) {
       return fn.apply(this, arguments);
     }
@@ -42,37 +42,41 @@ var guard = function(key, fn){
 };
 
 guard.flags = {};
-guard.activate = function(key){ guard.flags[key] = true; };
-guard.deactivate = function(key){ guard.flags[key] = false; };
+guard.activate = function(key) {
+  guard.flags[key] = true;
+};
+guard.deactivate = function(key) {
+  guard.flags[key] = false;
+};
 
 function newEmptyBookmark() {
   emptyBookmarkId -= 1;
   // Maybe: change to a class?
   return {
-      id: emptyBookmarkId,
-      type: dbTypePostgres,
-      nick: initialConnectionName,
-      database: "",
-      url: "",
-      host: "",
-      user: "",
-      password: "",
-      port: "" ,
-    };
+    id: emptyBookmarkId,
+    type: dbTypePostgres,
+    nick: initialConnectionName,
+    database: '',
+    url: '',
+    host: '',
+    user: '',
+    password: '',
+    port: '',
+  };
 }
 
 function newTestDbBookmark() {
   return {
-      id: pagilaDemoBookmarkId,
-      type: dbTypePostgres,
-      nick: "demo database",
-      database: "pagila_demo",
-      url: "",
-      host: "banana-pepper-468.db.databaselabs.io",
-      user: "pagila_demo_user",
-      password: "pwd",
-      port: "" ,
-    };
+    id: pagilaDemoBookmarkId,
+    type: dbTypePostgres,
+    nick: 'demo database',
+    database: 'pagila_demo',
+    url: '',
+    host: 'banana-pepper-468.db.databaselabs.io',
+    user: 'pagila_demo_user',
+    password: 'pwd',
+    port: '',
+  };
 }
 
 const testDatabases = [newTestDbBookmark()];
@@ -100,7 +104,7 @@ class ConnectionWindow extends React.Component {
     this.state = {
       remember: true,
 
-      connectionErrorMessage: "",
+      connectionErrorMessage: '',
       isConnecting: false,
 
       bookmarks: bookmarks,
@@ -115,14 +119,14 @@ class ConnectionWindow extends React.Component {
   newConnectionInfo(e) {
     var bookmarks = this.state.bookmarks;
     if (bookmarks.length >= maxBookmarks) {
-      action.alertBar("Reached connections limit of " + maxBookmarks);
+      action.alertBar('Reached connections limit of ' + maxBookmarks);
       return;
     }
 
     bookmarks.push(newEmptyBookmark());
     this.setState({
       bookmarks: bookmarks,
-      selectedBookmarkIdx: bookmarks.length-1,
+      selectedBookmarkIdx: bookmarks.length - 1,
     });
   }
 
@@ -133,14 +137,14 @@ class ConnectionWindow extends React.Component {
     if (i < nBookmarks) {
       return bookmarks[i];
     }
-    return testDatabases[nBookmarks-i];
+    return testDatabases[nBookmarks - i];
   }
 
   getBookmarks() {
     api.getBookmarks((data) => {
-      console.log("getBookmarks: ", data);
+      console.log('getBookmarks: ', data);
       if (!data) {
-          data = [newEmptyBookmark()];
+        data = [newEmptyBookmark()];
       }
       this.setState({
         bookmarks: data,
@@ -151,7 +155,7 @@ class ConnectionWindow extends React.Component {
   deleteBookmark(e) {
     e.stopPropagation();
 
-    const idStr = e.target.attributes["data-custom-attribute"].value;
+    const idStr = e.target.attributes['data-custom-attribute'].value;
     const id = parseInt(idStr, 10);
     // bookmarks with negative id are not yet saved (only exist in the frontend)
     if (id < 0) {
@@ -172,7 +176,7 @@ class ConnectionWindow extends React.Component {
     }
 
     api.removeBookmark(id, (data) => {
-      console.log("deleteBookmarks removing: ", id, " data: ", data);
+      console.log('deleteBookmarks removing: ', id, ' data: ', data);
 
       let bookmarks = [newEmptyBookmark()];
       let selectedBookmarkIdx = 0;
@@ -190,13 +194,13 @@ class ConnectionWindow extends React.Component {
   selectBookmark(e) {
     e.stopPropagation();
 
-    var idxStr = e.currentTarget.attributes["data-custom-attribute"].value;
+    var idxStr = e.currentTarget.attributes['data-custom-attribute'].value;
     var idx = parseInt(idxStr, 10);
-    console.log("selectBookmark, idx:", idx);
+    console.log('selectBookmark, idx:', idx);
 
     this.setState({
       selectedBookmarkIdx: idx,
-      connectionErrorMessage: ""
+      connectionErrorMessage: ''
     });
   }
 
@@ -204,15 +208,15 @@ class ConnectionWindow extends React.Component {
     //console.log("handleFormChanged: name=", name, " val=", e.target.value);
 
     let b = this.getSelectedBookmark();
-    let prevDatabase = b["database"];
+    let prevDatabase = b['database'];
     b[name] = e.target.value;
-    let dbName = b["database"];
+    let dbName = b['database'];
 
     // if nick has not been modified by user, make it equal to database name
-    let nick = b["nick"];
+    let nick = b['nick'];
     if ((nick == initialConnectionName) || (nick == prevDatabase)) {
-      if (dbName != "") {
-        b["nick"] = dbName;
+      if (dbName != '') {
+        b['nick'] = dbName;
       }
     }
 
@@ -220,7 +224,7 @@ class ConnectionWindow extends React.Component {
     bookmarks[this.selectedBookmarkIdx] = b;
     this.setState({
       bookmarks: bookmarks,
-      connectionErrorMessage: "",
+      connectionErrorMessage: '',
     });
   }
 
@@ -234,37 +238,35 @@ class ConnectionWindow extends React.Component {
 
   handleConnect(e) {
     e.preventDefault();
-    console.log("handleConnect");
+    console.log('handleConnect');
 
     let b = this.getSelectedBookmark();
 
-    let id = b["id"];
-    let nick = b["nick"];
-    let dbType = b["type"];
-    let host = b["host"];
-    let port = b["port"];
-    let user = b["user"];
-    let pass = b["password"];
-    let db = b["database"];
+    let id = b['id'];
+    let nick = b['nick'];
+    let dbType = b['type'];
+    let host = b['host'];
+    let port = b['port'];
+    let user = b['user'];
+    let pass = b['password'];
+    let db = b['database'];
     let rememberConnection = this.state.remember;
     if (id == pagilaDemoBookmarkId) {
       rememberConnection = false;
     }
 
-    let url = "";
-    let urlSafe = "";
+    let url = '';
+    let urlSafe = '';
     if (dbType == dbTypePostgres) {
       if (port.length == 0) {
         port = defaultPortPostgres;
       }
-      url = "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + db;
+      url = 'postgres://' + user + ':' + pass + '@' + host + ':' + port + '/' + db;
       urlSafe = url;
-      if (pass != "") {
-        urlSafe = "postgres://" + user + ":" + "***" + "@" + host + ":" + port + "/" + db;
+      if (pass != '') {
+        urlSafe = 'postgres://' + user + ':' + '***' + '@' + host + ':' + port + '/' + db;
       }
-    }
-    else if (dbType == dbTypeMysql)
-    {
+    } else if (dbType == dbTypeMysql) {
       // mysql format:
       // username:password@protocol(address)/dbname?param=value
       // dbname can be empty
@@ -273,29 +275,29 @@ class ConnectionWindow extends React.Component {
       }
       // pareTime: conver time from []byte to time.Time
       // https://github.com/go-sql-driver/mysql#parsetime
-      url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
+      url = user + ':' + pass + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true';
       urlSafe = url;
-      if (pass != "") {
-        urlSafe = user + ":" + "***" + "@tcp(" + host + ":" + port + ")/" + db + "?parseTime=true";
+      if (pass != '') {
+        urlSafe = user + ':' + '***' + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true';
       }
     } else {
-      console.log("invalid type: " + dbType);
-      // TODO: how to error out?
+      console.log('invalid type: ' + dbType);
+    // TODO: how to error out?
     }
 
-    console.log("URL:" + url);
+    console.log('URL:' + url);
     this.setState({
       isConnecting: true,
     });
     const myConnectionId = currConnectionId;
     api.connect(dbType, url, urlSafe, (resp) => {
       if (myConnectionId != currConnectionId) {
-        console.log("ignoring completion of a cancelled connection");
+        console.log('ignoring completion of a cancelled connection');
         return;
       }
       ++currConnectionId;
       if (resp.error) {
-        console.log("handleConnect: resp.error: ", resp.error);
+        console.log('handleConnect: resp.error: ', resp.error);
 
         this.setState({
           connectionErrorMessage: resp.error,
@@ -305,10 +307,10 @@ class ConnectionWindow extends React.Component {
       }
 
       if (rememberConnection) {
-        console.log("did connect, saving a bookmark ", b);
+        console.log('did connect, saving a bookmark ', b);
         api.addBookmark(this.getSelectedBookmark());
       } else {
-        console.log("did connect, not saving a bookmark");
+        console.log('did connect, not saving a bookmark');
       }
       const connId = resp.ConnectionID;
       const connStr = url;
@@ -320,7 +322,7 @@ class ConnectionWindow extends React.Component {
 
   handleCancel(e) {
     e.preventDefault();
-    console.log("handleCancel");
+    console.log('handleCancel');
     // to tell api.connec() callback that we've been cancelled
     ++currConnectionId;
 
@@ -330,48 +332,48 @@ class ConnectionWindow extends React.Component {
   }
 
   renderErrorOptional(errorText) {
-    if (errorText != "") {
-      return <div className="col-md-12 connection-error">Error: {errorText}</div>;
+    if (errorText != '') {
+      return <div className="col-md-12 connection-error">
+               Error:
+               { errorText }
+             </div>;
     }
   }
 
   renderBookMarks() {
-    guard.activate("bookmarksEnabled");
+    guard.activate('bookmarksEnabled');
     if (this.state.isConnecting) {
-      guard.deactivate("bookmarksEnabled");
+      guard.deactivate('bookmarksEnabled');
     }
 
     let bookmarks = [];
     for (var i = 0; i < this.state.bookmarks.length; i++) {
       const b = this.state.bookmarks[i];
-      const id = b["id"];
-      const nick = b["nick"];
+      const id = b['id'];
+      const nick = b['nick'];
 
-      let className = "list-group-item";
+      let className = 'list-group-item';
       if (i == this.state.selectedBookmarkIdx) {
-        className = "list-group-item active";
+        className = 'list-group-item active';
       }
 
       bookmarks.push(
-        <a key={id} data-custom-attribute={i} href="#" className={className} onClick={guard("bookmarksEnabled", this.selectBookmark)}>
-          {nick}
-          <i data-custom-attribute={id} onClick={guard("bookmarksEnabled", this.deleteBookmark)} className="fa fa-times pull-right"></i>
-        </a>
+        <a key={ id }
+          data-custom-attribute={ i }
+          href="#"
+          className={ className }
+          onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
+          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right"></i></a>
       );
     }
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={guard("bookmarksEnabled", this.newConnectionInfo)} >
-          Connections
-          <i className="fa fa-plus pull-right"></i>
-        </a>
-
+        <a href="#" className="list-group-item title" onClick={ guard('bookmarksEnabled', this.newConnectionInfo) }>Connections <i className="fa fa-plus pull-right"></i></a>
         <hr/>
-
-        {bookmarks}
+        { bookmarks }
       </div>
-    );
+      );
   }
 
   renderTestDatabases() {
@@ -379,48 +381,46 @@ class ConnectionWindow extends React.Component {
     const nBookmarks = this.state.bookmarks.length;
     for (let i = 0; i < testDatabases.length; i++) {
       const b = testDatabases[i];
-      const id = b["id"];
-      const nick = b["nick"];
+      const id = b['id'];
+      const nick = b['nick'];
       const idx = i + nBookmarks;
 
-      let className = "list-group-item";
+      let className = 'list-group-item';
       if (idx == this.state.selectedBookmarkIdx) {
-        className = "list-group-item active";
+        className = 'list-group-item active';
       }
 
       bookmarks.push(
-        <a key={id} data-custom-attribute={idx} href="#" className={className}
-           onClick={guard("bookmarksEnabled", this.selectBookmark)}>
-          {nick}
+        <a key={ id }
+          data-custom-attribute={ idx }
+          href="#"
+          className={ className }
+          onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
+          { nick }
         </a>
       );
     }
 
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={guard("bookmarksEnabled", this.newConnectionInfo)} >
-          Test databases
-        </a>
-
+        <a href="#" className="list-group-item title" onClick={ guard('bookmarksEnabled', this.newConnectionInfo) }>Test databases</a>
         <hr/>
-
-        {bookmarks}
+        { bookmarks }
       </div>
-    );
-
+      );
   }
 
   renderFormElements() {
     let b = this.getSelectedBookmark();
 
-    let dbType = b["type"];
-    let defaultPort = "0";
+    let dbType = b['type'];
+    let defaultPort = '0';
     if (dbType == dbTypePostgres) {
       defaultPort = defaultPortPostgres;
     } else if (dbType == dbTypeMysql) {
       defaultPort = defaultPortMysql;
     } else {
-      console.log("Unknown type: " + dbType);
+      console.log('Unknown type: ' + dbType);
     }
 
     let disable = this.state.isConnecting;
@@ -429,122 +429,121 @@ class ConnectionWindow extends React.Component {
       <div>
         <div className="col-md-8">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_nickname">Nickname</label>
-            <input
-              type="text"
+            <label className="control-label" htmlFor="db_nickname">
+              Nickname
+            </label>
+            <input type="text"
               id="db_nickname"
               className="form-control input-sm"
-              value = {b["nick"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'nick')}/>
+              value={ b['nick'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'nick') } />
           </div>
         </div>
-
         <div className="col-md-4">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_type">Type</label>
-            <select
-              id="db_type"
+            <label className="control-label" htmlFor="db_type">
+              Type
+            </label>
+            <select id="db_type"
               className="form-control input-sm"
-              value={dbType}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'type')}>
-                <option value={dbTypePostgres}>PostgreSQL</option>
-                <option value={dbTypeMysql}>MySQL</option>
+              value={ dbType }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'type') }>
+              <option value={ dbTypePostgres }>
+                PostgreSQL
+              </option>
+              <option value={ dbTypeMysql }>
+                MySQL
+              </option>
             </select>
           </div>
         </div>
-
         <div className="col-md-8">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_hostname">Hostname</label>
-            <input
-              type="text"
+            <label className="control-label" htmlFor="db_hostname">
+              Hostname
+            </label>
+            <input type="text"
               id="db_hostname"
               className="form-control input-sm"
-              value = {b["host"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'host')}/>
+              value={ b['host'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'host') } />
           </div>
         </div>
-
         <div className="col-md-4">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_port">Port</label>
-            <input
-              type="text"
+            <label className="control-label" htmlFor="db_port">
+              Port
+            </label>
+            <input type="text"
               id="db_port"
               className="form-control input-sm"
-              value = {b["port"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'port')} placeholder={defaultPort}/>
+              value={ b['port'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'port') }
+              placeholder={ defaultPort } />
           </div>
         </div>
-
         <div className="col-md-12">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_database">Database</label>
-            <input
-              type="text"
+            <label className="control-label" htmlFor="db_database">
+              Database
+            </label>
+            <input type="text"
               id="db_database"
               className="form-control input-sm"
-              value = {b["database"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'database')} />
+              value={ b['database'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'database') } />
           </div>
         </div>
-
         <div className="col-md-6">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_user">User</label>
-            <input
-              type="text"
+            <label className="control-label" htmlFor="db_user">
+              User
+            </label>
+            <input type="text"
               id="db_user"
               className="form-control input-sm"
-              value = {b["user"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'user')} />
+              value={ b['user'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'user') } />
           </div>
         </div>
-
         <div className="col-md-6">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_pass">Password</label>
-            <input
-              type="password"
+            <label className="control-label" htmlFor="db_pass">
+              Password
+            </label>
+            <input type="password"
               id="db_pass"
               className="form-control input-sm"
-              value = {b["password"]}
-              disabled={disable}
-              onChange={this.handleFormChanged.bind(this, 'password')} />
+              value={ b['password'] }
+              disabled={ disable }
+              onChange={ this.handleFormChanged.bind(this, 'password') } />
           </div>
         </div>
-
         <div className="col-md-12 right">
           <label className="control-label" htmlFor="pwd-remember">
             <input type="checkbox"
               id="pwd-remember"
-              checked={this.state.remember}
-              disabled={disable}
-              onChange={this.handleRememberChange}
-            /> Remember
-         </label>
+              checked={ this.state.remember }
+              disabled={ disable }
+              onChange={ this.handleRememberChange } /> Remember
+          </label>
         </div>
-
         <div className="col-md-12 right light-text smaller-text">
-          <i className="fa fa-lock fa1"></i>&nbsp;Database crendentials are stored
-          securely on your computer
+          <i className="fa fa-lock fa1"></i>&nbsp;Database crendentials are stored securely on your computer
         </div>
-
         <div className="col-md-12">
           &nbsp;&nbsp;
         </div>
-
-        {this.renderErrorOptional(this.state.connectionErrorMessage)}
-
-        {this.renderConnectOrCancel()}
+        { this.renderErrorOptional(this.state.connectionErrorMessage) }
+        { this.renderConnectOrCancel() }
       </div>
-    );
+      );
   }
 
   renderConnectOrCancel() {
@@ -562,64 +561,66 @@ class ConnectionWindow extends React.Component {
 
     if (this.state.isConnecting) {
       return (
-        <div className="col-md-12" style={styleDiv}>
-          <button onClick={this.handleCancel} className="btn btn-block btn-danger small">Cancel</button>
-          <SpinnerCircle forceVisible={true} style={styleSpinner}/>
+        <div className="col-md-12" style={ styleDiv }>
+          <button onClick={ this.handleCancel } className="btn btn-block btn-danger small">
+            Cancel
+          </button>
+          <SpinnerCircle forceVisible={ true } style={ styleSpinner } />
         </div>
-      );
+        );
     }
 
     return (
       <div className="col-md-12">
-        <button onClick={this.handleConnect} className="btn btn-block btn-primary small">Connect</button>
+        <button onClick={ this.handleConnect } className="btn btn-block btn-primary small">
+          Connect
+        </button>
       </div>
-    );
+      );
   }
 
   renderForm() {
     if (this.state.selectedBookmarkIdx >= 0) {
       return (
         <form role="form">
-          {this.renderFormElements()}
+          { this.renderFormElements() }
         </form>
-      );
+        );
     }
 
     // TODO: I don't think it ever happens
     var imageStyle = {
-      width: "30%",
-      height: "30%"
+      width: '30%',
+      height: '30%'
     };
 
     return (
       <form role="form">
         <div className="col-md-12 text-center">
-            <img class="img-responsive center-block small"
-              src="/s/img/icon.png"
-              alt="" style={imageStyle}/>
-            <h5>Please add a connection</h5>
+          <img class="img-responsive center-block small"
+            src="/s/img/icon.png"
+            alt=""
+            style={ imageStyle } />
+          <h5>Please add a connection</h5>
         </div>
       </form>
-    );
+      );
   }
 
   renderConnectionWindow() {
     return (
       <div className="container small">
         <div className="row">
-
           <div className="col-md-4">
-            {this.renderBookMarks()}
-            {this.renderTestDatabases()}
+            { this.renderBookMarks() }
+            { this.renderTestDatabases() }
           </div>
-
           <div className="col-md-8">
-            {this.renderForm()}
+            { this.renderForm() }
           </div>
-
         </div>
       </div>
-    );
+      );
   }
 
   render() {
@@ -634,14 +635,19 @@ class ConnectionWindow extends React.Component {
 
     return (
       <div id="connection-window">
-          <div className='logo-container'><img className='resize_fit_center' src='/s/img/dbhero-sm.png' /></div>
-          <div className="connection-settings">
-            {this.renderConnectionWindow()}
-            <hr/>
-          </div>
-          <div style={versionStyle}>Version: {gVersionNumber}</div>
+        <div className='logo-container'>
+          <img className='resize_fit_center' src='/s/img/dbhero-sm.png' />
+        </div>
+        <div className="connection-settings">
+          { this.renderConnectionWindow() }
+          <hr/>
+        </div>
+        <div style={ versionStyle }>
+          Version:
+          { gVersionNumber }
+        </div>
       </div>
-    );
+      );
   }
 }
 

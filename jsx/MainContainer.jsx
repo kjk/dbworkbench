@@ -14,10 +14,10 @@ export default class MainContainer extends React.Component {
   }
 
   componentWillMount() {
-    store.onSidebarDx( (dx) => {
+    store.onSidebarDx((dx) => {
       this.sidebarDx = dx;
       const el = ReactDOM.findDOMNode(this);
-      el.style.left = dx + "px";
+      el.style.left = dx + 'px';
     }, this);
   }
 
@@ -52,25 +52,20 @@ export default class MainContainer extends React.Component {
     // }
 
     return (
-      <div id="body" style={style}>
-          <DbNav view={this.props.selectedView}/>
-
-          { withInput ?
-            <Input
-              supportsExplain={this.props.supportsExplain}
-              editedCells={this.props.editedCells} />
-            : null
-          }
-          <Output
-            selectedView={this.props.selectedView}
-            results={this.props.results}
-            withInput={withInput}
-            resetPagination={this.props.resetPagination}
-            tableStructures={this.props.tableStructures}
-            selectedTable={this.props.selectedTable}
-            selectedCellPosition={this.props.selectedCellPosition}
-            editedCells={this.props.editedCells} />
+      <div id="body" style={ style }>
+        <DbNav view={ this.props.selectedView } />
+        { withInput ?
+          <Input supportsExplain={ this.props.supportsExplain } editedCells={ this.props.editedCells } />
+          : null }
+        <Output selectedView={ this.props.selectedView }
+          results={ this.props.results }
+          withInput={ withInput }
+          resetPagination={ this.props.resetPagination }
+          tableStructures={ this.props.tableStructures }
+          selectedTable={ this.props.selectedTable }
+          selectedCellPosition={ this.props.selectedCellPosition }
+          editedCells={ this.props.editedCells } />
       </div>
-    );
+      );
   }
 }

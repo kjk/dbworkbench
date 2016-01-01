@@ -17,7 +17,7 @@ export default class Input extends React.Component {
   }
 
   componentWillMount() {
-    store.onQueryEditDy( (dy) => {
+    store.onQueryEditDy((dy) => {
       this.queryEditDy = dy;
 
       let el = ReactDOM.findDOMNode(this.refs.editor);
@@ -37,7 +37,7 @@ export default class Input extends React.Component {
       e.preventDefault();
     }
     const query = this.editor.getValue().trim();
-    console.log("runQuery", query);
+    console.log('runQuery', query);
     if (query.length > 0) {
       action.executeQuery(query);
     }
@@ -48,7 +48,7 @@ export default class Input extends React.Component {
       e.preventDefault();
     }
     const query = this.editor.getValue().trim();
-    console.log("runExplain", query);
+    console.log('runExplain', query);
     if (query.length > 0) {
       action.explainQuery(query);
     }
@@ -56,7 +56,7 @@ export default class Input extends React.Component {
 
   exportToCSV(e) {
     e.preventDefault();
-    console.log("downloadCsv");
+    console.log('downloadCsv');
 
     let query = this.editor.getValue().trim();
 
@@ -65,9 +65,9 @@ export default class Input extends React.Component {
     }
 
     // Replace line breaks with spaces and properly encode query
-    query = window.encodeURI(query.replace(/\n/g, " "));
+    query = window.encodeURI(query.replace(/\n/g, ' '));
 
-    const url = window.location.protocol + "//" + window.location.host + "/api/query?format=csv&query=" + query;
+    const url = window.location.protocol + '//' + window.location.host + '/api/query?format=csv&query=' + query;
     const win = window.open(url, '_blank');
     win.focus();
   }
@@ -75,27 +75,27 @@ export default class Input extends React.Component {
   initEditor() {
     const editorNode = ReactDOM.findDOMNode(this.refs.editor);
     this.editor = ace.edit(editorNode);
-    this.editor.getSession().setMode("ace/mode/pgsql");
+    this.editor.getSession().setMode('ace/mode/pgsql');
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
 
     const self = this;
     this.editor.commands.addCommands([
       {
-        name: "run_query",
+        name: 'run_query',
         bindKey: {
-          win: "Ctrl-Enter",
-          mac: "Command-Enter"
+          win: 'Ctrl-Enter',
+          mac: 'Command-Enter'
         },
         exec: function(editor) {
           self.runQuery();
         }
       },
       {
-        name: "explain_query",
+        name: 'explain_query',
         bindKey: {
-          win: "Ctrl-E",
-          mac: "Command-E"
+          win: 'Ctrl-E',
+          mac: 'Command-E'
         },
         exec: function(editor) {
           self.runExplain();
@@ -112,9 +112,12 @@ export default class Input extends React.Component {
   renderExplain() {
     if (this.props.supportsExplain) {
       return (
-        <input type="button" onClick={this.runExplain} id="explain"
-          value="Explain Query" className="btn btn-sm btn-default" />
-      );
+        <input type="button"
+          onClick={ this.runExplain }
+          id="explain"
+          value="Explain Query"
+          className="btn btn-sm btn-default" />
+        );
     }
   }
 
@@ -125,20 +128,23 @@ export default class Input extends React.Component {
     }
     return (
       <div className="actions">
-        <input type="button" onClick={this.runQuery} id="run"
-          value="Run Query" className="btn btn-sm btn-primary" />
-        {this.renderExplain()}
-        <SpinnerCircle style={{display: 'inline-block', top: '4px'}} />
+        <input type="button"
+          onClick={ this.runQuery }
+          id="run"
+          value="Run Query"
+          className="btn btn-sm btn-primary" />
+        { this.renderExplain() }
+        <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
       </div>
-    );
+      );
   }
 
   inputDy() {
-    return this.queryEditDy + "px";
+    return this.queryEditDy + 'px';
   }
 
   editorDy() {
-    return (this.queryEditDy - 50) + "px";
+    return (this.queryEditDy - 50) + 'px';
   }
 
   render() {
@@ -160,20 +166,16 @@ export default class Input extends React.Component {
     }
 
     return (
-      <div id="input" style={style}>
+      <div id="input" style={ style }>
         <div className="wrapper">
-          <div id="custom-query" ref="editor" style={editorStyle} />
-
-          <DragBarHoriz
-            initialY={store.getQueryEditDy()}
-            min={60}
-            max={400}
-            onPosChanged={(dy) => store.setQueryEditDy(dy)} />
-
-          {this.renderButtons()}
-
+          <div id="custom-query" ref="editor" style={ editorStyle } />
+          <DragBarHoriz initialY={ store.getQueryEditDy() }
+            min={ 60 }
+            max={ 400 }
+            onPosChanged={ (dy) => store.setQueryEditDy(dy) } />
+          { this.renderButtons() }
         </div>
       </div>
-    );
+      );
   }
 }

@@ -12,7 +12,9 @@ export default class SpinnerCircle extends React.Component {
   }
 
   handleToggleSpinner(newVisibleState) {
-    this.setState({visible: newVisibleState});
+    this.setState({
+      visible: newVisibleState
+    });
   }
 
   componentWillMount() {
@@ -31,7 +33,7 @@ export default class SpinnerCircle extends React.Component {
       return null;
     }
     return (
-      <div style={this.props.style} className="circle-wrapper fade-in spinner">
+      <div style={ this.props.style } className="circle-wrapper fade-in spinner">
         <div className="circle1 circle"></div>
         <div className="circle2 circle"></div>
         <div className="circle3 circle"></div>
@@ -45,6 +47,6 @@ export default class SpinnerCircle extends React.Component {
         <div className="circle11 circle"></div>
         <div className="circle12 circle"></div>
       </div>
-    );
+      );
   }
 }

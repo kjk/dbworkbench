@@ -61,7 +61,7 @@ export default class DragBarVert extends React.Component {
     if (x >= xMin && x <= xMax) {
       this.x = x;
       const el = ReactDOM.findDOMNode(this);
-      el.style.left = x + "px";
+      el.style.left = x + 'px';
       this.props.onPosChanged(x);
     }
     e.stopPropagation();
@@ -80,10 +80,7 @@ export default class DragBarVert extends React.Component {
     };
 
     return (
-      <div
-        style={style}
-        onMouseDown={this.handleMouseDown}
-      ></div>
-    );
+      <div style={ style } onMouseDown={ this.handleMouseDown }></div>
+      );
   }
 }
