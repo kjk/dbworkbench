@@ -12,13 +12,31 @@ export default class Input extends React.Component {
     this.runExplain = this.runExplain.bind(this);
     this.runQuery = this.runQuery.bind(this);
     this.renderExplain = this.renderExplain.bind(this);
+
+    this.queryEditDy = store.getQueryEditDy();
+  }
+
+  componentWillMount() {
+    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+      this.queryEditDy = dy;
+
+      let el = ReactDOM.findDOMNode(this.refs.editor);
+      el.style.height = this.editorDy();
+
+      el = ReactDOM.findDOMNode(this);
+      el.style.height = this.inputDy();
+    });
+  }
+
+  componentWillUnmount() {
+    store.offQueryEditDy(this.cidQueryEditDy);
   }
 
   runQuery(e) {
     if (e) {
       e.preventDefault();
     }
-    var query = this.editor.getValue().trim();
+    const query = this.editor.getValue().trim();
     console.log("runQuery", query);
     if (query.length > 0) {
       action.executeQuery(query);
@@ -29,7 +47,7 @@ export default class Input extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    var query = this.editor.getValue().trim();
+    const query = this.editor.getValue().trim();
     console.log("runExplain", query);
     if (query.length > 0) {
       action.explainQuery(query);
@@ -40,7 +58,7 @@ export default class Input extends React.Component {
     e.preventDefault();
     console.log("downloadCsv");
 
-    var query = this.editor.getValue().trim();
+    let query = this.editor.getValue().trim();
 
     if (query.length === 0) {
       return;
@@ -49,19 +67,19 @@ export default class Input extends React.Component {
     // Replace line breaks with spaces and properly encode query
     query = window.encodeURI(query.replace(/\n/g, " "));
 
-    var url = window.location.protocol + "//" + window.location.host + "/api/query?format=csv&query=" + query;
-    var win = window.open(url, '_blank');
+    const url = window.location.protocol + "//" + window.location.host + "/api/query?format=csv&query=" + query;
+    const win = window.open(url, '_blank');
     win.focus();
   }
 
   initEditor() {
-    var editorNode = ReactDOM.findDOMNode(this.refs.editor);
+    const editorNode = ReactDOM.findDOMNode(this.refs.editor);
     this.editor = ace.edit(editorNode);
     this.editor.getSession().setMode("ace/mode/pgsql");
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
 
-    var self = this;
+    const self = this;
     this.editor.commands.addCommands([
       {
         name: "run_query",
@@ -101,6 +119,10 @@ export default class Input extends React.Component {
   }
 
   renderButtons() {
+    const nEditedRows = Object.keys(this.props.editedCells).length;
+    if (nEditedRows != 0) {
+      return;
+    }
     return (
       <div className="actions">
         <input type="button" onClick={this.runQuery} id="run"
@@ -111,39 +133,46 @@ export default class Input extends React.Component {
     );
   }
 
+  inputDy() {
+    return this.queryEditDy + "px";
+  }
+
+  editorDy() {
+    return (this.queryEditDy - 50) + "px";
+  }
+
   render() {
-    // TODO: add csv support
+    // TODO: re-add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
     // value="Download CSV" className="btn btn-sm btn-default" />
 
-    console.log("Input.render");
-    if (this.props.dragBarPosition != 0) {
-      var inputStyle = { height: this.props.dragBarPosition + 'px' };
-      var customQueryStyle = { height: this.props.dragBarPosition - 50 + 'px' };
-      var dragBarStyle = { top: this.props.dragBarPosition - 50 + 'px' };
-    }
+    //console.log("Input.render");
+    let style = {};
+    let editorStyle = {};
 
-    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
-    if (numberOfRowsEdited == 0) {
-      var renderButtons = this.renderButtons();
+    if (this.queryEditDy != 0) {
+      style = {
+        height: this.inputDy()
+      };
+      editorStyle = {
+        height: this.editorDy()
+      };
     }
-
-    const minDy = 60;
-    const maxDy = 400;
 
     return (
-      <div id="input" style={inputStyle}>
+      <div id="input" style={style}>
         <div className="wrapper">
-          <div id="custom-query" ref="editor" style={customQueryStyle}></div>
+          <div id="custom-query" ref="editor" style={editorStyle}>
+          </div>
 
           <DragBarHoriz
             initialY={store.getQueryEditDy()}
-            min={minDy}
-            max={maxDy}
+            min={60}
+            max={400}
             onPosChanged={(dy) => store.setQueryEditDy(dy)}
           />
 
-          {renderButtons}
+          {this.renderButtons()}
 
         </div>
       </div>

@@ -11,11 +11,6 @@ export default class MainContainer extends React.Component {
     super(props, context);
 
     this.sidebarDx = store.getSidebarDx();
-    this.queryEditDy = store.getQueryEditDy();
-
-    this.state = {
-      dragBarPosition: this.queryEditDy,
-    };
   }
 
   componentWillMount() {
@@ -24,17 +19,10 @@ export default class MainContainer extends React.Component {
       const el = ReactDOM.findDOMNode(this);
       el.style.left = dx + "px";
     });
-
-    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
-      this.setState({
-        dragBarPosition: dy,
-      });
-    });
   }
 
   componentWillUnmount() {
     store.offSidebarDx(this.cidSidebarDx);
-    store.offQueryEditDy(this.cidQueryEditDy);
   }
 
   // renderInput(tooLong, supportsExplain, inputStyle) {
@@ -69,13 +57,11 @@ export default class MainContainer extends React.Component {
 
           { withInput ?
             <Input
-              dragBarPosition={this.state.dragBarPosition}
               supportsExplain={this.props.supportsExplain}
               editedCells={this.props.editedCells} />
             : null
           }
           <Output
-            dragBarPosition={this.state.dragBarPosition}
             selectedView={this.props.selectedView}
             results={this.props.results}
             withInput={withInput}

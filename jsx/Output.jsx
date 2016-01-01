@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
 import { Tfoot } from './reactable/tfoot.jsx';
@@ -7,8 +8,9 @@ import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
-import * as action from './action.js';
 import view from './view.js';
+import * as action from './action.js';
+import * as store from './store.js';
 
 function resultsToDictionary(results) {
   const reformatData = results.rows.map(function(row) {
@@ -26,9 +28,24 @@ export default class Output extends React.Component {
     this.handleCellClick = this.handleCellClick.bind(this);
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
 
+    this.queryEditDy = store.getQueryEditDy();
+
     this.state = {
       filterString: '',
     };
+  }
+
+  componentWillMount() {
+    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+
+      this.queryEditDy = dy;
+      const el = ReactDOM.findDOMNode(this);
+      el.style.top = this.topPos();
+    });
+  }
+
+  componentWillUnmount() {
+    store.offQueryEditDy(this.cidQueryEditDy);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -220,7 +237,10 @@ RETURNING ${columns};
     if (this.props.withInput && numberOfRowsEdited == 0) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
-      var filterStyle = { top: this.props.dragBarPosition + 6 + 'px' };
+
+      // TODO: need to update this style when resizing
+      // probably filter shouldn't be inside table
+      var filterStyle = { top: this.queryEditDy + 6 };
     }
 
     if (this.props.withInput) {
@@ -278,9 +298,32 @@ RETURNING ${columns};
     );
   }
 
+  topPos() {
+    let top = 60;
+    if (this.props.withInput) {
+      top = this.queryEditDy + 60;
+    }
+    return top + "px";
+  }
+
+  renderQueryEditBar() {
+    const nRowsEdited = Object.keys(this.props.editedCells).length;
+    if (nRowsEdited > 0) {
+      return (
+        <QueryEditBar
+
+          numberOfRowsEdited={nRowsEdited}
+          generateQuery={this.generateQuery.bind(this)}
+          onHandleDiscardChanges={this.handleDiscardChanges.bind(this)}
+        />
+      );
+    }
+  }
   render() {
-    var clsOutput, children;
-    var results = this.props.results;
+    //console.log("Output.render");
+
+    let clsOutput, children;
+    const results = this.props.results;
     if (!results) {
       children = this.renderNoResults();
       clsOutput = "empty";
@@ -303,31 +346,16 @@ RETURNING ${columns};
       );
     }
 
-    var outputStyle = { top: this.props.dragBarPosition + 60 + 'px'};
+    let style = { top: this.topPos() };
     if (clsOutput != "empty") {
-      outputStyle['marginTop'] = '-10px';
-    }
-
-    if (!this.props.withInput) {
-      outputStyle['top'] = '60px';
-    }
-
-    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
-    if (numberOfRowsEdited !== 0) {
-      var queryEditBar = (
-        <QueryEditBar
-          dragBarPosition={this.props.dragBarPosition}
-          numberOfRowsEdited={numberOfRowsEdited}
-          generateQuery={this.generateQuery.bind(this)}
-          onHandleDiscardChanges={this.handleDiscardChanges.bind(this)} />
-        );
+      style['marginTop'] = '-10px';
     }
 
     return (
-      <div id="output" className={clsOutput} style={outputStyle}>
+      <div id="output" className={clsOutput} style={style}>
         <div id="wrapper">
           {children}
-          {queryEditBar}
+          {this.renderQueryEditBar()}
         </div>
       </div>
     );

@@ -13,7 +13,6 @@ export default class DragBarHoriz extends React.Component {
     this.handleMouseUp = this.handleMouseUp.bind(this);
 
     this.y = this.props.initialY;
-    console.log("DragBarHoriz.contructor: initialY=", this.props.initialY);
     this.state = {
       dragging: false,
     };
@@ -56,7 +55,6 @@ export default class DragBarHoriz extends React.Component {
     }
 
     const y = e.pageY;
-    console.log("DragBarHoriz.handleMouseMove: y=", y);
     const yMin = this.props.min || 0;
     const yMax = this.props.max || 9999999;
     if (y >= yMin && y <= yMax) {
@@ -70,7 +68,6 @@ export default class DragBarHoriz extends React.Component {
   }
 
   render() {
-    console.log("DragBarHoriz.render: this.y=", this.y);
     const style = {
       position: 'absolute',
       backgroundColor: '#377CE4',
