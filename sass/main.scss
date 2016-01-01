@@ -1094,3 +1094,9 @@ select#db_type.form-control.input-sm {
     transform: scale(1.0);
   }
 }
+
+/***********************************************************/
+
+div.ReactModal__Overlay {
+  z-index: 1;
+}
