@@ -52,10 +52,6 @@ class App extends React.Component {
     this.handleQueryAsync = this.handleQueryAsync.bind(this);
     this.handleQuerySync = this.handleQuerySync.bind(this);
 
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-
     this.state = {
       selectedView: view.SQLQuery,
       connectionId: gUserInfo ? gUserInfo.ConnectionID : 0,
@@ -78,9 +74,6 @@ class App extends React.Component {
 
       errorMessage: "",
       errorVisible: false,
-
-      dragging: false,
-      dragBarPosition: store.getSidebarDx(),
 
       capabilities: {},
     };
@@ -115,44 +108,6 @@ class App extends React.Component {
 
       this.getAllTablesStructures(connId, data);
     });
-  }
-
-  componentDidUpdate(props, state) {
-    if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove);
-      document.addEventListener('mouseup', this.onMouseUp);
-    } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
-    }
-  }
-
-  onMouseDown(e) {
-    // only left mouse button
-    if (e.button !== 0) return;
-    this.setState({
-      dragging: true,
-    });
-    e.stopPropagation();
-    e.preventDefault();
-  }
-
-  onMouseUp(e) {
-    this.setState({
-      dragging: false,
-    });
-    e.stopPropagation();
-    e.preventDefault();
-  }
-
-  onMouseMove(e) {
-    if (!this.state.dragging) return;
-    if ((e.pageX < minSidebarDx) || (e.pageX > maxSidebarDx)) {
-      return;
-    }
-    store.setSidebarDx(e.pageX);
-    e.stopPropagation();
-    e.preventDefault();
   }
 
   handleTableSelected(table) {
@@ -452,12 +407,6 @@ class App extends React.Component {
     this.cidSelectedCellPosition = action.onSelectedCellPosition(this.handleSelectedCellPosition);
     this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
 
-    this.cidSidebarDx = store.onSidebarDx( (dx) => {
-      this.setState({
-        dragBarPosition: dx
-      });
-    });
-
     var connId = this.state.connectionId;
     if (connId == 0) {
       return;
@@ -489,7 +438,6 @@ class App extends React.Component {
     action.offResetPagination(this.cidResetPagination);
     action.offSelectedCellPosition(this.cidSelectedCellPosition);
     action.offEditedCells(this.cidEditedCells);
-    store.offSidebarDx(this.cidSidebarDx);
   }
 
   render() {
@@ -504,8 +452,6 @@ class App extends React.Component {
         </div>
       );
     }
-
-    var dragBarStyle = { left: this.state.dragBarPosition + 'px' };
 
     return (
       <div>
