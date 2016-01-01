@@ -35,6 +35,35 @@ function urlFragmentFromObject(params) {
   return s;
 }
 
+function json_ok(json, cb) {
+    if (cb) {
+      cb(json);
+    }
+}
+
+function json_failed(error) {
+  const msg = error.message;
+  action.alertBar(`Something is wrong. Please restart the application. Error parsing json response. Error: ${msg}`);
+}
+
+function fetch_ok(resp, cb,  method, url) {
+  store.spinnerHide();
+  if (!resp.ok) {
+    action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
+    return null;
+  }
+  resp.json().then(
+    (json) => json_ok(json, cb),
+    (error) => json_failed
+  );
+}
+
+function fetch_failed(error) {
+  store.spinnerHide();
+  const msg = error.message;
+  action.alertBar(`Something is wrong. Please restart the application. Error: '${msg}'`);
+}
+
 function apiCall(method, url, params, cb) {
   const opts = {
     method: method,
@@ -46,34 +75,11 @@ function apiCall(method, url, params, cb) {
     url += urlFragmentFromObject(params);
   }
 
-  let spinnerHidden = false;
   store.spinnerShow();
-  fetch(url, opts)
-    .then((resp) => {
-      store.spinnerHide();
-      spinnerHidden = true;
-      if (!resp.ok) {
-        action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
-        return;
-      }
-      resp.json().then( (json) => {
-        if (cb) {
-          cb(json);
-        }
-        return;
-      })
-      .catch( (error) => {
-        action.alertBar(`Something is wrong. Please restart the application. Error parsing json response"`);
-        return;
-      });
-    })
-    .catch( (error) => {
-      if (!spinnerHidden) {
-        store.spinnerHide();
-      }
-      const msg = error.message;
-      action.alertBar(`Something is wrong. Please restart the application. Error: '${msg}'`);
-    });
+  fetch(url, opts).then(
+    (resp) => fetch_ok(resp, cb, method, url),
+    (error) => fetch_failed(error)
+  );
 }
 
 export function connect(type, url, urlSafe, cb) {
@@ -202,7 +208,7 @@ export function getConnectionInfo(connId, cb) {
     const res = {
       columns: ["attribute", "value"],
       rows: rows
-    }; 
+    };
     cb(res);
   });
 }

@@ -389,9 +389,9 @@ class ConnectionWindow extends React.Component {
       }
 
       bookmarks.push(
-        <a key={id} data-custom-attribute={idx} href="#" className={className} onClick={guard("bookmarksEnabled", this.selectBookmark)}>
+        <a key={id} data-custom-attribute={idx} href="#" className={className}
+           onClick={guard("bookmarksEnabled", this.selectBookmark)}>
           {nick}
-          <i data-custom-attribute={id} onClick={guard("bookmarksEnabled", this.deleteBookmark)} className="fa fa-times pull-right"></i>
         </a>
       );
     }

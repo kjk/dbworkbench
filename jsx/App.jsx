@@ -111,7 +111,7 @@ class App extends React.Component {
   }
 
   handleTableSelected(table) {
-    console.log("handleTableSelected: table: ", table);
+    console.log("handleTableSelected: ", table);
 
     this.setState({
       selectedTable: table,
@@ -396,6 +396,7 @@ class App extends React.Component {
 
   componentWillMount() {
     //this.adHocTest();
+    console.log("App.componentWillMount: ", this);
 
     action.onViewSelected(this.handleViewSelected, this);
     action.onTableSelected(this.handleTableSelected, this);
@@ -429,6 +430,7 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log("App.componentWillUnmount: ", this);
     action.offAllForOwner(this);
   }
 
