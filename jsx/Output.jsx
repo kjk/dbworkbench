@@ -37,7 +37,6 @@ export default class Output extends React.Component {
 
   componentWillMount() {
     store.onQueryEditDy( (dy) => {
-
       this.queryEditDy = dy;
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();

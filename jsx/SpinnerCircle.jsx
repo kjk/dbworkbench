@@ -22,9 +22,7 @@ export default class SpinnerCircle extends React.Component {
   }
 
   componentWillUnmount() {
-    if (!this.props.forceVisible) {
-      store.offAllForOwner(this);
-    }
+    store.offAllForOwner(this);
   }
 
   render() {

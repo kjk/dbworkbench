@@ -212,16 +212,16 @@ export function spinnerHide() {
   //console.log(`spinnerHide: ${newVal}`);
 }
 
-export function onSpinner(cb) {
-  return on(spinnerKey, cb);
+export function onSpinner(cb, owner) {
+  return on(spinnerKey, cb, owner);
 }
 
 export function offSpinner(cbId) {
   off(spinnerKey, cbId);
 }
 
-export function onSidebarDx(cb) {
-  return on(sidebarDxKey, cb);
+export function onSidebarDx(cb, owner) {
+  return on(sidebarDxKey, cb, owner);
 }
 
 export function offSidebarDx(cbId) {
@@ -236,8 +236,8 @@ export function setSidebarDx(newVal) {
   set(sidebarDxKey, newVal);
 }
 
-export function onQueryEditDy(cb) {
-  return on(queryEditDyKey, cb);
+export function onQueryEditDy(cb, owner) {
+  return on(queryEditDyKey, cb, owner);
 }
 
 export function offQueryEditDy(cbId) {
