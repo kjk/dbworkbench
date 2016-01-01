@@ -13,21 +13,22 @@ export default class DragBarVert extends React.Component {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
 
+    this.x = this.props.initialX;
+
     this.state = {
-      x: this.props.initialX,
       dragging: false,
     };
   }
 
-  componentDidUpdate(props, state) {
-    if (this.state.dragging && !state.dragging) {
+  componentDidUpdate(props, prevState) {
+    const dragEnter = !prevState.dragging && this.state.dragging;
+    const dragLeave = prevState.dragging && !this.state.dragging;
+    if (dragEnter) {
       document.addEventListener('mousemove', this.handleMouseMove);
       document.addEventListener('mouseup', this.handleMouseUp);
-      //console.log("DragBarVert adding event handlers");
-    } else if (!this.state.dragging && state.dragging) {
+    } else if (dragLeave) {
       document.removeEventListener('mousemove', this.handleMouseMove);
       document.removeEventListener('mouseup', this.handleMouseUp);
-      //console.log("DragBarVert removing event handlers");
     }
   }
 
@@ -52,7 +53,6 @@ export default class DragBarVert extends React.Component {
 
   handleMouseMove(e) {
     if (!this.state.dragging) {
-      //console.log("DragBarVert not dragging");
       return;
     }
 
@@ -60,12 +60,10 @@ export default class DragBarVert extends React.Component {
     const xMin = this.props.min || 0;
     const xMax = this.props.max || 9999999;
     if (x >= xMin && x <= xMax) {
-      // TODO: maybe can set the element.style.width directly?
-      this.setState({
-        x: x
-      });
+      this.x = x;
+      const el = ReactDOM.findDOMNode(this);
+      el.style.left = x + "px";
       this.props.onPosChanged(x);
-      //store.setSidebarDx(e.pageX);
     }
     e.stopPropagation();
     e.preventDefault();
@@ -79,7 +77,7 @@ export default class DragBarVert extends React.Component {
       width: 3,
       cursor: 'col-resize',
       zIndex: 3,
-      left: this.state.x
+      left: this.x
     };
 
     return (
@@ -88,16 +86,5 @@ export default class DragBarVert extends React.Component {
         onMouseDown={this.handleMouseDown}
       ></div>
     );
-
-    /*
-    return (
-      <div
-        style={style}
-        onMouseDown={this.handleMouseDown}
-        onMouseMove={this.handleMouseMove}
-        onMouseUp={this.handleMouseUp}>
-      </div>
-    );*/
-
   }
 }
