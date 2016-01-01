@@ -162,15 +162,13 @@ export default class Input extends React.Component {
     return (
       <div id="input" style={style}>
         <div className="wrapper">
-          <div id="custom-query" ref="editor" style={editorStyle}>
-          </div>
+          <div id="custom-query" ref="editor" style={editorStyle} />
 
           <DragBarHoriz
             initialY={store.getQueryEditDy()}
             min={60}
             max={400}
-            onPosChanged={(dy) => store.setQueryEditDy(dy)}
-          />
+            onPosChanged={(dy) => store.setQueryEditDy(dy)} />
 
           {this.renderButtons()}
 

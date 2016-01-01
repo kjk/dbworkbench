@@ -60,7 +60,7 @@ export default class DragBarHoriz extends React.Component {
     if (y >= yMin && y <= yMax) {
       this.y = y;
       const el = ReactDOM.findDOMNode(this);
-      el.style.top = y + "px";
+      el.style.top = y - 50 + "px";
       this.props.onPosChanged(y);
     }
     e.stopPropagation();
@@ -81,8 +81,8 @@ export default class DragBarHoriz extends React.Component {
     return (
       <div
         style={style}
-        onMouseDown={this.handleMouseDown}
-      ></div>
+        onMouseDown={this.handleMouseDown}>
+      </div>
     );
   }
 }
