@@ -190,9 +190,8 @@ export default class Sidebar extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    this.sidebarDx = store.getSidebarDx();
     this.state = {
-      dragging: false,
-      sidebarDx: store.getSidebarDx(),
       tables: [],
     };
   }
@@ -200,9 +199,9 @@ export default class Sidebar extends React.Component {
   componentWillMount() {
     this.refreshTables();
     this.cidSidebarDx = store.onSidebarDx( (dx) => {
-      this.setState({
-        sidebarDx: dx
-      });
+      this.sidebarDx = dx;
+      const el = ReactDOM.findDOMNode(this);
+      el.style.width = dx + "px";
     });
   }
 
@@ -237,6 +236,9 @@ export default class Sidebar extends React.Component {
   }
 
   renderTables(tables) {
+    if (!tables) {
+      return null;
+    }
     const selectedTable = this.props.selectedTable;
     const res = tables.map((table) => {
       const cls = (table == selectedTable) ? ' selected' : '';
@@ -251,9 +253,12 @@ export default class Sidebar extends React.Component {
   }
 
   render() {
-    var tables = this.state.tables ? this.renderTables(this.state.tables) : null;
-    var divStyle = {
-        width: this.state.sidebarDx + 'px',
+    // TODO: on database connect gets rendered 28 times
+    //console.log("Sidebar render");
+
+    var tables = this.renderTables(this.state.tables);
+    var style = {
+        width: this.sidebarDx,
     };
 
     if (this.props.selectedTableInfo != null) {
@@ -263,7 +268,7 @@ export default class Sidebar extends React.Component {
     }
 
     return (
-      <div id="sidebar" style={divStyle}>
+      <div id="sidebar" style={style}>
         <div className="tables-list">
           <div className="wrap">
             <div className="title">
