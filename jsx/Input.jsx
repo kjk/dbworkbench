@@ -11,7 +11,6 @@ export default class Input extends React.Component {
     this.exportToCSV = this.exportToCSV.bind(this);
     this.runExplain = this.runExplain.bind(this);
     this.runQuery = this.runQuery.bind(this);
-    this.renderExplain = this.renderExplain.bind(this);
 
     this.queryEditDy = store.getQueryEditDy();
   }
@@ -22,9 +21,11 @@ export default class Input extends React.Component {
 
       let el = ReactDOM.findDOMNode(this.refs.editor);
       el.style.height = this.editorDy();
+      //console.log('this.refs.editor.style.height: ', el.style.height);
 
       el = ReactDOM.findDOMNode(this);
       el.style.height = this.inputDy();
+    //console.log('Input.style.height: ', el.style.height);
     }, this);
   }
 
@@ -79,7 +80,6 @@ export default class Input extends React.Component {
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
 
-    const self = this;
     this.editor.commands.addCommands([
       {
         name: 'run_query',
@@ -87,9 +87,7 @@ export default class Input extends React.Component {
           win: 'Ctrl-Enter',
           mac: 'Command-Enter'
         },
-        exec: function(editor) {
-          self.runQuery();
-        }
+        exec: (editor) => this.runQuery()
       },
       {
         name: 'explain_query',
@@ -97,9 +95,7 @@ export default class Input extends React.Component {
           win: 'Ctrl-E',
           mac: 'Command-E'
         },
-        exec: function(editor) {
-          self.runExplain();
-        }
+        exec: (editor) => this.runExplain()
       }
     ]);
     this.editor.focus();
@@ -107,36 +103,6 @@ export default class Input extends React.Component {
 
   componentDidMount() {
     this.initEditor();
-  }
-
-  renderExplain() {
-    if (this.props.supportsExplain) {
-      return (
-        <input type="button"
-          onClick={ this.runExplain }
-          id="explain"
-          value="Explain Query"
-          className="btn btn-sm btn-default" />
-        );
-    }
-  }
-
-  renderButtons() {
-    const nEditedRows = Object.keys(this.props.editedCells).length;
-    if (nEditedRows != 0) {
-      return;
-    }
-    return (
-      <div className="actions">
-        <input type="button"
-          onClick={ this.runQuery }
-          id="run"
-          value="Run Query"
-          className="btn btn-sm btn-primary" />
-        { this.renderExplain() }
-        <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
-      </div>
-      );
   }
 
   inputDy() {
@@ -165,6 +131,13 @@ export default class Input extends React.Component {
       };
     }
 
+    const nEditedRows = Object.keys(this.props.editedCells).length;
+    const actionsCls = nEditedRows != 0 ? 'hidden' : 'actions';
+    let explainCls = 'btn btn-sm btn-default';
+    if (!this.props.supportsExplain) {
+      explainCls += ' hidden';
+    }
+
     return (
       <div id="input" style={ style }>
         <div className="wrapper">
@@ -173,7 +146,19 @@ export default class Input extends React.Component {
             min={ 60 }
             max={ 400 }
             onPosChanged={ (dy) => store.setQueryEditDy(dy) } />
-          { this.renderButtons() }
+          <div className={ actionsCls }>
+            <input type="button"
+              onClick={ this.runQuery }
+              id="run"
+              value="Run Query"
+              className="btn btn-sm btn-primary" />
+            <input type="button"
+              onClick={ this.runExplain }
+              id="explain"
+              value="Explain Query"
+              className={ explainCls } />
+            <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
+          </div>
         </div>
       </div>
       );
