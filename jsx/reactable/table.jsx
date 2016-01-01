@@ -1,6 +1,5 @@
 import React from 'react';
 import { extractDataFrom, filterPropsFrom } from './utils.jsx';
-import { isUnsafe } from './unsafe.jsx';
 import { Thead } from './thead.jsx';
 import { Th } from './th.jsx';
 import { Tr } from './tr.jsx';
@@ -253,9 +252,9 @@ export class Table extends React.Component {
 
     this.data.sort(function(a, b) {
       let keyA = extractDataFrom(a, currentSort.column);
-      keyA = isUnsafe(keyA) ? keyA.toString() : keyA || '';
+      keyA = keyA || '';
       let keyB = extractDataFrom(b, currentSort.column);
-      keyB = isUnsafe(keyB) ? keyB.toString() : keyB || '';
+      keyB = keyB || '';
 
       // Default sort
       if (

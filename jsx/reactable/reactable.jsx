@@ -6,7 +6,6 @@ import { Th } from './th.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Thead } from './thead.jsx';
 import { Sort } from './sort.jsx';
-import { unsafe } from './unsafe.jsx';
 
 React.Children.children = function(children) {
   return React.Children.map(children, function(x) {
@@ -52,7 +51,6 @@ const Reactable = {
   Tfoot,
   Thead,
   Sort,
-  unsafe
 };
 
 export default Reactable;

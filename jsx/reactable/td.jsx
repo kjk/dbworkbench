@@ -1,6 +1,5 @@
 import React from 'react';
 import { stringable, isReactComponent } from './utils.jsx';
-import { isUnsafe } from './unsafe.jsx';
 
 export class Td extends React.Component {
   constructor(props, context) {
@@ -74,13 +73,7 @@ export class Td extends React.Component {
         data = this.props.children.toString();
       }
 
-      if (isUnsafe(this.props.children)) {
-        tdProps.dangerouslySetInnerHTML = {
-          __html: this.props.children.toString()
-        };
-      } else {
-        tdProps.children = data;
-      }
+      tdProps.children = data;
       if (this.state.isEditable) {
         tdProps.children = this.renderTextArea();
       }
