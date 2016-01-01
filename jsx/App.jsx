@@ -339,10 +339,10 @@ class App extends React.Component {
   }
 
   adHocTest() {
-    var cid1 = action.onViewSelected(this.handleViewSelected);
-    var cid2 = action.onViewSelected(this.handleViewSelected);
+    var cid1 = action.onViewSelected(this.handleViewSelected, this);
+    var cid2 = action.onViewSelected(this.handleViewSelected, this);
     action.offViewSelected(cid2);
-    action.offViewSelected(cid1);
+    action.offViewSelected(this);
     action.offViewSelected(18);
   }
 
@@ -397,15 +397,15 @@ class App extends React.Component {
   componentWillMount() {
     //this.adHocTest();
 
-    this.cidViewSelected = action.onViewSelected(this.handleViewSelected);
-    this.cidTableSelected = action.onTableSelected(this.handleTableSelected);
-    this.cidExecuteQuery = action.onExecuteQuery(this.handleExecuteQuery);
-    this.cidExplainQuery = action.onExplainQuery(this.handleExplainQuery);
-    this.cidDisconnectDatabase = action.onDisconnectDatabase(this.handleDisconnectDatabase);
-    this.cidAlertBar = action.onAlertBar(this.handleAlertBar);
-    this.cidResetPagination = action.onResetPagination(this.handleResetPagination);
-    this.cidSelectedCellPosition = action.onSelectedCellPosition(this.handleSelectedCellPosition);
-    this.cidEditedCells = action.onEditedCells(this.handleEditedCells);
+    action.onViewSelected(this.handleViewSelected, this);
+    action.onTableSelected(this.handleTableSelected, this);
+    action.onExecuteQuery(this.handleExecuteQuery, this);
+    action.onExplainQuery(this.handleExplainQuery, this);
+    action.onDisconnectDatabase(this.handleDisconnectDatabase, this);
+    action.onAlertBar(this.handleAlertBar, this);
+    action.onResetPagination(this.handleResetPagination, this);
+    action.onSelectedCellPosition(this.handleSelectedCellPosition, this);
+    action.onEditedCells(this.handleEditedCells, this);
 
     var connId = this.state.connectionId;
     if (connId == 0) {
@@ -429,15 +429,7 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
-    action.offViewSelected(this.cidViewSelected);
-    action.offTableSelected(this.cidTableSelected);
-    action.offExecuteQuery(this.cidExecuteQuery);
-    action.offExplainQuery(this.cidExplainQuery);
-    action.offDisconnectDatabase(this.cidDisconnectDatabase);
-    action.offAlertBar(this.cidAlertBar);
-    action.offResetPagination(this.cidResetPagination);
-    action.offSelectedCellPosition(this.cidSelectedCellPosition);
-    action.offEditedCells(this.cidEditedCells);
+    action.offAllForOwner(this);
   }
 
   render() {
