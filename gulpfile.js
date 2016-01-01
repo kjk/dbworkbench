@@ -8,7 +8,6 @@ var exorcist    = require('exorcist');
 var gulp        = require('gulp');
 var prefix      = require('gulp-autoprefixer');
 var uglify      = require('gulp-uglify');
-var react       = require('gulp-react');
 var sass        = require('gulp-sass');
 var sourcemaps  = require('gulp-sourcemaps');
 var source      = require('vinyl-source-stream');

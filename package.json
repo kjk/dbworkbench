@@ -28,15 +28,12 @@
     "gulp-autoprefixer": "3.1.0",
     "gulp-concat": "2.6.0",
     "gulp-html-replace": "1.5.5",
-    "gulp-react": "3.1.0",
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.1.1",
     "gulp-sourcemaps": "1.6.0",
-    "gulp-streamify": "1.0.1",
     "gulp-uglify": "1.5.1",
     "vinyl-buffer": "1.0.0",
-    "vinyl-source-stream": "1.1.0",
-    "watchify": "3.6.1"
+    "vinyl-source-stream": "1.1.0"
   },
   "version": "0.0.1"
 }
