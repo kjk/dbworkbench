@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# To enable:
+# ln -s ../../scripts/git-pre-commit-hook .git/hooks/pre-commit
+# see http://codeinthehole.com/writing/tips-for-using-a-git-pre-commit-hook/
+
+./node_modules/.bin/esformatter --diff jsx/reactable/*.jsx jsx/*js*
+RESULT=$?
+[ $RESULT -ne 0 ] && echo "commit aborted. run ./scripts/jsfmt.sh" && exit 1
+exit 0
