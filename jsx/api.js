@@ -36,9 +36,13 @@ function urlFragmentFromObject(params) {
 }
 
 function json_ok(json, cb) {
-    if (cb) {
-      cb(json);
-    }
+  if (json.error) {
+    action.alertBar(`Something is wrong. Please restart the application. Error: '${json.error}'`);
+    return;
+  }
+  if (cb) {
+    cb(json);
+  }
 }
 
 function json_failed(error) {
