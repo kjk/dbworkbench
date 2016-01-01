@@ -1074,6 +1074,8 @@ select#db_type.form-control.input-sm {
 
 .modal-body {
   padding-bottom: 0;
+  overflow: scroll;
+  height: 300px;
 }
 
 .modal-body div.container {
@@ -1102,6 +1104,12 @@ select#db_type.form-control.input-sm {
   height: 100px;
 }
 
+/*This is temporaryly duplicate once modal is redesign this can be removed*/
+#sidebar-modal-results {
+  min-height: 300px;
+  min-width: 638px;
+}
+
 div.ReactModal__Overlay {
-  z-index: 1;
+  z-index: 99;
 }
