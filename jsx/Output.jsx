@@ -56,7 +56,7 @@ export default class Output extends React.Component {
   }
 
   setEditedCells(rowId, colId, value) {
-    var tmp = Object.assign({}, this.props.editedCells);
+    let tmp = Object.assign({}, this.props.editedCells);
     if (tmp[rowId] == undefined) {
       tmp[rowId] = {};
     }
@@ -232,8 +232,11 @@ RETURNING ${columns};
     const header = this.renderHeader(results.columns);
     const rows = data.map((row, i) => this.renderRow(row, i));
 
-    var numberOfRowsEdited = Object.keys(this.props.editedCells).length;
-    if (this.props.withInput && numberOfRowsEdited == 0) {
+    let nRowsEdited = 0;
+    if (this.props.editedCells) {
+      nRowsEdited = Object.keys(this.props.editedCells).length;
+    }
+    if (this.props.withInput && nRowsEdited == 0) {
       var filterable = results.columns;
       var filterPlaceholder = "Filter Results";
 

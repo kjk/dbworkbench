@@ -11,6 +11,7 @@ export default class DatabaseMenuDropdown extends React.Component {
     this.handleConnection = this.handleConnection.bind(this);
     this.handleActivity = this.handleActivity.bind(this);
     this.handleDisconnect = this.handleDisconnect.bind(this);
+    this.handleModalCloseRequest = this.handleModalCloseRequest.bind(this);
 
     this.state = {
       modalIsOpen: false,
