@@ -1,5 +1,4 @@
 import React from 'react';
-import { Th } from './th.jsx';
 import { filterPropsFrom } from './utils.jsx';
 
 export class Thead extends React.Component {
@@ -30,7 +29,7 @@ export class Thead extends React.Component {
   }
 
   render() {
-    var Ths = [];
+    var ths = [];
     for (var index = 0; index < this.props.columns.length; index++) {
       var column = this.props.columns[index];
       var thClass = `reactable-th-${column.key.replace(/\s+/g, '-').toLowerCase()}`;
@@ -60,15 +59,17 @@ export class Thead extends React.Component {
         thClass += ` ${column.props.className}`;
       }
 
-      Ths.push(
-        <Th {...column.props}
+      // TODO: not sure if filtering is needed
+      const columnProps = filterPropsFrom(column.props);
+      ths.push(
+        <th {...columnProps}
           className={ thClass }
           key={ index }
           onClick={ this.handleClickTh.bind(this, column) }
           role="button"
           tabIndex="0">
           { column.label }
-        </Th>
+        </th>
       );
     }
 
@@ -83,7 +84,7 @@ export class Thead extends React.Component {
             placeholder={ this.props.filterPlaceholder }
             value={ this.props.currentFilter } /> : null }
         <tr className="reactable-column-header">
-          { Ths }
+          { ths }
         </tr>
       </thead>
       );

@@ -2,7 +2,6 @@ import React from 'react';
 import { Table } from './table.jsx';
 import { Tr } from './tr.jsx';
 import { Td } from './td.jsx';
-import { Th } from './th.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Thead } from './thead.jsx';
 import { Sort } from './sort.jsx';
@@ -47,7 +46,6 @@ const Reactable = {
   Table,
   Tr,
   Td,
-  Th,
   Tfoot,
   Thead,
   Sort,

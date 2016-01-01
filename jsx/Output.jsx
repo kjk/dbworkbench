@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
 import { Tfoot } from './reactable/tfoot.jsx';
-import { Th } from './reactable/th.jsx';
 import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
@@ -189,9 +188,9 @@ RETURNING ${columns};
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
-        <Th key={ i } data={ col } column={ col }>
+        <th key={ i } data={ col } column={ col }>
           { col }
-        </Th>
+        </th>
         );
     });
 

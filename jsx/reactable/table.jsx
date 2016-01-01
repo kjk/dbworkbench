@@ -1,7 +1,6 @@
 import React from 'react';
 import { extractDataFrom, filterPropsFrom } from './utils.jsx';
 import { Thead } from './thead.jsx';
-import { Th } from './th.jsx';
 import { Tr } from './tr.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';

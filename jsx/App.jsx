@@ -6,14 +6,22 @@ import Sidebar from './Sidebar.jsx';
 import AlertBar from './AlertBar.jsx';
 import MainContainer from './MainContainer.jsx';
 import DragBarVert from './DragBarVert.jsx';
-import utils from './utils.js';
 import * as api from './api.js';
 import * as action from './action.js';
 import * as store from './store.js';
 import view from './view.js';
 
-const minSidebarDx = 128;
-const maxSidebarDx = 128 * 3;
+function runOnLoad(f) {
+  if (window.addEventListener) {
+    window.addEventListener('DOMContentLoaded', f);
+  } else {
+    window.attachEvent('onload', f);
+  }
+}
+
+if (window) {
+  window.runOnLoad = runOnLoad;
+}
 
 function isCreateOrDropQuery(query) {
   return query.match(/(create|drop) table/i);
@@ -493,8 +501,8 @@ class App extends React.Component {
             selectedTable={ this.state.selectedTable }
             selectedTableInfo={ this.state.selectedTableInfo }
             databaseName={ this.state.databaseName } />
-          <DragBarVert min={ minSidebarDx }
-            max={ maxSidebarDx }
+          <DragBarVert min={ 128 }
+            max={ 128 * 3 }
             initialX={ store.getSidebarDx() }
             onPosChanged={ (dx) => store.setSidebarDx(dx) } />
           <MainContainer results={ this.state.results }
