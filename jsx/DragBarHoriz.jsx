@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 // TODO: add propTypes
 // http://www.newmediacampaigns.com/blog/refactoring-react-components-to-es6-classes
-export default class DragBarVert extends React.Component {
+export default class DragBarHoriz extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -12,8 +12,8 @@ export default class DragBarVert extends React.Component {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
 
-    this.x = this.props.initialX;
-
+    this.y = this.props.initialY;
+    console.log("DragBarHoriz.contructor: initialY=", this.props.initialY);
     this.state = {
       dragging: false,
     };
@@ -55,28 +55,30 @@ export default class DragBarVert extends React.Component {
       return;
     }
 
-    const x = e.pageX;
-    const xMin = this.props.min || 0;
-    const xMax = this.props.max || 9999999;
-    if (x >= xMin && x <= xMax) {
-      this.x = x;
+    const y = e.pageY;
+    console.log("DragBarHoriz.handleMouseMove: y=", y);
+    const yMin = this.props.min || 0;
+    const yMax = this.props.max || 9999999;
+    if (y >= yMin && y <= yMax) {
+      this.y = y;
       const el = ReactDOM.findDOMNode(this);
-      el.style.left = x + "px";
-      this.props.onPosChanged(x);
+      el.style.top = y + "px";
+      this.props.onPosChanged(y);
     }
     e.stopPropagation();
     e.preventDefault();
   }
 
   render() {
+    console.log("DragBarHoriz.render: this.y=", this.y);
     const style = {
       position: 'absolute',
       backgroundColor: '#377CE4',
-      minHeight: '100%',
-      width: 3,
-      cursor: 'col-resize',
+      minWidth: '100%',
+      height: 3,
+      cursor: 'row-resize',
       zIndex: 3,
-      left: this.x
+      top: this.y - 50
     };
 
     return (

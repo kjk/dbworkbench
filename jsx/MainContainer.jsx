@@ -9,14 +9,12 @@ import * as store from './store.js';
 export default class MainContainer extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
 
     this.sidebarDx = store.getSidebarDx();
+    this.queryEditDy = store.getQueryEditDy();
+
     this.state = {
-      dragBarPosition: 200,
-      dragging: false,
+      dragBarPosition: this.queryEditDy,
     };
   }
 
@@ -26,53 +24,17 @@ export default class MainContainer extends React.Component {
       const el = ReactDOM.findDOMNode(this);
       el.style.left = dx + "px";
     });
+
+    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+      this.setState({
+        dragBarPosition: dy,
+      });
+    });
   }
 
   componentWillUnmount() {
     store.offSidebarDx(this.cidSidebarDx);
-  }
-
-  componentDidUpdate(props, state) {
-    if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove);
-      document.addEventListener('mouseup', this.onMouseUp);
-    } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
-    }
-  }
-
-  onMouseDown(e) {
-    // only left mouse button
-    if (e.button !== 0) return;
-    this.setState({
-      dragging: true,
-    });
-    e.stopPropagation();
-    e.preventDefault();
-  }
-
-  onMouseUp(e) {
-    this.setState({
-      dragging: false,
-    });
-    e.stopPropagation();
-    e.preventDefault();
-  }
-
-  onMouseMove(e) {
-    const minDragbarDx = 60;
-    const maxDragbarDx = 400;
-
-    if (!this.state.dragging) return;
-    if ((e.pageY < minDragbarDx) || (e.pageY > maxDragbarDx)) {
-      return;
-    }
-    this.setState({
-      dragBarPosition: e.pageY,
-    });
-    e.stopPropagation();
-    e.preventDefault();
+    store.offQueryEditDy(this.cidQueryEditDy);
   }
 
   // renderInput(tooLong, supportsExplain, inputStyle) {
@@ -109,9 +71,6 @@ export default class MainContainer extends React.Component {
             <Input
               dragBarPosition={this.state.dragBarPosition}
               supportsExplain={this.props.supportsExplain}
-              onMouseDown={this.onMouseDown}
-              onMouseMove={this.onMouseMove}
-              onMouseUp={this.onMouseUp}
               editedCells={this.props.editedCells} />
             : null
           }

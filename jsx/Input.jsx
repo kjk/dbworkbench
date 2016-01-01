@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SpinnerCircle from './SpinnerCircle.jsx';
-import * as action from'./action.js';
+import DragBarHoriz from './DragBarHoriz.jsx';
+import * as action from './action.js';
+import * as store from './store.js';
 
 export default class Input extends React.Component {
   constructor(props, context) {
@@ -114,6 +116,7 @@ export default class Input extends React.Component {
     //   <input type="button" onClick={this.exportToCSV} id="csv"
     // value="Download CSV" className="btn btn-sm btn-default" />
 
+    console.log("Input.render");
     if (this.props.dragBarPosition != 0) {
       var inputStyle = { height: this.props.dragBarPosition + 'px' };
       var customQueryStyle = { height: this.props.dragBarPosition - 50 + 'px' };
@@ -125,17 +128,20 @@ export default class Input extends React.Component {
       var renderButtons = this.renderButtons();
     }
 
+    const minDy = 60;
+    const maxDy = 400;
+
     return (
       <div id="input" style={inputStyle}>
         <div className="wrapper">
           <div id="custom-query" ref="editor" style={customQueryStyle}></div>
 
-          <div className="query-content-dragbar"
-            style={dragBarStyle}
-            onMouseDown={this.props.onMouseDown}
-            onMouseMove={this.props.onMouseMove}
-            onMouseUp={this.props.onMouseUp}>
-          </div>
+          <DragBarHoriz
+            initialY={store.getQueryEditDy()}
+            min={minDy}
+            max={maxDy}
+            onPosChanged={(dy) => store.setQueryEditDy(dy)}
+          />
 
           {renderButtons}
 

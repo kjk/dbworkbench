@@ -373,16 +373,6 @@ body {
   min-width: 100%;
 }
 
-.query-content-dragbar {
-  position: absolute;
-  background-color: #377CE4;
-  min-width: 100%;
-  /*float: right;*/
-  height: 3px;
-  cursor: row-resize;
-  z-index: 1;
-}
-
 .fa-info
 .fa-database {
   color: #efefef;
@@ -401,18 +391,6 @@ h4.modal-title {
   text-align: left;
   margin-left: 10px;
 }
-
-/* Will be used for query dragbar
-#query-dragbar {
-  position: relative;
-  background-color: red;
-  min-width: 100%;
-  float: none;
-
-  height: 20px;
-  cursor: row-resize;
-  z-index: 1000;
-} */
 
 /*******************************************************/
 

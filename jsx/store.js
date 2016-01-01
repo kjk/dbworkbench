@@ -156,14 +156,18 @@ export function del(key) {
 
 const spinnerKey = "spinner";
 const sidebarDxKey = "sidebarDx";
+const queryEditDyKey = "queryEditDy";
 
 // for debugging: keys that we're watching i.e.
 // we'll log broadcasting new value
-var watchingBroadcast = {};
+var watchingBroadcast = {
+  "queryEditDy": false,
+};
 
 var defValues = {
   "spinner": 0,
   "sidebarDx": 250,
+  "queryEditDy": 200,
 };
 
 export function spinnerIsVisible() {
@@ -215,4 +219,20 @@ export function getSidebarDx() {
 
 export function setSidebarDx(newVal) {
   set(sidebarDxKey, newVal);
+}
+
+export function onQueryEditDy(cb) {
+  return on(queryEditDyKey, cb);
+}
+
+export function offQueryEditDy(cbId) {
+  return off(queryEditDyKey, cbId);
+}
+
+export function getQueryEditDy() {
+  return get(queryEditDyKey);
+}
+
+export function setQueryEditDy(newVal) {
+  set(queryEditDyKey, newVal);
 }
