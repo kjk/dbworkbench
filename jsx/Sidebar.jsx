@@ -19,15 +19,15 @@ export default class Sidebar extends React.Component {
 
   componentWillMount() {
     this.refreshTables();
-    this.cidSidebarDx = store.onSidebarDx( (dx) => {
+    store.onSidebarDx( (dx) => {
       this.sidebarDx = dx;
       const el = ReactDOM.findDOMNode(this);
       el.style.width = dx + "px";
-    });
+    }, this);
   }
 
   componentWillUnmount() {
-    store.offSidebarDx(this.cidSidebarDx);
+    store.offAllForOwner(this);
   }
 
   handleRefreshDatabase(e) {

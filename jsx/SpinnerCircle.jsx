@@ -14,16 +14,16 @@ export default class SpinnerCircle extends React.Component {
   handleToggleSpinner(newVisibleState) {
     this.setState({visible: newVisibleState});
   }
-  
+
   componentWillMount() {
     if (!this.props.forceVisible) {
-      this.cidSpinner = store.onSpinner(this.handleToggleSpinner);
+      store.onSpinner(this.handleToggleSpinner, this);
     }
   }
 
   componentWillUnmount() {
     if (!this.props.forceVisible) {
-      store.offSpinner(this.cidSpinner);
+      store.offAllForOwner(this);
     }
   }
 

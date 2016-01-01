@@ -14,15 +14,15 @@ export default class MainContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.cidSidebarDx = store.onSidebarDx( (dx) => {
+    store.onSidebarDx( (dx) => {
       this.sidebarDx = dx;
       const el = ReactDOM.findDOMNode(this);
       el.style.left = dx + "px";
-    });
+    }, this);
   }
 
   componentWillUnmount() {
-    store.offSidebarDx(this.cidSidebarDx);
+    store.offAllForOwner(this);
   }
 
   // renderInput(tooLong, supportsExplain, inputStyle) {

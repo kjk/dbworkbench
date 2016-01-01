@@ -36,16 +36,16 @@ export default class Output extends React.Component {
   }
 
   componentWillMount() {
-    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+    store.onQueryEditDy( (dy) => {
 
       this.queryEditDy = dy;
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();
-    });
+    }, this);
   }
 
   componentWillUnmount() {
-    store.offQueryEditDy(this.cidQueryEditDy);
+    store.offAllForOwner(this);
   }
 
   componentWillReceiveProps(nextProps) {

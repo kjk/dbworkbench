@@ -17,7 +17,7 @@ export default class Input extends React.Component {
   }
 
   componentWillMount() {
-    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+    store.onQueryEditDy( (dy) => {
       this.queryEditDy = dy;
 
       let el = ReactDOM.findDOMNode(this.refs.editor);
@@ -25,11 +25,11 @@ export default class Input extends React.Component {
 
       el = ReactDOM.findDOMNode(this);
       el.style.height = this.inputDy();
-    });
+    }, this);
   }
 
   componentWillUnmount() {
-    store.offQueryEditDy(this.cidQueryEditDy);
+    store.offAllForOwner(this);
   }
 
   runQuery(e) {

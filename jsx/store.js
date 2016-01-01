@@ -6,10 +6,10 @@ notified when the value changes.
 
 Apis:
 
-cid = store.on(key, cb);
-cid = store.onMap(key, subkey, cb);
+cid = store.on(key, cb, owner);
+cid = store.onMap(key, subkey, cb, owner);
 
-store.off(cid);
+store.off(cidOrOwner);
 
 store.set(key, value);
 store.setMap(key, subkey, cb);
@@ -25,7 +25,8 @@ Callbacks always take one argument: new value of the variable.
 /*
 Maps keys to their values. For non-map values, key is a known string.
 For map values, key is key + subkey.
-Value is [val, [cb1, cbId1], [cb2, cbId2], ...] i.e. current value followed by zero or more callbacks
+Value is [val, [cb1, cbId1, cbOwner1], [cb2, cbId2, cbOwner2], ...]
+i.e. current value followed by zero or more callbacks
 */
 let store = {};
 
@@ -58,10 +59,10 @@ function broadcast(key, val, subkey) {
   }
 }
 
-export function onMap(key, subkey, cb) {
+export function onMap(key, subkey, cb, owner) {
   currCid++;
   const fullKey = getFullKey(key, subkey);
-  const cbInfo = [cb, currCid];
+  const cbInfo = [cb, currCid, owner];
   let valAndCbs = store[fullKey];
   if (!valAndCbs) {
     const defVal = defValues[key];
@@ -72,26 +73,40 @@ export function onMap(key, subkey, cb) {
   return currCid;
 }
 
-export function on(key, cb) {
-  return onMap(key, null, cb);
+export function on(key, cb, owner) {
+  return onMap(key, null, cb, owner);
 }
 
-export function offMap(key, subkey, cbId) {
-  const fullKey = getFullKey(key, subkey);
+export function offFullKey(fullKey, cbIdOrOwner) {
   const valAndCbs = store[fullKey];
+  if (!valAndCbs) {
+    throw new Error("offFullKey for: ", fullKey, " valAndCbs is: ", valAndCbs);
+  }
   const n = valAndCbs.length;
   for (let i = 1; i < n; i++) {
-    const cbId2 = valAndCbs[i][1];
-    if (cbId == cbId2) {
+    const cbId = valAndCbs[i][1];
+    const cbOwner = valAndCbs[i][2];
+    if (cbIdOrOwner === cbId || cbIdOrOwner === cbOwner) {
       valAndCbs.splice(i, 1);
       return;
     }
   }
-  console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
+  //console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
+}
+
+export function offMap(key, subkey, cbIdOrOwner) {
+  const fullKey = getFullKey(key, subkey);
+  offFullKey(fullKey, cbIdOrOwner);
 }
 
 export function off(key, cbId) {
-  offMap(key, null, cbId);
+  offFullKey(key, cbId);
+}
+
+export function offAllForOwner(owner) {
+  for (let key in store) {
+    offFullKey(key, owner);
+  }
 }
 
 export function getMap(key, subkey) {

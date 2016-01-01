@@ -27,7 +27,7 @@ export default class QueryEditBar extends React.Component {
   }
 
   componentWillMount() {
-    this.cidQueryEditDy = store.onQueryEditDy( (dy) => {
+    store.onQueryEditDy( (dy) => {
       this.queryEditDy = dy;
 
       const top = this.topPos();
@@ -35,11 +35,11 @@ export default class QueryEditBar extends React.Component {
       this.setTopOnRef(this.refs.btnDiscard, top);
       this.setTopOnRef(this.refs.rowCount, top);
       this.setTopOnRef(this.refs.sqlPreview, top);
-    });
+    }, this);
   }
 
   componentWillUnmount() {
-    store.offQueryEditDy(this.cidQueryEditDy);
+    store.offAllForOwner(this);
   }
 
   togglePopover() {
