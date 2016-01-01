@@ -71,7 +71,7 @@ function fetch_failed(error) {
 function apiCall(method, url, params, cb) {
   const opts = {
     method: method,
-    cache: 'no-cache'
+    cache: "no-cache"
   };
   if (method == 'post') {
     opts.body = formDataFromObject(params);
