@@ -28,47 +28,49 @@ export class Table extends React.Component {
     }
   }
 
-    filterBy(filter) {
-      this.setState({ filter: filter });
-    }
+  filterBy(filter) {
+    this.setState({
+      filter: filter
+    });
+  }
 
-    // Translate a user defined column array to hold column objects if strings are specified
-    // (e.g. ['column1'] => [{key: 'column1', label: 'column1'}])
-    translateColumnsArray(columns) {
-      return columns.map(function(column, i) {
-        if (typeof(column) === 'string') {
-          return {
-            key:   column,
-            label: column
-          };
-        } else {
-          if (typeof(column.sortable) !== 'undefined') {
-            let sortFunction = column.sortable === true ? 'default' : column.sortable;
-            this._sortable[column.key] = sortFunction;
-          }
-
-          return column;
+  // Translate a user defined column array to hold column objects if strings are specified
+  // (e.g. ['column1'] => [{key: 'column1', label: 'column1'}])
+  translateColumnsArray(columns) {
+    return columns.map(function(column, i) {
+      if (typeof (column) === 'string') {
+        return {
+          key: column,
+          label: column
+        };
+      } else {
+        if (typeof (column.sortable) !== 'undefined') {
+          let sortFunction = column.sortable === true ? 'default' : column.sortable;
+          this._sortable[column.key] = sortFunction;
         }
-      }.bind(this));
-    }
+
+        return column;
+      }
+    }.bind(this));
+  }
 
   parseChildData(props) {
     let data = [], tfoot;
 
     // Transform any children back to a data array
-    if (typeof(props.children) !== 'undefined') {
+    if (typeof (props.children) !== 'undefined') {
       React.Children.forEach(props.children, function(child) {
-        if (typeof(child) === 'undefined' || child === null) {
+        if (typeof (child) === 'undefined' || child === null) {
           return;
         }
 
         switch (child.type) {
           case Tfoot:
-            if (typeof(tfoot) !== 'undefined') {
-              console.warn ('You can only have one <Tfoot>, but more than one was specified.' + 'Ignoring all but the last one');
+            if (typeof (tfoot) !== 'undefined') {
+              console.warn('You can only have one <Tfoot>, but more than one was specified.' + 'Ignoring all but the last one');
             }
             tfoot = child;
-          break;
+            break;
           case Tr:
             let childData = child.props.data || {};
 
@@ -76,51 +78,54 @@ export class Table extends React.Component {
               // TODO
               /* if (descendant.type.ConvenienceConstructor === Td) { */
               if (
-                  typeof(descendant) !== 'object' ||
-                  descendant == null
+                typeof (descendant) !== 'object' ||
+                descendant == null
               ) {
-                  return;
-              } else if (typeof(descendant.props.column) !== 'undefined') {
+                return;
+              } else if (typeof (descendant.props.column) !== 'undefined') {
                 let value;
 
-                if (typeof(descendant.props.data) !== 'undefined') {
-                    value = descendant.props.data;
-                } else if (typeof(descendant.props.children) !== 'undefined') {
-                    value = descendant.props.children;
+                if (typeof (descendant.props.data) !== 'undefined') {
+                  value = descendant.props.data;
+                } else if (typeof (descendant.props.children) !== 'undefined') {
+                  value = descendant.props.children;
                 } else {
-                    console.warn('exports.Td specified without ' +
-                                  'a `data` property or children, ' +
-                                  'ignoring');
-                    return;
+                  console.warn('exports.Td specified without ' +
+                    'a `data` property or children, ' +
+                    'ignoring');
+                  return;
                 }
 
                 childData[descendant.props.column] = {
-                    value: value,
-                    props: filterPropsFrom(descendant.props),
-                    __reactableMeta: true
+                  value: value,
+                  props: filterPropsFrom(descendant.props),
+                  __reactableMeta: true
                 };
               } else {
                 console.warn('exports.Td specified without a ' +
-                              '`column` property, ignoring');
+                  '`column` property, ignoring');
               }
-          });
+            });
 
-          data.push({
+            data.push({
               data: childData,
               props: filterPropsFrom(child.props),
               __reactableMeta: true
-          });
-          break;
+            });
+            break;
         }
       }.bind(this));
     }
 
-    return { data, tfoot };
+    return {
+      data,
+      tfoot
+    };
   }
 
   initialize(props) {
     this.data = props.data || [];
-    let { data, tfoot } = this.parseChildData(props);
+    let {data, tfoot} = this.parseChildData(props);
 
     this.data = this.data.concat(data);
     this.tfoot = tfoot;
@@ -136,21 +141,21 @@ export class Table extends React.Component {
       let columnName, sortFunction;
 
       if (column instanceof Object) {
-        if (typeof(column.column) !== 'undefined') {
-            columnName = column.column;
+        if (typeof (column.column) !== 'undefined') {
+          columnName = column.column;
         } else {
-            console.warn('Sortable column specified without column name');
-            return;
+          console.warn('Sortable column specified without column name');
+          return;
         }
 
-        if (typeof(column.sortFunction) === 'function') {
-            sortFunction = column.sortFunction;
+        if (typeof (column.sortFunction) === 'function') {
+          sortFunction = column.sortFunction;
         } else {
-            sortFunction = 'default';
+          sortFunction = 'default';
         }
       } else {
-        columnName      = column;
-        sortFunction    = 'default';
+        columnName = column;
+        sortFunction = 'default';
       }
       this._sortable[columnName] = sortFunction;
     }
@@ -160,14 +165,14 @@ export class Table extends React.Component {
     let columnName, sortDirection;
 
     if (column instanceof Object) {
-      if (typeof(column.column) !== 'undefined') {
+      if (typeof (column.column) !== 'undefined') {
         columnName = column.column;
       } else {
         console.warn('Default column specified without column name');
         return;
       }
 
-      if (typeof(column.direction) !== 'undefined') {
+      if (typeof (column.direction) !== 'undefined') {
         if (column.direction === 1 || column.direction === 'asc') {
           sortDirection = 1;
         } else if (column.direction === -1 || column.direction === 'desc') {
@@ -180,8 +185,8 @@ export class Table extends React.Component {
         sortDirection = 1;
       }
     } else {
-      columnName      = column;
-      sortDirection   = 1;
+      columnName = column;
+      sortDirection = 1;
     }
 
     return {
@@ -193,8 +198,10 @@ export class Table extends React.Component {
   updateCurrentSort(sortBy) {
     if (sortBy !== false &&
       sortBy.column !== this.state.currentSort.column &&
-        sortBy.direction !== this.state.currentSort.direction) {
-          this.setState({ currentSort: this.getCurrentSort(sortBy) });
+      sortBy.direction !== this.state.currentSort.direction) {
+      this.setState({
+        currentSort: this.getCurrentSort(sortBy)
+      });
     }
   }
 
@@ -223,8 +230,8 @@ export class Table extends React.Component {
         let filterColumn = this.props.filterable[j];
 
         if (
-          typeof(data[filterColumn]) !== 'undefined' &&
-              extractDataFrom(data, filterColumn).toString().toLowerCase().indexOf(filter) > -1
+          typeof (data[filterColumn]) !== 'undefined' &&
+          extractDataFrom(data, filterColumn).toString().toLowerCase().indexOf(filter) > -1
         ) {
           matchedChildren.push(children[i]);
           break;
@@ -252,8 +259,8 @@ export class Table extends React.Component {
 
       // Default sort
       if (
-        typeof(this._sortable[currentSort.column]) === 'undefined' ||
-            this._sortable[currentSort.column] === 'default'
+        typeof (this._sortable[currentSort.column]) === 'undefined' ||
+        this._sortable[currentSort.column] === 'default'
       ) {
         // Reverse direction if we're doing a reverse sort
         if (keyA < keyB) {
@@ -278,7 +285,7 @@ export class Table extends React.Component {
 
   onSort(column) {
     // Don't perform sort on unsortable columns
-    if (typeof(this._sortable[column]) === 'undefined') {
+    if (typeof (this._sortable[column]) === 'undefined') {
       return;
     }
 
@@ -292,7 +299,9 @@ export class Table extends React.Component {
     }
 
     // Set the current sort and pass it to the sort function
-    this.setState({ currentSort: currentSort });
+    this.setState({
+      currentSort: currentSort
+    });
     this.sortByCurrentSort();
   }
 
@@ -345,15 +354,15 @@ export class Table extends React.Component {
             // already specified
             if (userColumnsSpecified === false) {
               let column = {
-                key:   k,
+                key: k,
                 label: k
               };
 
               // Only add a new column if it doesn't already exist in the columns array
               if (
                 columns.find(function(element) {
-                return element.key === column.key;
-              }) === undefined
+                  return element.key === column.key;
+                }) === undefined
               ) {
                 columns.push(column);
               }
@@ -362,8 +371,11 @@ export class Table extends React.Component {
         }
 
         return (
-          <Tr columns={columns} key={i} data={data} {...props} />
-        );
+          <Tr columns={ columns }
+            key={ i }
+            data={ data }
+            {...props} />
+          );
       }.bind(this)));
     }
 
@@ -377,9 +389,9 @@ export class Table extends React.Component {
     let filtering = false;
     if (
       this.props.filterable &&
-        Array.isArray(this.props.filterable) &&
-          this.props.filterable.length > 0 &&
-            !this.props.hideFilterInput
+      Array.isArray(this.props.filterable) &&
+      this.props.filterable.length > 0 &&
+      !this.props.hideFilterInput
     ) {
       filtering = true;
     }
@@ -421,47 +433,47 @@ export class Table extends React.Component {
     let props = filterPropsFrom(this.props);
 
     return (
-    <div>
-      <div className="reactable-filterer" style={this.props.filterStyle}>
-        {filtering === true ?
-            <Filterer
-              onFilter={this.props.onFilter}
-              placeholder={this.props.filterPlaceholder}
-              value={this.props.filterString} />
-        : null}
-      </div>
-      <table {...props}>
-        {columns && columns.length > 0 ?
-          <Thead columns={columns}
-            sort={this.state.currentSort}
-            sortableColumns={this._sortable}
-            onSort={this.onSort.bind(this)}
-            key="thead"/>
-          : null}
-        <tbody className="reactable-data" key="tbody">
-          {currentChildren}
-        </tbody>
-      </table>
-      {pagination === true ?
-        <Paginator
-          numPages={numPages}
-          currentPage={currentPage}
-          totalRowCount={filteredChildren.length}
-          onPageChange={page => {
-              if (this.props.resetPagination) { action.resetPagination(false); }
-              this.setState({ currentPage: page });
-          }}
-            key="paginator"/>
-        : null}
-      {this.tfoot}
-    </div>);
+      <div>
+        <div className="reactable-filterer" style={ this.props.filterStyle }>
+          { filtering === true ?
+            <Filterer onFilter={ this.props.onFilter } placeholder={ this.props.filterPlaceholder } value={ this.props.filterString } />
+            : null }
+        </div>
+        <table {...props}>
+          { columns && columns.length > 0 ?
+            <Thead columns={ columns }
+              sort={ this.state.currentSort }
+              sortableColumns={ this._sortable }
+              onSort={ this.onSort.bind(this) }
+              key="thead" />
+            : null }
+          <tbody className="reactable-data" key="tbody">
+            { currentChildren }
+          </tbody>
+        </table>
+        { pagination === true ?
+          <Paginator numPages={ numPages }
+            currentPage={ currentPage }
+            totalRowCount={ filteredChildren.length }
+            onPageChange={ page => {
+                             if (this.props.resetPagination) {
+                               action.resetPagination(false);
+                             }
+                             this.setState({
+                               currentPage: page
+                             });
+                           } }
+            key="paginator" />
+          : null }
+        { this.tfoot }
+      </div>);
   }
 }
 
 Table.defaultProps = {
-    sortBy: false,
-    defaultSort: false,
-    itemsPerPage: 0,
-    filterBy: '',
-    hideFilterInput: false
+  sortBy: false,
+  defaultSort: false,
+  itemsPerPage: 0,
+  filterBy: '',
+  hideFilterInput: false
 };
