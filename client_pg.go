@@ -76,8 +76,17 @@ func (c *ClientPg) Schemas() ([]string, error) {
 
 // Tables returns list of tables
 func (c *ClientPg) Tables() ([]string, error) {
-	q := `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_schema,table_name`
-	return dbFetchRows(c.db, q)
+	q := `SELECT
+			column_name,
+			data_type, is_nullable,
+			character_maximum_length,
+			character_set_catalog,
+			column_default,
+			table_name,
+			table_schema
+		FROM information_schema.columns
+		WHERE table_name IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public')`
+	return dbQuery(c.db, q)
 }
 
 // Table returns schema for a given table
