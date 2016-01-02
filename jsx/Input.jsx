@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SpinnerCircle from './SpinnerCircle.jsx';
-import DragBarHoriz from './DragBarHoriz.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
 
@@ -162,10 +161,6 @@ export default class Input extends React.Component {
       <div id="input" style={ style }>
         <div className="wrapper">
           <div id="custom-query" ref="editor" style={ editorStyle } />
-          <DragBarHoriz initialY={ store.getQueryEditDy() }
-            min={ 60 }
-            max={ 400 }
-            onPosChanged={ (dy) => store.setQueryEditDy(dy) } />
           <div className={ actionsCls }>
             <input type="button"
               onClick={ this.runQuery }
