@@ -40,10 +40,17 @@ export default class Output extends React.Component {
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();
     }, this);
+
+    action.onFilterChanged((s) => {
+      this.setState({
+        filterString: s,
+      });
+    }, this)
   }
 
   componentWillUnmount() {
     store.offAllForOwner(this);
+    action.offAllForOwner(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -291,11 +298,6 @@ RETURNING ${columns};
         filterable={ filterable }
         filterPlaceholder={ filterPlaceholder }
         filterStyle={ filterStyle }
-        onFilter={ filter => {
-                     this.setState({
-                       filterString: filter
-                     });
-                   } }
         filterString={ this.state.filterString }
         itemsPerPage={ itemsPerPage }
         resetPagination={ this.props.resetPagination }>

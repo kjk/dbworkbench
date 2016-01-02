@@ -434,7 +434,7 @@ export class Table extends React.Component {
       <div>
         <div className="reactable-filterer" style={ this.props.filterStyle }>
           { filtering === true ?
-            <Filterer onFilter={ this.props.onFilter } placeholder={ this.props.filterPlaceholder } value={ this.props.filterString } />
+            <Filterer placeholder={ this.props.filterPlaceholder } value={ this.props.filterString } />
             : null }
         </div>
         <table {...props}>

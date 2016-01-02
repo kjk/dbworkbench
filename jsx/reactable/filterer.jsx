@@ -1,9 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as action from './../action.js'
 
 export class Filterer extends React.Component {
-  onChange() {
-    this.props.onFilter(ReactDOM.findDOMNode(this).value);
+  constructor(props, context) {
+    super(props, context);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange() {
+    const s = ReactDOM.findDOMNode(this).value;
+    action.filterChanged(s);
   }
 
   render() {
@@ -12,8 +19,8 @@ export class Filterer extends React.Component {
         className="reactable-filter-input"
         placeholder={ this.props.placeholder }
         value={ this.props.value }
-        onKeyUp={ this.onChange.bind(this) }
-        onChange={ this.onChange.bind(this) } />
+        onKeyUp={ this.handleChange }
+        onChange={ this.handleChange } />
       );
   }
 }

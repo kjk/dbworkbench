@@ -82,7 +82,8 @@ const alertBoxIdx = 5;
 const resetPaginationIdx = 6;
 const selectedCellPositionIdx = 7;
 const editedCellsIdx = 8;
-var lastIdx = 8;
+const filterChangedIdx = 9;
+var lastIdx = 9;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -95,6 +96,7 @@ var actionNames = [
   'resetPagination',
   'selectedCellPosition',
   'editedCells',
+  'filterChanged',
 ];
 
 export function tableSelected(name) {
@@ -203,4 +205,17 @@ export function onEditedCells(cb, owner) {
 
 export function offEditedCells(cbIdOrOwner) {
   off(editedCellsIdx, cbIdOrOwner);
+}
+
+// Maybe: could be in store
+export function filterChanged(s) {
+  broadcast(filterChangedIdx, s);
+}
+
+export function onFilterChanged(cb, owner) {
+  return on(filterChangedIdx, cb, owner);
+}
+
+export function offilterChanged(cbIdOrOwner) {
+  off(filterChangedIdx, cbIdOrOwner);
 }
