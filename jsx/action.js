@@ -41,7 +41,7 @@ function broadcast(actionIdx) {
 function on(action, cb, owner) {
   currCid++;
   const callbacks = actionCallbacks[action];
-  let el = [cb, currCid, owner];
+  const el = [cb, currCid, owner];
   if (!callbacks) {
     actionCallbacks[action] = [el];
   } else {
@@ -55,7 +55,8 @@ function off(actionIdx, cbIdOrOwner) {
   if (callbacks && callbacks.length > 0) {
     const n = callbacks.length;
     for (let i = 0; i < n; i++) {
-      if (callbacks[i][1] === cbIdOrOwner || callbacks[i][2] === cbIdOrOwner) {
+      const cb = callbacks[i];
+      if (cb[1] === cbIdOrOwner || cb[2] === cbIdOrOwner) {
         callbacks.splice(i, 1);
         return;
       }

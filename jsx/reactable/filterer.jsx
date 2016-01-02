@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as action from './../action.js';
+import { debounce } from './../util.js';
+
+const notifyFilterChnaged = debounce((s) => {
+  console.log('notifyFilterChanged: ', s);
+  action.filterChanged(s);
+}, 250);
 
 export class Filterer extends React.Component {
   constructor(props, context) {
@@ -29,7 +35,7 @@ export class Filterer extends React.Component {
     this.setState({
       value: s
     });
-    action.filterChanged(s);
+    notifyFilterChnaged(s);
   }
 
   render() {

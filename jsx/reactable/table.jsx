@@ -207,6 +207,12 @@ export class Table extends React.Component {
     this.initialize(this.props);
     this.sortByCurrentSort();
     this.filterBy(this.props.filterBy);
+
+    action.onFilterChanged((s) => {
+      this.setState({
+        filterString: s
+      })
+    }, this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -214,6 +220,8 @@ export class Table extends React.Component {
     this.updateCurrentSort(nextProps.sortBy);
     this.sortByCurrentSort();
     this.filterBy(nextProps.filterBy);
+
+    action.offAllForOwner(this);
   }
 
   applyFilter(filter, children) {
@@ -395,7 +403,7 @@ export class Table extends React.Component {
 
     let filteredChildren = children;
     const filterStr = this.state.filterString;
-    if (filterSt != '') {
+    if (filterStr != '') {
       filteredChildren = this.applyFilter(filterStr, filteredChildren);
     }
 

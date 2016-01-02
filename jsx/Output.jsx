@@ -276,7 +276,6 @@ RETURNING ${columns};
         style={ tableStyle }
         sortable={ true }
         filterable={ filterable }
-        filterPlaceholder={ filterPlaceholder }
         itemsPerPage={ itemsPerPage }
         resetPagination={ this.props.resetPagination }>
         { header }
