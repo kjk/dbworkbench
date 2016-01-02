@@ -119,7 +119,12 @@ func loadResourcesFromZipReader(zr *zip.Reader) error {
 		if err != nil {
 			return err
 		}
-		//LogInfof("Loaded '%s' of size %d bytes\n", name, len(d))
+		// for simplicity of the build, the file that we embedded in zip
+		// is bundle.min.js but the html refers to it as bundle.js
+		if name == "s/dist/bundle.min.js" {
+			name = "s/dist/bundle.js"
+		}
+		LogInfof("Loaded '%s' of size %d bytes\n", name, len(d))
 		resourcesFromZip[name] = d
 	}
 	return nil

@@ -24,8 +24,14 @@ gulp.task('js', function() {
     .pipe(gulp.dest('s/dist'));
 });
 
-var t_envify = ['envify', {'global': true, '_': 'purge', NODE_ENV: 'production'}];
-var t_babelify = ['babelify', { 'presets': ['es2015', 'react']}];
+var t_envify = ['envify', {
+  'global': true,
+  '_': 'purge',
+  NODE_ENV: 'production'
+}];
+var t_babelify = ['babelify', {
+  'presets': ['es2015', 'react']
+}];
 
 gulp.task('jsprod', function() {
   browserify({

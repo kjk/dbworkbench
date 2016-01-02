@@ -6,16 +6,22 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
 	blacklisted = []string{
-		"s/dist/bundle.js.map",
+		filepath.Join("s", "dist", "bundle.js"),
+		filepath.Join("s", "dist", "main2.css"),
+		filepath.Join("s", "fake_data_1.js"),
 		".gitkeep",
 	}
 )
 
 func isBlacklisted(path string) bool {
+	if strings.HasSuffix(path, ".map") {
+		return true
+	}
 	for _, s := range blacklisted {
 		if path == s {
 			return true

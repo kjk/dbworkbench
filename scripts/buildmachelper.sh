@@ -8,7 +8,7 @@ rm -rf mac/dbherohelper.exe dbherohelper.zip
 
 godep go vet github.com/kjk/dbworkbench
 
-./node_modules/.bin/gulp default
+./node_modules/.bin/gulp prod
 
 echo "generating resources .zip file..."
 go run tools/build/*.go -gen-resources
