@@ -49,8 +49,8 @@ func testMysqlInfo() {
 		fmt.Printf("c.Tables() failed with '%s'\n", err)
 		return
 	}
-	fmt.Printf("%d tables:\n", len(tables))
-	for _, s := range tables {
+	fmt.Printf("%d tables:\n", len(tables.Rows))
+	for _, s := range tables.Rows {
 		fmt.Printf("  '%s'\n", s)
 	}
 
