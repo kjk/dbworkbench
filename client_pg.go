@@ -75,10 +75,11 @@ func (c *ClientPg) Schemas() ([]string, error) {
 }
 
 // Tables returns list of tables
-func (c *ClientPg) Tables() ([]string, error) {
+func (c *ClientPg) Tables() (*Result, error) {
 	q := `SELECT
 			column_name,
-			data_type, is_nullable,
+			data_type,
+			is_nullable,
 			character_maximum_length,
 			character_set_catalog,
 			column_default,

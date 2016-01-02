@@ -14,7 +14,7 @@ type Client interface {
 	Info() (*Result, error)
 	Databases() ([]string, error)
 	Schemas() ([]string, error)
-	Tables() ([]string, error)
+	Tables() (*Result, error)
 	Table(table string) (*Result, error)
 	TableRows(table string, opts RowsOptions) (*Result, error)
 	TableInfo(table string) (*Result, error)

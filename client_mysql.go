@@ -73,11 +73,11 @@ func (c *ClientMysql) Schemas() ([]string, error) {
 }
 
 // Tables returns list of tables
-func (c *ClientMysql) Tables() ([]string, error) {
+func (c *ClientMysql) Tables() (*Result, error) {
 	// http://dev.mysql.com/doc/refman/5.0/en/show-tables.html
 	// TODO: possibliy rewrite as a query since it differs depending on mysql version
 	// https://dev.mysql.com/doc/refman/5.0/en/tables-table.html
-	q := `SHOW TABLES`
+	// q := `SHOW TABLES`
 	// TODO: add equivalent of table_schema = 'public'
 	/*
 			q := `SELECT
@@ -85,7 +85,19 @@ func (c *ClientMysql) Tables() ([]string, error) {
 		WHERE table_type = 'BASE TABLE'
 		ORDER BY table_schema, table_name`
 	*/
-	return dbFetchRows(c.db, q)
+
+	q := `SELECT
+			column_name,
+			data_type,
+			is_nullable,
+			character_maximum_length,
+			character_set_name as character_set_catalog,
+			column_default,
+			table_name,
+			table_schema
+		FROM information_schema.columns
+		WHERE table_schema IN (SELECT DATABASE() FROM DUAL)`
+	return dbQuery(c.db, q)
 }
 
 // Table returns schema for a given table
@@ -93,7 +105,7 @@ func (c *ClientMysql) Table(table string) (*Result, error) {
 	// https://dev.mysql.com/doc/refman/5.0/en/columns-table.html
 	// Note: returning character_set_name as character_set_catalog
 	// for pg compat. TODO: don't know if they mean the same thing
-	q := `SELECT 
+	q := `SELECT
 column_name, data_type, is_nullable, character_maximum_length, character_set_name as character_set_catalog, column_default
 FROM information_schema.columns
 WHERE table_name = ?`
