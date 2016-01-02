@@ -12,6 +12,33 @@ import * as store from './store.js';
 // about setting up ace editor component.
 const forceRerender = true;
 
+export class Actions extends React.Component {
+
+  render() {
+    return (
+      <div className="actions">
+        <input type="button"
+          onClick={ (e) => {
+                      e.preventDefault(); this.props.onRun();
+                    } }
+          id="run"
+          value="Run Query"
+          className="btn btn-sm btn-primary" />
+        { this.props.supportsExplain ?
+          <input type="button"
+            onClick={ (e) => {
+                        e.preventDefault(); this.props.onExplain();
+                      } }
+            id="explain"
+            value="Explain Query"
+            className='btn btn-sm btn-default' />
+          : null }
+        <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
+      </div>
+      );
+  }
+
+}
 export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -50,10 +77,7 @@ export default class Input extends React.Component {
     store.offAllForOwner(this);
   }
 
-  runQuery(e) {
-    if (e) {
-      e.preventDefault();
-    }
+  runQuery() {
     const query = this.editor.getValue().trim();
     console.log('runQuery', query);
     if (query.length > 0) {
@@ -61,10 +85,7 @@ export default class Input extends React.Component {
     }
   }
 
-  runExplain(e) {
-    if (e) {
-      e.preventDefault();
-    }
+  runExplain() {
     const query = this.editor.getValue().trim();
     console.log('runExplain', query);
     if (query.length > 0) {
@@ -150,30 +171,16 @@ export default class Input extends React.Component {
       };
     }
 
-    const nEditedRows = Object.keys(this.props.editedCells).length;
-    const actionsCls = nEditedRows != 0 ? 'hidden' : 'actions';
-    let explainCls = 'btn btn-sm btn-default';
-    if (!this.props.supportsExplain) {
-      explainCls += ' hidden';
-    }
+    const nEdited = Object.keys(this.props.editedCells).length;
+    const showActions = (nEdited == 0);
 
     return (
       <div id="input" style={ style }>
         <div className="wrapper">
           <div id="custom-query" ref="editor" style={ editorStyle } />
-          <div className={ actionsCls }>
-            <input type="button"
-              onClick={ this.runQuery }
-              id="run"
-              value="Run Query"
-              className="btn btn-sm btn-primary" />
-            <input type="button"
-              onClick={ this.runExplain }
-              id="explain"
-              value="Explain Query"
-              className={ explainCls } />
-            <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
-          </div>
+          { showActions ?
+            <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.runQuery } onExplain={ this.runExplain } />
+            : null }
         </div>
       </div>
       );
