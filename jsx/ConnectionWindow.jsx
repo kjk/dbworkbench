@@ -119,7 +119,7 @@ class ConnectionWindow extends React.Component {
   newConnectionInfo(e) {
     var bookmarks = this.state.bookmarks;
     if (bookmarks.length >= maxBookmarks) {
-      action.alertBar('Reached connections limit of ' + maxBookmarks);
+      action.alertBox('Reached connections limit of ' + maxBookmarks);
       return;
     }
 

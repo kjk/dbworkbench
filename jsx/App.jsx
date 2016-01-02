@@ -3,13 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ConnectionWindow from './ConnectionWindow.jsx';
 import Sidebar from './Sidebar.jsx';
-import AlertBar from './AlertBar.jsx';
 import MainContainer from './MainContainer.jsx';
 import DragBarVert from './DragBarVert.jsx';
 import * as api from './api.js';
 import * as action from './action.js';
 import * as store from './store.js';
 import view from './view.js';
+import AlertContainer from 'react-alert';
+
 
 function runOnLoad(f) {
   if (window.addEventListener) {
@@ -44,8 +45,7 @@ function databaseNameFromConnectionInfoRows(rows) {
 class App extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.handleAlertBar = this.handleAlertBar.bind(this);
-    this.handleCloseAlertBar = this.handleCloseAlertBar.bind(this);
+    this.handleAlertBox = this.handleAlertBox.bind(this);
     this.handleDidConnect = this.handleDidConnect.bind(this);
     this.handleDisconnectDatabase = this.handleDisconnectDatabase.bind(this);
     this.handleExecuteQuery = this.handleExecuteQuery.bind(this);
@@ -59,6 +59,14 @@ class App extends React.Component {
     this.getQueryAsyncData = this.getQueryAsyncData.bind(this);
     this.handleQueryAsync = this.handleQueryAsync.bind(this);
     this.handleQuerySync = this.handleQuerySync.bind(this);
+
+    this.alertOptions = {
+      offset: 14,
+      position: 'bottom left',
+      theme: 'dark', // Can be 'dark'
+      time: 7000,
+      transition: 'scale'
+    };
 
     this.state = {
       selectedView: view.SQLQuery,
@@ -82,9 +90,6 @@ class App extends React.Component {
         colId: -1
       },
       editedCells: {},
-
-      errorMessage: '',
-      errorVisible: false,
 
       capabilities: {},
     };
@@ -422,21 +427,10 @@ class App extends React.Component {
     });
   }
 
-  handleAlertBar(message) {
-    console.log('handleAlertBar');
-
-    this.setState({
-      errorVisible: true,
-      errorMessage: message,
-    });
-
-    // Dissmiss AlertBar with timer
-    // setTimeout(() => this.handleCloseAlertBar(), 5000);
-  }
-
-  handleCloseAlertBar() {
-    this.setState({
-      errorVisible: false
+  handleAlertBox(message) {
+    // type can be 'info', 'success', 'error'
+    msg.show(message, {
+      type: 'error',
     });
   }
 
@@ -466,7 +460,7 @@ class App extends React.Component {
     action.onExecuteQuery(this.handleExecuteQuery, this);
     action.onExplainQuery(this.handleExplainQuery, this);
     action.onDisconnectDatabase(this.handleDisconnectDatabase, this);
-    action.onAlertBar(this.handleAlertBar, this);
+    action.onAlertBox(this.handleAlertBox, this);
     action.onResetPagination(this.handleResetPagination, this);
     action.onSelectedCellPosition(this.handleSelectedCellPosition, this);
     action.onEditedCells(this.handleEditedCells, this);
@@ -494,8 +488,8 @@ class App extends React.Component {
     if (!this.state.connected) {
       return (
         <div>
-          <div onClick={ this.handleCloseAlertBar }>
-            { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
+          <div>
+            <AlertContainer ref={ (a) => global.msg = a } {...this.alertOptions} />
           </div>
           <ConnectionWindow onDidConnect={ this.handleDidConnect } />
         </div>
@@ -504,8 +498,8 @@ class App extends React.Component {
 
     return (
       <div>
-        <div onClick={ this.handleCloseAlertBar }>
-          { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
+        <div>
+          <AlertContainer ref={ (a) => global.msg = a } {...this.alertOptions} />
         </div>
         <div>
           <Sidebar refreshAllTableInformation={ this.getAllTablesStructures.bind(this) }

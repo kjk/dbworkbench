@@ -37,7 +37,7 @@ function urlFragmentFromObject(params) {
 
 function json_ok(json, cb) {
   if (json.error) {
-    action.alertBar(`Something is wrong. Please restart the application. Error: '${json.error}'`);
+    action.alertBox(`${json.error}`);
     return;
   }
   if (cb) {
@@ -47,13 +47,13 @@ function json_ok(json, cb) {
 
 function json_failed(error) {
   const msg = error.message;
-  action.alertBar(`Something is wrong. Please restart the application. Error parsing json response. Error: ${msg}`);
+  action.alertBox(`${msg}`);
 }
 
 function fetch_ok(resp, cb, method, url) {
   store.spinnerHide();
   if (!resp.ok) {
-    action.alertBar(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
+    action.alertBox(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
     return null;
   }
   resp.json().then(
@@ -65,7 +65,7 @@ function fetch_ok(resp, cb, method, url) {
 function fetch_failed(error) {
   store.spinnerHide();
   const msg = error.message;
-  action.alertBar(`Something is wrong. Please restart the application. Error: '${msg}'`);
+  action.alertBox(`${msg}`);
 }
 
 function apiCall(method, url, params, cb) {

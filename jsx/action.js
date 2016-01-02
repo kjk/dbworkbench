@@ -78,7 +78,7 @@ const viewSelectedIdx = 1;
 const executeQueryIdx = 2;
 const explainQueryIdx = 3;
 const disconnectDatabaseIdx = 4;
-const alertBarIdx = 5;
+const alertBoxIdx = 5;
 const resetPaginationIdx = 6;
 const selectedCellPositionIdx = 7;
 const editedCellsIdx = 8;
@@ -91,7 +91,7 @@ var actionNames = [
   'executeQuery',
   'explainQuery',
   'disconnectDatabase',
-  'alertBar',
+  'alertBox',
   'resetPagination',
   'selectedCellPosition',
   'editedCells',
@@ -157,16 +157,16 @@ export function offDisconnectDatabase(cbIdOrOwner) {
   off(disconnectDatabaseIdx, cbIdOrOwner);
 }
 
-export function alertBar(message) {
-  broadcast(alertBarIdx, message);
+export function alertBox(message) {
+  broadcast(alertBoxIdx, message);
 }
 
-export function onAlertBar(cb, owner) {
-  return on(alertBarIdx, cb, owner);
+export function onAlertBox(cb, owner) {
+  return on(alertBoxIdx, cb, owner);
 }
 
-export function offAlertBar(cbIdOrOwner) {
-  off(alertBarIdx, cbIdOrOwner);
+export function offAlertBox(cbIdOrOwner) {
+  off(alertBoxIdx, cbIdOrOwner);
 }
 
 export function resetPagination(toggle) {
