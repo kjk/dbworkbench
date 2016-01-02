@@ -1,6 +1,5 @@
 .DS_Store
 .vs/
-.vscode/
 bin
 tmp/
 cover.out
