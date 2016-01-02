@@ -8,6 +8,9 @@ const notifyFilterChnaged = debounce((s) => {
   action.filterChanged(s);
 }, 250);
 
+
+const KEY_ESC = 27;
+
 export class Filterer extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -30,8 +33,11 @@ export class Filterer extends React.Component {
     action.offAllForOwner(this);
   }
 
-  handleChange() {
-    const s = ReactDOM.findDOMNode(this).value;
+  handleChange(e) {
+    let s = ReactDOM.findDOMNode(this).value;
+    if (e.keyCode == KEY_ESC) {
+      s = '';
+    }
     this.setState({
       value: s
     });
@@ -41,7 +47,7 @@ export class Filterer extends React.Component {
   render() {
     return (
       <input type="text"
-        className="reactable-filter-input"
+        className="filter-results"
         placeholder={ this.props.placeholder }
         value={ this.state.value }
         onKeyUp={ this.handleChange }

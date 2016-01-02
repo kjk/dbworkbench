@@ -11,9 +11,11 @@ body {
    font-family: "Open Sans", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
 }
 
+/*
 #main {
 
 }
+*/
 
 #nav {
   position: relative;
@@ -456,7 +458,7 @@ h4.modal-title {
   top: 50px;
 }
 
-input.reactable-filter-input {
+input.filter-results {
   font-size: 12px;
   background-color: #fff;
   padding: 4px 6px;
