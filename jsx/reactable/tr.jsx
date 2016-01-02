@@ -11,7 +11,7 @@ function toTdChildren(children, data, columns) {
       return <Td column={ column } key={ column.key } />;
     }
 
-    const value = data[column.key];
+    let value = data[column.key];
     let props = {};
 
     if (value && value.__reactableMeta === true) {
