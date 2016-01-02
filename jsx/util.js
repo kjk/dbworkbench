@@ -19,3 +19,22 @@ export function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args);
   };
 }
+
+export function profileStart() {
+  if (console.profile) {
+    console.profile();
+  }
+}
+
+export function profileStop() {
+  if (console.profileEnd) {
+    console.profileEnd();
+  }
+}
+
+export function withProfiling(f) {
+  profileStart();
+  const res = f();
+  profileStop();
+  return res;
+}
