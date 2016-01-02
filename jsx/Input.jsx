@@ -5,6 +5,14 @@ import DragBarHoriz from './DragBarHoriz.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
 
+// TODO: the ace editor inside div id="custom-query" is not resized
+// when we move vert drag-bar. I thought it's related to my recent
+// changes but the same behavior is in 0.2.3.
+// forceRender changes how we work between re-rendering the component
+// or updating the style. Neither works so there's something missing
+// about setting up ace editor component.
+const forceRerender = true;
+
 export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -12,20 +20,30 @@ export default class Input extends React.Component {
     this.runExplain = this.runExplain.bind(this);
     this.runQuery = this.runQuery.bind(this);
 
-    this.queryEditDy = store.getQueryEditDy();
+    const dy = store.getQueryEditDy();
+    if (forceRerender) {
+      this.state = {
+        queryEditDy: dy
+      };
+    } else {
+      this.queryEditDy = dy;
+    }
   }
 
   componentWillMount() {
     store.onQueryEditDy((dy) => {
-      this.queryEditDy = dy;
+      if (forceRerender) {
+        this.setState({
+          queryEditDy: dy
+        });
+      } else {
+        this.queryEditDy = dy;
+        let el = ReactDOM.findDOMNode(this.refs.editor);
+        el.style.height = this.editorDy();
 
-      let el = ReactDOM.findDOMNode(this.refs.editor);
-      el.style.height = this.editorDy();
-      //console.log('this.refs.editor.style.height: ', el.style.height);
-
-      el = ReactDOM.findDOMNode(this);
-      el.style.height = this.inputDy();
-    //console.log('Input.style.height: ', el.style.height);
+        el = ReactDOM.findDOMNode(this);
+        el.style.height = this.inputDy();
+      }
     }, this);
   }
 
@@ -79,7 +97,6 @@ export default class Input extends React.Component {
     this.editor.getSession().setMode('ace/mode/pgsql');
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
-
     this.editor.commands.addCommands([
       {
         name: 'run_query',
@@ -106,11 +123,13 @@ export default class Input extends React.Component {
   }
 
   inputDy() {
-    return this.queryEditDy + 'px';
+    const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
+    return dy + 'px';
   }
 
   editorDy() {
-    return (this.queryEditDy - 50) + 'px';
+    const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
+    return (dy - 50) + 'px';
   }
 
   render() {
@@ -122,7 +141,8 @@ export default class Input extends React.Component {
     let style = {};
     let editorStyle = {};
 
-    if (this.queryEditDy != 0) {
+    const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
+    if (dy != 0) {
       style = {
         height: this.inputDy()
       };

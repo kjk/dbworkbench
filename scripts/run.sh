@@ -4,8 +4,11 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+echo "running jsfmt"
+./node_modules/.bin/esformatter -i jsx/reactable/*.jsx jsx/*js*
+
 echo "running eslint"
-./node_modules/.bin/eslint jsx/*.jsx jsx/*.js
+./node_modules/.bin/eslint jsx/*.js* jsx/reactable/*.jsx
 
 echo "running go vet"
 godep go vet github.com/kjk/dbworkbench
