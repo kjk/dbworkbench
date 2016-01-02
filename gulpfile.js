@@ -10,28 +10,27 @@ var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 
-gulp.task('js', function() {
-  browserify({
-    entries: ['jsx/App.jsx'],
-    debug: true
-  })
-    .transform('babelify', {
-      presets: ['es2015', 'react']
-    })
-    .bundle()
-    .pipe(exorcist('s/dist/bundle.js.map'))
-    .pipe(source('bundle.js'))
-    .pipe(gulp.dest('s/dist'));
-});
-
 var t_envify = ['envify', {
   'global': true,
   '_': 'purge',
   NODE_ENV: 'production'
 }];
+
 var t_babelify = ['babelify', {
   'presets': ['es2015', 'react']
 }];
+
+gulp.task('js', function() {
+  browserify({
+    entries: ['jsx/App.jsx'],
+    'transform': [t_babelify],
+    debug: true
+  })
+    .bundle()
+    .pipe(exorcist('s/dist/bundle.js.map'))
+    .pipe(source('bundle.js'))
+    .pipe(gulp.dest('s/dist'));
+});
 
 gulp.task('jsprod', function() {
   browserify({
