@@ -4,7 +4,6 @@ import { Thead } from './thead.jsx';
 import { Tr } from './tr.jsx';
 import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';
-import { Filterer } from './filterer.jsx';
 import * as action from '../action.js';
 
 export class Table extends React.Component {
@@ -17,6 +16,7 @@ export class Table extends React.Component {
         column: null,
         direction: 1
       },
+      filterString: '',
     };
 
     // Set the state of the current sort to the default sort
@@ -383,21 +383,20 @@ export class Table extends React.Component {
       }
     }
 
-    // Determine if we render the filter box
+    /*
     let filtering = false;
     if (
       this.props.filterable &&
       Array.isArray(this.props.filterable) &&
-      this.props.filterable.length > 0 &&
-      !this.props.hideFilterInput
+      this.props.filterable.length > 0
     ) {
       filtering = true;
-    }
+    }*/
 
-    // Apply filters
     let filteredChildren = children;
-    if (this.props.filterString != '' && this.props.filterString != undefined) {
-      filteredChildren = this.applyFilter(this.props.filterString, filteredChildren);
+    const filterStr = this.state.filterString;
+    if (filterSt != '') {
+      filteredChildren = this.applyFilter(filterStr, filteredChildren);
     }
 
     // Determine pagination properties and which columns to display
@@ -432,11 +431,6 @@ export class Table extends React.Component {
 
     return (
       <div>
-        <div className="reactable-filterer" style={ this.props.filterStyle }>
-          { filtering === true ?
-            <Filterer placeholder={ this.props.filterPlaceholder } value={ this.props.filterString } />
-            : null }
-        </div>
         <table {...props}>
           { columns && columns.length > 0 ?
             <Thead columns={ columns }
@@ -473,5 +467,4 @@ Table.defaultProps = {
   defaultSort: false,
   itemsPerPage: 0,
   filterBy: '',
-  hideFilterInput: false
 };

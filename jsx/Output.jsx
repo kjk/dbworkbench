@@ -28,10 +28,6 @@ export default class Output extends React.Component {
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
 
     this.queryEditDy = store.getQueryEditDy();
-
-    this.state = {
-      filterString: '',
-    };
   }
 
   componentWillMount() {
@@ -40,24 +36,15 @@ export default class Output extends React.Component {
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();
     }, this);
-
-    action.onFilterChanged((s) => {
-      this.setState({
-        filterString: s,
-      });
-    }, this)
   }
 
   componentWillUnmount() {
     store.offAllForOwner(this);
-    action.offAllForOwner(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
-      this.setState({
-        filterString: '',
-      });
+      action.clearFilter();
     }
   }
 
@@ -260,13 +247,6 @@ RETURNING ${columns};
     }
     if (this.props.withInput && nRowsEdited == 0) {
       var filterable = results.columns;
-      var filterPlaceholder = 'Filter Results';
-
-      // TODO: need to update this style when resizing
-      // probably filter shouldn't be inside table
-      var filterStyle = {
-        top: this.queryEditDy + 6
-      };
     }
 
     if (this.props.withInput) {
@@ -297,8 +277,6 @@ RETURNING ${columns};
         sortable={ true }
         filterable={ filterable }
         filterPlaceholder={ filterPlaceholder }
-        filterStyle={ filterStyle }
-        filterString={ this.state.filterString }
         itemsPerPage={ itemsPerPage }
         resetPagination={ this.props.resetPagination }>
         { header }

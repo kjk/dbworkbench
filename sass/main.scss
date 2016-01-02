@@ -456,14 +456,15 @@ h4.modal-title {
   top: 50px;
 }
 
-#output input.reactable-filter-input {
-  font-size: 11px;
+input.reactable-filter-input {
+  font-size: 12px;
   background-color: #fff;
   padding: 4px 6px;
   border: 1px solid #D1D1D1;
   border-radius: 5px;
   margin-left: 10px;
-  margin-top: 7px;
+  margin-top: 2px;
+  float: right;
 }
 
 div#output.empty {

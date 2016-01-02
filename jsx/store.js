@@ -216,16 +216,8 @@ export function onSpinner(cb, owner) {
   return on(spinnerKey, cb, owner);
 }
 
-export function offSpinner(cbId) {
-  off(spinnerKey, cbId);
-}
-
 export function onSidebarDx(cb, owner) {
   return on(sidebarDxKey, cb, owner);
-}
-
-export function offSidebarDx(cbId) {
-  return off(sidebarDxKey, cbId);
 }
 
 export function getSidebarDx() {
@@ -238,10 +230,6 @@ export function setSidebarDx(newVal) {
 
 export function onQueryEditDy(cb, owner) {
   return on(queryEditDyKey, cb, owner);
-}
-
-export function offQueryEditDy(cbId) {
-  return off(queryEditDyKey, cbId);
 }
 
 export function getQueryEditDy() {
