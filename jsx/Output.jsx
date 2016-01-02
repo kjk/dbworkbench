@@ -330,16 +330,11 @@ RETURNING ${columns};
     return top + 'px';
   }
 
-  renderQueryEditBar() {
-    const nRowsEdited = Object.keys(this.props.editedCells).length;
-    if (nRowsEdited > 0) {
-      return (
-        <QueryEditBar numberOfRowsEdited={ nRowsEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
-        );
-    }
-  }
   render() {
     //console.log("Output.render");
+
+    const nEdited = Object.keys(this.props.editedCells).length;
+    const showQueryBar = nEdited > 0;
 
     let clsOutput, children;
     const results = this.props.results;
@@ -376,7 +371,9 @@ RETURNING ${columns};
       <div id="output" className={ clsOutput } style={ style }>
         <div id="wrapper">
           { children }
-          { this.renderQueryEditBar() }
+          { showQueryBar ?
+            <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
+            : null }
         </div>
       </div>
       );

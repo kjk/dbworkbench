@@ -37,8 +37,8 @@ export class Actions extends React.Component {
       </div>
       );
   }
-
 }
+
 export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
