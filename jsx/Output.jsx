@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
-import { Tfoot } from './reactable/tfoot.jsx';
 import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';

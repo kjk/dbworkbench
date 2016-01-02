@@ -2,7 +2,6 @@ import React from 'react';
 import { extractDataFrom, filterPropsFrom } from './utils.jsx';
 import { Thead } from './thead.jsx';
 import { Tr } from './tr.jsx';
-import { Tfoot } from './tfoot.jsx';
 import { Paginator } from './paginator.jsx';
 import * as action from '../action.js';
 
@@ -63,12 +62,6 @@ export class Table extends React.Component {
         }
 
         switch (child.type) {
-          case Tfoot:
-            if (typeof (tfoot) !== 'undefined') {
-              console.warn('You can only have one <Tfoot>, but more than one was specified.' + 'Ignoring all but the last one');
-            }
-            tfoot = child;
-            break;
           case Tr:
             let childData = child.props.data || {};
 
@@ -211,7 +204,7 @@ export class Table extends React.Component {
     action.onFilterChanged((s) => {
       this.setState({
         filterString: s
-      })
+      });
     }, this);
   }
 
