@@ -34,7 +34,7 @@ export class Table extends React.Component {
   // Translate a user defined column array to hold column objects if strings are specified
   // (e.g. ['column1'] => [{key: 'column1', label: 'column1'}])
   translateColumnsArray(columns) {
-    return columns.map(function(column, i) {
+    return columns.map((column, i) => {
       if (typeof (column) === 'string') {
         return {
           key: column,
@@ -48,7 +48,7 @@ export class Table extends React.Component {
 
         return column;
       }
-    }.bind(this));
+    });
   }
 
   parseChildData(props) {
@@ -56,7 +56,7 @@ export class Table extends React.Component {
 
     // Transform any children back to a data array
     if (typeof (props.children) !== 'undefined') {
-      React.Children.forEach(props.children, function(child) {
+      React.Children.forEach(props.children, (child) => {
         if (typeof (child) === 'undefined' || child === null) {
           return;
         }
@@ -105,7 +105,7 @@ export class Table extends React.Component {
             });
             break;
         }
-      }.bind(this));
+      });
     }
 
     return {
@@ -252,7 +252,7 @@ export class Table extends React.Component {
       return;
     }
 
-    this.data.sort(function(a, b) {
+    this.data.sort((a, b) => {
       let keyA = extractDataFrom(a, currentSort.column);
       keyA = keyA || '';
       let keyB = extractDataFrom(b, currentSort.column);
@@ -281,7 +281,7 @@ export class Table extends React.Component {
           return this._sortable[currentSort.column](keyB, keyA);
         }
       }
-    }.bind(this));
+    });
   }
 
   onSort(column) {
@@ -340,7 +340,7 @@ export class Table extends React.Component {
     // Build up table rows
     if (this.data && typeof this.data.map === 'function') {
       // Build up the columns array
-      children = children.concat(this.data.map(function(rawData, i) {
+      children = children.concat(this.data.map((rawData, i) => {
         let data = rawData;
         let props = {};
         if (rawData.__reactableMeta === true) {
@@ -377,7 +377,7 @@ export class Table extends React.Component {
             data={ data }
             {...props} />
           );
-      }.bind(this)));
+      }));
     }
 
     if (this.props.sortable === true) {

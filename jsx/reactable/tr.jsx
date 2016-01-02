@@ -15,7 +15,7 @@ export class Tr extends React.Component {
         console.log(children);
       }
 
-      children = children.concat(this.props.columns.map(function(column, i) {
+      children = children.concat(this.props.columns.map((column, i) => {
         if (this.props.data.hasOwnProperty(column.key)) {
           var value = this.props.data[column.key];
           var props = {};
@@ -35,7 +35,7 @@ export class Tr extends React.Component {
         } else {
           return <Td column={ column } key={ column.key } />;
         }
-      }.bind(this)));
+      }));
     }
 
     // Manually transfer props
