@@ -90,18 +90,46 @@ class App extends React.Component {
     };
   }
 
-  getAllTablesStructures(connId, tables) {
-    // We can do this by having the query get all data at once but its harder
-    for (let table of tables) {
-      api.getTableStructure(connId, table, (tableStructureData) => {
-        let tmp = this.state.tableStructures;
-        tmp[table] = tableStructureData;
-        this.setState({
-          tableStructures: tmp
-        });
-      //console.log("All Table structrues, ", this.state.tableStructures);
+  getAllTablesStructures() {
+    var connId = this.state.connectionId;
+    api.getTables(connId, (data) => {
+      console.log("TABLE DATA IS data", data);
+
+      var tableNameIndex = -1;
+      for (let key in data.columns) {
+        if (data.columns.hasOwnProperty(key)) {
+          if (data.columns[key] == "table_name") {
+            tableNameIndex = key;
+            break;
+          }
+        }
+      }
+
+      var tableNames = [];
+      for (let i in data.rows) {
+        if (tableNames.indexOf(data.rows[i][tableNameIndex]) == -1) {
+          tableNames.push(data.rows[i][tableNameIndex]);
+        }
+      }
+
+      this.setState({
+        tables: tableNames,
       });
-    }
+
+      let tableStructures = [];
+      for (let i in data.rows) {
+        var tableName = data.rows[i][tableNameIndex];
+        if (tableStructures[tableName] == undefined) {
+          tableStructures[tableName] = [];
+        } else {
+          tableStructures[tableName].push(data.rows[i]);
+        }
+      }
+
+      this.setState({
+        tableStructures: tableStructures
+      });
+    });
   }
 
   handleDidConnect(connectionStr, connectionId, databaseName, capabilities) {
@@ -111,14 +139,8 @@ class App extends React.Component {
       databaseName: databaseName,
       capabilities: capabilities
     });
-    var connId = this.state.connectionId;
-    api.getTables(connId, (data) => {
-      this.setState({
-        tables: data,
-      });
 
-      this.getAllTablesStructures(connId, data);
-    });
+    this.getAllTablesStructures();
   }
 
   handleTableSelected(table) {
@@ -255,11 +277,7 @@ class App extends React.Component {
       if (!isCreateOrDropQuery(query)) {
         return;
       }
-      api.getTables(this.state.connectionId, (data) => {
-        this.setState({
-          tables: data,
-        });
-      });
+      this.getAllTablesStructures();
     });
   }
 
@@ -458,13 +476,7 @@ class App extends React.Component {
       return;
     }
 
-    api.getTables(connId, (data) => {
-      this.setState({
-        tables: data,
-      });
-
-      this.getAllTablesStructures(connId, data);
-    });
+    this.getAllTablesStructures();
 
     api.getConnectionInfo(connId, (data) => {
       const dbName = databaseNameFromConnectionInfoRows(data.rows);
@@ -496,7 +508,9 @@ class App extends React.Component {
           { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
         </div>
         <div>
-          <Sidebar connectionId={ this.state.connectionId }
+          <Sidebar
+            refreshAllTableInformation={ this.getAllTablesStructures.bind(this)}
+            connectionId={ this.state.connectionId }
             tables={ this.state.tables }
             selectedTable={ this.state.selectedTable }
             selectedTableInfo={ this.state.selectedTableInfo }

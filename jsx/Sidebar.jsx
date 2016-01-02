@@ -46,14 +46,7 @@ export default class Sidebar extends React.Component {
   }
 
   refreshTables() {
-    const connectionId = this.props.connectionId;
-
-    api.getTables(connectionId, (data) => {
-      // console.log("Refreshing.. " + JSON.stringify(data));
-      this.setState({
-        tables: data,
-      });
-    });
+    this.props.refreshAllTableInformation();
   }
 
   renderTables(tables) {
@@ -77,7 +70,7 @@ export default class Sidebar extends React.Component {
     // TODO: on database connect gets rendered 28 times
     //console.log("Sidebar render");
 
-    const tables = this.renderTables(this.state.tables);
+    const tables = this.renderTables(this.props.tables);
     const style = {
       width: this.sidebarDx,
     };
