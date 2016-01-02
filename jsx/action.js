@@ -38,36 +38,45 @@ function broadcast(actionIdx) {
 
 // subscribe to be notified about an action.
 // returns an id that can be used to unsubscribe with off()
-function on(action, cb, owner) {
+function on(actionIdx, cb, owner) {
   currCid++;
-  const callbacks = actionCallbacks[action];
+  const callbacks = actionCallbacks[actionIdx];
   const el = [cb, currCid, owner];
   if (!callbacks) {
-    actionCallbacks[action] = [el];
+    actionCallbacks[actionIdx] = [el];
   } else {
     callbacks.push(el);
   }
   return currCid;
 }
 
-function off(actionIdx, cbIdOrOwner) {
+function off(actionIdx, cbIdOrOwner, count) {
   const callbacks = actionCallbacks[actionIdx];
-  if (callbacks && callbacks.length > 0) {
-    const n = callbacks.length;
-    for (let i = 0; i < n; i++) {
-      const cb = callbacks[i];
-      if (cb[1] === cbIdOrOwner || cb[2] === cbIdOrOwner) {
-        callbacks.splice(i, 1);
-        return;
-      }
+  if (!callbacks || callbacks.length == 0) {
+    return count;
+  }
+  if (actionIdx == 10) {
+    console.log('off: clearFilterIdx');
+  }
+  const n = callbacks.length;
+  for (let i = 0; i < n; i++) {
+    const cb = callbacks[i];
+    if (cb[1] === cbIdOrOwner || cb[2] === cbIdOrOwner) {
+      callbacks.splice(i, 1);
+      return off(actionIdx, cbIdOrOwner, count + 1);
     }
   }
+  return count;
   //console.log(`action.off: didn't find callback '${cbIdOrOwner}' for '${actionName(actionIdx)}'`);
 }
 
 export function offAllForOwner(owner) {
-  for (let i = 0; i < lastIdx; i++) {
-    off(i, owner);
+  let n = 0;
+  for (let i = 0; i <= lastIdx; i++) {
+    n += off(i, owner, 0);
+  }
+  if (n == 0) {
+    throw Error("didn't find any callbacks for ", owner);
   }
 }
 

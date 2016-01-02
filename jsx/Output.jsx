@@ -240,12 +240,13 @@ RETURNING ${columns};
     const header = this.renderHeader(results.columns);
     const rows = data.map((row, i) => this.renderRow(row, i));
 
-    let nRowsEdited = 0;
+    let nEdited = 0;
     if (this.props.editedCells) {
-      nRowsEdited = Object.keys(this.props.editedCells).length;
+      nEdited = Object.keys(this.props.editedCells).length;
     }
-    if (this.props.withInput && nRowsEdited == 0) {
-      var filterable = results.columns;
+    let filterable = [];
+    if (this.props.withInput && nEdited == 0) {
+      filterable = results.columns;
     }
 
     if (this.props.withInput) {

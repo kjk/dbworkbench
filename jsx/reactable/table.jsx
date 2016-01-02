@@ -208,13 +208,15 @@ export class Table extends React.Component {
     }, this);
   }
 
+  componentWillUnmount() {
+    action.offAllForOwner(this);
+  }
+
   componentWillReceiveProps(nextProps) {
     this.initialize(nextProps);
     this.updateCurrentSort(nextProps.sortBy);
     this.sortByCurrentSort();
     this.filterBy(nextProps.filterBy);
-
-    action.offAllForOwner(this);
   }
 
   applyFilter(filter, children) {
