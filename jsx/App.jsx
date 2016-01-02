@@ -93,12 +93,12 @@ class App extends React.Component {
   getAllTablesStructures() {
     var connId = this.state.connectionId;
     api.getTables(connId, (data) => {
-      console.log("TABLE DATA IS data", data);
+      console.log('getAllTablesStructures', data);
 
       var tableNameIndex = -1;
       for (let key in data.columns) {
         if (data.columns.hasOwnProperty(key)) {
-          if (data.columns[key] == "table_name") {
+          if (data.columns[key] == 'table_name') {
             tableNameIndex = key;
             break;
           }
@@ -508,8 +508,7 @@ class App extends React.Component {
           { this.state.errorVisible ? <AlertBar errorMessage={ this.state.errorMessage } /> : null }
         </div>
         <div>
-          <Sidebar
-            refreshAllTableInformation={ this.getAllTablesStructures.bind(this)}
+          <Sidebar refreshAllTableInformation={ this.getAllTablesStructures.bind(this) }
             connectionId={ this.state.connectionId }
             tables={ this.state.tables }
             selectedTable={ this.state.selectedTable }
