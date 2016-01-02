@@ -9,7 +9,7 @@ g_world_db_url = "http://downloads.mysql.com/docs/world.sql.zip"
 g_tmp_data_dir = "tmp_data"
 
 g_world_db_zip_path = os.path.join(g_tmp_data_dir, "world-mysql.sql.zip")
-g_world_db_mysql_zip_sha1 = "c66bce8b37b253f0437755c078290e4c9c1e2104"
+g_world_db_mysql_zip_sha1 = "f0015378426020e96a01a6167838ce4718e915ab"
 g_world_db_mysql_path = os.path.join(g_tmp_data_dir, "world-mysql.sql")
 
 def fatal(s):
@@ -62,6 +62,6 @@ def main():
   os.makedirs(g_tmp_data_dir, exist_ok=True)
   dl_and_unzip_world_mysql()
   create_docker_image()
-  
+
 if __name__ == "__main__":
   main()
