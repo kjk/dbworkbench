@@ -1,13 +1,3 @@
-var t_envify = ['envify', {
-  'global': true,
-  '_': 'purge',
-  NODE_ENV: 'production'
-}];
-
-var t_babelify = ['babelify', {
-  'presets': ['es2015', 'react']
-}];
-
 var babelify = require('babelify');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
@@ -21,6 +11,16 @@ var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var merge = require('merge-stream');
 var concat = require('gulp-concat');
+
+var t_envify = ['envify', {
+  'global': true,
+  '_': 'purge',
+  NODE_ENV: 'production'
+}];
+
+var t_babelify = ['babelify', {
+  'presets': ['es2015', 'react']
+}];
 
 gulp.task('js', function() {
   browserify({
