@@ -39,10 +39,12 @@ export default class MainContainer extends React.Component {
         { withInput ?
           <Input supportsExplain={ this.props.supportsExplain } editedCells={ this.props.editedCells } />
           : null }
-        <DragBarHoriz initialY={ store.getQueryEditDy() }
-          min={ 60 }
-          max={ 400 }
-          onPosChanged={ (y) => store.setQueryEditDy(y) } />
+        { withInput ?
+          <DragBarHoriz initialY={ store.getQueryEditDy() }
+            min={ 60 }
+            max={ 400 }
+            onPosChanged={ (y) => store.setQueryEditDy(y) } />
+          : null }
         <Output selectedView={ this.props.selectedView }
           results={ this.props.results }
           withInput={ withInput }
