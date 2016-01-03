@@ -84,6 +84,10 @@ export default class QueryEditBar extends React.Component {
       top: this.topPos()
     };
 
+    var popOverStyle = {
+      zIndex: '4',
+    }
+
     return (
       <div id="query_edit_bar">
         <button ref="btnSave"
@@ -101,7 +105,9 @@ export default class QueryEditBar extends React.Component {
         <div ref="rowCount" className="row_number" style={ style }>
           { this.props.numberOfRowsEdited } edited rows
         </div>
-        <Popover isOpen={ this.state.isOpen }
+        <Popover
+          style={popOverStyle}
+          isOpen={ this.state.isOpen }
           body={ this.state.popOverText }
           preferPlace={ "right" }
           target={ "sql_preview" }

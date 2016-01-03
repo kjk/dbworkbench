@@ -74,7 +74,7 @@ export default class DragBarHoriz extends React.Component {
       minWidth: '100%',
       height: 3,
       cursor: 'row-resize',
-      zIndex: 0,
+      zIndex: 3,
       top: this.y
     };
 
