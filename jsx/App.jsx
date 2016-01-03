@@ -11,7 +11,6 @@ import * as store from './store.js';
 import view from './view.js';
 import AlertContainer from './alert/ReactAlert.jsx';
 
-
 function runOnLoad(f) {
   if (window.addEventListener) {
     window.addEventListener('DOMContentLoaded', f);
