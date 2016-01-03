@@ -36,7 +36,10 @@ function urlFragmentFromObject(params) {
 }
 
 function json_ok(json, cb, passJsonErrorToCallback) {
-  if (json.error && passJsonErrorToCallback) {
+  if (!cb) {
+    passJsonErrorToCallback = false;
+  }
+  if (json.error && !passJsonErrorToCallback) {
     action.alertBox(`${json.error}`);
     return;
   }
