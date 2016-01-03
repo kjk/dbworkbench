@@ -1,5 +1,5 @@
 import React from 'react';
-import { extractDataFrom, filterPropsFrom } from './utils.jsx';
+import { extractDataFrom, filterInternalProps } from './utils.jsx';
 import { Thead } from './thead.jsx';
 import { Tr } from './tr.jsx';
 import { Paginator } from './paginator.jsx';
@@ -89,7 +89,7 @@ export class Table extends React.Component {
 
                 childData[descendant.props.column] = {
                   value: value,
-                  props: filterPropsFrom(descendant.props),
+                  props: filterInternalProps(descendant.props),
                   __reactableMeta: true
                 };
               } else {
@@ -100,7 +100,7 @@ export class Table extends React.Component {
 
             data.push({
               data: childData,
-              props: filterPropsFrom(child.props),
+              props: filterInternalProps(child.props),
               __reactableMeta: true
             });
             break;
@@ -435,7 +435,7 @@ export class Table extends React.Component {
     }
 
     // Manually transfer props
-    let props = filterPropsFrom(this.props);
+    let props = filterInternalProps(this.props);
 
     return (
       <div>

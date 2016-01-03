@@ -32,7 +32,7 @@ const internalProps = {
   children: true
 };
 
-export function filterPropsFrom(baseProps) {
+export function filterInternalProps(baseProps) {
   baseProps = baseProps || {};
   var props = {};
   for (var key in baseProps) {

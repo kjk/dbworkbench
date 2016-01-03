@@ -1,6 +1,6 @@
 import React from 'react';
 import { Td } from './td.jsx';
-import { toArray, filterPropsFrom } from './utils.jsx';
+import { toArray, filterInternalProps } from './utils.jsx';
 
 function toTdChildren(children, data, columns) {
   if (!data || !columns || typeof columns.map !== 'function') {
@@ -30,7 +30,7 @@ export class Tr extends React.Component {
   render() {
     let children = React.Children.toArray();
     children = toTdChildren(children, this.props.data, this.props.columns);
-    var props = filterPropsFrom(this.props);
+    var props = filterInternalProps(this.props);
     return React.DOM.tr(props, children);
   }
 }

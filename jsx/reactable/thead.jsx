@@ -1,5 +1,5 @@
 import React from 'react';
-import { filterPropsFrom } from './utils.jsx';
+import { filterInternalProps } from './utils.jsx';
 
 export class Thead extends React.Component {
   static getColumns(component) {
@@ -12,7 +12,7 @@ export class Thead extends React.Component {
         columns.push({
           key: th.props.column,
           label: th.props.children,
-          props: filterPropsFrom(th.props)
+          props: filterInternalProps(th.props)
         });
       } else {
         throw new TypeError(
@@ -60,7 +60,7 @@ export class Thead extends React.Component {
       }
 
       // TODO: not sure if filtering is needed
-      const columnProps = filterPropsFrom(column.props);
+      const columnProps = filterInternalProps(column.props);
       ths.push(
         <th {...columnProps}
           className={ thClass }
@@ -74,7 +74,7 @@ export class Thead extends React.Component {
     }
 
     // Manually transfer props
-    var props = filterPropsFrom(this.props);
+    var props = filterInternalProps(this.props);
 
     return (
       <thead {...props}>
