@@ -9,7 +9,7 @@ import * as api from './api.js';
 import * as action from './action.js';
 import * as store from './store.js';
 import view from './view.js';
-import AlertContainer from 'react-alert';
+import AlertContainer from './alert/ReactAlert.jsx';
 
 
 function runOnLoad(f) {
@@ -63,8 +63,8 @@ class App extends React.Component {
     this.alertOptions = {
       offset: 14,
       position: 'bottom left',
-      theme: 'dark', // Can be 'dark'
       time: 7000,
+      theme: 'light', // Can be 'dark'
       transition: 'scale'
     };
 
