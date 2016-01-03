@@ -72,11 +72,12 @@ export default class Output extends React.Component {
   }
 
   generateQuery() {
-    const table = this.props.selectedTable;
+    const tableName = this.props.selectedTable;
     const results = this.props.results;
     const tableStructures = this.props.tableStructures;
     const resultsAsDictionary = resultsToDictionary(results);
     const editedCells = this.props.editedCells;
+    const schema = this.props.tableStructures[tableName]['table_schema'];
 
     let query = '';
     for (let rowId in editedCells) {
@@ -104,15 +105,6 @@ export default class Output extends React.Component {
       }
 
       const columns = results.columns.join(', ');
-
-      const tableStructuresAsDictionary = resultsToDictionary(tableStructures[table]);
-      let schema = null;
-      if (tableStructuresAsDictionary.length > 0) {
-        schema = tableStructuresAsDictionary[0]['table_schema'];
-      } else {
-        console.log('THIS CASE SHOULD NOT HAPPEN IS THERE A WAY TO LOG THIS?');
-      }
-
       const rowAsDictionary = resultsAsDictionary[rowId];
 
       index = 0;
@@ -131,9 +123,9 @@ export default class Output extends React.Component {
         index += 1;
       }
 
-      query += `UPDATE ${schema}.${table}
+      query += `UPDATE ${schema}.${tableName}
 SET ${colsAfterEdit}
-WHERE ctid IN (SELECT ctid FROM ${schema}.${table}
+WHERE ctid IN (SELECT ctid FROM ${schema}.${tableName}
 WHERE ${rowToBeEdited}
 LIMIT 1 FOR UPDATE)
 RETURNING ${columns};

@@ -75,7 +75,7 @@ func (c *ClientPg) Schemas() ([]string, error) {
 }
 
 // Tables returns list of tables
-func (c *ClientPg) Tables() (*Result, error) {
+func (c *ClientPg) Tables() ([]*TableInfo, error) {
 	q := `SELECT
 			column_name,
 			data_type,
@@ -87,7 +87,8 @@ func (c *ClientPg) Tables() (*Result, error) {
 			table_schema
 		FROM information_schema.columns
 		WHERE table_name IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public')`
-	return dbQuery(c.db, q)
+
+	return dbQueryTableInfo(c.db, q)
 }
 
 // Table returns schema for a given table

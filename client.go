@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strconv"
 	"time"
 	"unsafe"
 
@@ -14,7 +15,7 @@ type Client interface {
 	Info() (*Result, error)
 	Databases() ([]string, error)
 	Schemas() ([]string, error)
-	Tables() (*Result, error)
+	Tables() ([]*TableInfo, error)
 	Table(table string) (*Result, error)
 	TableRows(table string, opts RowsOptions) (*Result, error)
 	TableInfo(table string) (*Result, error)
@@ -23,6 +24,22 @@ type Client interface {
 	Query(query string) (*Result, error)
 	History() []HistoryRecord
 	GetCapabilities() ClientCapabilities
+}
+
+type ColumnInfo struct {
+	Name                   string `json:"column_name"`
+	DataType               string `json:"data_type"`
+	IsNullable             string `json:"is_nullable"`
+	CharacterMaximumLength string `json:"character_maximum_length"`
+	CharacterSetCatalog    string `json:"character_set_catalog"`
+	Default                string `json:"column_default"`
+	// Extra                  map[string]interface{} `json:"extra"`	// TODO: implement general case also for frontend
+}
+
+type TableInfo struct {
+	SchemaName string       `json:"table_schema"`
+	TableName  string       `json:"table_name"`
+	Columns    []ColumnInfo `json:"columns"`
 }
 
 // ClientCapabilities describes capabilities of the client.
@@ -109,4 +126,104 @@ func dbFetchRows(db *sqlx.DB, q string) ([]string, error) {
 	}
 
 	return results, nil
+}
+
+func getTableInfo(tableInfos []*TableInfo, tableName string) *TableInfo {
+	for _, tableInfo := range tableInfos {
+		if tableInfo.TableName == tableName {
+			return tableInfo
+		}
+	}
+	return nil
+}
+
+func dbQueryTableInfo(db *sqlx.DB, query string) ([]*TableInfo, error) {
+	var tableInfos []*TableInfo
+
+	results, err := dbQuery(db, query)
+	if err != nil {
+		return tableInfos, err
+	}
+
+	reformatedData := make([]map[interface{}]interface{}, 0)
+
+	for _, row := range results.Rows {
+		m := make(map[interface{}]interface{})
+		for j, col := range results.Columns {
+			m[col] = row[j]
+		}
+		reformatedData = append(reformatedData, m)
+	}
+
+	for _, row := range reformatedData {
+		LogInfof("row %v\n", row)
+
+		var tableInfo = getTableInfo(tableInfos, row["table_name"].(string))
+
+		LogInfof("current tableInfo %v\n", tableInfo)
+
+		if tableInfo == nil {
+			tableInfo = &TableInfo{}
+
+			tableInfo.SchemaName = row["table_schema"].(string)
+			tableInfo.TableName = row["table_name"].(string)
+			tableInfos = append(tableInfos, tableInfo)
+		}
+
+		var column = ColumnInfo{}
+
+		for columnType, value := range row {
+			switch columnType {
+			case "column_name":
+				if row["column_name"] != nil {
+					column.Name = value.(string)
+				}
+			case "data_type":
+				if row["data_type"] != nil {
+					column.DataType = row["data_type"].(string)
+				}
+			case "is_nullable":
+				if row["is_nullable"] != nil {
+					column.IsNullable = row["is_nullable"].(string)
+				}
+			case "character_maximum_length":
+				if row["character_maximum_length"] != nil {
+					// MySQL is string
+					// PostgreSQL is int64
+					vType := reflect.TypeOf(row["character_maximum_length"]).Kind()
+					if vType == reflect.Int64 {
+						column.CharacterMaximumLength = strconv.FormatInt(row["character_maximum_length"].(int64), 10)
+					} else if vType == reflect.String {
+						column.CharacterMaximumLength = row["character_maximum_length"].(string)
+					} else {
+						LogErrorf("This case shouldn't happen")
+					}
+				}
+			case "character_set_catalog":
+				if row["character_set_catalog"] != nil {
+					column.CharacterSetCatalog = row["character_set_catalog"].(string)
+				}
+			case "column_default":
+				if row["column_default"] != nil {
+					column.Default = row["column_default"].(string)
+				}
+			default:
+				// TODO: Implement General case
+				// LogInfof("DEFAULT TYPE %v\n", columnType)
+				// LogInfof("DEFAULT VALUE %v\n", value)
+				// if columnType != nil {
+				// 	if row[columnType] != nil {
+				// 		LogInfof("DEFAULT extraColumnType %v\n", row[columnType])
+				// 		column.Extra[columnType] = row[columnType]
+				// 	}
+				// }
+			}
+		}
+
+		tableInfo.Columns = append(tableInfo.Columns, column)
+	}
+
+	LogInfof("tableInfos %v\n", tableInfos)
+
+	return tableInfos, nil
 }

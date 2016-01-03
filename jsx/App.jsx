@@ -100,38 +100,28 @@ class App extends React.Component {
     api.getTables(connId, (data) => {
       console.log('getAllTablesStructures', data);
 
-      var tableNameIndex = -1;
-      for (let key in data.columns) {
-        if (data.columns.hasOwnProperty(key)) {
-          if (data.columns[key] == 'table_name') {
-            tableNameIndex = key;
-            break;
-          }
+      let tableNames = [];
+      let tableStructures = [];
+      for (var key in data) {
+        const table = data[key];
+        const tableName = table['table_name'];
+        tableNames.push(tableName);
+
+        if (tableStructures[tableName] == undefined) {
+          tableStructures[tableName] = [];
+          tableStructures[tableName]['table_schema'] = table['table_schema'];
+        }
+
+        for (let key in table['columns']) {
+          tableStructures[tableName].push(table['columns'][key]);
         }
       }
 
-      var tableNames = [];
-      for (let i in data.rows) {
-        if (tableNames.indexOf(data.rows[i][tableNameIndex]) == -1) {
-          tableNames.push(data.rows[i][tableNameIndex]);
-        }
-      }
+      // console.log('tableNames ', tableNames);
+      // console.log('tableStructures ', tableStructures);
 
       this.setState({
         tables: tableNames,
-      });
-
-      let tableStructures = [];
-      for (let i in data.rows) {
-        var tableName = data.rows[i][tableNameIndex];
-        if (tableStructures[tableName] == undefined) {
-          tableStructures[tableName] = [];
-        } else {
-          tableStructures[tableName].push(data.rows[i]);
-        }
-      }
-
-      this.setState({
         tableStructures: tableStructures
       });
     });

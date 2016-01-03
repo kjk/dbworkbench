@@ -73,7 +73,7 @@ func (c *ClientMysql) Schemas() ([]string, error) {
 }
 
 // Tables returns list of tables
-func (c *ClientMysql) Tables() (*Result, error) {
+func (c *ClientMysql) Tables() ([]*TableInfo, error) {
 	// http://dev.mysql.com/doc/refman/5.0/en/show-tables.html
 	// TODO: possibliy rewrite as a query since it differs depending on mysql version
 	// https://dev.mysql.com/doc/refman/5.0/en/tables-table.html
@@ -97,7 +97,7 @@ func (c *ClientMysql) Tables() (*Result, error) {
 			table_schema
 		FROM information_schema.columns
 		WHERE table_schema IN (SELECT DATABASE() FROM DUAL)`
-	return dbQuery(c.db, q)
+	return dbQueryTableInfo(c.db, q)
 }
 
 // Table returns schema for a given table

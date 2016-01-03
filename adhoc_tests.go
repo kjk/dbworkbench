@@ -44,14 +44,14 @@ func testMysqlInfo() {
 		fmt.Printf("  '%s'\n", db)
 	}
 
-	tables, err := c.Tables()
+	tableInfos, err := c.Tables()
 	if err != nil {
 		fmt.Printf("c.Tables() failed with '%s'\n", err)
 		return
 	}
-	fmt.Printf("%d tables:\n", len(tables.Rows))
-	for _, s := range tables.Rows {
-		fmt.Printf("  '%s'\n", s)
+	fmt.Printf("%d tables:\n", len(tableInfos))
+	for _, s := range tableInfos {
+		fmt.Printf("Table Name '%s', TableSchema '%s, Columns: %v\n", s.TableName, s.SchemaName, s.Columns)
 	}
 
 	/*
