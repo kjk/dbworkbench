@@ -275,10 +275,10 @@ class ConnectionWindow extends React.Component {
       }
       // pareTime: conver time from []byte to time.Time
       // https://github.com/go-sql-driver/mysql#parsetime
-      url = user + ':' + pass + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true';
+      url = user + ':' + pass + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true&allowOldPasswords=true';
       urlSafe = url;
       if (pass != '') {
-        urlSafe = user + ':' + '***' + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true';
+        urlSafe = user + ':' + '***' + '@tcp(' + host + ':' + port + ')/' + db + '?parseTime=true&allowOldPasswords=true';
       }
     } else {
       console.log('invalid type: ' + dbType);

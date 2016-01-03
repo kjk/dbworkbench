@@ -58,9 +58,9 @@ gulp.task('css', function() {
     .pipe(gulp.dest('./s/dist/'));
 });
 
-gulp.task('tests', function () {
-    return gulp.src('./jsx/tests/*.js')
-        .pipe(mocha());
+gulp.task('tests', function() {
+  return gulp.src('./jsx/tests/*.js')
+    .pipe(mocha());
 });
 
 // gulp.task('css2', function() { // Do we need this?
