@@ -156,11 +156,7 @@ func dbQueryTableInfo(db *sqlx.DB, query string) ([]*TableInfo, error) {
 	}
 
 	for _, row := range reformatedData {
-		LogInfof("row %v\n", row)
-
 		var tableInfo = getTableInfo(tableInfos, row["table_name"].(string))
-
-		LogInfof("current tableInfo %v\n", tableInfo)
 
 		if tableInfo == nil {
 			tableInfo = &TableInfo{}
@@ -222,8 +218,6 @@ func dbQueryTableInfo(db *sqlx.DB, query string) ([]*TableInfo, error) {
 
 		tableInfo.Columns = append(tableInfo.Columns, column)
 	}
-
-	LogInfof("tableInfos %v\n", tableInfos)
 
 	return tableInfos, nil
 }
