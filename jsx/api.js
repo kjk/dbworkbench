@@ -35,8 +35,8 @@ function urlFragmentFromObject(params) {
   return s;
 }
 
-function json_ok(json, cb) {
-  if (json.error) {
+function json_ok(json, cb, passJsonErrorToCallback) {
+  if (json.error && passJsonErrorToCallback) {
     action.alertBox(`${json.error}`);
     return;
   }
@@ -50,14 +50,14 @@ function json_failed(error) {
   action.alertBox(`${msg}`);
 }
 
-function fetch_ok(resp, cb, method, url) {
+function fetch_ok(resp, cb, method, url, passJsonErrorToCallback) {
   store.spinnerHide();
   if (!resp.ok) {
     action.alertBox(`Something is wrong. Please restart the application. ${method.toUpperCase()} ${url} Status: ${resp.status} "${resp.statusText}"`);
     return null;
   }
   resp.json().then(
-    (json) => json_ok(json, cb),
+    (json) => json_ok(json, cb, passJsonErrorToCallback),
     (error) => json_failed
   );
 }
@@ -68,7 +68,10 @@ function fetch_failed(error) {
   action.alertBox(`${msg}`);
 }
 
-function apiCall(method, url, params, cb) {
+// passJsonErrorToCallback : if true, a callback will receive json response
+//     even if it has error field (used for /api/connect). Otherwise we show
+//     the error globally and don't call the callback (most api calls)
+function apiCall(method, url, params, cb, passJsonErrorToCallback) {
   const opts = {
     method: method,
     cache: 'no-cache'
@@ -81,7 +84,7 @@ function apiCall(method, url, params, cb) {
 
   store.spinnerShow();
   fetch(url, opts).then(
-    (resp) => fetch_ok(resp, cb, method, url),
+    (resp) => fetch_ok(resp, cb, method, url, passJsonErrorToCallback),
     (error) => fetch_failed(error)
   );
 }
@@ -92,7 +95,7 @@ export function connect(type, url, urlSafe, cb) {
     url: url,
     urlSafe: urlSafe
   };
-  apiCall('post', '/api/connect', params, cb);
+  apiCall('post', '/api/connect', params, cb, true);
 }
 
 export function disconnect(connId, cb) {
