@@ -4,11 +4,14 @@ var buffer = require('vinyl-buffer');
 var envify = require('envify/custom');
 var exorcist = require('exorcist');
 var gulp = require('gulp');
+var mocha = require('gulp-mocha');
 var prefix = require('gulp-autoprefixer');
 var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
+
+require('babel-register');
 
 var t_envify = ['envify', {
   'global': true,
@@ -55,6 +58,11 @@ gulp.task('css', function() {
     .pipe(gulp.dest('./s/dist/'));
 });
 
+gulp.task('tests', function () {
+    return gulp.src('./jsx/tests/*.js')
+        .pipe(mocha());
+});
+
 // gulp.task('css2', function() { // Do we need this?
 //   return gulp.src('./sass/main2.scss')
 //   .pipe(sourcemaps.init())
@@ -71,6 +79,7 @@ gulp.task('watch', function() {
 
 gulp.task('build_and_watch', ['css', 'js', 'watch']);
 
+gulp.task('prod', ['css', 'jsprod']);
+
 gulp.task('default', ['css', 'js']);
 
-gulp.task('prod', ['css', 'jsprod']);
