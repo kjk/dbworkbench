@@ -1,3 +1,13 @@
+var t_envify = ['envify', {
+  'global': true,
+  '_': 'purge',
+  NODE_ENV: 'production'
+}];
+
+var t_babelify = ['babelify', {
+  'presets': ['es2015', 'react']
+}];
+
 var babelify = require('babelify');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
@@ -9,16 +19,8 @@ var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
-
-var t_envify = ['envify', {
-  'global': true,
-  '_': 'purge',
-  NODE_ENV: 'production'
-}];
-
-var t_babelify = ['babelify', {
-  'presets': ['es2015', 'react']
-}];
+var merge = require('merge-stream');
+var concat = require('gulp-concat');
 
 gulp.task('js', function() {
   browserify({
@@ -47,30 +49,33 @@ gulp.task('jsprod', function() {
 });
 
 gulp.task('css', function() {
-  return gulp.src('./sass/main.scss')
+  var sassFiles = gulp.src(['./sass/main.scss', './sass/alert.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
     .pipe(prefix('last 2 versions'))
     .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
+
+  return merge(sassFiles)
+    .pipe(concat('main.css'))
     .pipe(gulp.dest('./s/dist/'));
 });
 
-gulp.task('css2', function() {
-  return gulp.src('./sass/main2.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(prefix('last 2 versions'))
-    .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
-    .pipe(gulp.dest('./s/dist/'));
-});
+// gulp.task('css2', function() { // Do we need this?
+//   return gulp.src('./sass/main2.scss')
+//   .pipe(sourcemaps.init())
+//   .pipe(sass().on('error', sass.logError))
+//   .pipe(prefix('last 2 versions'))
+//   .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
+//   .pipe(gulp.dest('./s/dist/'));
+// });
 
 gulp.task('watch', function() {
   gulp.watch('jsx/**/*js*', ['js']);
-  gulp.watch(['sass/*'], ['css', 'css2']);
+  gulp.watch(['sass/*'], ['css']);
 });
 
-gulp.task('build_and_watch', ['css', 'css2', 'js', 'watch']);
+gulp.task('build_and_watch', ['css', 'js', 'watch']);
 
-gulp.task('default', ['css', 'css2', 'js']);
+gulp.task('default', ['css', 'js']);
 
-gulp.task('prod', ['css', 'css2', 'jsprod']);
+gulp.task('prod', ['css', 'jsprod']);
