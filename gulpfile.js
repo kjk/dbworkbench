@@ -9,8 +9,6 @@ var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
-var merge = require('merge-stream');
-var concat = require('gulp-concat');
 
 var t_envify = ['envify', {
   'global': true,
@@ -49,14 +47,11 @@ gulp.task('jsprod', function() {
 });
 
 gulp.task('css', function() {
-  var sassFiles = gulp.src(['./sass/main.scss', './sass/alert.scss'])
+  return gulp.src('./sass/main.scss')
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
     .pipe(prefix('last 2 versions'))
     .pipe(sourcemaps.write('.')) // this is relative to gulp.dest()
-
-  return merge(sassFiles)
-    .pipe(concat('main.css'))
     .pipe(gulp.dest('./s/dist/'));
 });
 
