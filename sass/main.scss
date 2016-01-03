@@ -1,5 +1,5 @@
 @import 'normalize';
-@import 'alert';
+
 /* Text Color: #5B5C59 */
 /* Blue      : #377CE4 */
 
@@ -1083,3 +1083,5 @@ select#db_type.form-control.input-sm {
 div.ReactModal__Overlay {
   z-index: 99;
 }
+
+@import 'alert';
