@@ -75,7 +75,7 @@ export default class DragBarVert extends React.Component {
       minHeight: '100%',
       width: 3,
       cursor: 'col-resize',
-      zIndex: 3,
+      zIndex: 1,
       left: this.x
     };
 
