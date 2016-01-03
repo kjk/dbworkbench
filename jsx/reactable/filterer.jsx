@@ -6,7 +6,7 @@ import { debounce } from './../util.js';
 const notifyFilterChnaged = debounce((s) => {
   console.log('notifyFilterChanged: ', s);
   action.filterChanged(s);
-}, 250);
+}, 150);
 
 
 const KEY_ESC = 27;
