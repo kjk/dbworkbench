@@ -311,9 +311,10 @@ RETURNING ${columns};
 
   render() {
     //console.log("Output.render");
-
-    const nEdited = Object.keys(this.props.editedCells).length;
-    const showQueryBar = nEdited > 0;
+    if (this.props.editedCells != null) {
+      var nEdited = Object.keys(this.props.editedCells).length;
+      var showQueryBar = nEdited > 0;
+    }
 
     let clsOutput, children;
     const results = this.props.results;
