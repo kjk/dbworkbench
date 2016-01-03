@@ -57,8 +57,8 @@ gulp.task('css2', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('jsx/**', ['js']);
-  gulp.watch(['sass/**/*'], ['css', 'css2']);
+  gulp.watch('jsx/**/*js*', ['js']);
+  gulp.watch(['sass/*'], ['css', 'css2']);
 });
 
 gulp.task('build_and_watch', ['css', 'css2', 'js', 'watch']);
