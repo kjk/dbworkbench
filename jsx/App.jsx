@@ -387,11 +387,6 @@ class App extends React.Component {
   }
 
   adHocTest() {
-    var cid1 = action.onViewSelected(this.handleViewSelected, this);
-    var cid2 = action.onViewSelected(this.handleViewSelected, this);
-    action.offViewSelected(cid2);
-    action.offViewSelected(this);
-    action.offViewSelected(18);
   }
 
   handleDisconnectDatabase() {

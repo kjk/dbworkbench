@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
-import { Tfoot } from './reactable/tfoot.jsx';
 import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
 import ConnectionWindow from './ConnectionWindow.jsx';
@@ -28,10 +27,6 @@ export default class Output extends React.Component {
     this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
 
     this.queryEditDy = store.getQueryEditDy();
-
-    this.state = {
-      filterString: '',
-    };
   }
 
   componentWillMount() {
@@ -48,9 +43,7 @@ export default class Output extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
-      this.setState({
-        filterString: '',
-      });
+      action.clearFilter();
     }
   }
 
@@ -247,19 +240,13 @@ RETURNING ${columns};
     const header = this.renderHeader(results.columns);
     const rows = data.map((row, i) => this.renderRow(row, i));
 
-    let nRowsEdited = 0;
+    let nEdited = 0;
     if (this.props.editedCells) {
-      nRowsEdited = Object.keys(this.props.editedCells).length;
+      nEdited = Object.keys(this.props.editedCells).length;
     }
-    if (this.props.withInput && nRowsEdited == 0) {
-      var filterable = results.columns;
-      var filterPlaceholder = 'Filter Results';
-
-      // TODO: need to update this style when resizing
-      // probably filter shouldn't be inside table
-      var filterStyle = {
-        top: this.queryEditDy + 6
-      };
+    let filterable = [];
+    if (this.props.withInput && nEdited == 0) {
+      filterable = results.columns;
     }
 
     if (this.props.withInput) {
@@ -289,14 +276,6 @@ RETURNING ${columns};
         style={ tableStyle }
         sortable={ true }
         filterable={ filterable }
-        filterPlaceholder={ filterPlaceholder }
-        filterStyle={ filterStyle }
-        onFilter={ filter => {
-                     this.setState({
-                       filterString: filter
-                     });
-                   } }
-        filterString={ this.state.filterString }
         itemsPerPage={ itemsPerPage }
         resetPagination={ this.props.resetPagination }>
         { header }
@@ -330,16 +309,11 @@ RETURNING ${columns};
     return top + 'px';
   }
 
-  renderQueryEditBar() {
-    const nRowsEdited = Object.keys(this.props.editedCells).length;
-    if (nRowsEdited > 0) {
-      return (
-        <QueryEditBar numberOfRowsEdited={ nRowsEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
-        );
-    }
-  }
   render() {
     //console.log("Output.render");
+
+    const nEdited = Object.keys(this.props.editedCells).length;
+    const showQueryBar = nEdited > 0;
 
     let clsOutput, children;
     const results = this.props.results;
@@ -376,7 +350,9 @@ RETURNING ${columns};
       <div id="output" className={ clsOutput } style={ style }>
         <div id="wrapper">
           { children }
-          { this.renderQueryEditBar() }
+          { showQueryBar ?
+            <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
+            : null }
         </div>
       </div>
       );

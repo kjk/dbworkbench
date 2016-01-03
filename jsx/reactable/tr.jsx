@@ -2,45 +2,35 @@ import React from 'react';
 import { Td } from './td.jsx';
 import { toArray, filterPropsFrom } from './utils.jsx';
 
-export class Tr extends React.Component {
-  render() {
-    var children = React.Children.toArray();
-
-    if (
-      this.props.data &&
-      this.props.columns &&
-      typeof this.props.columns.map === 'function'
-    ) {
-      if (typeof (children.concat) === 'undefined') {
-        console.log(children);
-      }
-
-      children = children.concat(this.props.columns.map(function(column, i) {
-        if (this.props.data.hasOwnProperty(column.key)) {
-          var value = this.props.data[column.key];
-          var props = {};
-
-          if (
-            typeof (value) !== 'undefined' &&
-            value !== null &&
-            value.__reactableMeta === true
-          ) {
-            props = value.props;
-            value = value.value;
-          }
-
-          return <Td column={ column } key={ column.key } {...props}>
-                   { value }
-                 </Td>;
-        } else {
-          return <Td column={ column } key={ column.key } />;
-        }
-      }.bind(this)));
+function toTdChildren(children, data, columns) {
+  if (!data || !columns || typeof columns.map !== 'function') {
+    return children;
+  }
+  children = children.concat(columns.map((column, i) => {
+    if (!data.hasOwnProperty(column.key)) {
+      return <Td column={ column } key={ column.key } />;
     }
 
-    // Manually transfer props
-    var props = filterPropsFrom(this.props);
+    let value = data[column.key];
+    let props = {};
 
+    if (value && value.__reactableMeta === true) {
+      props = value.props;
+      value = value.value;
+    }
+
+    return <Td column={ column } key={ column.key } {...props}>
+             { value }
+           </Td>;
+  }));
+  return children;
+}
+
+export class Tr extends React.Component {
+  render() {
+    let children = React.Children.toArray();
+    children = toTdChildren(children, this.props.data, this.props.columns);
+    var props = filterPropsFrom(this.props);
     return React.DOM.tr(props, children);
   }
 }

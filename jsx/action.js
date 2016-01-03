@@ -38,35 +38,45 @@ function broadcast(actionIdx) {
 
 // subscribe to be notified about an action.
 // returns an id that can be used to unsubscribe with off()
-function on(action, cb, owner) {
+function on(actionIdx, cb, owner) {
   currCid++;
-  const callbacks = actionCallbacks[action];
-  let el = [cb, currCid, owner];
+  const callbacks = actionCallbacks[actionIdx];
+  const el = [cb, currCid, owner];
   if (!callbacks) {
-    actionCallbacks[action] = [el];
+    actionCallbacks[actionIdx] = [el];
   } else {
     callbacks.push(el);
   }
   return currCid;
 }
 
-function off(actionIdx, cbIdOrOwner) {
+function off(actionIdx, cbIdOrOwner, count) {
   const callbacks = actionCallbacks[actionIdx];
-  if (callbacks && callbacks.length > 0) {
-    const n = callbacks.length;
-    for (let i = 0; i < n; i++) {
-      if (callbacks[i][1] === cbIdOrOwner || callbacks[i][2] === cbIdOrOwner) {
-        callbacks.splice(i, 1);
-        return;
-      }
+  if (!callbacks || callbacks.length == 0) {
+    return count;
+  }
+  if (actionIdx == 10) {
+    console.log('off: clearFilterIdx');
+  }
+  const n = callbacks.length;
+  for (let i = 0; i < n; i++) {
+    const cb = callbacks[i];
+    if (cb[1] === cbIdOrOwner || cb[2] === cbIdOrOwner) {
+      callbacks.splice(i, 1);
+      return off(actionIdx, cbIdOrOwner, count + 1);
     }
   }
+  return count;
   //console.log(`action.off: didn't find callback '${cbIdOrOwner}' for '${actionName(actionIdx)}'`);
 }
 
 export function offAllForOwner(owner) {
-  for (let i = 0; i < lastIdx; i++) {
-    off(i, owner);
+  let n = 0;
+  for (let i = 0; i <= lastIdx; i++) {
+    n += off(i, owner, 0);
+  }
+  if (n == 0) {
+    throw Error("didn't find any callbacks for ", owner);
   }
 }
 
@@ -82,7 +92,9 @@ const alertBoxIdx = 5;
 const resetPaginationIdx = 6;
 const selectedCellPositionIdx = 7;
 const editedCellsIdx = 8;
-var lastIdx = 8;
+const filterChangedIdx = 9;
+const clearFilterIdx = 10;
+var lastIdx = 10;
 
 // must be in same order as *Idx above
 var actionNames = [
@@ -95,6 +107,8 @@ var actionNames = [
   'resetPagination',
   'selectedCellPosition',
   'editedCells',
+  'filterChanged',
+  'clearFilter',
 ];
 
 export function tableSelected(name) {
@@ -105,20 +119,12 @@ export function onTableSelected(cb, owner) {
   return on(tableSelectedIdx, cb, owner);
 }
 
-export function offTableSelected(cbIdOrOwner) {
-  off(tableSelectedIdx, cbIdOrOwner);
-}
-
 export function viewSelected(view) {
   broadcast(viewSelectedIdx, view);
 }
 
 export function onViewSelected(cb, owner) {
   return on(viewSelectedIdx, cb, owner);
-}
-
-export function offViewSelected(cbIdOrOwner) {
-  off(viewSelectedIdx, cbIdOrOwner);
 }
 
 export function executeQuery(query) {
@@ -129,20 +135,12 @@ export function onExecuteQuery(cb, owner) {
   return on(executeQueryIdx, cb, owner);
 }
 
-export function offExecuteQuery(cbIdOrOwner) {
-  off(executeQueryIdx, cbIdOrOwner);
-}
-
 export function explainQuery(query) {
   broadcast(explainQueryIdx, query);
 }
 
 export function onExplainQuery(cb, owner) {
   return on(explainQueryIdx, cb, owner);
-}
-
-export function offExplainQuery(cbIdOrOwner) {
-  off(explainQueryIdx, cbIdOrOwner);
 }
 
 export function disconnectDatabase(query) {
@@ -153,20 +151,12 @@ export function onDisconnectDatabase(cb, owner) {
   return on(disconnectDatabaseIdx, cb, owner);
 }
 
-export function offDisconnectDatabase(cbIdOrOwner) {
-  off(disconnectDatabaseIdx, cbIdOrOwner);
-}
-
 export function alertBox(message) {
   broadcast(alertBoxIdx, message);
 }
 
 export function onAlertBox(cb, owner) {
   return on(alertBoxIdx, cb, owner);
-}
-
-export function offAlertBox(cbIdOrOwner) {
-  off(alertBoxIdx, cbIdOrOwner);
 }
 
 export function resetPagination(toggle) {
@@ -177,20 +167,12 @@ export function onResetPagination(cb, owner) {
   return on(resetPaginationIdx, cb, owner);
 }
 
-export function offResetPagination(cbIdOrOwner) {
-  off(resetPaginationIdx, cbIdOrOwner);
-}
-
 export function selectedCellPosition(newPosition) {
   broadcast(selectedCellPositionIdx, newPosition);
 }
 
 export function onSelectedCellPosition(cb, owner) {
   return on(selectedCellPositionIdx, cb, owner);
-}
-
-export function offSelectedCellPosition(cbIdOrOwner) {
-  off(selectedCellPositionIdx, cbIdOrOwner);
 }
 
 export function editedCells(newCells) {
@@ -201,6 +183,19 @@ export function onEditedCells(cb, owner) {
   return on(editedCellsIdx, cb, owner);
 }
 
-export function offEditedCells(cbIdOrOwner) {
-  off(editedCellsIdx, cbIdOrOwner);
+// Maybe: could be in store
+export function filterChanged(s) {
+  broadcast(filterChangedIdx, s);
+}
+
+export function onFilterChanged(cb, owner) {
+  return on(filterChangedIdx, cb, owner);
+}
+
+export function clearFilter() {
+  broadcast(clearFilterIdx);
+}
+
+export function onClearFilter(cb, owner) {
+  return on(clearFilterIdx, cb, owner);
 }

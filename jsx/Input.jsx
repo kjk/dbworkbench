@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SpinnerCircle from './SpinnerCircle.jsx';
+import { Filterer } from './reactable/filterer.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
 
@@ -34,11 +35,12 @@ export class Actions extends React.Component {
             className='btn btn-sm btn-default' />
           : null }
         <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
+        <Filterer placeholder="Filter Results" defaultValue="" />
       </div>
       );
   }
-
 }
+
 export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
