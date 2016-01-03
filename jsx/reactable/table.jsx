@@ -306,6 +306,49 @@ export class Table extends React.Component {
     this.sortByCurrentSort();
   }
 
+  renderTrChildren(columns, data, userColumnsSpecified) {
+    // Build up the columns array
+    const res = data.map((rawData, i) => {
+      let data = rawData;
+      let props = {};
+      if (rawData.__reactableMeta === true) {
+        data = rawData.data;
+        props = rawData.props;
+      }
+
+      // Loop through the keys in each data row and build a td for it
+      for (let k in data) {
+        if (data.hasOwnProperty(k)) {
+          // Update the columns array with the data's keys if columns were not
+          // already specified
+          if (userColumnsSpecified === false) {
+            let column = {
+              key: k,
+              label: k
+            };
+
+            // Only add a new column if it doesn't already exist in the columns array
+            if (
+              columns.find(function(element) {
+                return element.key === column.key;
+              }) === undefined
+            ) {
+              columns.push(column);
+            }
+          }
+        }
+      }
+
+      return (
+        <Tr columns={ columns }
+          key={ i }
+          data={ data }
+          {...props} />
+        );
+    });
+    return res;
+  }
+
   render() {
     let children = [];
     let columns;
@@ -339,45 +382,7 @@ export class Table extends React.Component {
 
     // Build up table rows
     if (this.data && typeof this.data.map === 'function') {
-      // Build up the columns array
-      children = children.concat(this.data.map((rawData, i) => {
-        let data = rawData;
-        let props = {};
-        if (rawData.__reactableMeta === true) {
-          data = rawData.data;
-          props = rawData.props;
-        }
-
-        // Loop through the keys in each data row and build a td for it
-        for (let k in data) {
-          if (data.hasOwnProperty(k)) {
-            // Update the columns array with the data's keys if columns were not
-            // already specified
-            if (userColumnsSpecified === false) {
-              let column = {
-                key: k,
-                label: k
-              };
-
-              // Only add a new column if it doesn't already exist in the columns array
-              if (
-                columns.find(function(element) {
-                  return element.key === column.key;
-                }) === undefined
-              ) {
-                columns.push(column);
-              }
-            }
-          }
-        }
-
-        return (
-          <Tr columns={ columns }
-            key={ i }
-            data={ data }
-            {...props} />
-          );
-      }));
+      children = children.concat(this.renderTrChildren(columns, this.data, userColumnsSpecified));
     }
 
     if (this.props.sortable === true) {
