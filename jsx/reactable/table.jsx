@@ -55,58 +55,65 @@ export class Table extends React.Component {
     let data = [], tfoot;
 
     // Transform any children back to a data array
-    if (typeof (props.children) !== 'undefined') {
-      React.Children.forEach(props.children, (child) => {
-        if (typeof (child) === 'undefined' || child === null) {
+    if (typeof (props.children) === 'undefined') {
+      return {
+        data,
+        tfoot
+      };
+    }
+
+    React.Children.forEach(props.children, (child) => {
+      if (typeof (child) === 'undefined' || child === null) {
+        return;
+      }
+
+      if (Tr !== child.type) {
+        return;
+      }
+
+      let childData = child.props.data || {};
+
+      React.Children.forEach(child.props.children, (descendant) => {
+        // TODO
+        /* if (descendant.type.ConvenienceConstructor === Td) { */
+        if (
+          typeof (descendant) !== 'object' ||
+          descendant == null
+        ) {
+          return;
+        }
+        if (typeof (descendant.props.column) === 'undefined') {
+          console.warn('exports.Td specified without a ' +
+            '`column` property, ignoring');
           return;
         }
 
-        switch (child.type) {
-          case Tr:
-            let childData = child.props.data || {};
+        let value;
 
-            React.Children.forEach(child.props.children, function(descendant) {
-              // TODO
-              /* if (descendant.type.ConvenienceConstructor === Td) { */
-              if (
-                typeof (descendant) !== 'object' ||
-                descendant == null
-              ) {
-                return;
-              } else if (typeof (descendant.props.column) !== 'undefined') {
-                let value;
-
-                if (typeof (descendant.props.data) !== 'undefined') {
-                  value = descendant.props.data;
-                } else if (typeof (descendant.props.children) !== 'undefined') {
-                  value = descendant.props.children;
-                } else {
-                  console.warn('exports.Td specified without ' +
-                    'a `data` property or children, ' +
-                    'ignoring');
-                  return;
-                }
-
-                childData[descendant.props.column] = {
-                  value: value,
-                  props: filterInternalProps(descendant.props),
-                  __reactableMeta: true
-                };
-              } else {
-                console.warn('exports.Td specified without a ' +
-                  '`column` property, ignoring');
-              }
-            });
-
-            data.push({
-              data: childData,
-              props: filterInternalProps(child.props),
-              __reactableMeta: true
-            });
-            break;
+        if (typeof (descendant.props.data) !== 'undefined') {
+          value = descendant.props.data;
+        } else if (typeof (descendant.props.children) !== 'undefined') {
+          value = descendant.props.children;
+        } else {
+          console.warn('exports.Td specified without ' +
+            'a `data` property or children, ' +
+            'ignoring');
+          return;
         }
+
+        childData[descendant.props.column] = {
+          value: value,
+          props: filterInternalProps(descendant.props),
+          __reactableMeta: true
+        };
       });
-    }
+
+      data.push({
+        data: childData,
+        props: filterInternalProps(child.props),
+        __reactableMeta: true
+      });
+    });
 
     return {
       data,
