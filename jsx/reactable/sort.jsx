@@ -76,3 +76,6 @@ export var Sort = {
   }
 };
 
+export const None = 0;
+export const Up = 1;
+export const Down = 2;

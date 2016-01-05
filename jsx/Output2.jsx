@@ -5,6 +5,7 @@ import QueryEditBar from './QueryEditBar.jsx';
 import view from './view.js';
 import * as action from './action.js';
 import * as store from './store.js';
+import * as sort from './reactable/sort.jsx';
 
 /*
 Output selectedView="Query", results={ columns: ["colName1", "colName2", ...]
@@ -37,6 +38,38 @@ Output selectedView="Query", results={ columns: ["colName1", "colName2", ...]
                   ..
       Paginator
 */
+class ColumnInfo {
+  constructor(name, sortOrder) {
+    this.name = name;
+    this.sortOrder = sortOrder;
+    this.isSortable = true;
+  }
+}
+
+function incSortOrder(sortOrder) {
+  if (sortOrder == sort.None) {
+    return sort.Up;
+  }
+  if (sortOrder == sort.Up) {
+    return sort.Down;
+  }
+  return sort.Up;
+}
+
+function calcColumnInfos(columnNames, sortByColumnIdx, prevColumnInfos) {
+  if (!columnNames) {
+    return [];
+  }
+  const res = columnNames.map((name, idx) => {
+    let sortOrder = sort.None;
+    if (prevColumnInfos && idx == sortByColumnIdx) {
+      const prevSortOrder = prevColumnInfos[sortByColumnIdx].sortOrder;
+      sortOrder = incSortOrder(prevSortOrder);
+    }
+    return new ColumnInfo(name, sortOrder);
+  });
+  return res;
+}
 
 function topPos(dy, withInput) {
   let top = withInput ? dy + 60 : 60;
@@ -72,15 +105,22 @@ export default class Output extends React.Component {
     console.log('Output2.calcState');
     const results = props.results;
     const allRows = results ? results.rows : [];
+    const columns = results ? results.columns : [];
     const nPages = Math.ceil(allRows.length / nPerPage);
     const pageNo = 0;
     const rows = getPage(allRows, pageNo);
+    let columnInfos = this.state ? this.state.columnInfos : null;
+    if (!columnInfos || columnInfos.length != columns.length) {
+      columnInfos = calcColumnInfos(columns, 0, null);
+    }
     return {
       results: results,
       allRows: allRows,
       currPageNo: pageNo,
       nPages: nPages,
-      rows: rows
+      rows: rows,
+      columns: columns,
+      columnInfos: columnInfos
     };
   }
 
@@ -152,11 +192,31 @@ export default class Output extends React.Component {
       );
   }
 
+  handleColumnClick(e, colIdx) {
+    e.preventDefault();
+    console.log('Output2.handleColumnClick: ', colIdx);
+    const columns = this.state.columns;
+    const columnInfos = calcColumnInfos(columns, colIdx, this.state.columnInfos);
+    this.setState({
+      columnInfos: columnInfos
+    });
+  }
+
   renderTheadTh(col, colIdx) {
     let cls = 'reactable-header-sortable';
+    const s = col.name;
+    if (col.sortOrder == sort.Up) {
+      cls += ' reactable-header-sort-asc';
+    } else if (col.sortOrder == sort.Down) {
+      cls += ' reactable-header-sort-desc';
+    }
     return (
-      <th key={ colIdx } className={ cls } role="button">
-        { col }
+      <th key={ colIdx }
+        className={ cls }
+        role="button"
+        tabIndex="0"
+        onClick={ e => this.handleColumnClick(e, colIdx) }>
+        { s }
       </th>
       );
   }
@@ -171,10 +231,11 @@ export default class Output extends React.Component {
   }
 
   renderResults() {
-    const results = this.state.results;
-    const allRows = this.state.allRows;
-    const rows = this.state.rows;
-    const columns = results.columns;
+    const state = this.state;
+    const results = state.results;
+    const allRows = state.allRows;
+    const rows = state.rows;
+    const columns = state.columnInfos;
     const columnsChildren = columns.map((col, colIdx) => this.renderTheadTh(col, colIdx));
     const rowsChildren = rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
     return <div>
