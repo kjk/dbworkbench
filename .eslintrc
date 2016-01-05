@@ -12,7 +12,8 @@
     "jsx": true
   },
   "rules": {
-    "semi": 2
+    "semi": 2,
+    "react/jsx-no-bind": 1
   },
   "plugins": [
     "eslint-plugin-react"

@@ -54,6 +54,7 @@ class App extends React.Component {
     this.handleResetPagination = this.handleResetPagination.bind(this);
     this.handleSelectedCellPosition = this.handleSelectedCellPosition.bind(this);
     this.handleEditedCells = this.handleEditedCells.bind(this);
+    this.getAllTablesStructures = this.getAllTablesStructures.bind(this);
     this.getQueryAsyncStatus = this.getQueryAsyncStatus.bind(this);
     this.getQueryAsyncData = this.getQueryAsyncData.bind(this);
     this.handleQueryAsync = this.handleQueryAsync.bind(this);
@@ -486,7 +487,7 @@ class App extends React.Component {
           <AlertContainer ref={ (a) => global.msg = a } {...this.alertOptions} />
         </div>
         <div>
-          <Sidebar refreshAllTableInformation={ this.getAllTablesStructures.bind(this) }
+          <Sidebar refreshAllTableInformation={ this.getAllTablesStructures }
             connectionId={ this.state.connectionId }
             tables={ this.state.tables }
             selectedTable={ this.state.selectedTable }
