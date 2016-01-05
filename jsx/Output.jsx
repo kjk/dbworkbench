@@ -284,23 +284,6 @@ RETURNING ${columns};
       );
   }
 
-  renderNoResults() {
-    return (
-      <div>
-        No records found
-      </div>
-      );
-  }
-
-  renderError(errorMsg) {
-    return (
-      <div>
-        Err:
-        { errorMsg }
-      </div>
-      );
-  }
-
   topPos() {
     let top = 60;
     if (this.props.withInput) {
@@ -309,28 +292,48 @@ RETURNING ${columns};
     return top + 'px';
   }
 
+  renderEmptyOrError(results) {
+    let res;
+    if (results && results.error) {
+      res = <div>
+              Error:
+              { results.error }
+            </div>;
+    } else if (!results || !results.rows || results.rows.length == 0) {
+      res = <div>
+              No records found
+            </div>;
+    }
+    if (!res) {
+      return res;
+    }
+    if (this.props.isSidebar) {
+      return (<div id="sidebar-result-wrapper">
+                { res }
+              </div>);
+    }
+    let style = {
+      top: this.topPos()
+    };
+
+    return (<div id="output" className="empty" style={ style }>
+              <div id="wrapper">
+                { res }
+              </div>
+            </div>
+      );
+  }
+
   render() {
     //console.log("Output.render");
-    if (this.props.editedCells != null) {
-      var nEdited = Object.keys(this.props.editedCells).length;
-      var showQueryBar = nEdited > 0;
+
+    const results = this.props.results;
+    const res = this.renderEmptyOrError(results);
+    if (res) {
+      return res;
     }
 
-    let clsOutput, children;
-    const results = this.props.results;
-    if (!results) {
-      children = this.renderNoResults();
-      clsOutput = 'empty';
-    } else {
-      if (results.error) {
-        children = this.renderError(results.error);
-      } else if (!results.rows || results.rows.length === 0) {
-        children = this.renderNoResults();
-        clsOutput = 'empty';
-      } else {
-        children = this.renderResults(results);
-      }
-    }
+    const children = this.renderResults(results);
 
     if (this.props.isSidebar) {
       return (
@@ -340,15 +343,17 @@ RETURNING ${columns};
         );
     }
 
+    const editedCells = this.props.editedCells || {};
+    const nEdited = Object.keys(editedCells).length;
+    const showQueryBar = nEdited > 0;
+
     let style = {
-      top: this.topPos()
+      top: this.topPos(),
+      marginTop: -10
     };
-    if (clsOutput != 'empty') {
-      style['marginTop'] = '-10px';
-    }
 
     return (
-      <div id="output" className={ clsOutput } style={ style }>
+      <div id="output" style={ style }>
         <div id="wrapper">
           { children }
           { showQueryBar ?
