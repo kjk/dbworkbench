@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import DbNav from './DbNav.jsx';
 import DragBarHoriz from './DragBarHoriz.jsx';
 import Input from './Input.jsx';
-import Output from './Output.jsx';
+import Output from './Output2.jsx';
 import view from './view.js';
 import * as store from './store.js';
 

@@ -4,7 +4,6 @@ import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
 import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
-import ConnectionWindow from './ConnectionWindow.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import view from './view.js';
 import * as action from './action.js';
