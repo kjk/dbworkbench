@@ -52,14 +52,11 @@ export class Table extends React.Component {
   }
 
   parseChildData(props) {
-    let data = [], tfoot;
+    let data = [];
 
     // Transform any children back to a data array
     if (typeof (props.children) === 'undefined') {
-      return {
-        data,
-        tfoot
-      };
+      return data;
     }
 
     React.Children.forEach(props.children, (child) => {
@@ -115,19 +112,13 @@ export class Table extends React.Component {
       });
     });
 
-    return {
-      data,
-      tfoot
-    };
+    return data;
   }
 
   initialize(props) {
     this.data = props.data || [];
-    let {data, tfoot} = this.parseChildData(props);
-
+    let data = this.parseChildData(props);
     this.data = this.data.concat(data);
-    this.tfoot = tfoot;
-
     this.initializeSorts(props);
   }
 
@@ -446,14 +437,8 @@ export class Table extends React.Component {
 
     return (
       <div>
-        <table {...props}>
-          { columns && columns.length > 0 ?
-            <Thead columns={ columns }
-              sort={ this.state.currentSort }
-              sortableColumns={ this._sortable }
-              onSort={ this.onSort.bind(this) }
-              key="thead" />
-            : null }
+        <table>
+          <Thead columns={ columns } onSort={ this.onSort.bind(this) } key="thead" />
           <tbody className="reactable-data" key="tbody">
             { currentChildren }
           </tbody>
@@ -472,8 +457,8 @@ export class Table extends React.Component {
                            } }
             key="paginator" />
           : null }
-        { this.tfoot }
-      </div>);
+      </div>
+      );
   }
 }
 

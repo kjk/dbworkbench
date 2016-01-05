@@ -37,4 +37,3 @@ export class Tr extends React.Component {
 
 Tr.childNode = Td;
 Tr.dataType = 'object';
-

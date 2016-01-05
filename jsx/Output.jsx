@@ -10,6 +10,14 @@ import view from './view.js';
 import * as action from './action.js';
 import * as store from './store.js';
 
+class ColumnInfo {
+  constructor(name, sortOrder = sortNone) {
+    this.name = name;
+    this.sortOrder = sortOrder;
+    this.isSortable = true;
+  }
+}
+
 function resultsToDictionary(results) {
   const reformatData = results.rows.map(function(row) {
     let some = {};
@@ -295,7 +303,7 @@ RETURNING ${columns};
   renderError(errorMsg) {
     return (
       <div>
-        Err:
+        Error:
         { errorMsg }
       </div>
       );
