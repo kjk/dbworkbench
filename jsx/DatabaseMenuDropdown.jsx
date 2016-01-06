@@ -110,7 +110,7 @@ export default class DatabaseMenuDropdown extends React.Component {
               <h4 className="modal-title">{ this.state.selectedView }</h4>
             </div>
             <div className="modal-body">
-              <Output style={ modalOutputStyles } results={ this.state.results } isSidebar={ true } />
+              <Output style={ modalOutputStyles } results={ this.state.results } isSidebar />
             </div>
           </div>
         </Modal>

@@ -261,7 +261,7 @@ RETURNING ${columns};
         <Table id="sidebar-modal-results"
           className="sidebar-modal-results"
           onClick={ this.handleCellClick }
-          sortable={ true }>
+          sortable>
           { header }
           { rows }
         </Table>
@@ -273,7 +273,7 @@ RETURNING ${columns};
         className="results"
         onClick={ this.handleCellClick }
         style={ tableStyle }
-        sortable={ true }
+        sortable
         filterable={ filterable }
         itemsPerPage={ itemsPerPage }
         resetPagination={ this.props.resetPagination }>

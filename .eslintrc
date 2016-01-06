@@ -13,7 +13,8 @@
   },
   "rules": {
     "semi": 2,
-    "react/jsx-no-bind": 1
+    "react/jsx-boolean-value": 1
+    //"react/jsx-no-bind": 1
   },
   "plugins": [
     "eslint-plugin-react"
