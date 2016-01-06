@@ -597,7 +597,7 @@ class ConnectionWindow extends React.Component {
     return (
       <form role="form">
         <div className="col-md-12 text-center">
-          <img class="img-responsive center-block small"
+          <img className="img-responsive center-block small"
             src="/s/img/icon.png"
             alt=""
             style={ imageStyle } />

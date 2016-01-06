@@ -18,7 +18,7 @@ export class Actions extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleRun = this.handleRun.bind(this);
-    this.handleExplain = this.handleExplain.bind(thid);
+    this.handleExplain = this.handleExplain.bind(this);
   }
 
   handleRun(e) {
@@ -78,7 +78,7 @@ export default class Input extends React.Component {
         });
       } else {
         this.queryEditDy = dy;
-        let el = ReactDOM.findDOMNode(this.refs.editor);
+        let el = this.editor;
         el.style.height = this.editorDy();
 
         el = ReactDOM.findDOMNode(this);
@@ -126,8 +126,7 @@ export default class Input extends React.Component {
   }
 
   initEditor() {
-    const editorNode = ReactDOM.findDOMNode(this.refs.editor);
-    this.editor = ace.edit(editorNode);
+    this.editor = ace.edit(this.editorNode);
     this.editor.getSession().setMode('ace/mode/pgsql');
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
@@ -191,7 +190,7 @@ export default class Input extends React.Component {
     return (
       <div id="input" style={ style }>
         <div className="wrapper">
-          <div id="custom-query" ref="editor" style={ editorStyle } />
+          <div id="custom-query" ref={ c => this.editorNode = c } style={ editorStyle } />
           { showActions ?
             <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.handleRun } onExplain={ this.handleExplain } />
             : null }

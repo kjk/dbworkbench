@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popover from 'react-popover';
-import * as action from './action.js';
-import * as store from './store.js';
+import * as action from './action';
+import * as store from './store';
 
 export default class QueryEditBar extends React.Component {
   constructor(props, context) {
