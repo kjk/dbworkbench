@@ -239,7 +239,7 @@ export default class Output extends React.Component {
     const columnsChildren = columns.map((col, colIdx) => this.renderTheadTh(col, colIdx));
     const rowsChildren = rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
     return <div>
-             <table className="results" id="results" itemsPerPage="100">
+             <table className="results" id="results">
                <thead>
                  <tr className="reactable-column-header">
                    { columnsChildren }
