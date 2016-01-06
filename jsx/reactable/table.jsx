@@ -9,20 +9,21 @@ export class Table extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      currentPage: 0,
-      currentSort: {
-        column: null,
-        direction: 1
-      },
-      filterString: '',
+    let curentSort = {
+      column: null,
+      direction: 1
     };
-
     // Set the state of the current sort to the default sort
     if (props.sortBy !== false || props.defaultSort !== false) {
       let sortingColumn = props.sortBy || props.defaultSort;
-      this.state.currentSort = this.getCurrentSort(sortingColumn);
+      currentSort = this.getCurrentSort(sortingColumn);
     }
+
+    this.state = {
+      currentPage: 0,
+      currentSort: curentSort,
+      filterString: '',
+    };
   }
 
   filterBy(filter) {

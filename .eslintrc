@@ -19,6 +19,9 @@
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
     "react/no-deprecated": 1,
+    "react/no-did-mount-set-state": 1,
+    "react/no-did-update-set-state": 1,
+    "react/no-direct-mutation-state": 1,
     "react/jsx-handler-names": 1
     //"react/jsx-no-bind": 1
   },
