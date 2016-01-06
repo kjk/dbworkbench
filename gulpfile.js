@@ -19,6 +19,7 @@ var t_envify = ['envify', {
   NODE_ENV: 'production'
 }];
 
+// 'plugins': ['undeclared-variables-check'],
 var t_babelify = ['babelify', {
   'presets': ['es2015', 'react']
 }];

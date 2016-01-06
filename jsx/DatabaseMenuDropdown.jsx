@@ -7,7 +7,7 @@ import * as action from './action.js';
 export default class DatabaseMenuDropdown extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.closeModal = this.closeModal.bind(this);
+    this.handleClose = this.handleClose.bind(this);
     this.handleConnection = this.handleConnection.bind(this);
     this.handleActivity = this.handleActivity.bind(this);
     this.handleDisconnect = this.handleDisconnect.bind(this);
@@ -20,7 +20,7 @@ export default class DatabaseMenuDropdown extends React.Component {
     };
   }
 
-  closeModal() {
+  handleClose() {
     this.setState({
       modalIsOpen: false
     });
@@ -29,7 +29,7 @@ export default class DatabaseMenuDropdown extends React.Component {
   handleModalCloseRequest() {
     // opportunity to validate something and keep the modal open even if it
     // requested to be closed
-    this.closeModal();
+    this.handleClose();
   }
 
   handleConnection() {
@@ -99,7 +99,7 @@ export default class DatabaseMenuDropdown extends React.Component {
         </div>
         <Modal id='nav'
           isOpen={ this.state.modalIsOpen }
-          onRequestClose={ this.closeModal }
+          onRequestClose={ this.handleClose }
           style={ modalStyle }>
           <div>
             <div className="modal-header">

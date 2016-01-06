@@ -15,21 +15,33 @@ const forceRerender = true;
 
 export class Actions extends React.Component {
 
+  constructor(props, context) {
+    super(props, context);
+    this.handleRun = this.handleRun.bind(this);
+    this.handleExplain = this.handleExplain.bind(thid);
+  }
+
+  handleRun(e) {
+    e.preventDefault();
+    this.props.onRun();
+  }
+
+  handleExplain(e) {
+    e.preventDefault();
+    this.props.onExplain();
+  }
+
   render() {
     return (
       <div className="actions">
         <input type="button"
-          onClick={ (e) => {
-                      e.preventDefault(); this.props.onRun();
-                    } }
+          onClick={ this.handleRun }
           id="run"
           value="Run Query"
           className="btn btn-sm btn-primary" />
         { this.props.supportsExplain ?
           <input type="button"
-            onClick={ (e) => {
-                        e.preventDefault(); this.props.onExplain();
-                      } }
+            onClick={ this.handleExplain }
             id="explain"
             value="Explain Query"
             className='btn btn-sm btn-default' />
@@ -45,8 +57,8 @@ export default class Input extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.exportToCSV = this.exportToCSV.bind(this);
-    this.runExplain = this.runExplain.bind(this);
-    this.runQuery = this.runQuery.bind(this);
+    this.handleExplain = this.handleExplain.bind(this);
+    this.handleRun = this.handleRun.bind(this);
 
     const dy = store.getQueryEditDy();
     if (forceRerender) {
@@ -79,17 +91,17 @@ export default class Input extends React.Component {
     store.offAllForOwner(this);
   }
 
-  runQuery() {
+  handleRun() {
     const query = this.editor.getValue().trim();
-    console.log('runQuery', query);
+    console.log('handleRun', query);
     if (query.length > 0) {
       action.executeQuery(query);
     }
   }
 
-  runExplain() {
+  handleExplain() {
     const query = this.editor.getValue().trim();
-    console.log('runExplain', query);
+    console.log('handleExplain', query);
     if (query.length > 0) {
       action.explainQuery(query);
     }
@@ -126,7 +138,7 @@ export default class Input extends React.Component {
           win: 'Ctrl-Enter',
           mac: 'Command-Enter'
         },
-        exec: (editor) => this.runQuery()
+        exec: (editor) => this.handleRun()
       },
       {
         name: 'explain_query',
@@ -134,7 +146,7 @@ export default class Input extends React.Component {
           win: 'Ctrl-E',
           mac: 'Command-E'
         },
-        exec: (editor) => this.runExplain()
+        exec: (editor) => this.handleExplain()
       }
     ]);
     this.editor.focus();
@@ -181,7 +193,7 @@ export default class Input extends React.Component {
         <div className="wrapper">
           <div id="custom-query" ref="editor" style={ editorStyle } />
           { showActions ?
-            <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.runQuery } onExplain={ this.runExplain } />
+            <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.handleRun } onExplain={ this.handleExplain } />
             : null }
         </div>
       </div>
