@@ -6,10 +6,10 @@ var exorcist = require('exorcist');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var prefix = require('gulp-autoprefixer');
-var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
+var uglify = require('gulp-uglify');
 
 require('babel-register');
 
@@ -79,8 +79,6 @@ gulp.task('watch', function() {
 });
 
 gulp.task('build_and_watch', ['css', 'js', 'watch']);
-
 gulp.task('prod', ['css', 'jsprod']);
-
 gulp.task('default', ['css', 'js']);
 
