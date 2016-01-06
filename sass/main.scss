@@ -3,6 +3,8 @@
 $col-text: #5B5C59;
 $col-bg: #377CE4;
 
+$paginator-dy: 23px;
+
 html {
     height:100%;
 }
@@ -443,7 +445,7 @@ h4.modal-title {
   margin: 0px;
   padding: 0px;
   overflow: auto;
-  margin-bottom: 21px;
+  margin-bottom: $paginator-dy;
 }
 
 #output div.reactable-filterer {
@@ -601,7 +603,8 @@ div.reactable-pagination-button-container {
   position: fixed;
   background-color: #4592EA;
   width: 100%;
-  font-size: 12px;
+  height: $paginator-dy;
+  font-size: 14px;
   bottom: 0;
   padding: 2px;
 }
