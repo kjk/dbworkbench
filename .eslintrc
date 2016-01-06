@@ -15,6 +15,10 @@
     "semi": 2,
     "react/jsx-boolean-value": 1,
     "react/jsx-key": 1,
+    "react/jsx-no-duplicate-props": 1,
+    "react/jsx-no-undef": 1,
+    "react/jsx-pascal-case": 1,
+    "react/no-deprecated": 1,
     "react/jsx-handler-names": 1
     //"react/jsx-no-bind": 1
   },
