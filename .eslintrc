@@ -14,7 +14,8 @@
   "rules": {
     "semi": 2,
     "react/jsx-boolean-value": 1,
-     "react/jsx-handler-names": 1
+    "react/jsx-key": 1,
+    "react/jsx-handler-names": 1
     //"react/jsx-no-bind": 1
   },
   "plugins": [
