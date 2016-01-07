@@ -79,8 +79,6 @@ function newTestDbBookmark() {
   };
 }
 
-const testDatabases = [newTestDbBookmark()];
-
 class ConnectionWindow extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -92,6 +90,8 @@ class ConnectionWindow extends React.Component {
     this.handleRememberChange = this.handleRememberChange.bind(this);
     this.selectBookmark = this.selectBookmark.bind(this);
     this.getSelectedBookmark = this.getSelectedBookmark.bind(this);
+    this.connectToDatabase = this.connectToDatabase.bind(this);
+    this.handleTestDatabase = this.handleTestDatabase.bind(this);
 
     // create default bookmark if no bookmarks saved in the backend
     var bookmarks = [newEmptyBookmark()];
@@ -137,7 +137,6 @@ class ConnectionWindow extends React.Component {
     if (i < nBookmarks) {
       return bookmarks[i];
     }
-    return testDatabases[nBookmarks - i];
   }
 
   getBookmarks() {
@@ -236,12 +235,7 @@ class ConnectionWindow extends React.Component {
     //console.log("remember changed to: " + newRemeber);
   }
 
-  handleConnect(e) {
-    e.preventDefault();
-    console.log('handleConnect');
-
-    let b = this.getSelectedBookmark();
-
+  connectToDatabase(b) {
     let id = b['id'];
     let nick = b['nick'];
     let dbType = b['type'];
@@ -320,6 +314,20 @@ class ConnectionWindow extends React.Component {
     });
   }
 
+  handleTestDatabase(e) {
+    console.log('handleTestDatabase');
+    e.preventDefault();
+    const b = newTestDbBookmark();
+    this.connectToDatabase(b);
+  }
+
+  handleConnect(e) {
+    console.log('handleConnect');
+    e.preventDefault();
+    const b = this.getSelectedBookmark();
+    this.connectToDatabase(b);
+  }
+
   handleCancel(e) {
     e.preventDefault();
     console.log('handleCancel');
@@ -380,37 +388,18 @@ class ConnectionWindow extends React.Component {
   }
 
   renderTestDatabases() {
-    let bookmarks = [];
-    const nBookmarks = this.state.bookmarks.length;
-    for (let i = 0; i < testDatabases.length; i++) {
-      const b = testDatabases[i];
-      const id = b['id'];
-      const nick = b['nick'];
-      const idx = i + nBookmarks;
-
-      let className = 'list-group-item';
-      if (idx == this.state.selectedBookmarkIdx) {
-        className = 'list-group-item active';
-      }
-
-      bookmarks.push(
-        <a key={ id }
-          data-custom-attribute={ idx }
-          href="#"
-          className={ className }
-          onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
-          { nick }
-        </a>
-      );
-    }
-
+      const style = {
+        border: 0,
+        fontSize: 14
+      };
     return (
-      <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={ guard('bookmarksEnabled', this.newConnectionInfo) }>Test databases</a>
-        <hr/>
-        { bookmarks }
+      <div className="list-group list-group-item" style={ style }>
+        <a href="#"
+           onClick={ guard('bookmarksEnabled', this.handleTestDatabase) }>
+           Try demo database
+        </a>
       </div>
-      );
+    );
   }
 
   renderFormElements() {
