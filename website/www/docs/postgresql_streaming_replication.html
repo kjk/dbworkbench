@@ -156,14 +156,14 @@
           <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recovery.conf</code></span></div>
           <div><code>primary_conninfo = '... application_name = main ...'</code> <span class="desc"></span></div>
 
-        <td>
-          <div class="flex-row flex-center-children"><span class="hdr2">Master <code>postgressql.conf</code></span></div>
-          <div><code>max_worker_processes = max_replication_slots = 6</code> <span class="desc">: max number of replication slots</span></div>
-          <div class="flex-row flex-center-children"><span class="hdr2">Create slot on master with psql</span></div>
-          <div><code>SELECT pg_create_physical_replication_slot('main');</code> <span class="desc"></span></div>
-          <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recovery.conf</code></span></div>
-          <div><code>primary_slot_name = 'main'</code> <span class="desc"></span></div>
-        </td>
+          <td>
+            <div class="flex-row flex-center-children"><span class="hdr2">Master <code>postgressql.conf</code></span></div>
+            <div><code>max_worker_processes = max_replication_slots = 6</code> <span class="desc">: max number of replication slots</span></div>
+            <div class="flex-row flex-center-children"><span class="hdr2">Create slot on master with psql</span></div>
+            <div><code>SELECT pg_create_physical_replication_slot('main');</code> <span class="desc"></span></div>
+            <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recovery.conf</code></span></div>
+            <div><code>primary_slot_name = 'main'</code> <span class="desc"></span></div>
+          </td>
       </tr>
 
       <tr>
@@ -180,15 +180,22 @@ values (more than 1GB) is bad and mean that the master under heavy load</span></
 from pg_stat_replication;</code> <span class="desc">: get sent but not replayed amount of WAL on standby. Big values
 (more than 1GB) is bad and mean that the standby under heavy load or has network problems</span></div>
 
-        <td>
-          <div><code>SELECT now() - pg_last_xact_replay_timestamp();</code> <span class="desc">: get lag in seconds</span></div>
-        </td>
+          <td>
+            <div><code>SELECT now() - pg_last_xact_replay_timestamp();</code> <span class="desc">: get lag in seconds</span></div>
+          </td>
       </tr>
-
-
     </table>
 
-
     <body>
+
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-71335002-1', 'auto');
+    ga('send', 'pageview');
+      </script>
 
   </html>
