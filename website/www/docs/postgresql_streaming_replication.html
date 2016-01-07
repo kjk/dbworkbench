@@ -14,6 +14,7 @@
     }
 
     td {
+      padding: 2px 8px;
       width: 50%;
       background-color: white;
       vertical-align: top;
@@ -35,12 +36,19 @@
     }
 
     .desc {
-      font-style: italic;
       color: gray;
     }
 
     .hdr2 {
       font-weight: bold;
+    }
+
+    .small {
+      font-size: 85%;
+    }
+
+    .move-up {
+      margin-top: 2px;
     }
   </style>
 
@@ -50,7 +58,8 @@
 
   <body>
 
-    <p class="flex-row flex-center-children">PostgreSQL Streaming Replication Cheat Sheet</p>
+    <div class="flex-row flex-center-children">PostgreSQL Streaming Replication Cheat Sheet</div>
+    <p class="flex-row flex-center-children small move-up">based on&nbsp;<a href="http://blog.postgresql-consulting.com/2016/01/postgresql-sreaming-replication.html">PDF cheat sheet</a></p>
 
     <table>
       <tr>
@@ -61,20 +70,20 @@
       <tr>
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Primary GUC's (also needs postgresql restart)</span></div>
-          <div><code>wal_level = hot_standby</code> <span class="desc">required for hot standby</span></div>
-          <div><code>max_wal_senders = 6</code> <span class="desc">max number of concurrent replication connections (must be > 0)</span></div>
+          <div><code>wal_level = hot_standby</code> <span class="desc">: required for hot standby</span></div>
+          <div><code>max_wal_senders = 6</code> <span class="desc">: max number of concurrent replication connections (must be > 0)</span></div>
           <div class="flex-row flex-center-children"><span class="hdr2">Secondary GUC's</span></div>
-          <div><code>wal_keep_segments = 256</code> <span class="desc">(4 GB on disk) or set more for high-write and huge databases</span></div>
-          <div><code>wal_sender_timeout = 60s</code> <span class="desc">ok by default</span>
+          <div><code>wal_keep_segments = 256</code> <span class="desc">: 4 GB; set higher for huge, write-heavy databases</span></div>
+          <div><code>wal_sender_timeout = 60s</code> <span class="desc">: ok by default</span>
         </td>
 
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Primary GUC's</span></div>
-          <div><code>hot_standby = on</code> <span class="desc">if enabled, standby can acceept read-only queryies</span></div>
-          <div><code>max_standby_streaming_delay = 300s</code> <span class="desc">set more if recovery conflicts occurs</span></div>
-          <div><code>wal_receiver_status_interval = 10x</code> <span class="desc">ok by default</span></div>
-          <div><code>hot_standby_feedback = on</code> <span class="desc">default, enable it anyway</span></div>
-          <div><code>wal_receiver_timeout = 60s</code> <span class="desc">ok by defult</span></div>
+          <div><code>hot_standby = on</code> <span class="desc">: if enabled, standby can acceept read-only queryies</span></div>
+          <div><code>max_standby_streaming_delay = 300s</code> <span class="desc">: set more if recovery conflicts occurs</span></div>
+          <div><code>wal_receiver_status_interval = 10s</code> <span class="desc">: ok by default</span></div>
+          <div><code>hot_standby_feedback = on</code> <span class="desc">: default, enable anyway</span></div>
+          <div><code>wal_receiver_timeout = 60s</code> <span class="desc">: ok by defult</span></div>
         </td>
       </tr>
 
@@ -95,9 +104,9 @@
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recover.conf</code> (streaming replication)</span></div>
           <div><code>primary_conninfo = 'host=master port=... user=... password=...'</code> <span class="desc"></span></div>
-          <div><code>standby_mode = 'on'</code> <span class="desc">start as standby and don't stop recovery</span></div>
-          <div><code>trigger_file = '/path/to/file'</code> <span class="desc">create this file to switch postgres from standby mode oto normal</span></div>
-          <div><code>recovdery_min_apply_delay = 5min</code> <span class="desc">delay recovery by a fixed period of time (since 9.4)</span></div>
+          <div><code>standby_mode = 'on'</code> <span class="desc">: start as standby and don't stop recovery</span></div>
+          <div><code>trigger_file = '/path/to/file'</code> <span class="desc">: create this file to switch postgres from standby mode to normal</span></div>
+          <div><code>recovery_min_apply_delay = 5min</code> <span class="desc">: delay recovery by a fixed period of time (since 9.4)</span></div>
         </td>
       </tr>
 
@@ -109,29 +118,29 @@
       <tr>
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Main options</span></div>
-          <div><code>-h master, -p port, -U user, -D destdir</code> <span class="desc">destdir must have 700 perms)</span></div>
+          <div><code>-h master, -p port, -U user, -D destdir</code> <span class="desc">: destdir must have 700 perms)</span></div>
           <div class="flex-row flex-center-children"><span class="hdr2">Auxiliary options</span></div>
-          <div><code>-c fast | spread</code> <span class="desc">use 'fast' to start base backup as soon as possible, 'spreawd' to minimize load</span></div>
-          <div><code>-X stream | fetch</code> <span class="desc">add WAL archives into backup. The 'stream' uses separate streaming connection (since 9.2)</span></div>
-          <div><code>-R</code> <span class="desc">create minimal <code>recovery.conf</code> (since 9.3)</span></div>
-          <div><code>-r</code> <span class="desc">limit network bandwidth in kB/s, or use suffix "k" or "M" (since 9.4)</span></div>
-          <div><code>--xlogdir=dir</code> <span class="desc">set new <code>pg_xlog</code> location (sicne 9.4)</span></div>
-          <div><code>-T olddir=newdir</code> <span class="desc">set new locations for tablspacees (since 9.4)</span></div>
-          <div><code>-P</code> <span class="desc">show progress</span></div>
+          <div><code>-c fast | spread</code> <span class="desc">: use 'fast' to start base backup as soon as possible, 'spread' to minimize load</span></div>
+          <div><code>-X stream | fetch</code> <span class="desc">: add WAL archives to backup; 'stream' uses separate streaming connection (since 9.2)</span></div>
+          <div><code>-R</code> <span class="desc">: create minimal <code>recovery.conf</code> (since 9.3)</span></div>
+          <div><code>-r</code> <span class="desc">: limit network bandwidth in kB/s, or use suffix "k" or "M" (since 9.4)</span></div>
+          <div><code>--xlogdir=dir</code> <span class="desc">: set new <code>pg_xlog</code> location (since 9.4)</span></div>
+          <div><code>-T olddir=newdir</code> <span class="desc">: set new locations for tablspacees (since 9.4)</span></div>
+          <div><code>-P</code> <span class="desc">: show progress</span></div>
         </td>
 
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recover.conf</code> (streaming replication)</span></div>
-          <div><code>restore_command = 'cp /path/to/archives/%f "%p"'</code> <span class="desc"> command to restore WAL</span></div>
-          <div><code>archive_cleanup_command = 'pg_archivecleanup /archivedir %r'</code> <span class="desc">clean up old WAL archives</span></div>
-          <div><code>recovery_target = 'immediate'</code> <span class="desc">stop recover when consistent state is reached</span></div>
-          <div><code>recovery_target_name = 'deploy'</code> <span class="desc">recover to point created by <code>pg_create_restore_point()</code></span></div>
-          <div><code>recovery_target_time = '2016-01-06 18:11:54.840563'</code> <span class="desc">recover to timestamp</span></div>
-          <div><code>recovery_target_xid = 1234567</code> <span class="desc">recover to transaction ID</span></div>
-          <div><code>recovery_target_inclusive = true</code> <span class="desc">recover specified target (true) or stop before target (false)</span></div>
-          <div><code>recovery_target_timeline = 'latest'</code> <span class="desc">recover to specified timeline number</span></div>
-          <div><code>recovery_end_command = 'cmd'</code> <span class="desc">cmd to run after recovery</span></div>
-          <div><code>recovery_target_action = pause | promote | shutdown</code> <span class="desc">take action after recovery (since 9.5)</span></div>
+          <div><code>restore_command = 'cp /path/to/archives/%f "%p"'</code> <span class="desc">: command to restore WAL</span></div>
+          <div><code>archive_cleanup_command = 'pg_archivecleanup /archivedir %r'</code> <span class="desc">: clean up old WAL archives</span></div>
+          <div><code>recovery_target = 'immediate'</code> <span class="desc">: stop recovery when consistent state is reached</span></div>
+          <div><code>recovery_target_name = 'deploy'</code> <span class="desc">: recover to point created by <code>pg_create_restore_point()</code></span></div>
+          <div><code>recovery_target_time = '2016-01-06 18:11:54.840563'</code> <span class="desc">: recover to timestamp</span></div>
+          <div><code>recovery_target_xid = 1234567</code> <span class="desc">: recover to transaction ID</span></div>
+          <div><code>recovery_target_inclusive = true</code> <span class="desc">: recover specified target (true) or stop before target (false)</span></div>
+          <div><code>recovery_target_timeline = 'latest'</code> <span class="desc">: recover to specified timeline number</span></div>
+          <div><code>recovery_end_command = 'cmd'</code> <span class="desc">: cmd to run after recovery</span></div>
+          <div><code>recovery_target_action = pause | promote | shutdown</code> <span class="desc">: take action after recovery (since 9.5)</span></div>
         </td>
       </tr>
 
@@ -145,11 +154,11 @@
           <div class="flex-row flex-center-children"><span class="hdr2">Master <code>postgressql.conf</code></span></div>
           <div><code>synchronous_standby_names = 'main'</code> <span class="desc"></span></div>
           <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recovery.conf</code></span></div>
-          <div><code>primary_conninfo = '... applicatio_naem = main ...'</code> <span class="desc"></span></div>
+          <div><code>primary_conninfo = '... application_name = main ...'</code> <span class="desc"></span></div>
 
         <td>
           <div class="flex-row flex-center-children"><span class="hdr2">Master <code>postgressql.conf</code></span></div>
-          <div><code>max_worker_processes = max_replication_slots = 6</code> <span class="desc">max number of replication slots</span></div>
+          <div><code>max_worker_processes = max_replication_slots = 6</code> <span class="desc">: max number of replication slots</span></div>
           <div class="flex-row flex-center-children"><span class="hdr2">Create slot on master with psql</span></div>
           <div><code>SELECT pg_create_physical_replication_slot('main');</code> <span class="desc"></span></div>
           <div class="flex-row flex-center-children"><span class="hdr2">Standby <code>recovery.conf</code></span></div>
@@ -165,14 +174,14 @@
       <tr>
         <td>
           <div><code>SELECT client_addr, pg_xlog_location_diff(pg_current_xlog_location(),sent_location) as
-pending from pg_stat_replication;</code> <span class="desc"> get pending (not sent) amount of local WAL on master. Big
+pending from pg_stat_replication;</code> <span class="desc">: get pending (not sent) amount of local WAL on master. Big
 values (more than 1GB) is bad and mean that the master under heavy load</span></div>
           <div><code>SELECT client_addr, pg_xlog_location_diff(sent_location,replay_location) as lag
-from pg_stat_replication;</code> <span class="desc"> get sent but not replayed amount of WAL on standby. Big values
+from pg_stat_replication;</code> <span class="desc">: get sent but not replayed amount of WAL on standby. Big values
 (more than 1GB) is bad and mean that the standby under heavy load or has network problems</span></div>
 
         <td>
-          <div><code>SELECT now() - pg_last_xact_replay_timestamp()</code> <span class="desc">get lag in seconds</span></div>
+          <div><code>SELECT now() - pg_last_xact_replay_timestamp();</code> <span class="desc">: get lag in seconds</span></div>
         </td>
       </tr>
 
