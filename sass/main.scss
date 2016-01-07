@@ -609,6 +609,12 @@ div.reactable-pagination-button-container {
   padding: 2px;
 }
 
+.hover-highlight {
+  &:hover {
+    color: darkgray;
+  }
+}
+
 div.reactable-pagination-button-container:hover {
   opacity: 1;
 }

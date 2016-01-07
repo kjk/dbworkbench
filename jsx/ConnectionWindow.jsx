@@ -363,7 +363,10 @@ class ConnectionWindow extends React.Component {
           href="#"
           className={ className }
           onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
-          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right"></i></a>
+            { nick }
+            <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight">
+            </i>
+        </a>
       );
     }
 
