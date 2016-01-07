@@ -82,7 +82,7 @@ function newTestDbBookmark() {
 class ConnectionWindow extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.newConnectionInfo = this.newConnectionInfo.bind(this);
+    this.newConnection = this.newConnection.bind(this);
     this.deleteBookmark = this.deleteBookmark.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConnect = this.handleConnect.bind(this);
@@ -116,7 +116,7 @@ class ConnectionWindow extends React.Component {
     this.getBookmarks();
   }
 
-  newConnectionInfo(e) {
+  newConnection(e) {
     var bookmarks = this.state.bookmarks;
     if (bookmarks.length >= maxBookmarks) {
       action.alertBox('Reached connections limit of ' + maxBookmarks);
@@ -378,20 +378,34 @@ class ConnectionWindow extends React.Component {
       );
     }
 
+    const style = {
+      border: 0,
+      fontSize: 14
+    };
+
+    // TODO: "Connections" text should change color on hover
     return (
       <div className="list-group list-special">
-        <a href="#" className="list-group-item title" onClick={ guard('bookmarksEnabled', this.newConnectionInfo) }>Connections <i className="fa fa-plus pull-right"></i></a>
+        <span className="list-group-item title">Connections</span>
         <hr/>
         { bookmarks }
+
+        <div className="list-group list-group-item pull-right" style={ style }>
+          <a href="#"
+            onClick={ guard('bookmarksEnabled', this.newConnection) }>
+            New connection
+          </a>
+        </div>
       </div>
       );
   }
 
   renderTestDatabases() {
-      const style = {
-        border: 0,
-        fontSize: 14
-      };
+    const style = {
+      border: 0,
+      clear: "both",
+      fontSize: 14
+    };
     return (
       <div className="list-group list-group-item" style={ style }>
         <a href="#"
