@@ -371,10 +371,7 @@ class ConnectionWindow extends React.Component {
           href="#"
           className={ className }
           onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
-            { nick }
-            <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight">
-            </i>
-        </a>
+          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight"></i></a>
       );
     }
 
@@ -389,12 +386,8 @@ class ConnectionWindow extends React.Component {
         <span className="list-group-item title">Connections</span>
         <hr/>
         { bookmarks }
-
         <div className="list-group list-group-item pull-right" style={ style }>
-          <a href="#"
-            onClick={ guard('bookmarksEnabled', this.newConnection) }>
-            New connection
-          </a>
+          <a href="#" onClick={ guard('bookmarksEnabled', this.newConnection) }>New connection</a>
         </div>
       </div>
       );
@@ -403,17 +396,14 @@ class ConnectionWindow extends React.Component {
   renderTestDatabases() {
     const style = {
       border: 0,
-      clear: "both",
+      clear: 'both',
       fontSize: 14
     };
     return (
       <div className="list-group list-group-item" style={ style }>
-        <a href="#"
-           onClick={ guard('bookmarksEnabled', this.handleTestDatabase) }>
-           Try demo database
-        </a>
+        <a href="#" onClick={ guard('bookmarksEnabled', this.handleTestDatabase) }>Try demo database</a>
       </div>
-    );
+      );
   }
 
   renderFormElements() {

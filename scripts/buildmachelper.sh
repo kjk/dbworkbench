@@ -6,8 +6,10 @@ set -o pipefail
 
 rm -rf mac/dbherohelper.exe dbherohelper.zip
 
+echo "running go vet"
 godep go vet github.com/kjk/dbworkbench
 
+echo "running gulp prod"
 ./node_modules/.bin/gulp prod
 
 echo "generating resources .zip file..."

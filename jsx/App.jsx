@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import ConnectionWindow from './ConnectionWindow.jsx';
 import Sidebar from './Sidebar.jsx';
 import MainContainer from './MainContainer.jsx';
