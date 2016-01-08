@@ -5,7 +5,7 @@ set -o errexit
 set -o pipefail
 
 echo "running jsfmt"
-./node_modules/.bin/esformatter -i jsx/reactable/*.jsx jsx/*js* *.js
+./node_modules/.bin/esformatter -i js/*js* *.js
 
 . scripts/lint.sh
 

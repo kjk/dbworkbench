@@ -6,4 +6,4 @@ set -o pipefail
 
 ./node_modules/.bin/gulp tests
 
-#./node_modules/.bin/mocha jsx/tests/*.js
+#./node_modules/.bin/mocha js/tests/*.js
