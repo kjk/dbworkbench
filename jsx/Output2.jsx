@@ -95,7 +95,8 @@ export default class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    console.log('Output.constructor');
+    this.handleDiscardChanges = this.handleDiscardChanges.bind(this);
+
     this.state = this.calcState(this.props);
   }
 
@@ -115,6 +116,36 @@ export default class Output extends React.Component {
   componentWillUnmount() {
     console.log('Output.componentWillUnmount');
     store.offAllForOwner(this);
+  }
+
+  handlePageChanged(pageNo) {
+    console.log('Output2.handlePageChanged: ', pageNo);
+    const rows = getPage(this.state.allRows, pageNo);
+    this.setState({
+      currPageNo: pageNo,
+      rows: rows
+    });
+  }
+
+  handleDiscardChanges() {
+    console.log('handleDiscardChanges');
+    // TODO: do these togethor
+    /*
+    action.editedCells({});
+    action.selectedCellPosition({
+      rowId: -1,
+      colId: -1
+    });*/
+  }
+
+  handleColumnClick(e, colIdx) {
+    e.preventDefault();
+    console.log('Output2.handleColumnClick: ', colIdx);
+    const columns = this.state.columns;
+    const columnInfos = calcColumnInfos(columns, colIdx, this.state.columnInfos);
+    this.setState({
+      columnInfos: columnInfos
+    });
   }
 
   calcState(props) {
@@ -192,16 +223,6 @@ export default class Output extends React.Component {
       );
   }
 
-  handleColumnClick(e, colIdx) {
-    e.preventDefault();
-    console.log('Output2.handleColumnClick: ', colIdx);
-    const columns = this.state.columns;
-    const columnInfos = calcColumnInfos(columns, colIdx, this.state.columnInfos);
-    this.setState({
-      columnInfos: columnInfos
-    });
-  }
-
   renderTheadTh(col, colIdx) {
     let cls = 'reactable-header-sortable';
     const s = col.name;
@@ -210,24 +231,16 @@ export default class Output extends React.Component {
     } else if (col.sortOrder == sort.Down) {
       cls += ' reactable-header-sort-desc';
     }
+    const handleColumnClick = e => this.handleColumnClick(e, colIdx);
     return (
       <th key={ colIdx }
         className={ cls }
         role="button"
         tabIndex="0"
-        onClick={ e => this.handleColumnClick(e, colIdx) }>
+        onClick={ handleColumnClick }>
         { s }
       </th>
       );
-  }
-
-  handlePageChanged(pageNo) {
-    console.log('Output2.handlePageChanged: ', pageNo);
-    const rows = getPage(this.state.allRows, pageNo);
-    this.setState({
-      currPageNo: pageNo,
-      rows: rows
-    });
   }
 
   renderResults() {
@@ -238,6 +251,7 @@ export default class Output extends React.Component {
     const columns = state.columnInfos;
     const columnsChildren = columns.map((col, colIdx) => this.renderTheadTh(col, colIdx));
     const rowsChildren = rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
+    const pageChanged = pageNo => this.handlePageChanged(pageNo);
     return <div>
              <table className="results" id="results">
                <thead>
@@ -252,7 +266,7 @@ export default class Output extends React.Component {
              <ResultsPaginator nRows={ allRows.length }
                nPages={ this.state.nPages }
                currentPage={ this.state.currPageNo }
-               onPageChange={ pageNo => this.handlePageChanged(pageNo) } />
+               onPageChange={ pageChanged } />
            </div>;
   }
 
@@ -288,7 +302,7 @@ export default class Output extends React.Component {
         <div id="wrapper">
           { children }
           { showQueryBar ?
-            <QueryEditBar numberOfRowsEdited={ nEdited } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
+            <QueryEditBar numberOfRowsEdited={ nEdited } onHandleDiscardChanges={ this.handleDiscardChanges } />
             : null }
         </div>
       </div>
