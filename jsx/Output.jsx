@@ -364,7 +364,6 @@ RETURNING ${columns};
   }
 }
 
-
 Output.propTypes = {
   editedCells: React.PropTypes.any, // TODO: more specifc
   selectedTable: React.PropTypes.string,

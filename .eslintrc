@@ -19,6 +19,7 @@
     "react/jsx-no-duplicate-props": 1,
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
+    "react/jsx-no-bind": 1,
     "react/no-deprecated": 1,
     "react/no-did-mount-set-state": 1,
     "react/no-did-update-set-state": 1,
@@ -32,8 +33,6 @@
     "react/react-in-jsx-scope": 1,
     "react/self-closing-comp": 1,
     "react/sort-comp": 1
-    //rules we might enfornce in the future
-    //"react/jsx-no-bind": 1
   },
   "plugins": [
     "eslint-plugin-react"

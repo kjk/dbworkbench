@@ -203,16 +203,18 @@ export default class ConnectionWindow extends React.Component {
     });
   }
 
-  handleFormChanged(name, e) {
-    //console.log("handleFormChanged: name=", name, " val=", e.target.value);
+  handleFormChanged(e) {
+    const name = e.target.id;
+    const val = e.target.value;
+    console.log(`handleFormChanged: name=${name} val=${val}`);
 
-    let b = this.getSelectedBookmark();
-    let prevDatabase = b['database'];
-    b[name] = e.target.value;
-    let dbName = b['database'];
+    const b = this.getSelectedBookmark();
+    const prevDatabase = b['database'];
+    b[name] = val;
+    const dbName = b['database'];
 
     // if nick has not been modified by user, make it equal to database name
-    let nick = b['nick'];
+    const nick = b['nick'];
     if ((nick == initialConnectionName) || (nick == prevDatabase)) {
       if (dbName != '') {
         b['nick'] = dbName;
@@ -425,27 +427,27 @@ export default class ConnectionWindow extends React.Component {
       <div>
         <div className="col-md-8">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_nickname">
+            <label className="control-label" htmlFor="nick">
               Nickname
             </label>
             <input type="text"
-              id="db_nickname"
+              id="nick"
               className="form-control input-sm"
               value={ b['nick'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'nick') } />
+              onChange={ this.handleFormChanged } />
           </div>
         </div>
         <div className="col-md-4">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_type">
+            <label className="control-label" htmlFor="type">
               Type
             </label>
-            <select id="db_type"
+            <select id="type"
               className="form-control input-sm"
               value={ dbType }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'type') }>
+              onChange={ this.handleFormChanged }>
               <option value={ dbTypePostgres }>
                 PostgreSQL
               </option>
@@ -457,68 +459,68 @@ export default class ConnectionWindow extends React.Component {
         </div>
         <div className="col-md-8">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_hostname">
+            <label className="control-label" htmlFor="host">
               Hostname
             </label>
             <input type="text"
-              id="db_hostname"
+              id="host"
               className="form-control input-sm"
               value={ b['host'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'host') } />
+              onChange={ this.handleFormChanged } />
           </div>
         </div>
         <div className="col-md-4">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_port">
+            <label className="control-label" htmlFor="port">
               Port
             </label>
             <input type="text"
-              id="db_port"
+              id="port"
               className="form-control input-sm"
               value={ b['port'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'port') }
+              onChange={ this.handleFormChanged }
               placeholder={ defaultPort } />
           </div>
         </div>
         <div className="col-md-12">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_database">
+            <label className="control-label" htmlFor="database">
               Database
             </label>
             <input type="text"
-              id="db_database"
+              id="database"
               className="form-control input-sm"
               value={ b['database'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'database') } />
+              onChange={ this.handleFormChanged } />
           </div>
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_user">
+            <label className="control-label" htmlFor="user">
               User
             </label>
             <input type="text"
-              id="db_user"
+              id="user"
               className="form-control input-sm"
               value={ b['user'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'user') } />
+              onChange={ this.handleFormChanged } />
           </div>
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label className="control-label" htmlFor="db_pass">
+            <label className="control-label" htmlFor="password">
               Password
             </label>
             <input type="password"
-              id="db_pass"
+              id="password"
               className="form-control input-sm"
               value={ b['password'] }
               disabled={ disable }
-              onChange={ this.handleFormChanged.bind(this, 'password') } />
+              onChange={ this.handleFormChanged } />
           </div>
         </div>
         <div className="col-md-12 right">
