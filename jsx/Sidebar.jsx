@@ -76,7 +76,8 @@ export default class Sidebar extends React.Component {
     };
 
     let sortList = {};
-    if (this.props.selectedTableInfo != null) {
+    const tableInfo = this.props.selectedTableInfo;
+    if (tableInfo != null) {
       sortList = {
         height: 'calc(100% - 135px)',
       };
@@ -101,7 +102,9 @@ export default class Sidebar extends React.Component {
             </ul>
           </div>
         </div>
-        <TableInformation tableInfo={ this.props.selectedTableInfo } />
+        { tableInfo ?
+          <TableInformation tableInfo={ this.props.selectedTableInfo } /> :
+          null }
       </div>
       );
   }

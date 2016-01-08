@@ -7,11 +7,7 @@ set -o pipefail
 echo "running jsfmt"
 ./node_modules/.bin/esformatter -i jsx/reactable/*.jsx jsx/*js* *.js
 
-echo "running eslint"
-./node_modules/.bin/eslint jsx/*.js* jsx/reactable/*.jsx *.js
-
-echo "running go vet"
-godep go vet github.com/kjk/dbworkbench
+. scripts/lint.sh
 
 echo "runnig gulp"
 ./node_modules/.bin/gulp prod

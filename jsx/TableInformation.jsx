@@ -44,30 +44,22 @@ export default class TableInformation extends React.Component {
       );
   }
 
-  renderTableInfoContainer() {
-    const info = this.props.tableInfo;
-    if (isNullOrEmptyObject(info)) {
-      return;
-    }
-
-    const tableInfo = this.renderTableInfo(info);
-    return (
-      <div className="wrap">
-        <div className="title">
-          <i className="fa fa-info"></i>
-          <span className="current-table-information">Table Information</span>
-        </div>
-        { tableInfo }
-      </div>
-      );
-  }
-
   render() {
+    const tableInfo = this.renderTableInfo(this.props.tableInfo);
     return (
       <div className="table-information">
-        { this.renderTableInfoContainer() }
+        <div className="wrap">
+          <div className="title">
+            <i className="fa fa-info"></i>
+            <span className="current-table-information">Table Information</span>
+          </div>
+          { tableInfo }
+        </div>
       </div>
       );
   }
 }
 
+TableInformation.propTypes = {
+  tableInfo: React.PropTypes.object.isRequired
+};
