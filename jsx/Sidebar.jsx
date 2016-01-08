@@ -11,6 +11,8 @@ export default class Sidebar extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    this.handleRefreshTables = this.handleRefreshTables.bind(this);
+
     this.sidebarDx = store.getSidebarDx();
     this.state = {
       tables: [],
@@ -30,11 +32,9 @@ export default class Sidebar extends React.Component {
     store.offAllForOwner(this);
   }
 
-  handleRefreshDatabase(e) {
-    e.preventDefault();
-
-    console.log('handleRefreshDatabase');
-
+  handleRefreshTables(e) {
+    //console.log('handleRefreshTables');
+    //e.preventDefault();
     // TODO: make some kind of UI representation of refresh
     // just to show users that the action was successful.
     this.refreshTables();;
@@ -94,7 +94,7 @@ export default class Sidebar extends React.Component {
                 <div className="dropdown-cursor">
                   <i className="fa fa-angle-down fa-lg pull-right"></i>
                 </div>
-                <DatabaseMenuDropdown connectionId={ this.props.connectionId } handleRefresh={ this.handleRefreshDatabase.bind(this) } />
+                <DatabaseMenuDropdown connectionId={ this.props.connectionId } onRefreshTables={ this.handleRefreshTables } />
               </div>
             </div>
             <ul style={ sortList }>

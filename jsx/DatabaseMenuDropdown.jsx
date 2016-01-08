@@ -33,8 +33,7 @@ export default class DatabaseMenuDropdown extends React.Component {
   }
 
   handleConnection() {
-    console.log('handleConnection');
-
+    //console.log('handleConnection');
     const connId = this.props.connectionId;
     api.getConnectionInfo(connId, (data) => {
       this.setState({
@@ -46,8 +45,7 @@ export default class DatabaseMenuDropdown extends React.Component {
   }
 
   handleActivity() {
-    console.log('handleActivity');
-
+    //console.log('handleActivity');
     const connId = this.props.connectionId;
     api.getActivity(connId, (data) => {
       console.log('getActivity: ', data);
@@ -60,7 +58,7 @@ export default class DatabaseMenuDropdown extends React.Component {
   }
 
   handleDisconnect() {
-    console.log('handleDisconnect');
+    //console.log('handleDisconnect');
     action.disconnectDatabase();
   }
 
@@ -92,7 +90,7 @@ export default class DatabaseMenuDropdown extends React.Component {
     return (
       <div id="deneme" className='dropdown-window'>
         <div className="list-group">
-          <a href="#" className="list-group-item" onClick={ this.props.handleRefresh }>Refresh Tables</a>
+          <a href="#" className="list-group-item" onClick={ this.props.onRefreshTables }>Refresh Tables</a>
           <a href="#" className="list-group-item" onClick={ this.handleConnection }>Connection Info</a>
           <a href="#" className="list-group-item" onClick={ this.handleActivity }>Activity</a>
           <a href="#" className="list-group-item" onClick={ this.handleDisconnect }>Disconnect</a>
@@ -120,6 +118,6 @@ export default class DatabaseMenuDropdown extends React.Component {
 }
 
 DatabaseMenuDropdown.propTypes = {
-  handleRefresh: React.PropTypes.func.isRequired,
+  onRefreshTables: React.PropTypes.func.isRequired,
   connectionId: React.PropTypes.number.isRequired
 };
