@@ -119,3 +119,9 @@ export default class QueryEditBar extends React.Component {
       );
   }
 }
+
+QueryEditBar.propTypes = {
+  generateQuery: React.PropTypes.func.isRequired,
+  onHandleDiscardChanges: React.PropTypes.func.isRequired,
+  numberOfRowsEdited: React.PropTypes.number.isRequired
+};
