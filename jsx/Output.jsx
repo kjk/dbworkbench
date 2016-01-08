@@ -23,8 +23,8 @@ export default class Output extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleCellClick = this.handleCellClick.bind(this);
-    this.handleOnCellEdit = this.handleOnCellEdit.bind(this);
-
+    this.handleDiscardChanges = this.handleDiscardChanges.bind(this);
+    this.generateQuery = this.generateQuery.bind(this);
     this.queryEditDy = store.getQueryEditDy();
   }
 
@@ -160,8 +160,8 @@ RETURNING ${columns};
     });
   }
 
-  handleOnCellEdit(rowId, colId, e) {
-    console.log('handleOnCellEdit ', rowId, colId, e.target.value);
+  handleCellEdit(rowId, colId, e) {
+    console.log('handleCellEdit ', rowId, colId, e.target.value);
     this.setEditedCells(rowId, colId, e.target.value);
   }
 
@@ -214,6 +214,7 @@ RETURNING ${columns};
         // border: 'solid 1px #3B8686',
         };
       }
+      const handleCellEdit = e => this.handleCellEdit(rowId, colId);
 
       children.push(
         <Td key={ position }
@@ -221,7 +222,7 @@ RETURNING ${columns};
           position={ position }
           style={ tdStyle }
           isEditable={ isEditable }
-          onEdit={ this.handleOnCellEdit.bind(this, rowId, colId) }>
+          onEdit={ handleCellEdit }>
           { value }
         </Td>
       );
@@ -356,7 +357,7 @@ RETURNING ${columns};
         <div id="wrapper">
           { children }
           { showQueryBar ?
-            <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery.bind(this) } onHandleDiscardChanges={ this.handleDiscardChanges.bind(this) } />
+            <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery } onHandleDiscardChanges={ this.handleDiscardChanges } />
             : null }
         </div>
       </div>
