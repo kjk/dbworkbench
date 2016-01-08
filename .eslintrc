@@ -24,6 +24,7 @@
     "react/no-did-update-set-state": 1,
     "react/no-direct-mutation-state": 1,
     "react/no-is-mounted": 1,
+    //"react/no-multi-comp": 1,
     "react/no-string-refs": 1,
     "react/no-unknown-property": 1,
     "react/prefer-es6-class": 1,
@@ -31,7 +32,6 @@
     "react/self-closing-comp": 1
     //rules we might enfornce in the future
     //"react/jsx-no-bind": 1
-    //"react/no-multi-comp": 1,
     //"react/prop-types": 1,
     //"react/sort-comp": 1,
   },

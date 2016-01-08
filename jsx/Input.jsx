@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SpinnerCircle from './SpinnerCircle.jsx';
-import { Filterer } from './reactable/filterer.jsx';
+import { Actions } from './Actions.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
 
@@ -12,46 +11,6 @@ import * as store from './store.js';
 // or updating the style. Neither works so there's something missing
 // about setting up ace editor component.
 const forceRerender = true;
-
-export class Actions extends React.Component {
-
-  constructor(props, context) {
-    super(props, context);
-    this.handleRun = this.handleRun.bind(this);
-    this.handleExplain = this.handleExplain.bind(this);
-  }
-
-  handleRun(e) {
-    e.preventDefault();
-    this.props.onRun();
-  }
-
-  handleExplain(e) {
-    e.preventDefault();
-    this.props.onExplain();
-  }
-
-  render() {
-    return (
-      <div className="actions">
-        <input type="button"
-          onClick={ this.handleRun }
-          id="run"
-          value="Run Query"
-          className="btn btn-sm btn-primary" />
-        { this.props.supportsExplain ?
-          <input type="button"
-            onClick={ this.handleExplain }
-            id="explain"
-            value="Explain Query"
-            className='btn btn-sm btn-default' />
-          : null }
-        <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
-        <Filterer placeholder="Filter Results" defaultValue="" />
-      </div>
-      );
-  }
-}
 
 export default class Input extends React.Component {
   constructor(props, context) {
