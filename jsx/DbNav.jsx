@@ -8,8 +8,6 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 export default class DbNav extends React.Component {
   constructor(props, context) {
     super(props, context);
-
-    this.handleFeedbackButton = this.handleFeedbackButton.bind();
   }
 
   handleFeedbackButton(e) {
@@ -48,7 +46,7 @@ export default class DbNav extends React.Component {
           { children }
         </ul>
         <OverlayTrigger placement="left" overlay={ tooltip }>
-          <button className="feedback-button" onClick={ this.handleFeedbackButton.bind(this) }>
+          <button className="feedback-button" onClick={ this.handleFeedbackButton }>
             Feedback
           </button>
         </OverlayTrigger>

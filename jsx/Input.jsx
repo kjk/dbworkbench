@@ -18,6 +18,7 @@ export default class Input extends React.Component {
     this.exportToCSV = this.exportToCSV.bind(this);
     this.handleExplain = this.handleExplain.bind(this);
     this.handleRun = this.handleRun.bind(this);
+    this.setEditorNode = this.setEditorNode.bind(this);
 
     const dy = store.getQueryEditDy();
     if (forceRerender) {
@@ -124,6 +125,10 @@ export default class Input extends React.Component {
     return (dy - 50) + 'px';
   }
 
+  setEditorNode(c) {
+    this.editorNode = c;
+  }
+
   render() {
     // TODO: re-add csv support
     //   <input type="button" onClick={this.exportToCSV} id="csv"
@@ -149,7 +154,7 @@ export default class Input extends React.Component {
     return (
       <div id="input" style={ style }>
         <div className="wrapper">
-          <div id="custom-query" ref={ c => this.editorNode = c } style={ editorStyle } />
+          <div id="custom-query" ref={ this.setEditorNode } style={ editorStyle } />
           { showActions ?
             <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.handleRun } onExplain={ this.handleExplain } />
             : null }
@@ -161,5 +166,5 @@ export default class Input extends React.Component {
 
 Input.propTypes = {
   editedCells: React.PropTypes.any, // TODO: be mroe explicit
-  supportsExplain: React.PropTypes.bool.isRequired
+  supportsExplain: React.PropTypes.bool
 };

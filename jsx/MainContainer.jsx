@@ -23,6 +23,10 @@ export default class MainContainer extends React.Component {
     store.offAllForOwner(this);
   }
 
+  handlePosChanged(y) {
+    store.setQueryEditDy(y);
+  }
+
   render() {
     // TODO: after database connect, this happens 28 times
     //console.log("MainContainer render");
@@ -43,7 +47,7 @@ export default class MainContainer extends React.Component {
           <DragBarHoriz initialY={ store.getQueryEditDy() }
             min={ 60 }
             max={ 400 }
-            onPosChanged={ (y) => store.setQueryEditDy(y) } />
+            onPosChanged={ this.handlePosChanged } />
           : null }
         <Output selectedView={ this.props.selectedView }
           results={ this.props.results }
