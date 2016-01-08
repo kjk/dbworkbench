@@ -110,3 +110,11 @@ export default class Sidebar extends React.Component {
   }
 }
 
+Sidebar.propTypes = {
+  refreshAllTableInformation: React.PropTypes.func,
+  selectedTable: React.PropTypes.string,
+  tables: React.PropTypes.array, // TODO: more specific
+  selectedTableInfo: React.PropTypes.any, // TODO: more specific
+  databaseName: React.PropTypes.string,
+  connectionId: React.PropTypes.number
+};
