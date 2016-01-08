@@ -16,8 +16,8 @@ var (
 
 // ClientPg describes Postgres db client
 type ClientPg struct {
+	History
 	db               *sqlx.DB
-	history          []HistoryRecord
 	connectionString string
 }
 
@@ -32,7 +32,6 @@ func NewClientPgFromURL(uri string) (Client, error) {
 	return &ClientPg{
 		db:               db,
 		connectionString: uri,
-		history:          NewHistory(),
 	}, nil
 }
 
@@ -171,15 +170,10 @@ func (c *ClientPg) Query(query string) (*Result, error) {
 
 	// Save history records only if query did not fail
 	if err == nil {
-		c.history = append(c.history, NewHistoryRecord(query))
+		c.AddToHistory(query)
 	}
 
 	return res, err
-}
-
-// History returns history of queries
-func (c *ClientPg) History() []HistoryRecord {
-	return c.history
 }
 
 // a heuristic that detects if a given error is a tcp connection timeout

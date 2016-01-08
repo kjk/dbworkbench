@@ -22,7 +22,8 @@ type Client interface {
 	TableIndexes(table string) (*Result, error)
 	Activity() (*Result, error)
 	Query(query string) (*Result, error)
-	History() []HistoryRecord
+	AddToHistory(query string)
+	GetHistory() []HistoryRecord
 	GetCapabilities() ClientCapabilities
 }
 

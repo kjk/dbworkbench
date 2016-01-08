@@ -472,6 +472,7 @@ func doQueryAsync(client Client, query string, queryID string, maxRows int, maxD
 		s.Columns = cols
 	})
 
+	client.AddToHistory(query)
 	firstRow := false
 	timeStart := time.Now()
 	nRows := 0
@@ -710,7 +711,7 @@ func handleExplain(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /api/history
 func handleHistory(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	serveJSON(w, r, ctx.ConnInfo.Client.History())
+	serveJSON(w, r, ctx.ConnInfo.Client.GetHistory())
 }
 
 // GET /api/getbookmarks

@@ -20,8 +20,8 @@ var (
 
 // ClientMysql describes MySQL (and derivatives) client
 type ClientMysql struct {
+	History
 	db               *sqlx.DB
-	history          []HistoryRecord
 	connectionString string
 }
 
@@ -34,7 +34,6 @@ func NewClientMysqlFromURL(uri string) (Client, error) {
 	return &ClientMysql{
 		db:               db,
 		connectionString: uri,
-		history:          NewHistory(),
 	}, nil
 }
 
@@ -181,15 +180,10 @@ func (c *ClientMysql) Query(query string) (*Result, error) {
 
 	// Save history records only if query did not fail
 	if err == nil {
-		c.history = append(c.history, NewHistoryRecord(query))
+		c.AddToHistory(query)
 	}
 
 	return res, err
-}
-
-// History returns history of queries
-func (c *ClientMysql) History() []HistoryRecord {
-	return c.history
 }
 
 func connectMysql(uri string) (Client, error) {
