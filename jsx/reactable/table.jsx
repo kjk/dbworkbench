@@ -2,7 +2,7 @@ import React from 'react';
 import { extractDataFrom, filterInternalProps } from './utils.jsx';
 import { Thead } from './thead.jsx';
 import { Tr } from './tr.jsx';
-import { Paginator } from './paginator.jsx';
+import ResultsPaginator from './../ResultsPaginator.jsx';
 import * as action from '../action.js';
 
 export class Table extends React.Component {
@@ -460,7 +460,7 @@ export class Table extends React.Component {
           </tbody>
         </table>
         { pagination === true ?
-          <Paginator numPages={ numPages }
+          <ResultsPaginator numPages={ numPages }
             currentPage={ currentPage }
             totalRowCount={ filteredChildren.length }
             onPageChange={ page => {

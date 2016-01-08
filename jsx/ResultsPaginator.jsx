@@ -4,7 +4,7 @@ function pageHref(num) {
   return `#page-${num + 1}`;
 }
 
-export class Paginator extends React.Component {
+export default class ResultsPaginator extends React.Component {
   constructor(props, context) {
     super(props, context);
   }
@@ -56,5 +56,10 @@ export class Paginator extends React.Component {
       );
   }
 }
-;
 
+ResultsPaginator.propTypes = {
+  onPageChange: React.PropTypes.func.isRequired,
+  currentPage: React.PropTypes.number.isRequired,
+  nPages: React.PropTypes.number.isRequired,
+  nRows: React.PropTypes.number.isRequired
+};

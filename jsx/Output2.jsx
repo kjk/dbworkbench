@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Paginator } from './reactable/paginator.jsx';
+import ResultsPaginator from './ResultsPaginator.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import view from './view.js';
 import * as action from './action.js';
@@ -249,7 +249,7 @@ export default class Output extends React.Component {
                  { rowsChildren }
                </tbody>
              </table>
-             <Paginator nRows={ allRows.length }
+             <ResultsPaginator nRows={ allRows.length }
                nPages={ this.state.nPages }
                currentPage={ this.state.currPageNo }
                onPageChange={ pageNo => this.handlePageChanged(pageNo) } />
