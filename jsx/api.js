@@ -141,12 +141,11 @@ export function getHistory(connId, cb) {
     conn_id: connId
   };
   apiCall('get', '/api/history', params, function(data) {
-    let rows = [];
-    for (let i in data) {
-      rows.unshift([parseInt(i) + 1, data[i].query, data[i].timestamp]);
-    }
+    const rows = data.map(historyRecord => {
+      return [historyRecord.query, historyRecord.timestamp];
+    });
     cb({
-      columns: ['id', 'query', 'timestamp'],
+      columns: ['query', 'timestamp'],
       rows: rows
     });
   });

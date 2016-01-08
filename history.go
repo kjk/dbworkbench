@@ -15,9 +15,14 @@ type History struct {
 	history []HistoryRecord
 }
 
-// History returns history records
+// GetHistory returns history records, most recent at the beginning
 func (h *History) GetHistory() []HistoryRecord {
-	return h.history
+	n := len(h.history)
+	res := make([]HistoryRecord, 0)
+	for i := n - 1; i >= 0; i-- {
+		res = append(res, h.history[i])
+	}
+	return res
 }
 
 // AddToHistory remembers query in history
