@@ -101,7 +101,7 @@ export default class Output extends React.Component {
   }
 
   componentWillMount() {
-    console.log('Output.componentWillMount');
+    //console.log('Output2.componentWillMount');
     store.onQueryEditDy(dy => {
       const el = ReactDOM.findDOMNode(this);
       el.style.top = topPos(dy, this.props.withInput);
@@ -109,17 +109,17 @@ export default class Output extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('Output2.componentWillReceiveProps');
+    //console.log('Output2.componentWillReceiveProps');
     this.setState(this.calcState(nextProps));
   }
 
   componentWillUnmount() {
-    console.log('Output.componentWillUnmount');
+    //console.log('Output2.componentWillUnmount');
     store.offAllForOwner(this);
   }
 
   handlePageChanged(pageNo) {
-    console.log('Output2.handlePageChanged: ', pageNo);
+    //console.log('Output2.handlePageChanged: ', pageNo);
     const rows = getPage(this.state.allRows, pageNo);
     this.setState({
       currPageNo: pageNo,
@@ -128,7 +128,7 @@ export default class Output extends React.Component {
   }
 
   handleDiscardChanges() {
-    console.log('handleDiscardChanges');
+    //console.log('Output2.handleDiscardChanges');
     // TODO: do these togethor
     /*
     action.editedCells({});
@@ -151,7 +151,7 @@ export default class Output extends React.Component {
   calcState(props) {
     this.top = topPos(store.getQueryEditDy(), this.props.withInput);
 
-    console.log('Output2.calcState');
+    //console.log('Output2.calcState');
     const results = props.results;
     const allRows = results ? results.rows : [];
     const columns = results ? results.columns : [];
@@ -197,11 +197,12 @@ export default class Output extends React.Component {
       top: this.top
     };
 
-    return (<div id="output" className="empty" style={ style }>
-              <div id="wrapper">
-                { res }
-              </div>
-            </div>
+    return (
+      <div id="output" className="empty" style={ style }>
+        <div id="wrapper">
+          { res }
+        </div>
+      </div>
       );
   }
 
@@ -252,22 +253,24 @@ export default class Output extends React.Component {
     const columnsChildren = columns.map((col, colIdx) => this.renderTheadTh(col, colIdx));
     const rowsChildren = rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
     const pageChanged = pageNo => this.handlePageChanged(pageNo);
-    return <div>
-             <table className="results" id="results">
-               <thead>
-                 <tr className="reactable-column-header">
-                   { columnsChildren }
-                 </tr>
-               </thead>
-               <tbody className="reactable-data">
-                 { rowsChildren }
-               </tbody>
-             </table>
-             <ResultsPaginator nRows={ allRows.length }
-               nPages={ this.state.nPages }
-               currentPage={ this.state.currPageNo }
-               onPageChange={ pageChanged } />
-           </div>;
+    return (
+      <div>
+        <table className="results" id="results">
+          <thead>
+            <tr className="reactable-column-header">
+              { columnsChildren }
+            </tr>
+          </thead>
+          <tbody className="reactable-data">
+            { rowsChildren }
+          </tbody>
+        </table>
+        <ResultsPaginator nRows={ allRows.length }
+          nPages={ this.state.nPages }
+          currentPage={ this.state.currPageNo }
+          onPageChange={ pageChanged } />
+      </div>
+      );
   }
 
   render() {

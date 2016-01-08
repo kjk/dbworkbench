@@ -37,26 +37,8 @@ export default class QueryEditBar extends React.Component {
     store.offAllForOwner(this);
   }
 
-  togglePopover() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
-
-  handleSaveChanges() {
-    console.log('handleSaveChanges ');
-
-    // TODO: must support multiple queries for multiple rows changes
-    var query = this.props.generateQuery();
-    action.executeQuery(query);
-  }
-
-  topPos() {
-    return this.queryEditDy + 'px';
-  }
-
   handleToggleSQLPreview() {
-    console.log('handleSQLPreview');
+    //console.log('handleSQLPreview');
     if (this.state.isOpen) {
       this.setState({
         isOpen: false
@@ -69,6 +51,43 @@ export default class QueryEditBar extends React.Component {
         popOverText: query,
         isOpen: true,
       });
+    }
+  }
+
+  handleSaveChanges() {
+    console.log('handleSaveChanges ');
+
+    // TODO: must support multiple queries for multiple rows changes
+    var query = this.props.generateQuery();
+    action.executeQuery(query);
+  }
+
+  togglePopover() {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
+
+  topPos() {
+    return this.queryEditDy + 'px';
+  }
+
+  rememberNode(el) {
+    console.log('rememberNode: ', el.id);
+
+    switch (el.id) {
+      case 'id-save':
+        this.btnSaveNode = el;
+        break;
+      case 'id-discard':
+        this.btnDiscardNode = el;
+        break;
+      case 'id-row-number':
+        this.rowCountNode = el;
+        break;
+      case id - sql - preview:
+        this.sqlPreviewNode = el;
+        break;
     }
   }
 
@@ -85,19 +104,24 @@ export default class QueryEditBar extends React.Component {
 
     return (
       <div id="query_edit_bar">
-        <button ref={ c => this.btnSaveNode = c }
+        <button ref={ this.rememberNode }
           className="save_changes"
-          onClick={ this.handleSaveChanges.bind(this) }
+          id="id-save"
+          onClick={ this.handleSaveChanges }
           style={ style }>
           Save Changes
         </button>
-        <button ref={ c => this.bbtnDiscardNode = c }
+        <button ref={ this.rememberNode }
+          id="id-discard"
           className="discard_changes"
           onClick={ this.props.onHandleDiscardChanges }
           style={ style }>
           Discard Changes
         </button>
-        <div ref={ c => this.rowCountNode = c } className="row_number" style={ style }>
+        <div ref={ this.rememberNode }
+          className="row_number"
+          id="id-row-number"
+          style={ style }>
           { this.props.numberOfRowsEdited } edited rows
         </div>
         <Popover style={ popOverStyle }
@@ -107,9 +131,10 @@ export default class QueryEditBar extends React.Component {
           target={ "sql_preview" }
           targetElement={ "sql_preview" }
           tipSize={ 10 }>
-          <div ref={ c => this.sqlPreviewNode = c }
+          <div ref={ this.rememberNode }
             className="sql_preview"
-            onClick={ this.handleToggleSQLPreview.bind(this) }
+            id="id-sql-preview"
+            onClick={ this.handleToggleSQLPreview }
             style={ style }>
             { !this.state.isOpen ? 'Show SQL Preview' :
               'Hide SQL Preview' }
