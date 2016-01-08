@@ -96,6 +96,7 @@ export default class Output extends React.Component {
     super(props, context);
 
     this.handleDiscardChanges = this.handleDiscardChanges.bind(this);
+    this.handleColumnClick = this.handleColumnClick.bind(this);
 
     this.state = this.calcState(this.props);
   }
@@ -138,8 +139,9 @@ export default class Output extends React.Component {
     });*/
   }
 
-  handleColumnClick(e, colIdx) {
+  handleColumnClick(e) {
     e.preventDefault();
+    const colIdx = e.target.cellIndex;
     console.log('Output2.handleColumnClick: ', colIdx);
     const columns = this.state.columns;
     const columnInfos = calcColumnInfos(columns, colIdx, this.state.columnInfos);
@@ -232,13 +234,12 @@ export default class Output extends React.Component {
     } else if (col.sortOrder == sort.Down) {
       cls += ' reactable-header-sort-desc';
     }
-    const handleColumnClick = e => this.handleColumnClick(e, colIdx);
     return (
       <th key={ colIdx }
         className={ cls }
         role="button"
         tabIndex="0"
-        onClick={ handleColumnClick }>
+        onClick={ this.handleColumnClick }>
         { s }
       </th>
       );
@@ -248,21 +249,19 @@ export default class Output extends React.Component {
     const state = this.state;
     const results = state.results;
     const allRows = state.allRows;
-    const rows = state.rows;
-    const columns = state.columnInfos;
-    const columnsChildren = columns.map((col, colIdx) => this.renderTheadTh(col, colIdx));
-    const rowsChildren = rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
+    const columns = state.columnInfos.map((col, colIdx) => this.renderTheadTh(col, colIdx));
+    const rows = state.rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
     const pageChanged = pageNo => this.handlePageChanged(pageNo);
     return (
       <div>
         <table className="results" id="results">
           <thead>
             <tr className="reactable-column-header">
-              { columnsChildren }
+              { columns }
             </tr>
           </thead>
           <tbody className="reactable-data">
-            { rowsChildren }
+            { rows }
           </tbody>
         </table>
         <ResultsPaginator nRows={ allRows.length }
