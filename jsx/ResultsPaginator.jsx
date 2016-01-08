@@ -7,6 +7,8 @@ function pageHref(num) {
 export default class ResultsPaginator extends React.Component {
   constructor(props, context) {
     super(props, context);
+    this.handlePrevious = this.handlePrevious.bind(this);
+    this.handleNext = this.handleNext.bind(this);
   }
 
   handlePrevious(e) {
@@ -25,7 +27,7 @@ export default class ResultsPaginator extends React.Component {
     }
 
     return (
-      <a className='reactable-previous-page' onClick={ this.handlePrevious.bind(this) } href={ pageHref(this.props.currentPage - 1) }><i className="fa fa-chevron-left"></i></a>
+      <a className='reactable-previous-page' onClick={ this.handlePrevious } href={ pageHref(this.props.currentPage - 1) }><i className="fa fa-chevron-left"></i></a>
       );
   }
 
@@ -35,7 +37,7 @@ export default class ResultsPaginator extends React.Component {
     }
 
     return (
-      <a className='reactable-next-page' onClick={ this.handleNext.bind(this) } href={ pageHref(this.props.currentPage + 1) }><i className="fa fa-chevron-right"></i></a>
+      <a className='reactable-next-page' onClick={ this.handleNext } href={ pageHref(this.props.currentPage + 1) }><i className="fa fa-chevron-right"></i></a>
       );
   }
 
