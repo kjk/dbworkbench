@@ -5,7 +5,6 @@ import view from './view.js';
 import Modal from 'react-modal';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-
 export default class DbNav extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -57,4 +56,8 @@ export default class DbNav extends React.Component {
       );
   }
 }
+
+DbNav.propTypes = {
+  view: React.PropTypes.string.isRequired
+};
 

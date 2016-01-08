@@ -79,7 +79,7 @@ function newTestDbBookmark() {
   };
 }
 
-class ConnectionWindow extends React.Component {
+export default class ConnectionWindow extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.newConnection = this.newConnection.bind(this);
@@ -647,4 +647,7 @@ class ConnectionWindow extends React.Component {
   }
 }
 
-module.exports = ConnectionWindow;
+ConnectionWindow.propTypes = {
+  onDidConnect: React.PropTypes.func.isRequired
+};
+

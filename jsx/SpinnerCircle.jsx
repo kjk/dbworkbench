@@ -50,3 +50,8 @@ export default class SpinnerCircle extends React.Component {
       );
   }
 }
+
+SpinnerCircle.propTypes = {
+  forceVisible: React.PropTypes.bool,
+  style: React.PropTypes.object
+};

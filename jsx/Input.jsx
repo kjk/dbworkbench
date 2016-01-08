@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Actions } from './Actions.jsx';
+import Actions from './Actions.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
 

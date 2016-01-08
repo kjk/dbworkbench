@@ -295,3 +295,9 @@ export default class Output extends React.Component {
       );
   }
 }
+
+Output.propTypes = {
+  withInput: React.PropTypes.bool,
+  isSidebar: React.PropTypes.bool,
+  editedCells: React.PropTypes.any // TODO: be more specific
+};

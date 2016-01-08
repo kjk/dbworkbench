@@ -2,7 +2,7 @@ import React from 'react';
 import SpinnerCircle from './SpinnerCircle.jsx';
 import { Filterer } from './reactable/filterer.jsx';
 
-export class Actions extends React.Component {
+export default class Actions extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleRun = this.handleRun.bind(this);
