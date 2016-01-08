@@ -118,3 +118,8 @@ export default class DatabaseMenuDropdown extends React.Component {
       );
   }
 }
+
+DatabaseMenuDropdown.propTypes = {
+  handleRefresh: React.PropTypes.func.isRequired,
+  connectionId: React.PropTypes.number.isRequired
+};

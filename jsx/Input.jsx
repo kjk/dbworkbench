@@ -158,3 +158,8 @@ export default class Input extends React.Component {
       );
   }
 }
+
+Input.propTypes = {
+  editedCells: React.PropTypes.any, // TODO: be mroe explicit
+  supportsExplain: React.PropTypes.bool.isRequired
+};

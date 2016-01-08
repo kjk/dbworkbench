@@ -84,3 +84,10 @@ export default class DragBarVert extends React.Component {
       );
   }
 }
+
+DragBarVert.propTypes = {
+  onPosChanged: React.PropTypes.func.isRequired,
+  initialX: React.PropTypes.number.isRequired,
+  min: React.PropTypes.number.isRequired,
+  max: React.PropTypes.number.isRequired
+};

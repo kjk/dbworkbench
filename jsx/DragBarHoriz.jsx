@@ -84,3 +84,10 @@ export default class DragBarHoriz extends React.Component {
       );
   }
 }
+
+DragBarHoriz.propTypes = {
+  onPosChanged: React.PropTypes.func.isRequired,
+  initialY: React.PropTypes.number.isRequired,
+  min: React.PropTypes.number.isRequired,
+  max: React.PropTypes.number.isRequired
+};
