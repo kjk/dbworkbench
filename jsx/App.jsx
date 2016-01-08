@@ -470,12 +470,21 @@ class App extends React.Component {
     });
   }
 
+  handlePosChanged(dx) {
+    store.setSidebarDx(dx);
+  }
+
+  setAlertNode(el) {
+    console.log('setAlertNode:', el);
+    global.msg = el;
+  }
+
   render() {
     if (!this.state.connected) {
       return (
         <div>
           <div>
-            <AlertContainer ref={ (a) => global.msg = a } {...this.alertOptions} />
+            <AlertContainer ref={ this.setAlertNode } {...this.alertOptions} />
           </div>
           <ConnectionWindow onDidConnect={ this.handleDidConnect } />
         </div>
@@ -485,7 +494,7 @@ class App extends React.Component {
     return (
       <div>
         <div>
-          <AlertContainer ref={ (a) => global.msg = a } {...this.alertOptions} />
+          <AlertContainer ref={ this.setAlertNode } {...this.alertOptions} />
         </div>
         <div>
           <Sidebar refreshAllTableInformation={ this.getAllTablesStructures }
@@ -497,7 +506,7 @@ class App extends React.Component {
           <DragBarVert min={ 128 }
             max={ 128 * 3 }
             initialX={ store.getSidebarDx() }
-            onPosChanged={ (dx) => store.setSidebarDx(dx) } />
+            onPosChanged={ this.handlePosChanged } />
           <MainContainer results={ this.state.results }
             supportsExplain={ this.state.capabilities.HasAnalyze }
             selectedView={ this.state.selectedView }
