@@ -96,6 +96,38 @@ class App extends React.Component {
     };
   }
 
+  componentWillMount() {
+    //this.adHocTest();
+
+    action.onViewSelected(this.handleViewSelected, this);
+    action.onTableSelected(this.handleTableSelected, this);
+    action.onExecuteQuery(this.handleExecuteQuery, this);
+    action.onExplainQuery(this.handleExplainQuery, this);
+    action.onDisconnectDatabase(this.handleDisconnectDatabase, this);
+    action.onAlertBox(this.handleAlertBox, this);
+    action.onResetPagination(this.handleResetPagination, this);
+    action.onSelectedCellPosition(this.handleSelectedCellPosition, this);
+    action.onEditedCells(this.handleEditedCells, this);
+
+    var connId = this.state.connectionId;
+    if (connId == 0) {
+      return;
+    }
+
+    this.getAllTablesStructures();
+
+    api.getConnectionInfo(connId, (data) => {
+      const dbName = databaseNameFromConnectionInfoRows(data.rows);
+      this.setState({
+        databaseName: dbName
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    action.offAllForOwner(this);
+  }
+
   getAllTablesStructures() {
     var connId = this.state.connectionId;
     api.getTables(connId, (data) => {
@@ -436,38 +468,6 @@ class App extends React.Component {
     this.setState({
       editedCells: newCells
     });
-  }
-
-  componentWillMount() {
-    //this.adHocTest();
-
-    action.onViewSelected(this.handleViewSelected, this);
-    action.onTableSelected(this.handleTableSelected, this);
-    action.onExecuteQuery(this.handleExecuteQuery, this);
-    action.onExplainQuery(this.handleExplainQuery, this);
-    action.onDisconnectDatabase(this.handleDisconnectDatabase, this);
-    action.onAlertBox(this.handleAlertBox, this);
-    action.onResetPagination(this.handleResetPagination, this);
-    action.onSelectedCellPosition(this.handleSelectedCellPosition, this);
-    action.onEditedCells(this.handleEditedCells, this);
-
-    var connId = this.state.connectionId;
-    if (connId == 0) {
-      return;
-    }
-
-    this.getAllTablesStructures();
-
-    api.getConnectionInfo(connId, (data) => {
-      const dbName = databaseNameFromConnectionInfoRows(data.rows);
-      this.setState({
-        databaseName: dbName
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    action.offAllForOwner(this);
   }
 
   render() {

@@ -26,6 +26,29 @@ export class Table extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.initialize(this.props);
+    this.sortByCurrentSort();
+    this.filterBy(this.props.filterBy);
+
+    action.onFilterChanged((s) => {
+      this.setState({
+        filterString: s
+      });
+    }, this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.initialize(nextProps);
+    this.updateCurrentSort(nextProps.sortBy);
+    this.sortByCurrentSort();
+    this.filterBy(nextProps.filterBy);
+  }
+
+  componentWillUnmount() {
+    action.offAllForOwner(this);
+  }
+
   filterBy(filter) {
     this.setState({
       filter: filter
@@ -202,29 +225,6 @@ export class Table extends React.Component {
         currentSort: this.getCurrentSort(sortBy)
       });
     }
-  }
-
-  componentWillMount() {
-    this.initialize(this.props);
-    this.sortByCurrentSort();
-    this.filterBy(this.props.filterBy);
-
-    action.onFilterChanged((s) => {
-      this.setState({
-        filterString: s
-      });
-    }, this);
-  }
-
-  componentWillUnmount() {
-    action.offAllForOwner(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.initialize(nextProps);
-    this.updateCurrentSort(nextProps.sortBy);
-    this.sortByCurrentSort();
-    this.filterBy(nextProps.filterBy);
   }
 
   applyFilter(filter, children) {

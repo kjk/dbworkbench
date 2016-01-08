@@ -99,6 +99,24 @@ export default class Output extends React.Component {
     this.state = this.calcState(this.props);
   }
 
+  componentWillMount() {
+    console.log('Output.componentWillMount');
+    store.onQueryEditDy(dy => {
+      const el = ReactDOM.findDOMNode(this);
+      el.style.top = topPos(dy, this.props.withInput);
+    }, this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('Output2.componentWillReceiveProps');
+    this.setState(this.calcState(nextProps));
+  }
+
+  componentWillUnmount() {
+    console.log('Output.componentWillUnmount');
+    store.offAllForOwner(this);
+  }
+
   calcState(props) {
     this.top = topPos(store.getQueryEditDy(), this.props.withInput);
 
@@ -122,24 +140,6 @@ export default class Output extends React.Component {
       columns: columns,
       columnInfos: columnInfos
     };
-  }
-
-  componentWillMount() {
-    console.log('Output.componentWillMount');
-    store.onQueryEditDy(dy => {
-      const el = ReactDOM.findDOMNode(this);
-      el.style.top = topPos(dy, this.props.withInput);
-    }, this);
-  }
-
-  componentWillUnmount() {
-    console.log('Output.componentWillUnmount');
-    store.offAllForOwner(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log('Output2.componentWillReceiveProps');
-    this.setState(this.calcState(nextProps));
   }
 
   renderEmptyOrError(results) {

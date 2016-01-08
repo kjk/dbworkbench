@@ -46,6 +46,10 @@ export default class Input extends React.Component {
     }, this);
   }
 
+  componentDidMount() {
+    this.initEditor();
+  }
+
   componentWillUnmount() {
     store.offAllForOwner(this);
   }
@@ -108,10 +112,6 @@ export default class Input extends React.Component {
       }
     ]);
     this.editor.focus();
-  }
-
-  componentDidMount() {
-    this.initEditor();
   }
 
   inputDy() {

@@ -36,14 +36,14 @@ export default class Output extends React.Component {
     }, this);
   }
 
-  componentWillUnmount() {
-    store.offAllForOwner(this);
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
       action.clearFilter();
     }
+  }
+
+  componentWillUnmount() {
+    store.offAllForOwner(this);
   }
 
   setEditedCells(rowId, colId, value) {
