@@ -363,3 +363,16 @@ RETURNING ${columns};
       );
   }
 }
+
+
+Output.propTypes = {
+  editedCells: React.PropTypes.any, // TODO: more specifc
+  selectedTable: React.PropTypes.string,
+  results: React.PropTypes.any, // TODO: more specific,
+  tableStructures: React.PropTypes.any, // TODO: more specific
+  selectedCellPosition: React.PropTypes.any, // TODO: more specific
+  selectedView: React.PropTypes.string,
+  withInput: React.PropTypes.bool,
+  isSidebar: React.PropTypes.bool,
+  resetPagination: React.PropTypes.bool
+};

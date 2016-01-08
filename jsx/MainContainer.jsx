@@ -61,7 +61,6 @@ export default class MainContainer extends React.Component {
 MainContainer.propTypes = {
   selectedView: React.PropTypes.string,
   supportsExplain: React.PropTypes.bool,
-  editedCells: React.PropTypes.any, // TODO: more specifc
   results: React.PropTypes.any, // TODO: more specific,
   resetPagination: React.PropTypes.bool, // TODO: more specific
   tableStructures: React.PropTypes.any, // TODO: more specific
