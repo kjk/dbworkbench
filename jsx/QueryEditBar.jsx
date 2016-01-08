@@ -21,20 +21,15 @@ export default class QueryEditBar extends React.Component {
     };
   }
 
-  setTopOnRef(ref, top) {
-    const el = ReactDOM.findDOMNode(ref);
-    el.style.top = top;
-  }
-
   componentWillMount() {
     store.onQueryEditDy((dy) => {
       this.queryEditDy = dy;
 
       const top = this.topPos();
-      this.setTopOnRef(this.refs.btnSave, top);
-      this.setTopOnRef(this.refs.btnDiscard, top);
-      this.setTopOnRef(this.refs.rowCount, top);
-      this.setTopOnRef(this.refs.sqlPreview, top);
+      this.btnSaveNode.style.top = top;
+      this.btnDiscardNode.style.top = top;
+      this.rowCountNode.style.top = top;
+      this.sqlPreviewNode.style.top = top;
     }, this);
   }
 
@@ -90,19 +85,19 @@ export default class QueryEditBar extends React.Component {
 
     return (
       <div id="query_edit_bar">
-        <button ref="btnSave"
+        <button ref={ c => this.btnSaveNode = c }
           className="save_changes"
           onClick={ this.handleSaveChanges.bind(this) }
           style={ style }>
           Save Changes
         </button>
-        <button ref="btnDiscard"
+        <button ref={ c => this.bbtnDiscardNode = c }
           className="discard_changes"
           onClick={ this.props.onHandleDiscardChanges }
           style={ style }>
           Discard Changes
         </button>
-        <div ref="rowCount" className="row_number" style={ style }>
+        <div ref={ c => this.rowCountNode = c } className="row_number" style={ style }>
           { this.props.numberOfRowsEdited } edited rows
         </div>
         <Popover style={ popOverStyle }
@@ -112,7 +107,7 @@ export default class QueryEditBar extends React.Component {
           target={ "sql_preview" }
           targetElement={ "sql_preview" }
           tipSize={ 10 }>
-          <div ref="sqlPreview"
+          <div ref={ c => this.sqlPreviewNode = c }
             className="sql_preview"
             onClick={ this.handleToggleSQLPreview.bind(this) }
             style={ style }>
