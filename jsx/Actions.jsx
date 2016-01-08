@@ -40,3 +40,9 @@ export class Actions extends React.Component {
       );
   }
 }
+
+Actions.propTypes = {
+  onRun: React.PropTypes.function,
+  onExplain: React.PropTypes.function,
+  supportsExplain: React.PropTypes.boolean
+};
