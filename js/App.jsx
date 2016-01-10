@@ -12,6 +12,8 @@ import * as store from './store.js';
 import view from './view.js';
 import AlertContainer from './alert/ReactAlert.jsx';
 
+let g_alert = null;
+
 function runOnLoad(f) {
   if (window.addEventListener) {
     window.addEventListener('DOMContentLoaded', f);
@@ -447,7 +449,7 @@ class App extends React.Component {
 
   handleAlertBox(message) {
     // type can be 'info', 'success', 'error'
-    msg.show(message, {
+    g_alert.show(message, {
       type: 'error',
     });
   }
@@ -476,7 +478,7 @@ class App extends React.Component {
 
   setAlertNode(el) {
     console.log('setAlertNode:', el);
-    global.msg = el;
+    g_alert = el;
   }
 
   render() {

@@ -9,6 +9,13 @@ import (
 	"strings"
 )
 
+const hdr = `// +build embeded_resources
+
+package main
+
+var resourcesZipData = []byte{
+`
+
 var (
 	blacklisted = []string{
 		filepath.Join("s", "dist", "bundle.js"),
@@ -42,13 +49,6 @@ func createResourcesZip(path string) {
 	err = zw.Close()
 	fataliferr(err)
 }
-
-var hdr = `// +build embeded_resources
-
-package main
-
-var resourcesZipData = []byte{
-`
 
 func genHexLine(f *os.File, d []byte, off, n int) {
 	f.WriteString("\t")

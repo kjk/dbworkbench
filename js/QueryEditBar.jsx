@@ -85,7 +85,7 @@ export default class QueryEditBar extends React.Component {
       case 'id-row-number':
         this.rowCountNode = el;
         break;
-      case id - sql - preview:
+      case 'id-sql-preview':
         this.sqlPreviewNode = el;
         break;
     }

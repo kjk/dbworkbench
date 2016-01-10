@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"mime"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -71,10 +70,6 @@ func IntAppendIfNotExists(arr []int, n int) []int {
 		return arr
 	}
 	return append(arr, n)
-}
-
-func getMyHost(r *http.Request) string {
-	return "http://" + r.Host
 }
 
 func openDefaultBrowserMac(uri string) error {

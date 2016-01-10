@@ -12,6 +12,7 @@
     "jsx": true
   },
   "rules": {
+    "no-undef": 2,
     "semi": 2,
     "react/jsx-boolean-value": 1,
     "react/jsx-handler-names": 1,
@@ -33,6 +34,12 @@
     "react/react-in-jsx-scope": 1,
     "react/self-closing-comp": 1,
     "react/sort-comp": 1
+  },
+  "globals": {
+    "gUserInfo": true,
+    "gBookmarkInfo": true,
+    "gVersionNumber": true,
+    "ace": true
   },
   "plugins": [
     "eslint-plugin-react"

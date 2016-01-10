@@ -10,7 +10,7 @@ High-level overview:
 - run tests pointing to a database running in that container
 - stop container
 
-Repeat for all docker images. 
+Repeat for all docker images.
 """
 
 g_imageName = "dbhero/mysql-55"
@@ -31,7 +31,7 @@ def run_cmd_out(cmd):
   s = subprocess.check_output(cmd)
   return s.decode("utf-8")
 
-def verify_docker_running():  
+def verify_docker_running():
   try:
     run_cmd(["docker", "ps"])
   except:
@@ -45,15 +45,15 @@ def get_docker_machine_ip():
 # returns container id and status (running, exited) for a container
 # started with a given name
 # returns None if no container of that name
-def docker_ps(containerName):  
+def docker_ps(containerName):
   s = run_cmd_out(["docker", "ps", "-a"])
   lines = s.split("\n")
-  #print(lines)  
+  #print(lines)
   if len(lines) < 2:
     return None
   lines = lines[1:]
   for l in lines:
-    # imperfect heuristic 
+    # imperfect heuristic
     if containerName in l:
       status = kStatusRunning
       # probably imperfect heuristic
@@ -101,11 +101,11 @@ def run_tests(dbConnURL):
   else:
     cmd = "godep go test ."
   p = subprocess.Popen(cmd, env=env, stderr=subprocess.STDOUT,stdout=subprocess.PIPE)
-  p.wait(timeoutInSecs)   
+  p.wait(timeoutInSecs)
   s = p.stdout.read().decode("utf-8")
   print(s)
-  # TODO: remove dbworkbench.test 
-  
+  # TODO: remove dbworkbench.test
+
 def mysql_conn(ip, port, dbName):
   return "root@tcp(%s:%s)/%s?parseTime=true" % (ip, port, dbName)
 
@@ -118,7 +118,7 @@ def main():
   start_fresh_container(g_imageName, g_containerName, "7100:3306")
   conn = mysql_conn(ip, "7100", "world")
   run_tests(conn)
-  remove_container(g_containerName)  
+  remove_container(g_containerName)
 
 if __name__ == "__main__":
   main()

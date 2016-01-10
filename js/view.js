@@ -1,19 +1,21 @@
-const Structure = 'Structure';
-const Indexes = 'Indexes';
-const SQLQuery = 'Query';
-const History = 'History';
+export const Structure = 'Structure';
+export const Indexes = 'Indexes';
+export const SQLQuery = 'Query';
+export const History = 'History';
 
-const MainTabViews = [
+export const MainTabViews = [
   SQLQuery,
   Structure,
   Indexes,
   History,
 ];
 
-module.exports = {
-  SQLQuery: SQLQuery,
-  Structure: Structure,
-  Indexes: Indexes,
-  History: History,
-  MainTabViews: MainTabViews
+/*
+export {
+  SQLQuery as SQLQuery,
+  Structure as Structure,
+  Indexes as Indexes,
+  History as History,
+  MainTabViews as MainTabViews
 };
+*/

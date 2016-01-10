@@ -4,9 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-echo "running jsfmt"
-./node_modules/.bin/esformatter -i js/*js* *.js
-
+. scripts/fmt.sh
 . scripts/lint.sh
 
 echo "runnig gulp"

@@ -4,9 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-echo "running jsfmt"
-./node_modules/.bin/esformatter -i js/*js* *.js
-
+. scripts/fmt.sh
 . scripts/lint.sh
 
 #TODO: use go tool vet so that I can pass printfuncs, but needs

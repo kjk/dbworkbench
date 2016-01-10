@@ -215,9 +215,9 @@ func handleIndex(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 
 // GET /s/:path
 func handleStatic(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
-	resourcePath := "s/" + r.URL.Path[len("/s/"):]
+	path := r.URL.Path[1:] // remove initial "/" i.e. "/s/*" => "s/*"
 	//LogInfof("path='%s'\n", path)
-	serveStatic(w, r, resourcePath)
+	serveStatic(w, r, path)
 }
 
 // POST /api/connect

@@ -22,6 +22,10 @@ func getClientIP(r *http.Request) string {
 	return r.RemoteAddr
 }
 
+func getMyHost(r *http.Request) string {
+	return "http://" + r.Host
+}
+
 func acceptsGzip(r *http.Request) bool {
 	return r != nil && strings.Contains(r.Header.Get("Accept-Encoding"), "gzip")
 }
