@@ -22,7 +22,7 @@ const pagilaDemoBookmarkId = -1;
 
 // connecting is async process which might be cancelled
 // we use this to uniquely identify connection attempt so that
-// whe api.connect() finishes, we can tell if it has been cancelled
+// when api.connect() finishes, we can tell if it has been cancelled
 // Note: could be state on CoonectionWindow, but we only have one
 // of those at any given time so global is just as good
 let currConnectionId = 1;
@@ -652,4 +652,3 @@ export default class ConnectionWindow extends React.Component {
 ConnectionWindow.propTypes = {
   onDidConnect: React.PropTypes.func.isRequired
 };
-
