@@ -50,23 +50,20 @@ function on(actionIdx, cb, owner) {
   return currCid;
 }
 
-function off(actionIdx, cbIdOrOwner, count) {
-  const callbacks = actionCallbacks[actionIdx];
-  if (!callbacks || callbacks.length == 0) {
-    return count;
-  }
+function off(actionIdx, cbIdOrOwner) {
   if (actionIdx == 10) {
     console.log('off: clearFilterIdx');
   }
+  const callbacks = actionCallbacks[actionIdx] || [];
   const n = callbacks.length;
   for (let i = 0; i < n; i++) {
-    const cb = callbacks[i];
-    if (cb[1] === cbIdOrOwner || cb[2] === cbIdOrOwner) {
+    const cbInfo = callbacks[i];
+    if (cbInfo[1] === cbIdOrOwner || cbInfo[2] === cbIdOrOwner) {
       callbacks.splice(i, 1);
-      return off(actionIdx, cbIdOrOwner, count + 1);
+      return 1 + off(actionIdx, cbIdOrOwner);
     }
   }
-  return count;
+  return 0;
   //console.log(`action.off: didn't find callback '${cbIdOrOwner}' for '${actionName(actionIdx)}'`);
 }
 
