@@ -1,9 +1,6 @@
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// TODO: add propTypes
-// http://www.newmediacampaigns.com/blog/refactoring-react-components-to-es6-classes
 export default class DragBarHoriz extends React.Component {
   constructor(props, context) {
     super(props, context);
