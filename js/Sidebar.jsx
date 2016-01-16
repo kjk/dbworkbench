@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import DatabaseMenuDropdown from './DatabaseMenuDropdown.jsx';
 import TableInformation from './TableInformation.jsx';
-import filesize from 'filesize';
 import * as action from './action.js';
 import * as api from './api.js';
 import * as store from './store.js';
