@@ -266,12 +266,12 @@ func handleConnect(ctx *ReqContext, w http.ResponseWriter, r *http.Request) {
 	i := info.Format()[0]
 	currDb, ok := i["current_database"]
 	if !ok {
-		serveJSONError(w, r, "no current_database")
+		serveJSONError(w, r, "must provide database")
 		return
 	}
 	currDbStr, ok := currDb.(string)
 	if !ok {
-		serveJSONError(w, r, "invalid type")
+		serveJSONError(w, r, "must provide a database")
 		return
 	}
 	v := struct {
