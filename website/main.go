@@ -13,8 +13,6 @@ import (
 	"strings"
 	"text/template"
 	"time"
-
-	"github.com/kjk/u"
 )
 
 const (
@@ -114,11 +112,11 @@ func getDataDir() string {
 	// on the server, must be done first because ExpandTildeInPath()
 	// doesn't work when cross-compiled on mac for linux
 	dataDir = filepath.Join("..", "..", "data")
-	if u.PathExists(dataDir) {
+	if PathExists(dataDir) {
 		return dataDir
 	}
-	dataDir = u.ExpandTildeInPath("~/data/dbhero-website")
-	if u.PathExists(dataDir) {
+	dataDir = ExpandTildeInPath("~/data/dbhero-website")
+	if PathExists(dataDir) {
 		return dataDir
 	}
 	log.Fatal("data directory (../../data or ~/data/dbhero-website) doesn't exist")

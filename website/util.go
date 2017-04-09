@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -32,4 +33,19 @@ func getIPFromRequest(r *http.Request) string {
 		return parts[0]
 	}
 	return hdrReal
+}
+
+// PathExists returns true if path exists
+// treats any error (e.g. lack of access due to permissions) as non-existence
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+// ExpandTildeInPath expands ~ in path
+func ExpandTildeInPath(s string) string {
+	if strings.HasPrefix(s, "~") {
+		return UserHomeDir() + s[1:]
+	}
+	return s
 }
