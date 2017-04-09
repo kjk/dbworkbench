@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"os/user"
+	"runtime"
 	"strings"
 )
 
@@ -40,6 +42,25 @@ func getIPFromRequest(r *http.Request) string {
 func PathExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
+}
+
+// IsLinux returns true if we're running on linux
+func IsLinux() bool {
+	return runtime.GOOS == "linux"
+}
+
+// IsMac returns true if we're running on mac
+func IsMac() bool {
+	return runtime.GOOS == "darwin"
+}
+
+// UserHomeDir returns $HOME dir
+func UserHomeDir() string {
+	// user.Current() returns nil if cross-compiled e.g. on mac for linux
+	if usr, _ := user.Current(); usr != nil {
+		return usr.HomeDir
+	}
+	return os.Getenv("HOME")
 }
 
 // ExpandTildeInPath expands ~ in path

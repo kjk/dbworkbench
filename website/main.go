@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +16,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"golang.org/x/crypto/acme/autocert"
 )
 
 const (
@@ -335,12 +340,32 @@ func handleUsage(w http.ResponseWriter, r *http.Request) {
 	serveTemplate(w, r, path, v)
 }
 
-func initHandlers() {
-	http.HandleFunc("/", handleIndex)
-	http.HandleFunc("/s/", handleStatic)
-	http.HandleFunc("/admin/usage", handleUsage)
-	http.HandleFunc("/api/winupdatecheck", handleWinUpdateCheck)
-	http.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
+// https://blog.gopheracademy.com/advent-2016/exposing-go-on-the-internet/
+func makeHTTPServer() *http.Server {
+	mux := &http.ServeMux{}
+
+	mux.HandleFunc("/", handleIndex)
+	mux.HandleFunc("/s/", handleStatic)
+	mux.HandleFunc("/admin/usage", handleUsage)
+	mux.HandleFunc("/api/winupdatecheck", handleWinUpdateCheck)
+	mux.HandleFunc("/api/macupdatecheck", handleMacUpdateCheck)
+
+	srv := &http.Server{
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		// TODO: 1.8 only
+		// IdleTimeout:  120 * time.Second,
+		Handler: mux,
+	}
+	// TODO: track connections and their state
+	return srv
+}
+
+func hostPolicy(ctx context.Context, host string) error {
+	if strings.HasSuffix(host, "dbheroapp.com") {
+		return nil
+	}
+	return errors.New("acme/autocert: only *.dbheroapp.com hosts are allowed")
 }
 
 func parseCmdLine() {
@@ -354,10 +379,29 @@ func main() {
 		testUsageParse()
 		os.Exit(0)
 	}
-	initHandlers()
 	openUsageFileMust()
+
+	if IsLinux() {
+		srv := makeHTTPServer()
+		m := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: hostPolicy,
+		}
+		srv.Addr = ":443"
+		srv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
+		LogInfof("Started runing HTTPS on %s\n", srv.Addr)
+		go func() {
+			srv.ListenAndServeTLS("", "")
+		}()
+	}
+
+	srv := makeHTTPServer()
+	if IsLinux() {
+		httpAddr = ":80"
+	}
+	srv.Addr = httpAddr
 	LogInfof("starting website on %s\n", httpAddr)
-	if err := http.ListenAndServe(httpAddr, nil); err != nil {
-		LogErrorf("http.ListendAndServe() failed with '%s'\n", err)
+	if err := srv.ListenAndServe(); err != nil {
+		fmt.Printf("http.ListendAndServer() failed with %s\n", err)
 	}
 }
