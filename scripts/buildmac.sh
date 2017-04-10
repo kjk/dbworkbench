@@ -1,12 +1,9 @@
 #!/bin/bash
+set -u -e -o pipefail
 
 # flags:
 #   -upload : upload to s3
 #   -beta   : build beta version (different location in s3)
-
-set -o nounset
-set -o errexit
-set -o pipefail
 
 . scripts/buildmachelper.sh
 
