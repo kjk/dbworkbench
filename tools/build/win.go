@@ -178,12 +178,12 @@ func uploadToS3Win() {
 	cdToWinDir()
 	s3Path = s3SetupPathWin()
 	s3VerifyNotExistsMust(s3Path)
-	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3UploadFileMust(s3Path, exeSetupPath(), true)
 
 	cdToWinCefDir()
 	s3Path = s3SetupPathWinCef()
 	s3VerifyNotExistsMust(s3Path)
-	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3UploadFileMust(s3Path, exeSetupPath(), true)
 
 	// for now we use non-cef version
 	s3Path = s3SetupPathWin()
@@ -209,12 +209,12 @@ func uploadToS3WinBeta() {
 	cdToWinDir()
 	s3Path = s3SetupPathWinBeta()
 	s3VerifyNotExistsMust(s3Path)
-	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3UploadFileMust(s3Path, exeSetupPath(), true)
 
 	cdToWinCefDir()
 	s3Path = s3SetupPathWinCefBeta()
 	s3VerifyNotExistsMust(s3Path)
-	s3UploadFile(s3Path, exeSetupPath(), true)
+	s3UploadFileMust(s3Path, exeSetupPath(), true)
 
 	s3Path = s3SetupPathWinBeta()
 

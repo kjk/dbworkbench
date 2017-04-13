@@ -93,13 +93,11 @@ func s3UploadFileReader(pathRemote, pathLocal string, public bool) error {
 	return err
 }
 
-func s3UploadFile(pathRemote, pathLocal string, public bool) error {
+func s3UploadFileMust(pathRemote, pathLocal string, public bool) {
 	fmt.Printf("Uploading '%s' as '%s'\n", pathLocal, pathRemote)
 	bucket := s3GetBucket()
 	d, err := ioutil.ReadFile(pathLocal)
-	if err != nil {
-		return err
-	}
+	fataliferr(err)
 	perm := s3.Private
 	if public {
 		perm = s3.PublicRead
@@ -107,7 +105,8 @@ func s3UploadFile(pathRemote, pathLocal string, public bool) error {
 	mimeType := mime.TypeByExtension(filepath.Ext(pathLocal))
 	opts := s3.Options{}
 	opts.ContentMD5 = md5B64OfBytes(d)
-	return bucket.Put(pathRemote, d, mimeType, perm, opts)
+	err = bucket.Put(pathRemote, d, mimeType, perm, opts)
+	fataliferr(err)
 }
 
 func s3UploadString(pathRemote string, s string, public bool) error {

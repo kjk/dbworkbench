@@ -79,22 +79,18 @@ func printStack() {
 }
 
 func fatalf(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
-	printStack()
 	finalizeThings(true)
-	os.Exit(1)
+	s := fmt.Sprintf(format, args...)
+	panic(s)
 }
 
 func fatalif(cond bool, format string, args ...interface{}) {
-	if cond {
-		if inFatal {
-			os.Exit(1)
-		}
+	if cond && !inFatal {
+		// prevent infinite recursion from finalizeThings()
 		inFatal = true
-		fmt.Printf(format, args...)
-		printStack()
 		finalizeThings(true)
-		os.Exit(1)
+		s := fmt.Sprintf(format, args...)
+		panic(s)
 	}
 }
 

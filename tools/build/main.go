@@ -229,7 +229,7 @@ func uploadToS3Mac() {
 	s3Path := s3SetupPathMac()
 	s3VerifyNotExistsMust(s3Path)
 
-	s3UploadFile(s3Path, macZipPath(), true)
+	s3UploadFileMust(s3Path, macZipPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerMac = "%s";
@@ -251,7 +251,7 @@ func uploadToS3MacBeta() {
 	s3Path := s3SetupPathMacBeta()
 	s3VerifyNotExistsMust(s3Path)
 
-	s3UploadFile(s3Path, macZipPath(), true)
+	s3UploadFileMust(s3Path, macZipPath(), true)
 	s3Url := "https://kjkpub.s3.amazonaws.com/" + s3Path
 	buildOn := time.Now().Format("2006-01-02")
 	jsTxt := fmt.Sprintf(`var LatestVerMac = "%s";
