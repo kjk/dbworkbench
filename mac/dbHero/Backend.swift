@@ -1,25 +1,51 @@
 import Cocoa
 import AppKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
 
-var backendTask = NSTask()
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
+
+var backendTask = Process()
 var waitsForMoreServerOutput = true
 
 // kill other instances of mac app. this is needed for the case when a user
 // downloads an update and runs it without quitting the previous version
 func killOtherAppInstances() {
-    let wsk = NSWorkspace.sharedWorkspace()
+    let wsk = NSWorkspace.shared()
     let processes = wsk.runningApplications
-    guard let myPath = NSRunningApplication.currentApplication().executableURL?.path else {
+    guard let myPath = NSRunningApplication.current().executableURL?.path else {
         return
     }
     for proc in processes {
         guard let appUrl = proc.executableURL else {
             continue
         }
-        guard let path = appUrl.path else {
+        /*guard let path = appUrl.path else {
             continue
-        }
-        guard path.containsString("dbHero.app") else {
+        }*/
+        let path = appUrl.path
+
+        guard path.contains("dbHero.app") else {
             continue
         }
         //log("path: \(path)")
@@ -34,7 +60,7 @@ func killOtherAppInstances() {
         // TODO: proc.terminated seems to be false even if process is gone
         var i = 3
         while i > 0 {
-            if proc.terminated {
+            if proc.isTerminated {
                 return
             }
             sleep(1)
@@ -50,7 +76,7 @@ func killOtherAppInstances() {
 func killBackendIfRunning() {
     let procs = listProcesses()
     for p in procs {
-        if p.pathAndArgs.containsString("/dbherohelper.exe") {
+        if p.pathAndArgs.contains("/dbherohelper.exe") {
             log("killing process \(p.pid) '\(p.pathAndArgs)'")
             kill(pid_t(p.pid), SIGKILL) // SIGINT ?
         }
@@ -58,19 +84,19 @@ func killBackendIfRunning() {
 }
 
 func getDataDir() -> String {
-    return NSString.pathWithComponents([NSHomeDirectory(), "Library", "Application Support", "dbHero"])
+    return NSString.path(withComponents: [NSHomeDirectory(), "Library", "Application Support", "dbHero"])
 }
 
 var backendUsage = ""
 
 // must be executed before starting backend in order to read usage.json
 func loadUsageData() {
-    let path = NSString.pathWithComponents([getDataDir(), "usage.json"])
+    let path = NSString.path(withComponents: [getDataDir(), "usage.json"])
     do {
-        let s = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
+        let s = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
         backendUsage = s as String;
         // delete so that we don't send duplicate data
-        try NSFileManager.defaultManager().removeItemAtPath(path)
+        try FileManager.default.removeItem(atPath: path)
     }
     catch let error as NSError {
         log("loadUsageData: error: \(error)")
@@ -78,8 +104,8 @@ func loadUsageData() {
 }
 
 // Maybe: instead of passing appDelegate, use notifcations or getDelegate()
-func startBackend(appDelegate : AppDelegate) {
-    let resPath = NSBundle.mainBundle().resourcePath
+func startBackend(_ appDelegate : AppDelegate) {
+    let resPath = Bundle.main.resourcePath
     let backendGoExePath = resPath! + "/dbherohelper.exe"
 
     killOtherAppInstances()
@@ -93,7 +119,7 @@ func startBackend(appDelegate : AppDelegate) {
     // So we guard against the most common reason for this error with up-front check
     // I also tried running on background thread, but that would crash the whole app
     // due to uncought exception
-    let exists = NSFileManager.defaultManager().fileExistsAtPath(backendGoExePath)
+    let exists = FileManager.default.fileExists(atPath: backendGoExePath)
     if !exists {
         appDelegate.showBackendFailedError()
         return
@@ -102,7 +128,7 @@ func startBackend(appDelegate : AppDelegate) {
     backendTask.terminationHandler = { task -> Void in
         log("backendTask terminated");
         // this runs on non-main thread so marshal on main thread
-        dispatch_async(dispatch_get_main_queue(),{
+        DispatchQueue.main.async(execute: {
             appDelegate.showBackendFailedError()
         })
     }
@@ -111,32 +137,32 @@ func startBackend(appDelegate : AppDelegate) {
     backendTask.currentDirectoryPath = resPath!
     //        serverTask.arguments = ["-dev"]
 
-    let pipe = NSPipe()
+    let pipe = Pipe()
     backendTask.standardOutput = pipe
     backendTask.standardError = pipe
 
     let outHandle = pipe.fileHandleForReading
     outHandle.waitForDataInBackgroundAndNotify()
 
-    let _ = NSNotificationCenter.defaultCenter().addObserverForName(NSFileHandleDataAvailableNotification, object: outHandle, queue: nil, usingBlock: { notification -> Void in
+    let _ = NotificationCenter.default.addObserver(forName: NSNotification.Name.NSFileHandleDataAvailable, object: outHandle, queue: nil, using: { notification -> Void in
 
         if !waitsForMoreServerOutput {
             return
         }
 
         let output = outHandle.availableData
-        let outStr = NSString(data: output, encoding: NSUTF8StringEncoding)
+        let outStr = NSString(data: output, encoding: String.Encoding.utf8.rawValue)
         // wait until backend prints "Started running on..."
         if outStr?.length > 0 {
             let s = outStr! as String
-            if (s.containsString("failed with")) {
+            if (s.contains("failed with")) {
                 // TODO: notify about the error in the UI
                 // this could be "http.ListendAndServer() failed with listen tcp 127.0.0.1:5444: bind: address already in use"
                 log("startBackend: failed because output is: \(s)")
                 waitsForMoreServerOutput = false
                 return
             }
-            if (s.containsString("Started running on")) {
+            if (s.contains("Started running on")) {
                 log("startBackend: backend started, loading url")
                 waitsForMoreServerOutput = false
                 appDelegate.loadURL()
@@ -151,7 +177,7 @@ func startBackend(appDelegate : AppDelegate) {
 
 func stopBackend() {
     log("stopping backend")
-    if backendTask.running {
+    if backendTask.isRunning {
         backendTask.terminationHandler = nil
         backendTask.terminate()
     }

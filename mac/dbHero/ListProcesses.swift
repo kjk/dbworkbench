@@ -7,8 +7,8 @@ struct ProcInfo {
 
 // parses output of ps -ax line, which is in the format:
 // "  454 ttys000    0:00.05 -bash"
-func parsePsLine(s : String) -> ProcInfo? {
-    var parts = s.characters.split(" ", maxSplit: 3, allowEmptySlices: false).map(String.init)
+func parsePsLine(_ s : String) -> ProcInfo? {
+    var parts = s.characters.split(separator: " ", maxSplits: 3, omittingEmptySubsequences: true).map(String.init)
     if parts.count != 4 {
         log("parsePsLine: failed to parse: '\(s)'")
         return nil
@@ -23,24 +23,24 @@ func parsePsLine(s : String) -> ProcInfo? {
 }
 
 func listProcesses() -> [ProcInfo] {
-    let task = NSTask()
+    let task = Process()
     task.launchPath = "/bin/ps"
     task.arguments = ["-ax"]
     
-    let pipe = NSPipe()
+    let pipe = Pipe()
     task.standardOutput = pipe
     task.launch()
     
     var res = [ProcInfo]()
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    guard let output = NSString(data: data, encoding: NSUTF8StringEncoding) as? String else {
+    guard let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String else {
         log("listProcesses: failed to parse the output")
         return res
     }
-    var lines = output.characters.split("\n", allowEmptySlices: false).map(String.init)
+    var lines = output.characters.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
     // first line is the header
     if lines.count > 0 {
-        lines.removeAtIndex(0)
+        lines.remove(at: 0)
     }
     for l in lines {
         if let pi = parsePsLine(l) {

@@ -1,7 +1,7 @@
 import Foundation
 
 
-extension NSBundle {
+extension Bundle {
     
     var shortVersion: String {
         if let ver = self.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -19,12 +19,12 @@ extension NSBundle {
     
 }
 
-func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
+func parseAutoUpdateCheck(_ s : String) -> (ver: String?, url: String?) {
     var ver : String?
     var url : String?
-    let parts = s.componentsSeparatedByString("\n")
+    let parts = s.components(separatedBy: "\n")
     for p in parts {
-        let parts = p.componentsSeparatedByString(": ")
+        let parts = p.components(separatedBy: ": ")
         if parts.count != 2 {
             continue
         }
@@ -39,7 +39,7 @@ func parseAutoUpdateCheck(s : String) -> (ver: String?, url: String?) {
     return (ver, url)
 }
 
-func versionArrayElToInt(a : [String], pos : Int) -> Int {
+func versionArrayElToInt(_ a : [String], pos : Int) -> Int {
     if pos >= a.count {
         return 0
     }
@@ -54,14 +54,14 @@ func versionArrayElToInt(a : [String], pos : Int) -> Int {
 
 // return true if ver1 > ver2
 // version is in the format "0.1.3", "1.2" etc.
-func programVersionGreater(ver1 : String, ver2 : String) -> Bool {
-    let parts1 = ver1.componentsSeparatedByString(".")
-    let parts2 = ver2.componentsSeparatedByString(".")
+func programVersionGreater(_ ver1 : String, ver2 : String) -> Bool {
+    let parts1 = ver1.components(separatedBy: ".")
+    let parts2 = ver2.components(separatedBy: ".")
     var n = parts1.count
     if parts2.count > n {
         n = parts2.count
     }
-    for (var i = 0; i < n; i++) {
+    for i in 0 ..< n {
         let n1 = versionArrayElToInt(parts1, pos: i)
         let n2 = versionArrayElToInt(parts2, pos: i)
         if n1 > n2 {
@@ -81,12 +81,12 @@ func getMacSerialNumber() -> String {
     if platformExpert == 0 {
         return ""
     }
-    let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey, kCFAllocatorDefault, 0);
+    let serialNumberAsCFString = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformSerialNumberKey as CFString, kCFAllocatorDefault, 0);
     IOObjectRelease(platformExpert);
     // Take the unretained value of the unmanaged-any-object
     // (so we're not responsible for releasing it)
     // and pass it back as a String or, if it fails, an empty string
-    return (serialNumberAsCFString.takeUnretainedValue() as? String) ?? ""
+    return (serialNumberAsCFString!.takeUnretainedValue() as? String) ?? ""
 }
 
 // http://stackoverflow.com/questions/31835418/how-to-get-mac-address-from-osx-with-swift
@@ -114,7 +114,7 @@ func findEthernetInterfaces() -> io_iterator_t? {
 // Given an iterator across a set of Ethernet interfaces, return the MAC address of the last one.
 // If no interfaces are found the MAC address is set to an empty string.
 // Here the iterator should contain just the primary interface.
-func getMACAddress(intfIterator : io_iterator_t) -> [UInt8]? {
+func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
     
     var macAddress : [UInt8]?
     
@@ -124,11 +124,11 @@ func getMACAddress(intfIterator : io_iterator_t) -> [UInt8]? {
         var controllerService : io_object_t = 0
         if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
             
-            let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress", kCFAllocatorDefault, 0)
+            let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
             if dataUM != nil {
-                let data = dataUM.takeRetainedValue() as! NSData
+                let data = dataUM?.takeRetainedValue() as! Data
                 macAddress = [0, 0, 0, 0, 0, 0]
-                data.getBytes(&macAddress!, length: macAddress!.count)
+                (data as NSData).getBytes(&macAddress!, length: macAddress!.count)
             }
             IOObjectRelease(controllerService)
         }
@@ -151,7 +151,7 @@ func getMACAddressString() -> String {
     var res = ""
     if let macAddress = getMACAddress(intfIterator) {
         let converted = macAddress.map( { String(format:"%02x", $0) } )
-        res = converted.joinWithSeparator(":")
+        res = converted.joined(separator: ":")
     }
     
     IOObjectRelease(intfIterator)
@@ -212,10 +212,10 @@ return "unknown: \(ver)"
 */
 
 func getOsVersion() -> String {
-    let os = NSProcessInfo().operatingSystemVersion
+    let os = ProcessInfo().operatingSystemVersion
     return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
 }
 
 func getHostName() -> String {
-    return NSProcessInfo.processInfo().hostName
+    return ProcessInfo.processInfo.hostName
 }

@@ -9,7 +9,7 @@ let zoomLevels : [Double] = [
 ]
 
 // returns an index at which zoomLevel[i] has the smallest difference from z
-func findClosestZoomLevelIdx(z : Double) -> Int {
+func findClosestZoomLevelIdx(_ z : Double) -> Int {
     let min = zoomLevels[0]
     if z <= min {
         return 0
@@ -30,7 +30,7 @@ func findClosestZoomLevelIdx(z : Double) -> Int {
     return n-1
 }
 
-func findNextZoomLevel(z : Double) -> Double {
+func findNextZoomLevel(_ z : Double) -> Double {
     var idx = findClosestZoomLevelIdx(z) + 1
     if idx >= zoomLevels.count {
         idx = zoomLevels.count - 1
@@ -38,7 +38,7 @@ func findNextZoomLevel(z : Double) -> Double {
     return zoomLevels[idx]
 }
 
-func findPrevZoomLevel(z : Double) -> Double {
+func findPrevZoomLevel(_ z : Double) -> Double {
     var idx = findClosestZoomLevelIdx(z) - 1
     if idx < 0 {
         idx = 0
@@ -54,13 +54,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let backendURL = "http://localhost:5444"
 
     func autoUpdateCheck() {
-        let myVer = NSBundle.mainBundle().shortVersion
-        let url = NSURL(string: "https://dbheroapp.com/api/macupdatecheck?ver=" + myVer)!;
+        let myVer = Bundle.main.shortVersion
+        let url = URL(string: "https://dbheroapp.com/api/macupdatecheck?ver=" + myVer)!;
         //let url = NSURL(string: "http://localhost:5555/api/macupdatecheck?ver=" + ver); // for testing
         log("url: \(url)")
-        let req = NSMutableURLRequest(URL: url)
-        let session = NSURLSession.sharedSession()
-        req.HTTPMethod = "POST"
+        let req = NSMutableURLRequest(url: url)
+        let session = URLSession.shared
+        req.httpMethod = "POST"
         // should roughly match BuildAutoUpdatePostData() in Form1.cs for win
         var s = "ver: \(myVer)\n"
         s += "ostype: mac\n"
@@ -76,14 +76,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if backendUsage != "" {
             s += backendUsage
         }
-        req.HTTPBody = s.dataUsingEncoding((NSUTF8StringEncoding))
-        let task = session.dataTaskWithRequest(req, completionHandler: {data, response, error -> Void in
+        req.httpBody = s.data(using: (String.Encoding.utf8))
+        let req2 = req as URLRequest;
+        let task = session.dataTask(with: req2, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
             if error != nil {
                 log("autoUpdateCheck(): url download failed with error: \(error)")
                 return
             }
-            guard let httpRsp = response as? NSHTTPURLResponse else {
+            guard let httpRsp = response as? HTTPURLResponse else {
                 log("autoUpdateCheck(): '\(response)' is not NSHTTPURLResponse")
                 return
             }
@@ -91,10 +92,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 log("autoUpdateCheck(): response returned status code \(httpRsp.statusCode) which is not 200")
                 return
             }
-            let dataStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+            let dataStr = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
             let urlVer = parseAutoUpdateCheck(dataStr as! String)
             if programVersionGreater(urlVer.ver!, ver2: myVer) {
-                dispatch_async(dispatch_get_main_queue(),{
+                DispatchQueue.main.async(execute: {
                     self.notifyAboutUpdate(urlVer.ver!)
                 })
             }
@@ -102,13 +103,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         task.resume()
     }
     
-    func notifyAboutUpdate(ver : String) {
+    func notifyAboutUpdate(_ ver : String) {
         let alert = NSAlert()
         alert.messageText = "Update available"
         alert.informativeText = "A new version \(ver) is available. Do you want to update?"
-        alert.addButtonWithTitle("Update")
-        alert.addButtonWithTitle("No")
-        alert.beginSheetModalForWindow(self.window!, completionHandler: {res -> Void in
+        alert.addButton(withTitle: "Update")
+        alert.addButton(withTitle: "No")
+        alert.beginSheetModal(for: self.window!, completionHandler: {res -> Void in
             if res == NSAlertFirstButtonReturn {
                 // TODO: a more specific page with just a download button to
                 // download new version and instructions on how to update
@@ -121,49 +122,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let alert = NSAlert()
         alert.messageText = "Backend failed"
         alert.informativeText = "Failed to start"
-        alert.addButtonWithTitle("Exit the app")
+        alert.addButton(withTitle: "Exit the app")
         // TODO: maybe a way to contact support
-        alert.beginSheetModalForWindow(self.window!, completionHandler: {res -> Void in
+        alert.beginSheetModal(for: self.window!, completionHandler: {res -> Void in
             log("shutting down the app")
             NSApp.terminate(nil)
         })
     }
 
-    func urlReq(url: String) -> NSURLRequest {
-        let u = NSURL(string: url)
-        return NSURLRequest(URL: u!)
+    func urlReq(_ url: String) -> URLRequest {
+        let u = URL(string: url)
+        return URLRequest(url: u!)
     }
 
     
-    func viewMidPoint(view : NSView) -> CGPoint {
+    func viewMidPoint(_ view : NSView) -> CGPoint {
         let b = view.bounds
         return CGPoint(x: b.width / 2, y: b.height / 2)
     }
 
-    @IBAction func zoomIn(sender: AnyObject) {
+    @IBAction func zoomIn(_ sender: AnyObject) {
         let currZoom = Double(webView.magnification)
         let newZoom = findNextZoomLevel(currZoom)
-        webView.setMagnification(CGFloat(newZoom), centeredAtPoint: viewMidPoint(webView))
+        webView.setMagnification(CGFloat(newZoom), centeredAt: viewMidPoint(webView))
         //log("zoomIn: from \(currZoom) to \(newZoom)")
     }
 
-    @IBAction func zoomOut(sender: AnyObject) {
+    @IBAction func zoomOut(_ sender: AnyObject) {
         let currZoom = Double(webView.magnification)
         let newZoom = findPrevZoomLevel(currZoom)
-        webView.setMagnification(CGFloat(newZoom), centeredAtPoint: viewMidPoint(webView))
+        webView.setMagnification(CGFloat(newZoom), centeredAt: viewMidPoint(webView))
         //log("zoomIn: from \(currZoom) to \(newZoom)")
     }
 
-    @IBAction func actualSize(sender: AnyObject) {
-        webView.setMagnification(1.0, centeredAtPoint: viewMidPoint(webView))
+    @IBAction func actualSize(_ sender: AnyObject) {
+        webView.setMagnification(1.0, centeredAt: viewMidPoint(webView))
     }
 
     func loadURL() {
         log("loadURL")
-        webView.loadRequest(urlReq(backendURL))
+        webView.load(urlReq(backendURL))
     }
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         log("applicationDidFinishLaunching")
         webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 400, height: 400))
         webView.allowsMagnification = true
@@ -174,18 +175,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let v = window.contentView!
 
         let cWidth = NSLayoutConstraint(item: webView,
-            attribute: NSLayoutAttribute.Width,
-            relatedBy: .Equal,
+            attribute: NSLayoutAttribute.width,
+            relatedBy: .equal,
             toItem: v,
-            attribute: .Width,
+            attribute: .width,
             multiplier: 1,
             constant: 0)
 
         let cHeight = NSLayoutConstraint(item: webView,
-            attribute: NSLayoutAttribute.Height,
-            relatedBy: .Equal,
+            attribute: NSLayoutAttribute.height,
+            relatedBy: .equal,
             toItem: v,
-            attribute: .Height,
+            attribute: .height,
             multiplier: 1,
             constant: 0)
 
@@ -211,29 +212,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         autoUpdateCheck()
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(_ aNotification: Notification) {
         stopBackend()
         closeLogFile()
     }
 
     func goToWebsite() {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com")!)
+        NSWorkspace.shared().open(URL(string: "https://dbheroapp.com")!)
     }
     
-    @IBAction func goToWebsite(sender: NSMenuItem) {
+    @IBAction func goToWebsite(_ sender: NSMenuItem) {
         goToWebsite()
     }
     
-    @IBAction func goToSupport(sender: NSMenuItem) {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/support")!)
+    @IBAction func goToSupport(_ sender: NSMenuItem) {
+        NSWorkspace.shared().open(URL(string: "https://dbheroapp.com/support")!)
     }
     
-    @IBAction func goToFeedback(sender: NSMenuItem) {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "https://dbheroapp.com/feedback")!)
+    @IBAction func goToFeedback(_ sender: NSMenuItem) {
+        NSWorkspace.shared().open(URL(string: "https://dbheroapp.com/feedback")!)
     }
 }
 

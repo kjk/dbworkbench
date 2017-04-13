@@ -2,7 +2,7 @@ import Foundation
 
 var shouldOpenLog = true
 var logLock = NSLock()
-var logFile : NSOutputStream?
+var logFile : OutputStream?
 
 func openLogFileIfNeeded() {
     if logFile != nil {
@@ -12,14 +12,14 @@ func openLogFileIfNeeded() {
         return
     }
 
-    let dir =  NSString.pathWithComponents([getDataDir(), "log"])
+    let dir =  NSString.path(withComponents: [getDataDir(), "log"])
 
-    let dateFmt = NSDateFormatter()
+    let dateFmt = DateFormatter()
     dateFmt.dateFormat = "'log-'yy-MM-dd'-mac.txt"
-    let logName = dateFmt.stringFromDate(NSDate())
-    if (!NSFileManager.defaultManager().fileExistsAtPath(dir)) {
+    let logName = dateFmt.string(from: Date())
+    if (!FileManager.default.fileExists(atPath: dir)) {
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
         } catch _ {
             // failed
             shouldOpenLog = false
@@ -28,8 +28,8 @@ func openLogFileIfNeeded() {
 
     }
 
-    let logPath = NSString.pathWithComponents([dir, logName])
-    logFile = NSOutputStream(toFileAtPath: logPath, append: true)
+    let logPath = NSString.path(withComponents: [dir, logName])
+    logFile = OutputStream(toFileAtPath: logPath, append: true)
     logFile?.open()
 }
 
@@ -40,7 +40,7 @@ func closeLogFile() {
     logLock.unlock()
 }
 
-func log(s : String) {
+func log(_ s : String) {
     logLock.lock()
     openLogFileIfNeeded()
     print(s)
