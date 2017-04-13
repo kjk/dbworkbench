@@ -9,7 +9,7 @@ import DragBarVert from './DragBarVert.jsx';
 import * as api from './api.js';
 import * as action from './action.js';
 import * as store from './store.js';
-import view from './view.js';
+import * as view from './view.js';
 import AlertContainer from './alert/ReactAlert.jsx';
 
 let g_alert = null;
@@ -421,8 +421,7 @@ class App extends React.Component {
     });
   }
 
-  adHocTest() {
-  }
+  adHocTest() {}
 
   handleDisconnectDatabase() {
     api.disconnect(this.state.connectionId, (data) => {

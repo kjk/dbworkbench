@@ -21,21 +21,21 @@ export default class Actions extends React.Component {
 
   render() {
     return (
-      <div className="actions">
-        <input type="button"
+      <div className='actions'>
+        <input type='button'
           onClick={ this.handleRun }
-          id="run"
-          value="Run Query"
-          className="btn btn-sm btn-primary" />
+          id='run'
+          value='Run Query'
+          className='btn btn-sm btn-primary' />
         { this.props.supportsExplain ?
-          <input type="button"
+          <input type='button'
             onClick={ this.handleExplain }
-            id="explain"
-            value="Explain Query"
+            id='explain'
+            value='Explain Query'
             className='btn btn-sm btn-default' />
           : null }
-        <SpinnerCircle style={ {  display: 'inline-block',  top: '4px'} } />
-        <Filterer placeholder="Filter Results" defaultValue="" />
+        <SpinnerCircle style={ { display: 'inline-block', top: '4px' } } />
+        <Filterer placeholder='Filter Results' defaultValue='' />
       </div>
       );
   }

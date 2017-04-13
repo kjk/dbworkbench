@@ -152,9 +152,9 @@ export default class Input extends React.Component {
     const showActions = (nEdited == 0);
 
     return (
-      <div id="input" style={ style }>
-        <div className="wrapper">
-          <div id="custom-query" ref={ this.setEditorNode } style={ editorStyle } />
+      <div id='input' style={ style }>
+        <div className='wrapper'>
+          <div id='custom-query' ref={ this.setEditorNode } style={ editorStyle } />
           { showActions ?
             <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.handleRun } onExplain={ this.handleExplain } />
             : null }

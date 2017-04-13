@@ -103,24 +103,24 @@ export default class QueryEditBar extends React.Component {
     };
 
     return (
-      <div id="query_edit_bar">
+      <div id='query_edit_bar'>
         <button ref={ this.rememberNode }
-          className="save_changes"
-          id="id-save"
+          className='save_changes'
+          id='id-save'
           onClick={ this.handleSaveChanges }
           style={ style }>
           Save Changes
         </button>
         <button ref={ this.rememberNode }
-          id="id-discard"
-          className="discard_changes"
+          id='id-discard'
+          className='discard_changes'
           onClick={ this.props.onHandleDiscardChanges }
           style={ style }>
           Discard Changes
         </button>
         <div ref={ this.rememberNode }
-          className="row_number"
-          id="id-row-number"
+          className='row_number'
+          id='id-row-number'
           style={ style }>
           { this.props.numberOfRowsEdited } edited rows
         </div>
@@ -132,8 +132,8 @@ export default class QueryEditBar extends React.Component {
           targetElement={ "sql_preview" }
           tipSize={ 10 }>
           <div ref={ this.rememberNode }
-            className="sql_preview"
-            id="id-sql-preview"
+            className='sql_preview'
+            id='id-sql-preview'
             onClick={ this.handleToggleSQLPreview }
             style={ style }>
             { !this.state.isOpen ? 'Show SQL Preview' :

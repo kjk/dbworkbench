@@ -5,7 +5,7 @@ import { Thead } from './reactable/thead.jsx';
 import { Tr } from './reactable/tr.jsx';
 import { Td } from './reactable/td.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
-import view from './view.js';
+import * as view from './view.js';
 import * as action from './action.js';
 import * as store from './store.js';
 
@@ -259,8 +259,8 @@ RETURNING ${columns};
 
     if (this.props.isSidebar) {
       return (
-        <Table id="sidebar-modal-results"
-          className="sidebar-modal-results"
+        <Table id='sidebar-modal-results'
+          className='sidebar-modal-results'
           onClick={ this.handleCellClick }
           sortable>
           { header }
@@ -270,8 +270,8 @@ RETURNING ${columns};
     }
 
     return (
-      <Table id="results"
-        className="results"
+      <Table id='results'
+        className='results'
         onClick={ this.handleCellClick }
         style={ tableStyle }
         sortable
@@ -308,7 +308,7 @@ RETURNING ${columns};
       return res;
     }
     if (this.props.isSidebar) {
-      return (<div id="sidebar-result-wrapper">
+      return (<div id='sidebar-result-wrapper'>
                 { res }
               </div>);
     }
@@ -316,8 +316,8 @@ RETURNING ${columns};
       top: this.topPos()
     };
 
-    return (<div id="output" className="empty" style={ style }>
-              <div id="wrapper">
+    return (<div id='output' className='empty' style={ style }>
+              <div id='wrapper'>
                 { res }
               </div>
             </div>
@@ -337,7 +337,7 @@ RETURNING ${columns};
 
     if (this.props.isSidebar) {
       return (
-        <div id="sidebar-result-wrapper">
+        <div id='sidebar-result-wrapper'>
           { children }
         </div>
         );
@@ -353,8 +353,8 @@ RETURNING ${columns};
     };
 
     return (
-      <div id="output" style={ style }>
-        <div id="wrapper">
+      <div id='output' style={ style }>
+        <div id='wrapper'>
           { children }
           { showQueryBar ?
             <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery } onHandleDiscardChanges={ this.handleDiscardChanges } />

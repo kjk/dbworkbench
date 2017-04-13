@@ -91,7 +91,7 @@ export function offFullKey(fullKey, cbIdOrOwner) {
       return;
     }
   }
-  //console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
+//console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
 }
 
 export function offMap(key, subkey, cbIdOrOwner) {
@@ -196,7 +196,7 @@ export function spinnerShow() {
     // we transitioned from 'not visible' to 'visible' state
     broadcast(spinnerKey, true);
   }
-  //console.log(`spinnerShow: ${newVal}`);
+//console.log(`spinnerShow: ${newVal}`);
 }
 
 export function spinnerHide() {
@@ -209,7 +209,7 @@ export function spinnerHide() {
   if (newVal < 0) {
     throw new Error(`negative spinnerState (${newVal}))`);
   }
-  //console.log(`spinnerHide: ${newVal}`);
+//console.log(`spinnerHide: ${newVal}`);
 }
 
 export function onSpinner(cb, owner) {

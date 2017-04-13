@@ -88,26 +88,26 @@ export default class DatabaseMenuDropdown extends React.Component {
     Modal.setAppElement(appElement);
 
     return (
-      <div id="deneme" className='dropdown-window'>
-        <div className="list-group">
-          <a href="#" className="list-group-item" onClick={ this.props.onRefreshTables }>Refresh Tables</a>
-          <a href="#" className="list-group-item" onClick={ this.handleConnection }>Connection Info</a>
-          <a href="#" className="list-group-item" onClick={ this.handleActivity }>Activity</a>
-          <a href="#" className="list-group-item" onClick={ this.handleDisconnect }>Disconnect</a>
+      <div id='deneme' className='dropdown-window'>
+        <div className='list-group'>
+          <a href='#' className='list-group-item' onClick={ this.props.onRefreshTables }>Refresh Tables</a>
+          <a href='#' className='list-group-item' onClick={ this.handleConnection }>Connection Info</a>
+          <a href='#' className='list-group-item' onClick={ this.handleActivity }>Activity</a>
+          <a href='#' className='list-group-item' onClick={ this.handleDisconnect }>Disconnect</a>
         </div>
         <Modal id='nav'
           isOpen={ this.state.modalIsOpen }
           onRequestClose={ this.handleClose }
           style={ modalStyle }>
           <div>
-            <div className="modal-header">
-              <button type="button" className="close" onClick={ this.handleModalCloseRequest }>
-                <span aria-hidden="true">&times;</span>
-                <span className="sr-only">Close</span>
+            <div className='modal-header'>
+              <button type='button' className='close' onClick={ this.handleModalCloseRequest }>
+                <span aria-hidden='true'>×</span>
+                <span className='sr-only'>Close</span>
               </button>
-              <h4 className="modal-title">{ this.state.selectedView }</h4>
+              <h4 className='modal-title'>{ this.state.selectedView }</h4>
             </div>
-            <div className="modal-body">
+            <div className='modal-body'>
               <Output style={ modalOutputStyles } results={ this.state.results } isSidebar />
             </div>
           </div>

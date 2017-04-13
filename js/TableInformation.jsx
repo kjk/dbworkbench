@@ -29,16 +29,16 @@ export default class TableInformation extends React.Component {
     return (
       <ul style={ style }>
         <li>
-          <span className="table-info-light">Size:</span><span>{ totalSizePretty }</span>
+          <span className='table-info-light'>Size:</span><span>{ totalSizePretty }</span>
         </li>
         <li>
-          <span className="table-info-light">Data size:</span><span>{ dataSizePretty }</span>
+          <span className='table-info-light'>Data size:</span><span>{ dataSizePretty }</span>
         </li>
         <li>
-          <span className="table-info-light">Index size:</span><span>{ indexSizePretty }</span>
+          <span className='table-info-light'>Index size:</span><span>{ indexSizePretty }</span>
         </li>
         <li>
-          <span className="table-info-light">Estimated rows:</span><span>{ rowCount }</span>
+          <span className='table-info-light'>Estimated rows:</span><span>{ rowCount }</span>
         </li>
       </ul>
       );
@@ -47,11 +47,11 @@ export default class TableInformation extends React.Component {
   render() {
     const tableInfo = this.renderTableInfo(this.props.tableInfo);
     return (
-      <div className="table-information">
-        <div className="wrap">
-          <div className="title">
-            <i className="fa fa-info"/>
-            <span className="current-table-information">Table Information</span>
+      <div className='table-information'>
+        <div className='wrap'>
+          <div className='title'>
+            <i className='fa fa-info' />
+            <span className='current-table-information'>Table Information</span>
           </div>
           { tableInfo }
         </div>

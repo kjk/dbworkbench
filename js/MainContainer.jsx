@@ -4,7 +4,7 @@ import DbNav from './DbNav.jsx';
 import DragBarHoriz from './DragBarHoriz.jsx';
 import Input from './Input.jsx';
 import Output from './Output2.jsx';
-import view from './view.js';
+import * as view from './view.js';
 import * as store from './store.js';
 
 export default class MainContainer extends React.Component {
@@ -38,7 +38,7 @@ export default class MainContainer extends React.Component {
     };
 
     return (
-      <div id="body" style={ style }>
+      <div id='body' style={ style }>
         <DbNav view={ this.props.selectedView } />
         { withInput ?
           <Input supportsExplain={ this.props.supportsExplain } editedCells={ this.props.editedCells } />

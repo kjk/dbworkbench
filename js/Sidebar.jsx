@@ -83,15 +83,15 @@ export default class Sidebar extends React.Component {
     }
 
     return (
-      <div id="sidebar" style={ style }>
-        <div className="tables-list">
-          <div className="wrap">
-            <div className="title">
-              <i className="fa fa-database"/>
-              <span className="current-database" id="current">{ this.props.databaseName }</span>
+      <div id='sidebar' style={ style }>
+        <div className='tables-list'>
+          <div className='wrap'>
+            <div className='title'>
+              <i className='fa fa-database' />
+              <span className='current-database' id='current'>{ this.props.databaseName }</span>
               <div className='dropdown-menu'>
-                <div className="dropdown-cursor">
-                  <i className="fa fa-angle-down fa-lg pull-right"/>
+                <div className='dropdown-cursor'>
+                  <i className='fa fa-angle-down fa-lg pull-right' />
                 </div>
                 <DatabaseMenuDropdown connectionId={ this.props.connectionId } onRefreshTables={ this.handleRefreshTables } />
               </div>

@@ -234,7 +234,7 @@ export default class ConnectionWindow extends React.Component {
     this.setState({
       remember: newRemeber,
     });
-    //console.log("remember changed to: " + newRemeber);
+  //console.log("remember changed to: " + newRemeber);
   }
 
   connectToDatabase(b) {
@@ -343,7 +343,7 @@ export default class ConnectionWindow extends React.Component {
 
   renderErrorOptional(errorText) {
     if (errorText != '') {
-      return <div className="col-md-12 connection-error">
+      return <div className='col-md-12 connection-error'>
                Error:
                { errorText }
              </div>;
@@ -370,10 +370,10 @@ export default class ConnectionWindow extends React.Component {
       bookmarks.push(
         <a key={ id }
           data-custom-attribute={ i }
-          href="#"
+          href='#'
           className={ className }
           onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
-          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight"/>></a>
+          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className='fa fa-times pull-right hover-highlight' />></a>
       );
     }
 
@@ -384,12 +384,12 @@ export default class ConnectionWindow extends React.Component {
 
     // TODO: "Connections" text should change color on hover
     return (
-      <div className="list-group list-special">
-        <span className="list-group-item title">Connections</span>
+      <div className='list-group list-special'>
+        <span className='list-group-item title'>Connections</span>
         <hr/>
         { bookmarks }
-        <div className="list-group list-group-item pull-right" style={ style }>
-          <a href="#" onClick={ guard('bookmarksEnabled', this.newConnection) }>New connection</a>
+        <div className='list-group list-group-item pull-right' style={ style }>
+          <a href='#' onClick={ guard('bookmarksEnabled', this.newConnection) }>New connection</a>
         </div>
       </div>
       );
@@ -402,8 +402,8 @@ export default class ConnectionWindow extends React.Component {
       fontSize: 14
     };
     return (
-      <div className="list-group list-group-item" style={ style }>
-        <a href="#" onClick={ guard('bookmarksEnabled', this.handleTestDatabase) }>Try demo database</a>
+      <div className='list-group list-group-item' style={ style }>
+        <a href='#' onClick={ guard('bookmarksEnabled', this.handleTestDatabase) }>Try demo database</a>
       </div>
       );
   }
@@ -425,26 +425,26 @@ export default class ConnectionWindow extends React.Component {
 
     return (
       <div>
-        <div className="col-md-8">
-          <div className="form-group">
-            <label className="control-label" htmlFor="nick">
+        <div className='col-md-8'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='nick'>
               Nickname
             </label>
-            <input type="text"
-              id="nick"
-              className="form-control input-sm"
+            <input type='text'
+              id='nick'
+              className='form-control input-sm'
               value={ b['nick'] }
               disabled={ disable }
               onChange={ this.handleFormChanged } />
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="form-group">
-            <label className="control-label" htmlFor="type">
+        <div className='col-md-4'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='type'>
               Type
             </label>
-            <select id="type"
-              className="form-control input-sm"
+            <select id='type'
+              className='form-control input-sm'
               value={ dbType }
               disabled={ disable }
               onChange={ this.handleFormChanged }>
@@ -457,87 +457,85 @@ export default class ConnectionWindow extends React.Component {
             </select>
           </div>
         </div>
-        <div className="col-md-8">
-          <div className="form-group">
-            <label className="control-label" htmlFor="host">
+        <div className='col-md-8'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='host'>
               Hostname
             </label>
-            <input type="text"
-              id="host"
-              className="form-control input-sm"
+            <input type='text'
+              id='host'
+              className='form-control input-sm'
               value={ b['host'] }
               disabled={ disable }
               onChange={ this.handleFormChanged } />
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="form-group">
-            <label className="control-label" htmlFor="port">
+        <div className='col-md-4'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='port'>
               Port
             </label>
-            <input type="text"
-              id="port"
-              className="form-control input-sm"
+            <input type='text'
+              id='port'
+              className='form-control input-sm'
               value={ b['port'] }
               disabled={ disable }
               onChange={ this.handleFormChanged }
               placeholder={ defaultPort } />
           </div>
         </div>
-        <div className="col-md-12">
-          <div className="form-group">
-            <label className="control-label" htmlFor="database">
+        <div className='col-md-12'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='database'>
               Database
             </label>
-            <input type="text"
-              id="database"
-              className="form-control input-sm"
+            <input type='text'
+              id='database'
+              className='form-control input-sm'
               value={ b['database'] }
               disabled={ disable }
               onChange={ this.handleFormChanged } />
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
-            <label className="control-label" htmlFor="user">
+        <div className='col-md-6'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='user'>
               User
             </label>
-            <input type="text"
-              id="user"
-              className="form-control input-sm"
+            <input type='text'
+              id='user'
+              className='form-control input-sm'
               value={ b['user'] }
               disabled={ disable }
               onChange={ this.handleFormChanged } />
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
-            <label className="control-label" htmlFor="password">
+        <div className='col-md-6'>
+          <div className='form-group'>
+            <label className='control-label' htmlFor='password'>
               Password
             </label>
-            <input type="password"
-              id="password"
-              className="form-control input-sm"
+            <input type='password'
+              id='password'
+              className='form-control input-sm'
               value={ b['password'] }
               disabled={ disable }
               onChange={ this.handleFormChanged } />
           </div>
         </div>
-        <div className="col-md-12 right">
-          <label className="control-label" htmlFor="pwd-remember">
-            <input type="checkbox"
-              id="pwd-remember"
+        <div className='col-md-12 right'>
+          <label className='control-label' htmlFor='pwd-remember'>
+            <input type='checkbox'
+              id='pwd-remember'
               checked={ this.state.remember }
               disabled={ disable }
               onChange={ this.handleRememberChange } /> Remember
           </label>
         </div>
-        <div className="col-md-12 right light-text smaller-text">
-          <i className="fa fa-lock fa1"/>&nbsp;Database crendentials are stored securely on your computer
+        <div className='col-md-12 right light-text smaller-text'>
+          <i className='fa fa-lock fa1' /> Database crendentials are stored securely on your computer
         </div>
-        <div className="col-md-12">
-          &nbsp;&nbsp;
-        </div>
+        <div className='col-md-12'/>
         { this.renderErrorOptional(this.state.connectionErrorMessage) }
         { this.renderConnectOrCancel() }
       </div>
@@ -559,8 +557,8 @@ export default class ConnectionWindow extends React.Component {
 
     if (this.state.isConnecting) {
       return (
-        <div className="col-md-12" style={ styleDiv }>
-          <button onClick={ this.handleCancel } className="btn btn-block btn-danger small">
+        <div className='col-md-12' style={ styleDiv }>
+          <button onClick={ this.handleCancel } className='btn btn-block btn-danger small'>
             Cancel
           </button>
           <SpinnerCircle forceVisible style={ styleSpinner } />
@@ -569,8 +567,8 @@ export default class ConnectionWindow extends React.Component {
     }
 
     return (
-      <div className="col-md-12">
-        <button onClick={ this.handleConnect } className="btn btn-block btn-primary small">
+      <div className='col-md-12'>
+        <button onClick={ this.handleConnect } className='btn btn-block btn-primary small'>
           Connect
         </button>
       </div>
@@ -580,7 +578,7 @@ export default class ConnectionWindow extends React.Component {
   renderForm() {
     if (this.state.selectedBookmarkIdx >= 0) {
       return (
-        <form role="form">
+        <form role='form'>
           { this.renderFormElements() }
         </form>
         );
@@ -593,11 +591,11 @@ export default class ConnectionWindow extends React.Component {
     };
 
     return (
-      <form role="form">
-        <div className="col-md-12 text-center">
-          <img className="img-responsive center-block small"
-            src="/s/img/icon.png"
-            alt=""
+      <form role='form'>
+        <div className='col-md-12 text-center'>
+          <img className='img-responsive center-block small'
+            src='/s/img/icon.png'
+            alt=''
             style={ imageStyle } />
           <h5>Please add a connection</h5>
         </div>
@@ -607,13 +605,13 @@ export default class ConnectionWindow extends React.Component {
 
   renderConnectionWindow() {
     return (
-      <div className="container small">
-        <div className="row">
-          <div className="col-md-4">
+      <div className='container small'>
+        <div className='row'>
+          <div className='col-md-4'>
             { this.renderBookMarks() }
             { this.renderTestDatabases() }
           </div>
-          <div className="col-md-8">
+          <div className='col-md-8'>
             { this.renderForm() }
           </div>
         </div>
@@ -632,11 +630,11 @@ export default class ConnectionWindow extends React.Component {
     };
 
     return (
-      <div id="connection-window">
+      <div id='connection-window'>
         <div className='logo-container'>
           <img className='resize_fit_center' src='/s/img/dbhero-sm.png' />
         </div>
-        <div className="connection-settings">
+        <div className='connection-settings'>
           { this.renderConnectionWindow() }
           <hr/>
         </div>

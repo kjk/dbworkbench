@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ResultsPaginator from './ResultsPaginator.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
-import view from './view.js';
+import * as view from './view.js';
 import * as action from './action.js';
 import * as store from './store.js';
 import * as sort from './reactable/sort.jsx';
@@ -191,7 +191,7 @@ export default class Output extends React.Component {
       return res;
     }
     if (this.props.isSidebar) {
-      return (<div id="sidebar-result-wrapper">
+      return (<div id='sidebar-result-wrapper'>
                 { res }
               </div>);
     }
@@ -200,8 +200,8 @@ export default class Output extends React.Component {
     };
 
     return (
-      <div id="output" className="empty" style={ style }>
-        <div id="wrapper">
+      <div id='output' className='empty' style={ style }>
+        <div id='wrapper'>
           { res }
         </div>
       </div>
@@ -237,8 +237,8 @@ export default class Output extends React.Component {
     return (
       <th key={ colIdx }
         className={ cls }
-        role="button"
-        tabIndex="0"
+        role='button'
+        tabIndex='0'
         onClick={ this.handleColumnClick }>
         { s }
       </th>
@@ -254,13 +254,13 @@ export default class Output extends React.Component {
     const pageChanged = pageNo => this.handlePageChanged(pageNo);
     return (
       <div>
-        <table className="results" id="results">
+        <table className='results' id='results'>
           <thead>
-            <tr className="reactable-column-header">
+            <tr className='reactable-column-header'>
               { columns }
             </tr>
           </thead>
-          <tbody className="reactable-data">
+          <tbody className='reactable-data'>
             { rows }
           </tbody>
         </table>
@@ -284,7 +284,7 @@ export default class Output extends React.Component {
 
     if (this.props.isSidebar) {
       return (
-        <div id="sidebar-result-wrapper">
+        <div id='sidebar-result-wrapper'>
           { children }
         </div>
         );
@@ -300,8 +300,8 @@ export default class Output extends React.Component {
     };
 
     return (
-      <div id="output" style={ style }>
-        <div id="wrapper">
+      <div id='output' style={ style }>
+        <div id='wrapper'>
           { children }
           { showQueryBar ?
             <QueryEditBar numberOfRowsEdited={ nEdited } onHandleDiscardChanges={ this.handleDiscardChanges } />
