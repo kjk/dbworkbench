@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import Actions from './Actions.jsx';
-import * as action from './action.js';
-import * as store from './store.js';
+import React from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import Actions from "./Actions.jsx";
+import * as action from "./action.js";
+import * as store from "./store.js";
 
 // TODO: the ace editor inside div id="custom-query" is not resized
 // when we move vert drag-bar. I thought it's related to my recent
@@ -24,7 +24,7 @@ export default class Input extends React.Component {
     const dy = store.getQueryEditDy();
     if (forceRerender) {
       this.state = {
-        queryEditDy: dy
+        queryEditDy: dy,
       };
     } else {
       this.queryEditDy = dy;
@@ -32,10 +32,10 @@ export default class Input extends React.Component {
   }
 
   componentWillMount() {
-    store.onQueryEditDy((dy) => {
+    store.onQueryEditDy(dy => {
       if (forceRerender) {
         this.setState({
-          queryEditDy: dy
+          queryEditDy: dy,
         });
       } else {
         this.queryEditDy = dy;
@@ -58,7 +58,7 @@ export default class Input extends React.Component {
 
   handleRun() {
     const query = this.editor.getValue().trim();
-    console.log('handleRun', query);
+    console.log("handleRun", query);
     if (query.length > 0) {
       action.executeQuery(query);
     }
@@ -66,7 +66,7 @@ export default class Input extends React.Component {
 
   handleExplain() {
     const query = this.editor.getValue().trim();
-    console.log('handleExplain', query);
+    console.log("handleExplain", query);
     if (query.length > 0) {
       action.explainQuery(query);
     }
@@ -74,7 +74,7 @@ export default class Input extends React.Component {
 
   exportToCSV(e) {
     e.preventDefault();
-    console.log('downloadCsv');
+    console.log("downloadCsv");
 
     let query = this.editor.getValue().trim();
 
@@ -83,47 +83,52 @@ export default class Input extends React.Component {
     }
 
     // Replace line breaks with spaces and properly encode query
-    query = window.encodeURI(query.replace(/\n/g, ' '));
+    query = window.encodeURI(query.replace(/\n/g, " "));
 
-    const url = window.location.protocol + '//' + window.location.host + '/api/query?format=csv&query=' + query;
-    const win = window.open(url, '_blank');
+    const url =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      "/api/query?format=csv&query=" +
+      query;
+    const win = window.open(url, "_blank");
     win.focus();
   }
 
   initEditor() {
     this.editor = ace.edit(this.editorNode);
-    this.editor.getSession().setMode('ace/mode/pgsql');
+    this.editor.getSession().setMode("ace/mode/pgsql");
     this.editor.getSession().setTabSize(2);
     this.editor.getSession().setUseSoftTabs(true);
     this.editor.commands.addCommands([
       {
-        name: 'run_query',
+        name: "run_query",
         bindKey: {
-          win: 'Ctrl-Enter',
-          mac: 'Command-Enter'
+          win: "Ctrl-Enter",
+          mac: "Command-Enter",
         },
-        exec: (editor) => this.handleRun()
+        exec: editor => this.handleRun(),
       },
       {
-        name: 'explain_query',
+        name: "explain_query",
         bindKey: {
-          win: 'Ctrl-E',
-          mac: 'Command-E'
+          win: "Ctrl-E",
+          mac: "Command-E",
         },
-        exec: (editor) => this.handleExplain()
-      }
+        exec: editor => this.handleExplain(),
+      },
     ]);
     this.editor.focus();
   }
 
   inputDy() {
     const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
-    return dy + 'px';
+    return dy + "px";
   }
 
   editorDy() {
     const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
-    return (dy - 50) + 'px';
+    return dy - 50 + "px";
   }
 
   setEditorNode(c) {
@@ -142,30 +147,34 @@ export default class Input extends React.Component {
     const dy = forceRerender ? this.state.queryEditDy : this.queryEditDy;
     if (dy != 0) {
       style = {
-        height: this.inputDy()
+        height: this.inputDy(),
       };
       editorStyle = {
-        height: this.editorDy()
+        height: this.editorDy(),
       };
     }
 
     const nEdited = Object.keys(this.props.editedCells).length;
-    const showActions = (nEdited == 0);
+    const showActions = nEdited == 0;
 
     return (
-      <div id='input' style={ style }>
-        <div className='wrapper'>
-          <div id='custom-query' ref={ this.setEditorNode } style={ editorStyle } />
-          { showActions ?
-            <Actions supportsExplain={ this.props.supportsExplain } onRun={ this.handleRun } onExplain={ this.handleExplain } />
-            : null }
+      <div id="input" style={style}>
+        <div className="wrapper">
+          <div id="custom-query" ref={this.setEditorNode} style={editorStyle} />
+          {showActions
+            ? <Actions
+                supportsExplain={this.props.supportsExplain}
+                onRun={this.handleRun}
+                onExplain={this.handleExplain}
+              />
+            : null}
         </div>
       </div>
-      );
+    );
   }
 }
 
 Input.propTypes = {
   editedCells: PropTypes.any, // TODO: be mroe explicit
-  supportsExplain: PropTypes.bool
+  supportsExplain: PropTypes.bool,
 };

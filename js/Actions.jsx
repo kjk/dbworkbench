@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import SpinnerCircle from './SpinnerCircle.jsx';
-import { Filterer } from './reactable/filterer.jsx';
+import React from "react";
+import PropTypes from "prop-types";
+import SpinnerCircle from "./SpinnerCircle.jsx";
+import { Filterer } from "./reactable/filterer.jsx";
 
 export default class Actions extends React.Component {
   constructor(props, context) {
@@ -22,28 +22,32 @@ export default class Actions extends React.Component {
 
   render() {
     return (
-      <div className='actions'>
-        <input type='button'
-          onClick={ this.handleRun }
-          id='run'
-          value='Run Query'
-          className='btn btn-sm btn-primary' />
-        { this.props.supportsExplain ?
-          <input type='button'
-            onClick={ this.handleExplain }
-            id='explain'
-            value='Explain Query'
-            className='btn btn-sm btn-default' />
-          : null }
-        <SpinnerCircle style={ { display: 'inline-block', top: '4px' } } />
-        <Filterer placeholder='Filter Results' defaultValue='' />
+      <div className="actions">
+        <input
+          type="button"
+          onClick={this.handleRun}
+          id="run"
+          value="Run Query"
+          className="btn btn-sm btn-primary"
+        />
+        {this.props.supportsExplain
+          ? <input
+              type="button"
+              onClick={this.handleExplain}
+              id="explain"
+              value="Explain Query"
+              className="btn btn-sm btn-default"
+            />
+          : null}
+        <SpinnerCircle style={{ display: "inline-block", top: "4px" }} />
+        <Filterer placeholder="Filter Results" defaultValue="" />
       </div>
-      );
+    );
   }
 }
 
 Actions.propTypes = {
   onRun: PropTypes.func.isRequired,
   onExplain: PropTypes.func.isRequired,
-  supportsExplain: PropTypes.bool
+  supportsExplain: PropTypes.bool,
 };

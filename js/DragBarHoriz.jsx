@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+import React from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 export default class DragBarHoriz extends React.Component {
   constructor(props, context) {
@@ -20,18 +20,17 @@ export default class DragBarHoriz extends React.Component {
     const dragEnter = !prevState.dragging && this.state.dragging;
     const dragLeave = prevState.dragging && !this.state.dragging;
     if (dragEnter) {
-      document.addEventListener('mousemove', this.handleMouseMove);
-      document.addEventListener('mouseup', this.handleMouseUp);
+      document.addEventListener("mousemove", this.handleMouseMove);
+      document.addEventListener("mouseup", this.handleMouseUp);
     } else if (dragLeave) {
-      document.removeEventListener('mousemove', this.handleMouseMove);
-      document.removeEventListener('mouseup', this.handleMouseUp);
+      document.removeEventListener("mousemove", this.handleMouseMove);
+      document.removeEventListener("mouseup", this.handleMouseUp);
     }
   }
 
   handleMouseDown(e) {
     // only left mouse button
-    if (e.button !== 0)
-      return;
+    if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
     this.setState({
@@ -58,7 +57,7 @@ export default class DragBarHoriz extends React.Component {
     if (y >= yMin && y <= yMax) {
       this.y = y;
       const el = ReactDOM.findDOMNode(this);
-      el.style.top = y + 'px';
+      el.style.top = y + "px";
       this.props.onPosChanged(y);
     }
     e.stopPropagation();
@@ -67,18 +66,16 @@ export default class DragBarHoriz extends React.Component {
 
   render() {
     const style = {
-      position: 'absolute',
-      backgroundColor: '#377CE4',
-      minWidth: '100%',
+      position: "absolute",
+      backgroundColor: "#377CE4",
+      minWidth: "100%",
       height: 3,
-      cursor: 'row-resize',
+      cursor: "row-resize",
       zIndex: 3,
-      top: this.y
+      top: this.y,
     };
 
-    return (
-      <div style={ style } onMouseDown={ this.handleMouseDown } />
-      );
+    return <div style={style} onMouseDown={this.handleMouseDown} />;
   }
 }
 
@@ -86,5 +83,5 @@ DragBarHoriz.propTypes = {
   onPosChanged: PropTypes.func.isRequired,
   initialY: PropTypes.number.isRequired,
   min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired
+  max: PropTypes.number.isRequired,
 };

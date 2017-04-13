@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Modal from 'react-modal';
-import Output from './Output.jsx';
-import * as api from './api.js';
-import * as action from './action.js';
+import React from "react";
+import PropTypes from "prop-types";
+import Modal from "react-modal";
+import Output from "./Output.jsx";
+import * as api from "./api.js";
+import * as action from "./action.js";
 
 export default class DatabaseMenuDropdown extends React.Component {
   constructor(props, context) {
@@ -16,14 +16,14 @@ export default class DatabaseMenuDropdown extends React.Component {
 
     this.state = {
       modalIsOpen: false,
-      selectedView: '',
-      results: null
+      selectedView: "",
+      results: null,
     };
   }
 
   handleClose() {
     this.setState({
-      modalIsOpen: false
+      modalIsOpen: false,
     });
   }
 
@@ -36,11 +36,11 @@ export default class DatabaseMenuDropdown extends React.Component {
   handleConnection() {
     //console.log('handleConnection');
     const connId = this.props.connectionId;
-    api.getConnectionInfo(connId, (data) => {
+    api.getConnectionInfo(connId, data => {
       this.setState({
         results: data,
         modalIsOpen: true,
-        selectedView: 'Connection Info'
+        selectedView: "Connection Info",
       });
     });
   }
@@ -48,12 +48,12 @@ export default class DatabaseMenuDropdown extends React.Component {
   handleActivity() {
     //console.log('handleActivity');
     const connId = this.props.connectionId;
-    api.getActivity(connId, (data) => {
-      console.log('getActivity: ', data);
+    api.getActivity(connId, data => {
+      console.log("getActivity: ", data);
       this.setState({
         results: data,
         modalIsOpen: true,
-        selectedView: 'Activity'
+        selectedView: "Activity",
       });
     });
   }
@@ -66,59 +66,89 @@ export default class DatabaseMenuDropdown extends React.Component {
   render() {
     var modalStyle = {
       content: {
-        display: 'block',
-        overflow: 'auto',
-        top: '40%',
-        left: '50%',
-        maxWidth: '60%',
-        transform: 'translate(-50%, -50%)',
-        bottom: 'none',
-      }
+        display: "block",
+        overflow: "auto",
+        top: "40%",
+        left: "50%",
+        maxWidth: "60%",
+        transform: "translate(-50%, -50%)",
+        bottom: "none",
+      },
     };
 
     var modalOutputStyles = {
       // display     :'table-row',
-      position: 'absolute',
+      position: "absolute",
       padding: 0,
       margin: 0,
       top: 60,
     };
 
-    var appElement = document.getElementById('main');
+    var appElement = document.getElementById("main");
     Modal.setAppElement(appElement);
 
     return (
-      <div id='deneme' className='dropdown-window'>
-        <div className='list-group'>
-          <a href='#' className='list-group-item' onClick={ this.props.onRefreshTables }>Refresh Tables</a>
-          <a href='#' className='list-group-item' onClick={ this.handleConnection }>Connection Info</a>
-          <a href='#' className='list-group-item' onClick={ this.handleActivity }>Activity</a>
-          <a href='#' className='list-group-item' onClick={ this.handleDisconnect }>Disconnect</a>
+      <div id="deneme" className="dropdown-window">
+        <div className="list-group">
+          <a
+            href="#"
+            className="list-group-item"
+            onClick={this.props.onRefreshTables}
+          >
+            Refresh Tables
+          </a>
+          <a
+            href="#"
+            className="list-group-item"
+            onClick={this.handleConnection}
+          >
+            Connection Info
+          </a>
+          <a href="#" className="list-group-item" onClick={this.handleActivity}>
+            Activity
+          </a>
+          <a
+            href="#"
+            className="list-group-item"
+            onClick={this.handleDisconnect}
+          >
+            Disconnect
+          </a>
         </div>
-        <Modal id='nav'
-          isOpen={ this.state.modalIsOpen }
-          onRequestClose={ this.handleClose }
-          contentLabel='Modal'
-          style={ modalStyle }>
+        <Modal
+          id="nav"
+          isOpen={this.state.modalIsOpen}
+          onRequestClose={this.handleClose}
+          contentLabel="Modal"
+          style={modalStyle}
+        >
           <div>
-            <div className='modal-header'>
-              <button type='button' className='close' onClick={ this.handleModalCloseRequest }>
-                <span aria-hidden='true'>×</span>
-                <span className='sr-only'>Close</span>
+            <div className="modal-header">
+              <button
+                type="button"
+                className="close"
+                onClick={this.handleModalCloseRequest}
+              >
+                <span aria-hidden="true">×</span>
+                <span className="sr-only">Close</span>
               </button>
-              <h4 className='modal-title'>{ this.state.selectedView }</h4>
+              <h4 className="modal-title">{this.state.selectedView}</h4>
             </div>
-            <div className='modal-body'>
-              <Output style={ modalOutputStyles } results={ this.state.results } isSidebar />
+            <div className="modal-body">
+              <Output
+                style={modalOutputStyles}
+                results={this.state.results}
+                isSidebar
+              />
             </div>
           </div>
         </Modal>
       </div>
-      );
+    );
   }
 }
 
 DatabaseMenuDropdown.propTypes = {
   onRefreshTables: PropTypes.func.isRequired,
-  connectionId: PropTypes.number.isRequired
+  connectionId: PropTypes.number.isRequired,
 };

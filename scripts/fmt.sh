@@ -1,5 +1,5 @@
 #!/bin/bash
 set -u -e -o pipefail
 
-echo "running esformatter"
-./node_modules/.bin/esformatter -i js/*js* js/tests/*.js
+echo "formating js code with prettier"
+./node_modules/.bin/prettier --trailing-comma es5 --write js/*js* js/tests/*.js

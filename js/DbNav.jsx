@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import * as action from './action.js';
-import * as api from './api.js';
-import * as view from './view.js';
-import Modal from 'react-modal';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import React from "react";
+import PropTypes from "prop-types";
+import * as action from "./action.js";
+import * as api from "./api.js";
+import * as view from "./view.js";
+import Modal from "react-modal";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default class DbNav extends React.Component {
   constructor(props, context) {
@@ -13,7 +13,7 @@ export default class DbNav extends React.Component {
 
   handleFeedbackButton(e) {
     e.preventDefault();
-    api.launchBrowserWithURL('http://dbheroapp.com/feedback');
+    api.launchBrowserWithURL("http://dbheroapp.com/feedback");
   }
 
   render() {
@@ -23,40 +23,46 @@ export default class DbNav extends React.Component {
         action.viewSelected(viewName);
       };
 
-      const selected = (currentView == viewName);
+      const selected = currentView == viewName;
       if (selected) {
-        return <li key={ viewName } onClick={ handler } className='selected'>
-                 <u>{ viewName }</u>
-               </li>;
+        return (
+          <li key={viewName} onClick={handler} className="selected">
+            <u>{viewName}</u>
+          </li>
+        );
       } else {
-        return <li key={ viewName } onClick={ handler }>
-                 { viewName }
-               </li>;
+        return (
+          <li key={viewName} onClick={handler}>
+            {viewName}
+          </li>
+        );
       }
     });
 
     const tooltip = (
-    <Tooltip id='feedback'>
-      Let us know how we can improve dbHero.
-    </Tooltip>
+      <Tooltip id="feedback">
+        Let us know how we can improve dbHero.
+      </Tooltip>
     );
 
     return (
-      <div id='nav'>
+      <div id="nav">
         <ul>
-          { children }
+          {children}
         </ul>
-        <OverlayTrigger placement='left' overlay={ tooltip }>
-          <button className='feedback-button' onClick={ this.handleFeedbackButton }>
+        <OverlayTrigger placement="left" overlay={tooltip}>
+          <button
+            className="feedback-button"
+            onClick={this.handleFeedbackButton}
+          >
             Feedback
           </button>
         </OverlayTrigger>
       </div>
-      );
+    );
   }
 }
 
 DbNav.propTypes = {
-  view: PropTypes.string.isRequired
+  view: PropTypes.string.isRequired,
 };
-

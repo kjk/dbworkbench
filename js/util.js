@@ -7,8 +7,7 @@ the function on the leading edge, instead of the trailing.
 export function debounce(func, wait, immediate) {
   var timeout;
   return function() {
-    var context = this,
-      args = arguments;
+    var context = this, args = arguments;
     var later = function() {
       timeout = null;
       if (!immediate) func.apply(context, args);

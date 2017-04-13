@@ -1,14 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import { Table } from './reactable/table.jsx';
-import { Thead } from './reactable/thead.jsx';
-import { Tr } from './reactable/tr.jsx';
-import { Td } from './reactable/td.jsx';
-import QueryEditBar from './QueryEditBar.jsx';
-import * as view from './view.js';
-import * as action from './action.js';
-import * as store from './store.js';
+import React from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import { Table } from "./reactable/table.jsx";
+import { Thead } from "./reactable/thead.jsx";
+import { Tr } from "./reactable/tr.jsx";
+import { Td } from "./reactable/td.jsx";
+import QueryEditBar from "./QueryEditBar.jsx";
+import * as view from "./view.js";
+import * as action from "./action.js";
+import * as store from "./store.js";
 
 function resultsToDictionary(results) {
   const reformatData = results.rows.map(function(row) {
@@ -30,7 +30,7 @@ export default class Output extends React.Component {
   }
 
   componentWillMount() {
-    store.onQueryEditDy((dy) => {
+    store.onQueryEditDy(dy => {
       this.queryEditDy = dy;
       const el = ReactDOM.findDOMNode(this);
       el.style.top = this.topPos();
@@ -38,7 +38,8 @@ export default class Output extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.resetPagination) { // TODO: Maybe use another name instead of resetPagination
+    if (nextProps.resetPagination) {
+      // TODO: Maybe use another name instead of resetPagination
       action.clearFilter();
     }
   }
@@ -58,7 +59,10 @@ export default class Output extends React.Component {
   }
 
   getEditedCells(rowId, colId) {
-    if (this.props.editedCells == undefined || this.props.editedCells[rowId] == undefined) {
+    if (
+      this.props.editedCells == undefined ||
+      this.props.editedCells[rowId] == undefined
+    ) {
       return undefined;
     }
     return this.props.editedCells[rowId][colId];
@@ -70,48 +74,48 @@ export default class Output extends React.Component {
     const tableStructures = this.props.tableStructures;
     const resultsAsDictionary = resultsToDictionary(results);
     const editedCells = this.props.editedCells;
-    const schema = this.props.tableStructures[tableName]['table_schema'];
+    const schema = this.props.tableStructures[tableName]["table_schema"];
 
-    let query = '';
+    let query = "";
     for (let rowId in editedCells) {
       let value = editedCells[rowId];
       //let values = rowId.split('.');
 
       const thisRow = editedCells[rowId];
       let index = 0;
-      let colsAfterEdit = '';
+      let colsAfterEdit = "";
       for (let colId in thisRow) {
         let value = thisRow[colId];
         const columnToBeEdited = results.columns[colId];
         const afterChange = value;
 
-        if (afterChange == '') {
-          colsAfterEdit += columnToBeEdited + '=NULL ';
+        if (afterChange == "") {
+          colsAfterEdit += columnToBeEdited + "=NULL ";
         } else {
           colsAfterEdit += columnToBeEdited + "='" + afterChange + "'";
         }
 
         if (index < Object.keys(thisRow).length - 1) {
-          colsAfterEdit += ', ';
+          colsAfterEdit += ", ";
         }
         index += 1;
       }
 
-      const columns = results.columns.join(', ');
+      const columns = results.columns.join(", ");
       const rowAsDictionary = resultsAsDictionary[rowId];
 
       index = 0;
-      let rowToBeEdited = '';
+      let rowToBeEdited = "";
       for (let key in rowAsDictionary) {
         value = rowAsDictionary[key];
         if (value == null) {
-          rowToBeEdited += key + ' IS NULL ';
+          rowToBeEdited += key + " IS NULL ";
         } else {
           rowToBeEdited += key + "='" + value + "' ";
         }
 
         if (index < Object.keys(rowAsDictionary).length - 1) {
-          rowToBeEdited += 'AND ';
+          rowToBeEdited += "AND ";
         }
         index += 1;
       }
@@ -124,10 +128,9 @@ LIMIT 1 FOR UPDATE)
 RETURNING ${columns};
 `;
 
-      console.log('QUERY:', query);
+      console.log("QUERY:", query);
       // WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5'
       // UPDATE countrylanguage SET language='Not furkan' WHERE ctid IN (SELECT ctid FROM countrylanguage WHERE countrycode='ABW' AND language='Not English no qq' AND isofficial='false' AND percentage='9.5' LIMIT 1 FOR UPDATE) RETURNING language;
-
     }
 
     return query;
@@ -135,20 +138,20 @@ RETURNING ${columns};
 
   handleCellClick(e) {
     const node = e.target.nodeName;
-    if (node != 'TD') {
+    if (node != "TD") {
       return;
     }
-    const rowColStr = e.target.attributes['data-custom-attribute'].value;
-    const parts = rowColStr.split('-');
+    const rowColStr = e.target.attributes["data-custom-attribute"].value;
+    const parts = rowColStr.split("-");
     if (parts.length != 2) {
       return;
     }
     const rowId = parseInt(parts[0], 10);
     const colId = parseInt(parts[1], 10);
-    console.log('handleCellClick rowId: ', rowId, ' : ', colId);
+    console.log("handleCellClick rowId: ", rowId, " : ", colId);
     action.selectedCellPosition({
       rowId: rowId,
-      colId: colId
+      colId: colId,
     });
   }
 
@@ -157,12 +160,12 @@ RETURNING ${columns};
     action.editedCells({});
     action.selectedCellPosition({
       rowId: -1,
-      colId: -1
+      colId: -1,
     });
   }
 
   handleCellEdit(rowId, colId, e) {
-    console.log('handleCellEdit ', rowId, colId, e.target.value);
+    console.log("handleCellEdit ", rowId, colId, e.target.value);
     this.setEditedCells(rowId, colId, e.target.value);
   }
 
@@ -173,17 +176,17 @@ RETURNING ${columns};
       // TODO: use sortColumn and sortOrder)
       i = i + 1;
       return (
-        <th key={ i } data={ col } column={ col }>
-          { col }
+        <th key={i} data={col} column={col}>
+          {col}
         </th>
-        );
+      );
     });
 
     return (
       <Thead>
-        { children }
+        {children}
       </Thead>
-      );
+    );
   }
 
   renderRow(row, rowId) {
@@ -196,12 +199,13 @@ RETURNING ${columns};
       colId = colId + 1;
       const position = {
         rowId: rowId,
-        colId: colId
+        colId: colId,
       };
 
       var isEditable = false;
       if (selectedCellPosition != undefined) {
-        isEditable = selectedCellPosition.rowId == rowId &&
+        isEditable =
+          selectedCellPosition.rowId == rowId &&
           selectedCellPosition.colId == colId &&
           selectedView == view.SQLQuery;
       }
@@ -210,30 +214,32 @@ RETURNING ${columns};
       if (this.getEditedCells(rowId, colId) != undefined) {
         value = this.getEditedCells(rowId, colId);
         tdStyle = {
-          background: '#6EACE3',
-          color: '#ffffff',
-        // border: 'solid 1px #3B8686',
+          background: "#6EACE3",
+          color: "#ffffff",
+          // border: 'solid 1px #3B8686',
         };
       }
       const handleCellEdit = e => this.handleCellEdit(rowId, colId);
 
       children.push(
-        <Td key={ position }
-          column={ col }
-          position={ position }
-          style={ tdStyle }
-          isEditable={ isEditable }
-          onEdit={ handleCellEdit }>
-          { value }
+        <Td
+          key={position}
+          column={col}
+          position={position}
+          style={tdStyle}
+          isEditable={isEditable}
+          onEdit={handleCellEdit}
+        >
+          {value}
         </Td>
       );
     }
 
     return (
-      <Tr key={ rowId }>
-        { children }
+      <Tr key={rowId}>
+        {children}
       </Tr>
-      );
+    );
   }
 
   renderResults(results) {
@@ -254,35 +260,39 @@ RETURNING ${columns};
       var itemsPerPage = 100;
     } else {
       var tableStyle = {
-        height: '0'
+        height: "0",
       };
     }
 
     if (this.props.isSidebar) {
       return (
-        <Table id='sidebar-modal-results'
-          className='sidebar-modal-results'
-          onClick={ this.handleCellClick }
-          sortable>
-          { header }
-          { rows }
+        <Table
+          id="sidebar-modal-results"
+          className="sidebar-modal-results"
+          onClick={this.handleCellClick}
+          sortable
+        >
+          {header}
+          {rows}
         </Table>
-        );
+      );
     }
 
     return (
-      <Table id='results'
-        className='results'
-        onClick={ this.handleCellClick }
-        style={ tableStyle }
+      <Table
+        id="results"
+        className="results"
+        onClick={this.handleCellClick}
+        style={tableStyle}
         sortable
-        filterable={ filterable }
-        itemsPerPage={ itemsPerPage }
-        resetPagination={ this.props.resetPagination }>
-        { header }
-        { rows }
+        filterable={filterable}
+        itemsPerPage={itemsPerPage}
+        resetPagination={this.props.resetPagination}
+      >
+        {header}
+        {rows}
       </Table>
-      );
+    );
   }
 
   topPos() {
@@ -290,39 +300,46 @@ RETURNING ${columns};
     if (this.props.withInput) {
       top = this.queryEditDy + 60;
     }
-    return top + 'px';
+    return top + "px";
   }
 
   renderEmptyOrError(results) {
     let res;
     if (results && results.error) {
-      res = <div>
-              Error:
-              { results.error }
-            </div>;
+      res = (
+        <div>
+          Error:
+          {results.error}
+        </div>
+      );
     } else if (!results || !results.rows || results.rows.length == 0) {
-      res = <div>
-              No records found
-            </div>;
+      res = (
+        <div>
+          No records found
+        </div>
+      );
     }
     if (!res) {
       return res;
     }
     if (this.props.isSidebar) {
-      return (<div id='sidebar-result-wrapper'>
-                { res }
-              </div>);
+      return (
+        <div id="sidebar-result-wrapper">
+          {res}
+        </div>
+      );
     }
     let style = {
-      top: this.topPos()
+      top: this.topPos(),
     };
 
-    return (<div id='output' className='empty' style={ style }>
-              <div id='wrapper'>
-                { res }
-              </div>
-            </div>
-      );
+    return (
+      <div id="output" className="empty" style={style}>
+        <div id="wrapper">
+          {res}
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -338,10 +355,10 @@ RETURNING ${columns};
 
     if (this.props.isSidebar) {
       return (
-        <div id='sidebar-result-wrapper'>
-          { children }
+        <div id="sidebar-result-wrapper">
+          {children}
         </div>
-        );
+      );
     }
 
     const editedCells = this.props.editedCells || {};
@@ -350,19 +367,23 @@ RETURNING ${columns};
 
     let style = {
       top: this.topPos(),
-      marginTop: -10
+      marginTop: -10,
     };
 
     return (
-      <div id='output' style={ style }>
-        <div id='wrapper'>
-          { children }
-          { showQueryBar ?
-            <QueryEditBar numberOfRowsEdited={ nEdited } generateQuery={ this.generateQuery } onHandleDiscardChanges={ this.handleDiscardChanges } />
-            : null }
+      <div id="output" style={style}>
+        <div id="wrapper">
+          {children}
+          {showQueryBar
+            ? <QueryEditBar
+                numberOfRowsEdited={nEdited}
+                generateQuery={this.generateQuery}
+                onHandleDiscardChanges={this.handleDiscardChanges}
+              />
+            : null}
         </div>
       </div>
-      );
+    );
   }
 }
 
@@ -375,5 +396,5 @@ Output.propTypes = {
   selectedView: PropTypes.string,
   withInput: PropTypes.bool,
   isSidebar: PropTypes.bool,
-  resetPagination: PropTypes.bool
+  resetPagination: PropTypes.bool,
 };

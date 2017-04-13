@@ -1,14 +1,9 @@
-export const Structure = 'Structure';
-export const Indexes = 'Indexes';
-export const SQLQuery = 'Query';
-export const History = 'History';
+export const Structure = "Structure";
+export const Indexes = "Indexes";
+export const SQLQuery = "Query";
+export const History = "History";
 
-export const MainTabViews = [
-  SQLQuery,
-  Structure,
-  Indexes,
-  History,
-];
+export const MainTabViews = [SQLQuery, Structure, Indexes, History];
 
 /*
 export {

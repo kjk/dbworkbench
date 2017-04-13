@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 function pageHref(num) {
   return `#page-${num + 1}`;
@@ -24,39 +24,61 @@ export default class ResultsPaginator extends React.Component {
 
   renderPrevious() {
     if (this.props.currentPage <= 0) {
-      return (<a className='reactable-previous-page disabled'><i className='fa fa-chevron-left'/></a>);
+      return (
+        <a className="reactable-previous-page disabled">
+          <i className="fa fa-chevron-left" />
+        </a>
+      );
     }
 
     return (
-      <a className='reactable-previous-page' onClick={ this.handlePrevious } href={ pageHref(this.props.currentPage - 1) }><i className='fa fa-chevron-left'/></a>
-      );
+      <a
+        className="reactable-previous-page"
+        onClick={this.handlePrevious}
+        href={pageHref(this.props.currentPage - 1)}
+      >
+        <i className="fa fa-chevron-left" />
+      </a>
+    );
   }
 
   renderNext() {
     if (this.props.currentPage >= this.props.nPages - 1) {
-      return (<a className='reactable-next-page disabled'><i className='fa fa-chevron-right'/></a>);
+      return (
+        <a className="reactable-next-page disabled">
+          <i className="fa fa-chevron-right" />
+        </a>
+      );
     }
 
     return (
-      <a className='reactable-next-page' onClick={ this.handleNext } href={ pageHref(this.props.currentPage + 1) }><i className='fa fa-chevron-right'/></a>
-      );
+      <a
+        className="reactable-next-page"
+        onClick={this.handleNext}
+        href={pageHref(this.props.currentPage + 1)}
+      >
+        <i className="fa fa-chevron-right" />
+      </a>
+    );
   }
 
   render() {
     const style = {
-      color: 'white'
+      color: "white",
     };
 
     return (
-      <div className='reactable-pagination'>
-        <div className='reactable-pagination-button-container'>
-          { this.renderPrevious() }
-          <span className='reactable-page'>{ this.props.currentPage + 1 } / { this.props.nPages }</span>
-          { this.renderNext() }
-          <span style={ style }>{ this.props.nRows } rows</span>
+      <div className="reactable-pagination">
+        <div className="reactable-pagination-button-container">
+          {this.renderPrevious()}
+          <span className="reactable-page">
+            {this.props.currentPage + 1} / {this.props.nPages}
+          </span>
+          {this.renderNext()}
+          <span style={style}>{this.props.nRows} rows</span>
         </div>
       </div>
-      );
+    );
   }
 }
 
@@ -64,5 +86,5 @@ ResultsPaginator.propTypes = {
   onPageChange: PropTypes.func.isRequired,
   currentPage: PropTypes.number.isRequired,
   nPages: PropTypes.number.isRequired,
-  nRows: PropTypes.number.isRequired
+  nRows: PropTypes.number.isRequired,
 };

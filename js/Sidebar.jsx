@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import DatabaseMenuDropdown from './DatabaseMenuDropdown.jsx';
-import TableInformation from './TableInformation.jsx';
-import * as action from './action.js';
-import * as api from './api.js';
-import * as store from './store.js';
+import React from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import DatabaseMenuDropdown from "./DatabaseMenuDropdown.jsx";
+import TableInformation from "./TableInformation.jsx";
+import * as action from "./action.js";
+import * as api from "./api.js";
+import * as store from "./store.js";
 
 export default class Sidebar extends React.Component {
   constructor(props, context) {
@@ -21,10 +21,10 @@ export default class Sidebar extends React.Component {
 
   componentWillMount() {
     this.refreshTables();
-    store.onSidebarDx((dx) => {
+    store.onSidebarDx(dx => {
       this.sidebarDx = dx;
       const el = ReactDOM.findDOMNode(this);
-      el.style.width = dx + 'px';
+      el.style.width = dx + "px";
     }, this);
   }
 
@@ -37,7 +37,7 @@ export default class Sidebar extends React.Component {
     //e.preventDefault();
     // TODO: make some kind of UI representation of refresh
     // just to show users that the action was successful.
-    this.refreshTables();;
+    this.refreshTables();
   }
 
   handleSelectTable(e, table) {
@@ -54,14 +54,14 @@ export default class Sidebar extends React.Component {
       return null;
     }
     const selectedTable = this.props.selectedTable;
-    const res = tables.map((table) => {
-      const cls = (table == selectedTable) ? ' selected' : '';
-      let handler = (e) => this.handleSelectTable(e, table);
+    const res = tables.map(table => {
+      const cls = table == selectedTable ? " selected" : "";
+      let handler = e => this.handleSelectTable(e, table);
       return (
-        <li onClick={ handler } key={ table } className={ cls }>
-          <span><i className='fa fa-table'/>{ table }</span>
+        <li onClick={handler} key={table} className={cls}>
+          <span><i className="fa fa-table" />{table}</span>
         </li>
-        );
+      );
     });
     return res;
   }
@@ -79,34 +79,39 @@ export default class Sidebar extends React.Component {
     const tableInfo = this.props.selectedTableInfo;
     if (tableInfo != null) {
       sortList = {
-        height: 'calc(100% - 135px)',
+        height: "calc(100% - 135px)",
       };
     }
 
     return (
-      <div id='sidebar' style={ style }>
-        <div className='tables-list'>
-          <div className='wrap'>
-            <div className='title'>
-              <i className='fa fa-database' />
-              <span className='current-database' id='current'>{ this.props.databaseName }</span>
-              <div className='dropdown-menu'>
-                <div className='dropdown-cursor'>
-                  <i className='fa fa-angle-down fa-lg pull-right' />
+      <div id="sidebar" style={style}>
+        <div className="tables-list">
+          <div className="wrap">
+            <div className="title">
+              <i className="fa fa-database" />
+              <span className="current-database" id="current">
+                {this.props.databaseName}
+              </span>
+              <div className="dropdown-menu">
+                <div className="dropdown-cursor">
+                  <i className="fa fa-angle-down fa-lg pull-right" />
                 </div>
-                <DatabaseMenuDropdown connectionId={ this.props.connectionId } onRefreshTables={ this.handleRefreshTables } />
+                <DatabaseMenuDropdown
+                  connectionId={this.props.connectionId}
+                  onRefreshTables={this.handleRefreshTables}
+                />
               </div>
             </div>
-            <ul style={ sortList }>
-              { tables }
+            <ul style={sortList}>
+              {tables}
             </ul>
           </div>
         </div>
-        { tableInfo ?
-          <TableInformation tableInfo={ this.props.selectedTableInfo } /> :
-          null }
+        {tableInfo
+          ? <TableInformation tableInfo={this.props.selectedTableInfo} />
+          : null}
       </div>
-      );
+    );
   }
 }
 
@@ -116,5 +121,5 @@ Sidebar.propTypes = {
   tables: PropTypes.array, // TODO: more specific
   selectedTableInfo: PropTypes.any, // TODO: more specific
   databaseName: PropTypes.string,
-  connectionId: PropTypes.number
+  connectionId: PropTypes.number,
 };

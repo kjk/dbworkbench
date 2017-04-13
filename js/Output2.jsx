@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import ResultsPaginator from './ResultsPaginator.jsx';
-import QueryEditBar from './QueryEditBar.jsx';
-import * as view from './view.js';
-import * as action from './action.js';
-import * as store from './store.js';
-import * as sort from './reactable/sort.jsx';
+import React from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import ResultsPaginator from "./ResultsPaginator.jsx";
+import QueryEditBar from "./QueryEditBar.jsx";
+import * as view from "./view.js";
+import * as action from "./action.js";
+import * as store from "./store.js";
+import * as sort from "./reactable/sort.jsx";
 
 /*
 Output selectedView="Query", results={ columns: ["colName1", "colName2", ...]
@@ -74,7 +74,7 @@ function calcColumnInfos(columnNames, sortByColumnIdx, prevColumnInfos) {
 
 function topPos(dy, withInput) {
   let top = withInput ? dy + 60 : 60;
-  return top + 'px';
+  return top + "px";
 }
 
 const nPerPage = 100;
@@ -125,7 +125,7 @@ export default class Output extends React.Component {
     const rows = getPage(this.state.allRows, pageNo);
     this.setState({
       currPageNo: pageNo,
-      rows: rows
+      rows: rows,
     });
   }
 
@@ -143,11 +143,15 @@ export default class Output extends React.Component {
   handleColumnClick(e) {
     e.preventDefault();
     const colIdx = e.target.cellIndex;
-    console.log('Output2.handleColumnClick: ', colIdx);
+    console.log("Output2.handleColumnClick: ", colIdx);
     const columns = this.state.columns;
-    const columnInfos = calcColumnInfos(columns, colIdx, this.state.columnInfos);
+    const columnInfos = calcColumnInfos(
+      columns,
+      colIdx,
+      this.state.columnInfos
+    );
     this.setState({
-      columnInfos: columnInfos
+      columnInfos: columnInfos,
     });
   }
 
@@ -172,109 +176,123 @@ export default class Output extends React.Component {
       nPages: nPages,
       rows: rows,
       columns: columns,
-      columnInfos: columnInfos
+      columnInfos: columnInfos,
     };
   }
 
   renderEmptyOrError(results) {
     let res;
     if (results && results.error) {
-      res = <div>
-              Error:
-              { results.error }
-            </div>;
+      res = (
+        <div>
+          Error:
+          {results.error}
+        </div>
+      );
     } else if (!results || !results.rows || results.rows.length == 0) {
-      res = <div>
-              No records found
-            </div>;
+      res = (
+        <div>
+          No records found
+        </div>
+      );
     }
     if (!res) {
       return res;
     }
     if (this.props.isSidebar) {
-      return (<div id='sidebar-result-wrapper'>
-                { res }
-              </div>);
+      return (
+        <div id="sidebar-result-wrapper">
+          {res}
+        </div>
+      );
     }
     let style = {
-      top: this.top
+      top: this.top,
     };
 
     return (
-      <div id='output' className='empty' style={ style }>
-        <div id='wrapper'>
-          { res }
+      <div id="output" className="empty" style={style}>
+        <div id="wrapper">
+          {res}
         </div>
       </div>
-      );
+    );
   }
 
   renderTd(rowIdx, colIdx, colData) {
-    const key = '' + rowIdx + '-' + colIdx;
+    const key = "" + rowIdx + "-" + colIdx;
     return (
-      <td key={ key } data-custom-attribute={ key }>
-        { colData }
+      <td key={key} data-custom-attribute={key}>
+        {colData}
       </td>
-      );
+    );
   }
 
   renderTr(rowIdx, row) {
-    const children = row.map((col, colIdx) => this.renderTd(rowIdx, colIdx, col));
+    const children = row.map((col, colIdx) =>
+      this.renderTd(rowIdx, colIdx, col)
+    );
     return (
-      <tr key={ rowIdx }>
-        { children }
+      <tr key={rowIdx}>
+        {children}
       </tr>
-      );
+    );
   }
 
   renderTheadTh(col, colIdx) {
-    let cls = 'reactable-header-sortable';
+    let cls = "reactable-header-sortable";
     const s = col.name;
     if (col.sortOrder == sort.Up) {
-      cls += ' reactable-header-sort-asc';
+      cls += " reactable-header-sort-asc";
     } else if (col.sortOrder == sort.Down) {
-      cls += ' reactable-header-sort-desc';
+      cls += " reactable-header-sort-desc";
     }
     return (
-      <th key={ colIdx }
-        className={ cls }
-        role='button'
-        tabIndex='0'
-        onClick={ this.handleColumnClick }>
-        { s }
+      <th
+        key={colIdx}
+        className={cls}
+        role="button"
+        tabIndex="0"
+        onClick={this.handleColumnClick}
+      >
+        {s}
       </th>
-      );
+    );
   }
 
   renderResults() {
     const state = this.state;
     const results = state.results;
     const allRows = state.allRows;
-    const columns = state.columnInfos.map((col, colIdx) => this.renderTheadTh(col, colIdx));
+    const columns = state.columnInfos.map((col, colIdx) =>
+      this.renderTheadTh(col, colIdx)
+    );
     const rows = state.rows.map((row, rowIdx) => this.renderTr(rowIdx, row));
     const pageChanged = pageNo => this.handlePageChanged(pageNo);
     return (
       <div>
-        <table className='results' id='results'>
+        <table className="results" id="results">
           <thead>
-            <tr className='reactable-column-header'>
-              { columns }
+            <tr className="reactable-column-header">
+              {columns}
             </tr>
           </thead>
-          <tbody className='reactable-data'>
-            { rows }
+          <tbody className="reactable-data">
+            {rows}
           </tbody>
         </table>
-        <ResultsPaginator nRows={ allRows.length }
-          nPages={ this.state.nPages }
-          currentPage={ this.state.currPageNo }
-          onPageChange={ pageChanged } />
+        <ResultsPaginator
+          nRows={allRows.length}
+          nPages={this.state.nPages}
+          currentPage={this.state.currPageNo}
+          onPageChange={pageChanged}
+        />
       </div>
-      );
+    );
   }
 
   render() {
-    console.log('Output2.render');
+    console.log("Output2.render");
 
     const res = this.renderEmptyOrError(this.state.results);
     if (res) {
@@ -285,10 +303,10 @@ export default class Output extends React.Component {
 
     if (this.props.isSidebar) {
       return (
-        <div id='sidebar-result-wrapper'>
-          { children }
+        <div id="sidebar-result-wrapper">
+          {children}
         </div>
-        );
+      );
     }
 
     const editedCells = this.props.editedCells || {};
@@ -297,24 +315,27 @@ export default class Output extends React.Component {
 
     let style = {
       top: this.top,
-      marginTop: -10
+      marginTop: -10,
     };
 
     return (
-      <div id='output' style={ style }>
-        <div id='wrapper'>
-          { children }
-          { showQueryBar ?
-            <QueryEditBar numberOfRowsEdited={ nEdited } onHandleDiscardChanges={ this.handleDiscardChanges } />
-            : null }
+      <div id="output" style={style}>
+        <div id="wrapper">
+          {children}
+          {showQueryBar
+            ? <QueryEditBar
+                numberOfRowsEdited={nEdited}
+                onHandleDiscardChanges={this.handleDiscardChanges}
+              />
+            : null}
         </div>
       </div>
-      );
+    );
   }
 }
 
 Output.propTypes = {
   withInput: PropTypes.bool,
   isSidebar: PropTypes.bool,
-  editedCells: PropTypes.any // TODO: be more specific
+  editedCells: PropTypes.any, // TODO: be more specific
 };

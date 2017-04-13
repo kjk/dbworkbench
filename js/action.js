@@ -20,14 +20,22 @@ function actionName(idx) {
 function broadcast(actionIdx) {
   const callbacks = actionCallbacks[actionIdx];
   if (!callbacks || callbacks.length == 0) {
-    console.log('action.broadcast: no callback for action', actionName(actionIdx));
+    console.log(
+      "action.broadcast: no callback for action",
+      actionName(actionIdx)
+    );
     return;
   }
 
   const args = Array.prototype.slice.call(arguments, 1);
   for (let cbInfo of callbacks) {
     const cb = cbInfo[0];
-    console.log('action.broadcast: action: ', actionName(actionIdx), 'args: ', args);
+    console.log(
+      "action.broadcast: action: ",
+      actionName(actionIdx),
+      "args: ",
+      args
+    );
     if (args.length > 0) {
       cb.apply(null, args);
     } else {
@@ -52,7 +60,7 @@ function on(actionIdx, cb, owner) {
 
 function off(actionIdx, cbIdOrOwner) {
   if (actionIdx == 10) {
-    console.log('off: clearFilterIdx');
+    console.log("off: clearFilterIdx");
   }
   const callbacks = actionCallbacks[actionIdx] || [];
   const n = callbacks.length;
@@ -64,7 +72,7 @@ function off(actionIdx, cbIdOrOwner) {
     }
   }
   return 0;
-//console.log(`action.off: didn't find callback '${cbIdOrOwner}' for '${actionName(actionIdx)}'`);
+  //console.log(`action.off: didn't find callback '${cbIdOrOwner}' for '${actionName(actionIdx)}'`);
 }
 
 export function offAllForOwner(owner) {
@@ -95,17 +103,17 @@ var lastIdx = 10;
 
 // must be in same order as *Idx above
 var actionNames = [
-  'tableSelected',
-  'viewSelected',
-  'executeQuery',
-  'explainQuery',
-  'disconnectDatabase',
-  'alertBox',
-  'resetPagination',
-  'selectedCellPosition',
-  'editedCells',
-  'filterChanged',
-  'clearFilter',
+  "tableSelected",
+  "viewSelected",
+  "executeQuery",
+  "explainQuery",
+  "disconnectDatabase",
+  "alertBox",
+  "resetPagination",
+  "selectedCellPosition",
+  "editedCells",
+  "filterChanged",
+  "clearFilter",
 ];
 
 export function tableSelected(name) {

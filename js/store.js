@@ -36,7 +36,7 @@ let currCid = 0;
 
 function getFullKey(key, subkey) {
   if (subkey) {
-    return key + '-' + subkey;
+    return key + "-" + subkey;
   }
   return key;
 }
@@ -51,7 +51,9 @@ function broadcast(key, val, subkey) {
   }
 
   if (watchingBroadcast[key]) {
-    console.log(`store.broadcast: key: '${fullKey}', val: '${val}', nObservers: ${n - 1}`);
+    console.log(
+      `store.broadcast: key: '${fullKey}', val: '${val}', nObservers: ${n - 1}`
+    );
   }
   for (let i = 1; i < n; i++) {
     const cb = valAndCbs[i][0];
@@ -80,7 +82,7 @@ export function on(key, cb, owner) {
 export function offFullKey(fullKey, cbIdOrOwner) {
   const valAndCbs = store[fullKey];
   if (!valAndCbs) {
-    throw new Error('offFullKey for: ', fullKey, ' valAndCbs is: ', valAndCbs);
+    throw new Error("offFullKey for: ", fullKey, " valAndCbs is: ", valAndCbs);
   }
   const n = valAndCbs.length;
   for (let i = 1; i < n; i++) {
@@ -91,7 +93,7 @@ export function offFullKey(fullKey, cbIdOrOwner) {
       return;
     }
   }
-//console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
+  //console.log(`store.off: didn't find callback '${cbId}' for '{fullKey}'`);
 }
 
 export function offMap(key, subkey, cbIdOrOwner) {
@@ -169,20 +171,20 @@ export function del(key) {
 
 /* things specific to an app */
 
-const spinnerKey = 'spinner';
-const sidebarDxKey = 'sidebarDx';
-const queryEditDyKey = 'queryEditDy';
+const spinnerKey = "spinner";
+const sidebarDxKey = "sidebarDx";
+const queryEditDyKey = "queryEditDy";
 
 // for debugging: keys that we're watching i.e.
 // we'll log broadcasting new value
 var watchingBroadcast = {
-  'queryEditDy': false,
+  queryEditDy: false,
 };
 
 var defValues = {
-  'spinner': 0,
-  'sidebarDx': 250,
-  'queryEditDy': 200,
+  spinner: 0,
+  sidebarDx: 250,
+  queryEditDy: 200,
 };
 
 export function spinnerIsVisible() {
@@ -196,7 +198,7 @@ export function spinnerShow() {
     // we transitioned from 'not visible' to 'visible' state
     broadcast(spinnerKey, true);
   }
-//console.log(`spinnerShow: ${newVal}`);
+  //console.log(`spinnerShow: ${newVal}`);
 }
 
 export function spinnerHide() {
@@ -209,7 +211,7 @@ export function spinnerHide() {
   if (newVal < 0) {
     throw new Error(`negative spinnerState (${newVal}))`);
   }
-//console.log(`spinnerHide: ${newVal}`);
+  //console.log(`spinnerHide: ${newVal}`);
 }
 
 export function onSpinner(cb, owner) {
