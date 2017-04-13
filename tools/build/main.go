@@ -37,11 +37,9 @@ var (
 
 // Secrets defines secrets
 type Secrets struct {
-	AwsSecret        string
-	AwsAccess        string
-	CertPwd          string
-	NotifierEmail    string
-	NotifierEmailPwd string
+	AwsSecret string
+	AwsAccess string
+	CertPwd   string
 }
 
 func finalizeThings(crashed bool) {
