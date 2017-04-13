@@ -6,5 +6,6 @@
     "**/s/dist": true,
     "**/s/js/lib": true,
     "**/Godeps": true
-  }
+  },
+  "prettier.trailingComma": "es5"
 }
