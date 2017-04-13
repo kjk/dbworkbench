@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 export default class DragBarHoriz extends React.Component {
   constructor(props, context) {
@@ -82,8 +83,8 @@ export default class DragBarHoriz extends React.Component {
 }
 
 DragBarHoriz.propTypes = {
-  onPosChanged: React.PropTypes.func.isRequired,
-  initialY: React.PropTypes.number.isRequired,
-  min: React.PropTypes.number.isRequired,
-  max: React.PropTypes.number.isRequired
+  onPosChanged: PropTypes.func.isRequired,
+  initialY: PropTypes.number.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as store from './store.js';
 
 export default class SpinnerCircle extends React.Component {
@@ -52,6 +53,6 @@ export default class SpinnerCircle extends React.Component {
 }
 
 SpinnerCircle.propTypes = {
-  forceVisible: React.PropTypes.bool,
-  style: React.PropTypes.object
+  forceVisible: PropTypes.bool,
+  style: PropTypes.object
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import Output from './Output.jsx';
 import * as api from './api.js';
@@ -83,7 +84,6 @@ export default class DatabaseMenuDropdown extends React.Component {
       top: 60,
     };
 
-
     var appElement = document.getElementById('main');
     Modal.setAppElement(appElement);
 
@@ -98,6 +98,7 @@ export default class DatabaseMenuDropdown extends React.Component {
         <Modal id='nav'
           isOpen={ this.state.modalIsOpen }
           onRequestClose={ this.handleClose }
+          contentLabel='Modal'
           style={ modalStyle }>
           <div>
             <div className='modal-header'>
@@ -118,6 +119,6 @@ export default class DatabaseMenuDropdown extends React.Component {
 }
 
 DatabaseMenuDropdown.propTypes = {
-  onRefreshTables: React.PropTypes.func.isRequired,
-  connectionId: React.PropTypes.number.isRequired
+  onRefreshTables: PropTypes.func.isRequired,
+  connectionId: PropTypes.number.isRequired
 };

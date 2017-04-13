@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import DbNav from './DbNav.jsx';
 import DragBarHoriz from './DragBarHoriz.jsx';
 import Input from './Input.jsx';
@@ -63,12 +64,12 @@ export default class MainContainer extends React.Component {
 }
 
 MainContainer.propTypes = {
-  selectedView: React.PropTypes.string,
-  supportsExplain: React.PropTypes.bool,
-  results: React.PropTypes.any, // TODO: more specific,
-  resetPagination: React.PropTypes.bool, // TODO: more specific
-  tableStructures: React.PropTypes.any, // TODO: more specific
-  selectedTable: React.PropTypes.string,
-  selectedCellPosition: React.PropTypes.any, // TODO: more specific
-  editedCells: React.PropTypes.any // TODO: more specific
+  selectedView: PropTypes.string,
+  supportsExplain: PropTypes.bool,
+  results: PropTypes.any, // TODO: more specific,
+  resetPagination: PropTypes.bool, // TODO: more specific
+  tableStructures: PropTypes.any, // TODO: more specific
+  selectedTable: PropTypes.string,
+  selectedCellPosition: PropTypes.any, // TODO: more specific
+  editedCells: PropTypes.any // TODO: more specific
 };

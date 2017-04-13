@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as action from './action.js';
 import * as api from './api.js';
 import * as view from './view.js';
@@ -56,6 +57,6 @@ export default class DbNav extends React.Component {
 }
 
 DbNav.propTypes = {
-  view: React.PropTypes.string.isRequired
+  view: PropTypes.string.isRequired
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import EventEmitter from 'events';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import AlertMessage from './AlertMessage';
@@ -214,16 +215,16 @@ AlertContainer.defaultProps = {
 }
 
 AlertContainer.propTypes = {
-  offset: React.PropTypes.number,
-  position: React.PropTypes.oneOf([
+  offset: PropTypes.number,
+  position: PropTypes.oneOf([
     'bottom left',
     'bottom right',
     'top right',
     'top left',
   ]),
-  theme: React.PropTypes.oneOf(['dark', 'light']),
-  time: React.PropTypes.number,
-  transition: React.PropTypes.oneOf(['scale', 'fade'])
+  theme: PropTypes.oneOf(['dark', 'light']),
+  time: PropTypes.number,
+  transition: PropTypes.oneOf(['scale', 'fade'])
 }
 
 export default AlertContainer;

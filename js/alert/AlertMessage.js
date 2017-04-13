@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 class AlertMessage extends React.Component {
@@ -9,17 +10,7 @@ class AlertMessage extends React.Component {
       closeButtonStyle: {}
     };
   }
-  /**
-   * Handle the close button click
-   * @return {void}
-   */
-  _handleCloseClick(){
-    this._removeSelf();
-  }
-  /**
-   * Include the given icon or use the default one
-   * @return {React.Component}
-   */
+
   _showIcon(){
     let icon = '';
     if(this.props.icon){
@@ -31,19 +22,13 @@ class AlertMessage extends React.Component {
 
     return icon;
   }
-  /**
-   * Remove the alert after the given time
-   * @return {void}
-   */
+
   _countdown(){
     setTimeout(() => {
       this._removeSelf();
     }, this.props.time);
   }
-  /**
-   * Emit a event to AlertContainer remove this alert from page
-   * @return {void}
-   */
+
   _removeSelf(){
     reactAlertEvents.emit('ALERT.REMOVE', this);
   }
@@ -61,6 +46,10 @@ class AlertMessage extends React.Component {
     if(this.props.time > 0){
       this._countdown();
     }
+  }
+
+  _handleCloseClick(){
+    this._removeSelf();
   }
 
   render(){
@@ -88,7 +77,7 @@ AlertMessage.defaultProps = {
 }
 
 AlertMessage.propTypes = {
-  type: React.PropTypes.oneOf(['info', 'success', 'error'])
+  type: PropTypes.oneOf(['info', 'success', 'error'])
 }
 
 export default AlertMessage;

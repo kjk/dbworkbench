@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import { Table } from './reactable/table.jsx';
 import { Thead } from './reactable/thead.jsx';
 import { Tr } from './reactable/tr.jsx';
@@ -366,13 +367,13 @@ RETURNING ${columns};
 }
 
 Output.propTypes = {
-  editedCells: React.PropTypes.any, // TODO: more specifc
-  selectedTable: React.PropTypes.string,
-  results: React.PropTypes.any, // TODO: more specific,
-  tableStructures: React.PropTypes.any, // TODO: more specific
-  selectedCellPosition: React.PropTypes.any, // TODO: more specific
-  selectedView: React.PropTypes.string,
-  withInput: React.PropTypes.bool,
-  isSidebar: React.PropTypes.bool,
-  resetPagination: React.PropTypes.bool
+  editedCells: PropTypes.any, // TODO: more specifc
+  selectedTable: PropTypes.string,
+  results: PropTypes.any, // TODO: more specific,
+  tableStructures: PropTypes.any, // TODO: more specific
+  selectedCellPosition: PropTypes.any, // TODO: more specific
+  selectedView: PropTypes.string,
+  withInput: PropTypes.bool,
+  isSidebar: PropTypes.bool,
+  resetPagination: PropTypes.bool
 };

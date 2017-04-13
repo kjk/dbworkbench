@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import ResultsPaginator from './ResultsPaginator.jsx';
 import QueryEditBar from './QueryEditBar.jsx';
 import * as view from './view.js';
@@ -313,7 +314,7 @@ export default class Output extends React.Component {
 }
 
 Output.propTypes = {
-  withInput: React.PropTypes.bool,
-  isSidebar: React.PropTypes.bool,
-  editedCells: React.PropTypes.any // TODO: be more specific
+  withInput: PropTypes.bool,
+  isSidebar: PropTypes.bool,
+  editedCells: PropTypes.any // TODO: be more specific
 };

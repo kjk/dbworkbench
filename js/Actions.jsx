@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import SpinnerCircle from './SpinnerCircle.jsx';
 import { Filterer } from './reactable/filterer.jsx';
 
@@ -42,7 +43,7 @@ export default class Actions extends React.Component {
 }
 
 Actions.propTypes = {
-  onRun: React.PropTypes.func.isRequired,
-  onExplain: React.PropTypes.func.isRequired,
-  supportsExplain: React.PropTypes.bool
+  onRun: PropTypes.func.isRequired,
+  onExplain: PropTypes.func.isRequired,
+  supportsExplain: PropTypes.bool
 };

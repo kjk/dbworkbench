@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import Popover from 'react-popover';
 import * as action from './action';
 import * as store from './store';
@@ -146,7 +147,7 @@ export default class QueryEditBar extends React.Component {
 }
 
 QueryEditBar.propTypes = {
-  generateQuery: React.PropTypes.func.isRequired,
-  onHandleDiscardChanges: React.PropTypes.func.isRequired,
-  numberOfRowsEdited: React.PropTypes.number.isRequired
+  generateQuery: PropTypes.func.isRequired,
+  onHandleDiscardChanges: PropTypes.func.isRequired,
+  numberOfRowsEdited: PropTypes.number.isRequired
 };

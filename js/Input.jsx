@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import Actions from './Actions.jsx';
 import * as action from './action.js';
 import * as store from './store.js';
@@ -165,6 +166,6 @@ export default class Input extends React.Component {
 }
 
 Input.propTypes = {
-  editedCells: React.PropTypes.any, // TODO: be mroe explicit
-  supportsExplain: React.PropTypes.bool
+  editedCells: PropTypes.any, // TODO: be mroe explicit
+  supportsExplain: PropTypes.bool
 };

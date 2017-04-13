@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import DatabaseMenuDropdown from './DatabaseMenuDropdown.jsx';
 import TableInformation from './TableInformation.jsx';
 import * as action from './action.js';
@@ -110,10 +111,10 @@ export default class Sidebar extends React.Component {
 }
 
 Sidebar.propTypes = {
-  refreshAllTableInformation: React.PropTypes.func,
-  selectedTable: React.PropTypes.string,
-  tables: React.PropTypes.array, // TODO: more specific
-  selectedTableInfo: React.PropTypes.any, // TODO: more specific
-  databaseName: React.PropTypes.string,
-  connectionId: React.PropTypes.number
+  refreshAllTableInformation: PropTypes.func,
+  selectedTable: PropTypes.string,
+  tables: PropTypes.array, // TODO: more specific
+  selectedTableInfo: PropTypes.any, // TODO: more specific
+  databaseName: PropTypes.string,
+  connectionId: PropTypes.number
 };

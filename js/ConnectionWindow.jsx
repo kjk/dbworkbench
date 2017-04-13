@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import SpinnerCircle from './SpinnerCircle.jsx';
 import * as api from './api.js';
 import * as action from './action.js';
@@ -535,7 +536,7 @@ export default class ConnectionWindow extends React.Component {
         <div className='col-md-12 right light-text smaller-text'>
           <i className='fa fa-lock fa1' /> Database crendentials are stored securely on your computer
         </div>
-        <div className='col-md-12'/>
+        <div className='col-md-12' />
         { this.renderErrorOptional(this.state.connectionErrorMessage) }
         { this.renderConnectOrCancel() }
       </div>
@@ -548,10 +549,10 @@ export default class ConnectionWindow extends React.Component {
     };
 
     let styleSpinner = {
-      zIndex: '5',
+      zIndex: 5,
       position: 'absolute',
       right: '-32px',
-      top: '8'
+      top: 8
     };
 
 
@@ -648,5 +649,5 @@ export default class ConnectionWindow extends React.Component {
 }
 
 ConnectionWindow.propTypes = {
-  onDidConnect: React.PropTypes.func.isRequired
+  onDidConnect: PropTypes.func.isRequired
 };

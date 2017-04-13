@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import filesize from 'filesize';
 
 function isNullOrEmptyObject(object) {
@@ -61,5 +62,5 @@ export default class TableInformation extends React.Component {
 }
 
 TableInformation.propTypes = {
-  tableInfo: React.PropTypes.object.isRequired
+  tableInfo: PropTypes.object.isRequired
 };
