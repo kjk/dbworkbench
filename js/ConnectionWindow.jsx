@@ -373,7 +373,7 @@ export default class ConnectionWindow extends React.Component {
           href="#"
           className={ className }
           onClick={ guard('bookmarksEnabled', this.selectBookmark) }>
-          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight"></i></a>
+          { nick } <i data-custom-attribute={ id } onClick={ guard('bookmarksEnabled', this.deleteBookmark) } className="fa fa-times pull-right hover-highlight"/>></a>
       );
     }
 
@@ -533,7 +533,7 @@ export default class ConnectionWindow extends React.Component {
           </label>
         </div>
         <div className="col-md-12 right light-text smaller-text">
-          <i className="fa fa-lock fa1"></i>&nbsp;Database crendentials are stored securely on your computer
+          <i className="fa fa-lock fa1"/>&nbsp;Database crendentials are stored securely on your computer
         </div>
         <div className="col-md-12">
           &nbsp;&nbsp;

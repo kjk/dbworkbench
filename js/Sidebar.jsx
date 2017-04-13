@@ -58,7 +58,7 @@ export default class Sidebar extends React.Component {
       let handler = (e) => this.handleSelectTable(e, table);
       return (
         <li onClick={ handler } key={ table } className={ cls }>
-          <span><i className='fa fa-table'></i>{ table }</span>
+          <span><i className='fa fa-table'/>{ table }</span>
         </li>
         );
     });
@@ -87,11 +87,11 @@ export default class Sidebar extends React.Component {
         <div className="tables-list">
           <div className="wrap">
             <div className="title">
-              <i className="fa fa-database"></i>
+              <i className="fa fa-database"/>
               <span className="current-database" id="current">{ this.props.databaseName }</span>
               <div className='dropdown-menu'>
                 <div className="dropdown-cursor">
-                  <i className="fa fa-angle-down fa-lg pull-right"></i>
+                  <i className="fa fa-angle-down fa-lg pull-right"/>
                 </div>
                 <DatabaseMenuDropdown connectionId={ this.props.connectionId } onRefreshTables={ this.handleRefreshTables } />
               </div>

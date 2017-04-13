@@ -50,7 +50,7 @@ export default class TableInformation extends React.Component {
       <div className="table-information">
         <div className="wrap">
           <div className="title">
-            <i className="fa fa-info"></i>
+            <i className="fa fa-info"/>
             <span className="current-table-information">Table Information</span>
           </div>
           { tableInfo }
