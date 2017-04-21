@@ -52,7 +52,7 @@ func log(_ s : String) {
         let encodedDataArray = [UInt8](s2.utf8)
         let n = lf.write(encodedDataArray, maxLength: encodedDataArray.count)
         if n == -1 && false {
-            print("write failed with error: '\(logFile?.streamError)'")
+            print("write failed with error: '\(String(describing: logFile?.streamError))'")
         }
     }
     logLock.unlock()

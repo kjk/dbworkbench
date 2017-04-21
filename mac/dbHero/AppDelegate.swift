@@ -81,11 +81,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let task = session.dataTask(with: req2, completionHandler: {data, response, error -> Void in
             // error is not nil e.g. when the server is not running
             if error != nil {
-                log("autoUpdateCheck(): url download failed with error: \(error)")
+                log("autoUpdateCheck(): url download failed with error: \(String(describing: error))")
                 return
             }
             guard let httpRsp = response as? HTTPURLResponse else {
-                log("autoUpdateCheck(): '\(response)' is not NSHTTPURLResponse")
+                log("autoUpdateCheck(): '\(String(describing: response))' is not NSHTTPURLResponse")
                 return
             }
             if httpRsp.statusCode != 200 {
@@ -93,7 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 return
             }
             let dataStr = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-            let urlVer = parseAutoUpdateCheck(dataStr as! String)
+            let urlVer = parseAutoUpdateCheck(dataStr! as String)
             if programVersionGreater(urlVer.ver!, ver2: myVer) {
                 DispatchQueue.main.async(execute: {
                     self.notifyAboutUpdate(urlVer.ver!)

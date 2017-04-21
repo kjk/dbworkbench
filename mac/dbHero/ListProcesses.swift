@@ -33,7 +33,7 @@ func listProcesses() -> [ProcInfo] {
     
     var res = [ProcInfo]()
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    guard let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String else {
+    guard let output = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as String? else {
         log("listProcesses: failed to parse the output")
         return res
     }
