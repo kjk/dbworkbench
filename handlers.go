@@ -987,7 +987,7 @@ func startWebServer() {
 	httpAddr := fmt.Sprintf("%s:%v", options.HTTPHost, options.HTTPPort)
 	fmt.Printf("Started running on %s, dev mode: %v\n", httpAddr, options.IsDev)
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
-		log.Fatalf("http.ListendAndServer() failed with %s\n", err)
+		log.Fatalf("http.ListenAndServe() failed with %s\n", err)
 	}
 	fmt.Printf("Exited\n")
 }
