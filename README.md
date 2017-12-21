@@ -1,3 +1,7 @@
+# note of obsolecence
+
+This project is obsolete and no longer being worked on.
+
 # dbHero
 
 Web-based database browser written in Go, originally based on http://github.com/sosedoff/pgweb
