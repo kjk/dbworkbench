@@ -1,6 +1,8 @@
-# note of obsolecence
+# Note of obsolecence
 
 This project is obsolete and no longer being worked on.
+
+To see how it looked like, see https://blog.kowalczyk.info/software/dbhero/
 
 # dbHero
 
